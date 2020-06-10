@@ -19,6 +19,22 @@ const SURVEY_FILE_MAP = {
   TWELVE_MONTH_ENROLLMENT_1: ['12', 'month', 'v1']
 };
 
+async function getS3Object({ uri, credentials }) {
+  const { bucket, key } = parseS3Uri(uri);
+  const s3 = new AWS.S3({ credentials });
+  const response = await s3.getObject({
+    Bucket: bucket,
+    Key: key,
+  }).promise();
+
+  if (response.Body) {
+
+    return response.Body.toString('utf8');
+  }
+
+  return '{}';
+}
+
 function getSurveyTypeFromFileName(fileName) {
   return Object.keys(SURVEY_FILE_MAP).find(surveyType => {
     const words = SURVEY_FILE_MAP[surveyType];
@@ -187,9 +203,10 @@ async function main() {
     
     spinner.succeed();
     spinner.start('Executing SQL');
-  
+    
+    const startTimeFormatted = moment().format('YYYY-MM-DD HH:mm:ss A');
     let outputString = '';
-    const logFileName = `${moment().format('YYYY-MM-DD HH:mm A')}.txt`;
+    const logFileName = `${startTimeFormatted}.txt`;
     await exec(conn, `/usr/bin/gluepython3 /home/glue/job.py --tenant_id=${argv.tenantId} --stage=${argv.stage} --sql=${sqlUri}`, {
       onStdout: async data => {
         const strData = data.toString();
@@ -198,7 +215,7 @@ async function main() {
           console.log(strData);
         }
         await fs.ensureDir(Path.normalize('./.spark-logs'));
-        await fs.appendFile(Path.normalize(`./.spark-logs/${logFileName}`), data);
+        await fs.appendFile(Path.normalize(`./.spark-logs/${logFileName}`), data, 'utf8');
       },
       onStderr: async data => {
         if (argv.debug) {
@@ -214,10 +231,19 @@ async function main() {
     if (!s3OutputUri) {
       throw new Error('Unable to get S3 output location');
     }
-    
+
+    const outputJson = JSON.parse(await getS3Object({ uri: s3OutputUri, credentials }));
+
+    await fs.ensureDir(Path.normalize(`./.json-output/${surveyType}`));
+    await fs.writeFile(
+      Path.normalize(`./.json-output/${surveyType}/${startTimeFormatted}.json`),
+      JSON.stringify(outputJson, null, 2),
+      'utf8'
+    );
+
     spinner.succeed(`Executing SQL - ${s3OutputUri}`);
 
-    spinner.start('Validating SQL');
+    spinner.start('Validating Output');
 
     const surveyFile = await createSurveyFile({
       reportUri: s3OutputUri,
