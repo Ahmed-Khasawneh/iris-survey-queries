@@ -11,7 +11,7 @@ import argparse
 OUTPUT_BUCKET = 'doris-survey-reports-dev'
 S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
 sc = SparkContext.getOrCreate()
 sqlContext = SQLContext(sc)
 glueContext = GlueContext(SparkContext.getOrCreate())

@@ -168,6 +168,7 @@ async function createSurveyFile({ reportUri, unitId, surveyType, stage = 'DEV', 
 
 async function main() {
   const spinner = ora().start('Preparing execution');
+  let conn
 
   try {
     const surveyType = getSurveyTypeFromFileName(argv.sql);
@@ -176,7 +177,7 @@ async function main() {
     }
     const credentials = await getCredentials();
     // await writeKey(await getPrivateKey({}));
-    const conn = await connect({ credentials });
+    conn = await connect({ credentials });
     await putFile(conn, Path.resolve(__dirname, '../pyspark/spark-executor.py'), '/home/glue/job.py');
   
     const sql = await getFileContent(argv.sql);
@@ -207,8 +208,6 @@ async function main() {
         await fs.appendFile(Path.normalize(`./.spark-logs/${logFileName}`), data);
       },
     });
-    // close the connection
-    conn.end();
 
     const s3OutputUri = getS3PathFromGlueOutput(outputString);
 
@@ -233,6 +232,10 @@ async function main() {
     console.log(surveyFile);
   } catch (e) {
     spinner.fail(e.message);
+  } finally {
+    if (conn) {
+      conn.end();
+    }
   }
 
 }
