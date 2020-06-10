@@ -1,0 +1,13 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Test SQL DEV",
+      "type": "shell",
+      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId 11702b15-8db2-4a35-8087-b560bb233420 --stage DEV",
+      "problemMatcher": []
+    }
+  ]
+}
