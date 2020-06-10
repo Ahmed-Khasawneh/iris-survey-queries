@@ -96,6 +96,7 @@ async function connect({ credentials }) {
     conn.on('ready', () => {
       resolve(conn);
     });
+    conn.on('error', e => reject(e));
     conn.connect({
       host: await getDevEndpointHost({ credentials }),
       username: 'glue',
