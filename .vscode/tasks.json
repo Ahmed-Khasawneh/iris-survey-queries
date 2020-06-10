@@ -6,7 +6,7 @@
     {
       "label": "Test SQL DEV",
       "type": "shell",
-      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId 11702b15-8db2-4a35-8087-b560bb233420 --stage DEV",
+      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId 11702b15-8db2-4a35-8087-b560bb233420 --stage DEV --debug",
       "problemMatcher": []
     },
     {

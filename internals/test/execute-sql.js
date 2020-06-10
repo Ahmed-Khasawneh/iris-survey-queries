@@ -76,6 +76,9 @@ async function exec(conn, statement, options = {}) {
         .on('close', function(code, signal) {
           resolve();
         })
+        .on('error', (e) => {
+          reject(e);
+        })
         .on('data', function(data) {
           if (options.onStdout) {
             options.onStdout(data);
@@ -186,6 +189,7 @@ async function main() {
   
     let outputString = '';
     const logFileName = `${moment().format('YYYY-MM-DD HH:mm A')}.txt`;
+    console.log('starting executing');
     await exec(conn, `/usr/bin/gluepython3 /home/glue/job.py --tenant_id=${argv.tenantId} --stage=${argv.stage} --sql=${sqlUri}`, {
       onStdout: async data => {
         const strData = data.toString();
