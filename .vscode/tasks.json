@@ -8,6 +8,12 @@
       "type": "shell",
       "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId 11702b15-8db2-4a35-8087-b560bb233420 --stage DEV",
       "problemMatcher": []
+    },
+    {
+      "label": "Test SQL TST",
+      "type": "shell",
+      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId bbce3932-0456-4513-9a9d-8d71f433b2af --stage TST",
+      "problemMatcher": []
     }
   ]
 }

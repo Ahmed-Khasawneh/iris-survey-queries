@@ -11,10 +11,12 @@ const OUTPUT_PATH_PARSER = /##OUTPUT##: (s3:\/\/[^\s]+)/
 const S3_REGX_PARSER = /s3:\/\/([^\/]+)\/?(.*)/;
 
 const SURVEY_FILE_MAP = {
+  COMPLETIONS_1: ['completions', 'v1'],
   FALL_ENROLLMENT_1: ['fall', 'enrollment', 'v1'],
   FALL_ENROLLMENT_2: ['fall', 'enrollment', 'v2'],
   FALL_ENROLLMENT_3: ['fall', 'enrollment', 'v3'],
   FALL_ENROLLMENT_4: ['fall', 'enrollment', 'v4'],
+  TWELVE_MONTH_ENROLLMENT_1: ['12', 'month', 'v1']
 };
 
 function getSurveyTypeFromFileName(fileName) {
