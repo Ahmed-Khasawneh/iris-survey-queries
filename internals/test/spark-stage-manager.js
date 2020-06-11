@@ -15,8 +15,8 @@ const _ = require('lodash');
 const STAGE_REGEXP = new RegExp('^\\[Stage (\\d+)[^\\]*]+\\].*$', 'gm');
 
 function matchAll(input, regex) {
-  let currentInput = input;
   const matches = [];
+  let currentInput = input;
   let continueSearching = true;
 
   while (continueSearching) {
@@ -49,7 +49,7 @@ class SparkStageManager {
     this.currentChunkAgg = '';
     const lastGroup = _.last(groups);
 
-    console.log(lastGroup[0]);
+    console.log(`>>> Current stage = ${lastGroup[1]}`);
 
     this.currentStage = lastGroup[1];
   }

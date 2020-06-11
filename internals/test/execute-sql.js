@@ -17,7 +17,7 @@ const SURVEY_FILE_MAP = {
   FALL_ENROLLMENT_2: ['fall', 'enrollment', 'v2'],
   FALL_ENROLLMENT_3: ['fall', 'enrollment', 'v3'],
   FALL_ENROLLMENT_4: ['fall', 'enrollment', 'v4'],
-  TWELVE_MONTH_ENROLLMENT_1: ['12', 'month', 'v1']
+  TWELVE_MONTH_ENROLLMENT_1: ['twelve', 'month', 'v1']
 };
 
 async function getS3Object({ uri, credentials }) {
