@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+ install:
+   commands:
+     - echo "[Install phase]"
+     
+ pre_build:
+   commands:
+     - echo "[Pre-Build phase]"
+
+ build:
+   commands:
+     - echo "[Build phase]"
+     - environment=$(echo $STAGE | tr '[:upper:]' '[:lower:]')
+     - aws s3 sync src "s3://doris-code-bucket-${environment}/iris-report-queries/"

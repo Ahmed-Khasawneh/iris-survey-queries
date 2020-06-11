@@ -6,6 +6,7 @@ const uuid = require('uuid');
 const ora = require('ora');
 const { argv } = require('yargs');
 const moment = require('moment');
+const SparkStageManager = require('./spark-stage-manager');
 
 const OUTPUT_PATH_PARSER = /##OUTPUT##: (s3:\/\/[^\s]+)/
 const S3_REGX_PARSER = /s3:\/\/([^\/]+)\/?(.*)/;
@@ -33,6 +34,20 @@ async function getS3Object({ uri, credentials }) {
   }
 
   return '{}';
+}
+
+async function asPromise(method, ...args) {
+  return new Promise((resolve, reject) => {
+    method(...args, (err, ...args) => {
+      if (err) {
+        reject(err);
+      } else if (args.length < 2) {
+        resolve(args[0]);
+      } else {
+        resolve(args);
+      }
+    });
+  });
 }
 
 function getSurveyTypeFromFileName(fileName) {
@@ -75,11 +90,15 @@ async function getPrivateKey({ credentials}) {
 
 async function getDevEndpointHost({ credentials }) {
   const glue = new AWS.Glue({ region: 'us-east-1', credentials });
-  const result = await glue.getDevEndpoint({
-    EndpointName: 'doris-test-endpoint-DEV',
-  }).promise();
-  
-  return result.DevEndpoint.PublicAddress;
+  try {
+    const result = await glue.getDevEndpoint({
+      EndpointName: 'doris-test-endpoint-DEV',
+    }).promise();
+    
+    return result.DevEndpoint.PublicAddress;
+  } catch (e) {
+    throw new Error('Glue Dev Endpoint not started. Run zeppelin automation to enable.');
+  }
 }
 
 async function exec(conn, statement, options = {}) {
@@ -109,7 +128,7 @@ async function exec(conn, statement, options = {}) {
   })
 }
 
-async function connect({ credentials }) {
+async function connect({ host, username, privateKey }) {
   const conn  = new ssh2.Client();
   return new Promise(async (resolve, reject) => {
     conn.on('ready', () => {
@@ -117,9 +136,9 @@ async function connect({ credentials }) {
     });
     conn.on('error', e => reject(e));
     conn.connect({
-      host: await getDevEndpointHost({ credentials }),
-      username: 'glue',
-      privateKey: await getPrivateKey({ credentials }),
+      host: host,
+      username,
+      privateKey: privateKey,
     });
   });
 }
@@ -193,7 +212,12 @@ async function main() {
     }
     const credentials = await getCredentials();
     // await writeKey(await getPrivateKey({}));
-    conn = await connect({ credentials });
+    conn = await connect({
+      username: 'glue',
+      host: await getDevEndpointHost({ credentials }),
+      privateKey: await getPrivateKey({ credentials }),
+    });
+    // await asPromise(conn.forwardOut.bind(conn), '127.0.0.1', 4040, '127.0.0.1', 4040);
     await putFile(conn, Path.resolve(__dirname, '../pyspark/spark-executor.py'), '/home/glue/job.py');
   
     const sql = await getFileContent(argv.sql);
@@ -204,15 +228,24 @@ async function main() {
     spinner.succeed();
     spinner.start('Executing SQL');
     
-    const startTimeFormatted = moment().format('YYYY-MM-DD HH:mm:ss A');
+    const startTimeFormatted = moment().format('YYYY-MM-DD hh:mm:ss A');
     let outputString = '';
     const logFileName = `${startTimeFormatted}.txt`;
+    const sparkStageManager = new SparkStageManager();
     await exec(conn, `/usr/bin/gluepython3 /home/glue/job.py --tenant_id=${argv.tenantId} --stage=${argv.stage} --sql=${sqlUri}`, {
       onStdout: async data => {
         const strData = data.toString();
         outputString += strData;
         if (argv.debug) {
           console.log(strData);
+        }
+        try {
+          sparkStageManager.processChunk(data);
+        } catch (e) {
+          console.error(e.stack);
+        }
+        if (sparkStageManager.currentStage) {
+          spinner.text = `Executing SQL - Stage ${sparkStageManager.currentStage}`;
         }
         await fs.ensureDir(Path.normalize('./.spark-logs'));
         await fs.appendFile(Path.normalize(`./.spark-logs/${logFileName}`), data, 'utf8');
