@@ -738,36 +738,54 @@ Report all students enrolled for credit at any time during the July 1, 2018 - Ju
 Students are reported by gender, race/ethnicity, and their level of standing with the institution.
 */
 
-select 'A' part,
-		ipedsLevel field1, --valid values are 1 for undergraduate and 3 for graduate
-		coalesce(sum(case when ipedsEthnicity = '1' and ipedsGender = 'M' then 1 else 0 end), 0) field2, -- Nonresident alien - Men (1), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '1' and ipedsGender = 'F' then 1 else 0 end), 0) field3, -- Nonresident alien - Women (2), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '2' and ipedsGender = 'M' then 1 else 0 end), 0) field4, -- Hispanic/Latino - Men (25), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '2' and ipedsGender = 'F' then 1 else 0 end), 0) field5, -- Hispanic/Latino - Women (26), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '3' and ipedsGender = 'M' then 1 else 0 end), 0) field6, -- American Indian or Alaska Native - Men (27), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '3' and ipedsGender = 'F' then 1 else 0 end), 0) field7, -- American Indian or Alaska Native - Women (28), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '4' and ipedsGender = 'M' then 1 else 0 end), 0) field8,  -- Asian - Men (29), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '4' and ipedsGender = 'F' then 1 else 0 end), 0) field9, -- Asian - Women (30), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '5' and ipedsGender = 'M' then 1 else 0 end), 0) field10, -- Black or African American - Men (31), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '5' and ipedsGender = 'F' then 1 else 0 end), 0) field11, -- Black or African American - Women (32), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '6' and ipedsGender = 'M' then 1 else 0 end), 0) field12, -- Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '6' and ipedsGender = 'F' then 1 else 0 end), 0) field13, -- Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '7' and ipedsGender = 'M' then 1 else 0 end), 0) field14, -- White - Men (35), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '7' and ipedsGender = 'F' then 1 else 0 end), 0) field15, -- White - Women (36), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '8' and ipedsGender = 'M' then 1 else 0 end), 0) field16, -- Two or more races - Men (37), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '8' and ipedsGender = 'F' then 1 else 0 end), 0) field17, -- Two or more races - Women (38), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end), 0) field18, -- Race and ethnicity unknown - Men (13), 0 to 999999
-		coalesce(sum(case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end), 0) field19  -- Race and ethnicity unknown - Women (14), 0 to 999999
+select 'A'                                                                                      part,
+       ipedsLevel                                                                               field1,  -- SLEVEL   - valid values are 1 for undergraduate and 3 for graduate
+       coalesce(sum(case when ipedsEthnicity = '1' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field2,  -- FYRACE01 - Nonresident alien - Men (1), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '1' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field3,  -- FYRACE02 - Nonresident alien - Women (2), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '2' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field4,  -- FYRACE25 - Hispanic/Latino - Men (25), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '2' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field5,  -- FYRACE26 - Hispanic/Latino - Women (26), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '3' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field6,  -- FYRACE27 - American Indian or Alaska Native - Men (27), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '3' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field7,  -- FYRACE28 - American Indian or Alaska Native - Women (28), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '4' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field8,  -- FYRACE29 - Asian - Men (29), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '4' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field9,  -- FYRACE30 - Asian - Women (30), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '5' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field10, -- FYRACE31 - Black or African American - Men (31), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '5' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field11, -- FYRACE32 - Black or African American - Women (32), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '6' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field12, -- FYRACE33 - Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '6' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field13, -- FYRACE34 - Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '7' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field14, -- FYRACE35 - White - Men (35), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '7' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field15, -- FYRACE36 - White - Women (36), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '8' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field16, -- FYRACE37 - Two or more races - Men (37), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '8' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field17, -- FYRACE38 - Two or more races - Women (38), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end),
+                0)                                                                              field18, -- FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
+       coalesce(sum(case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end),
+                0)                                                                              field19  -- FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
 from (
-	select cohort.personId personId,
-		cohort.ipedsPartAStudentLevel ipedsLevel,
-		cohort.ipedsGender ipedsGender,
-		cohort.ipedsEthnicity ipedsEthnicity
-	from StudentCohort cohort
-	where cohort.ipedsPartAStudentLevel = 1
-	or cohort.ipedsPartAStudentLevel = 3
-	
-	union
+         select cohort.personId               personId,
+                cohort.ipedsPartAStudentLevel ipedsLevel,
+                cohort.ipedsGender            ipedsGender,
+                cohort.ipedsEthnicity         ipedsEthnicity
+         from StudentCohort cohort
+         where cohort.ipedsPartAStudentLevel = 1
+            or cohort.ipedsPartAStudentLevel = 3
+
+         union
 	
 	select null, --personId,
 		StudentLevel.ipedsLevel,
@@ -784,26 +802,28 @@ Report the total clock hour and/or credit hour activity attempted during the 12-
 The instructional activity data reported will be used to calculate full-time equivalent (FTE) student enrollment at the institution.
 */
 
-select 'B' part,
-		null field1,
-		--case when useClockHours = 'All' then null else...
-		coalesce(sum(cohort.totalCreditUGHrs), 0) field2, -- credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.
-		--case when useClockHours = 'None' then null else ...
-		sum(cohort.totalClockHrs) field3, -- clock hour instructional activity at the undergraduate level, 0 to 9999999, blank = not applicable, if no undergraduate programs are measured in clock hours.
-		sum(cohort.totalCreditGRHrs) field4, -- credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
-		case when sum(cohort.totalCreditPostGRHrs) > 0 then round((sum(cohort.totalCreditPostGRHrs))/18, 0) end field5, -- reported Doctor'92s degree-professional practice student FTE, 0 to 99999999, blank = not applicable
-		null field6, 
-		null field7, 
-		null field8,  
-		null field9, 
-		null field10,
-		null field11, 
-		null field12,
-		null field13,
-		null field14,
-		null field15, 
-		null field16, 
-		null field17, 
-		null field18, 
-		null field19
+select 'B'                                                                                                       part,
+       null                                                                                                      field1,
+       --case when useClockHours = 'All' then null else...
+       coalesce(sum(cohort.totalCreditUGHrs), 0)                                                                 field2, -- CREDHRSU - credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.
+       --case when useClockHours = 'None' then null else ...
+       sum(cohort.totalClockHrs)                                                                                 field3, -- CONTHRS  - clock hour instructional activity at the undergraduate level, 0 to 9999999, blank = not applicable, if no undergraduate programs are measured in clock hours.
+       sum(cohort.totalCreditGRHrs)                                                                              field4, -- CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
+       case
+           when sum(cohort.totalCreditPostGRHrs) > 0
+               then round((sum(cohort.totalCreditPostGRHrs)) / 18, 0) end                                        field5, -- RDOCFTE  - reported Doctor'92s degree-professional practice student FTE, 0 to 99999999, blank = not applicable
+       null                                                                                                      field6,
+       null                                                                                                      field7,
+       null                                                                                                      field8,
+       null                                                                                                      field9,
+       null                                                                                                      field10,
+       null                                                                                                      field11,
+       null                                                                                                      field12,
+       null                                                                                                      field13,
+       null                                                                                                      field14,
+       null                                                                                                      field15,
+       null                                                                                                      field16,
+       null                                                                                                      field17,
+       null                                                                                                      field18,
+       null                                                                                                      field19
 from StudentCohort cohort
