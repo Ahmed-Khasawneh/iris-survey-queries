@@ -49,7 +49,7 @@ class SparkStageManager {
     this.currentChunkAgg = '';
     const lastGroup = _.last(groups);
 
-    console.log(`>>> Current stage = ${lastGroup[1]}`);
+    // console.log(`>>> Current stage = ${lastGroup[1]}`);
 
     this.currentStage = lastGroup[1];
   }

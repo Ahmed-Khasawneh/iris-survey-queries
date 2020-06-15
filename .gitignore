@@ -3,3 +3,4 @@ node_modules
 .keys
 .spark-logs
 .json-output
+.flatfile-output

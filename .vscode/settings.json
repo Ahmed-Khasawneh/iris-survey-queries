@@ -1,4 +1,6 @@
 {
   "task.autoDetect": "off",
-  "npm.autoDetect": "off"
+  "npm.autoDetect": "off",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
 }
