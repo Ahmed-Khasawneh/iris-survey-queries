@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const ssh2 = require('ssh2');
+const net = require('net');
 const fs = require('fs-extra');
 const Path = require('path');
 const uuid = require('uuid');
@@ -7,7 +8,7 @@ const ora = require('ora');
 const { argv } = require('yargs');
 const moment = require('moment');
 const SurveyTypes = require('./survey-types');
-// const SparkStageManager = require('./spark-stage-manager');/
+const SparkStageManager = require('./spark-stage-manager');
 
 const OUTPUT_PATH_PARSER = /##OUTPUT##: (s3:\/\/[^\s]+)/;
 const S3_REGEX_PARSER = /s3:\/\/([^\/]+)\/?(.*)/;
@@ -148,6 +149,30 @@ async function connect({ host, username, privateKey }) {
   });
 }
 
+async function forward(connection, { fromPort, toPort, toHost }) {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer(socket => {
+      connection.forwardOut(
+        'localhost',
+        fromPort,
+        toHost || 'localhost',
+        toPort,
+        (error, stream) => {
+          if (error) {
+            return reject(error);
+          }
+          socket.pipe(stream);
+          stream.pipe(socket);
+        },
+      );
+    });
+
+    server.listen(fromPort, 'localhost', () => {
+      return resolve(() => server.close());
+    });
+  });
+}
+
 async function getCredentials() {
   const sts = new AWS.STS();
   const result = await sts
@@ -231,6 +256,7 @@ async function main() {
   const startTimeFormatted = moment().format('YYYY-MM-DD hh:mm:ss A');
 
   let conn;
+  let closeForwardConnection;
   let stdOutLogFileId;
   let stdErrLogFileId;
 
@@ -246,13 +272,11 @@ async function main() {
       privateKey: await getPrivateKey({ credentials }),
     });
 
-    // await asPromise(
-    //   conn.forwardOut.bind(conn),
-    //   '127.0.0.1',
-    //   18080,
-    //   '169.254.76.1',
-    //   18080,
-    // );
+    closeForwardConnection = await forward(conn, {
+      fromPort: 18080,
+      toHost: '169.254.76.1',
+      toPort: 18080,
+    });
 
     await putFile(
       conn,
@@ -269,7 +293,7 @@ async function main() {
     spinner.start('Executing SQL');
 
     let outputString = '';
-    // const sparkStageManager = new SparkStageManager();
+    const sparkStageManager = new SparkStageManager();
 
     await fs.ensureDir(Path.normalize(`./.spark-logs/${surveyType}`));
     stdOutLogFileId = await fs.open(
@@ -302,14 +326,14 @@ async function main() {
             console.error(data.toString('utf8'));
           }
           await fs.appendFile(stdErrLogFileId, data, 'utf8');
-          // try {
-          //   sparkStageManager.processChunk(data);
-          // } catch (e) {
-          //   console.error(e.stack);
-          // }
-          // if (sparkStageManager.currentStage) {
-          //   spinner.text = `Executing SQL - Stage ${sparkStageManager.currentStage}`;
-          // }
+          try {
+            sparkStageManager.processChunk(data);
+          } catch (e) {
+            console.error(e.stack);
+          }
+          if (sparkStageManager.currentStage) {
+            spinner.text = `Executing SQL - Stage ${sparkStageManager.currentStage}`;
+          }
         },
       },
     );
@@ -364,6 +388,9 @@ async function main() {
   } catch (e) {
     spinner.fail(e.message);
   } finally {
+    if (closeForwardConnection) {
+      closeForwardConnection();
+    }
     if (conn) {
       conn.end();
     }

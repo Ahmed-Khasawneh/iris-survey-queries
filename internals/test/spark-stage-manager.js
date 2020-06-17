@@ -11,47 +11,27 @@ const _ = require('lodash');
 // [Stage 164:(2131 + 124) / 4000][Stage 185:(759 + 240) / 4000][Stage 188:> (5 + 0) / 20]
 // [Stage 164:(2131 + 124) / 4000][Stage 185:(762 + 237) / 4000][Stage 188:> (5 + 0) / 20]`;
 
-// const STAGE_REGEXP = /(\[Stage [^\]]+\]).*/;
-const STAGE_REGEXP = new RegExp('^\\[Stage (\\d+)[^\\]*]+\\].*$', 'gm');
-
-function matchAll(input, regex) {
-  const matches = [];
-  let currentInput = input;
-  let continueSearching = true;
-
-  while (continueSearching) {
-    const match = currentInput.match(regex);
-    if (!match) {
-      continueSearching = false;
-      break;
-    }
-    matches.push(match);
-    currentInput = currentInput.slice(match.index + match[0].length);
-  }
-
-  return matches;
-}
+const STAGE_REGEXP = /^\[Stage (\d+)[^\]*]+\].*$/;
 
 class SparkStageManager {
   constructor() {
-    this.currentChunkAgg = '';
+    this.incompleteLine = '';
     this.currentStage = null;
   }
   processChunk(chunk) {
-    this.currentChunkAgg += chunk.toString('utf8');
+    const lines = (this.incompleteLine + chunk.toString('utf8')).split(
+      /[\n\r]+/g,
+    );
+    const completeLines = lines.slice(0, -1);
+    this.incompleteLine = _.last(lines);
 
-    const groups = matchAll(this.currentChunkAgg, STAGE_REGEXP);
+    for (const line of completeLines) {
+      const group = line.match(STAGE_REGEXP);
 
-    if (groups.length === 0) {
-      return;
+      if (group) {
+        this.currentStage = group[1] ? Number(group[1]) : null;
+      }
     }
-
-    this.currentChunkAgg = '';
-    const lastGroup = _.last(groups);
-
-    // console.log(`>>> Current stage = ${lastGroup[1]}`);
-
-    this.currentStage = lastGroup[1];
   }
 }
 
