@@ -246,13 +246,13 @@ async function main() {
       privateKey: await getPrivateKey({ credentials }),
     });
 
-    await asPromise(
-      conn.forwardOut.bind(conn),
-      '127.0.0.1',
-      4040,
-      '127.0.0.1',
-      4040,
-    );
+    // await asPromise(
+    //   conn.forwardOut.bind(conn),
+    //   '127.0.0.1',
+    //   18080,
+    //   '169.254.76.1',
+    //   18080,
+    // );
 
     await putFile(
       conn,
