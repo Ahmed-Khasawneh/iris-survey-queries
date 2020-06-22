@@ -285,7 +285,7 @@ async function main() {
     );
 
     const sql = await getFileContent(argv.sql);
-    const sqlUri = `s3://doris-survey-reports-dev/tmp-for-testing/sql-queries/${startTimeFormatted}/${uuid.v4()}.sql`;
+    const sqlUri = `s3://doris-survey-reports-${argv.stage.toLowerCase()}/tmp-for-testing/sql-queries/${startTimeFormatted}/${uuid.v4()}.sql`;
 
     await putS3File({ body: sql, uri: sqlUri, credentials });
 
