@@ -19,12 +19,16 @@ class SparkStageManager {
     this.currentStage = null;
   }
   processChunk(chunk) {
+    // break the chunk into lines (split by newline and/or return character)
     const lines = (this.incompleteLine + chunk.toString('utf8')).split(
       /[\n\r]+/g,
     );
+    // assume all but the last lines are complete (last line may have more data coming in later)
     const completeLines = lines.slice(0, -1);
+    // assume last line will be completed by a future chunk
     this.incompleteLine = _.last(lines);
 
+    // iterate through all complete lines to see if anything matches
     for (const line of completeLines) {
       const group = line.match(STAGE_REGEXP);
 
