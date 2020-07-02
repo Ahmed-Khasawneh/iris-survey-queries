@@ -13,4 +13,4 @@ phases:
     commands:
       - echo "[Build phase]"
       - environment=$(echo $STAGE | tr '[:upper:]' '[:lower:]')
-      - aws s3 sync src "s3://iris-survey-file-report-store-${environment}/iris-report-queries-src/" --delete
+      - aws s3 sync src "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src" --delete

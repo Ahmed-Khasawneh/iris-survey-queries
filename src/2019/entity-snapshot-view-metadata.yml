@@ -1,0 +1,1537 @@
+---
+# ----------------------------------------------------------------------------------------------------------------------
+# DORIS Entity Snapshot View Properties
+#
+# This file defines the set of DORIS entities to be included in an IPEDS report for a specific survey type.  For each
+# IPEDS survey type, a collection of one or more DORIS entity snapshot view configurations is defined.  Each entity
+# snapshot view configuration is defined by the following properties:
+#
+#   viewName          - a user-defined label used to differentiate snapshots of the same entity type; allows a report
+#                       to include data from different sets of snapshots for the same DORIS entity; this label will be
+#                       referenced in the corresponding DORIS report query (REQUIRED)
+#   entityName        - the name of a DORIS entity to include in the report (REQUIRED)
+#   tagNames          - a list of one or more DORIS tag names used to constrain the entity snapshots that will be
+#                       included in the report query (REQUIRED)
+#   snapshotDateRange - the range of dates (inclusive) to constrain the entity snapshots that will be included in the
+#                       report query; if defined, you must provide a start and/or end date (OPTIONAL)
+#
+#
+# NOTE: Please keep this file arranged alphabetically by IPEDS Survey Type and DORIS Entity name.
+#
+#
+# SUMMARY OF CHANGES
+#
+# Date      Author                Tag                 Comments
+# --------  --------------------  -------------       ------------------------------------------------------------------
+# 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
+#
+# ----------------------------------------------------------------------------------------------------------------------
+ACADEMIC_LIBRARIES_1:
+  - viewName: FiscalYearCurrent
+    entityName: FiscalYear
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: InterlibraryLoanStatisticCurrent
+    entityName: InterlibraryLoanStatistic
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: LibraryBranchCurrent
+    entityName: LibraryBranch
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: LibraryCirculationStatisticCurrent
+    entityName: LibraryCirculationStatistic
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: LibraryCollectionStatisticCurrent
+    entityName: LibraryCollectionStatistic
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: LibraryExpensesCurrent
+    entityName: LibraryExpenses
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: LibraryInventoryCurrent
+    entityName: LibraryInventory
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: LibraryItemTransactionCurrent
+    entityName: LibraryItemTransaction
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+COMPLETIONS_1:
+  - viewName: AcademicTermCurrent
+    entityName: AcademicTerm
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: AcademicTrackCurrent
+    entityName: AcademicTrack
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: AwardCurrent
+    entityName: Award
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CampusCurrent
+    entityName: Campus
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: DegreeCurrent
+    entityName: Degree
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: MajorCurrent
+    entityName: Major
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+FALL_ENROLLMENT_1:
+  - viewName: AcademicTermCurrent
+    entityName: AcademicTerm
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: AcademicTrackCurrent
+    entityName: AcademicTrack
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CampusCurrent
+    entityName: Campus
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CohortExculusionCurrent
+    entityName: CohortExclusion
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseCurrent
+    entityName: Course
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseSectionCurrent
+    entityName: CourseSection
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseSectionScheduleCurrent
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: DegreeCurrent
+    entityName: Degree
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeCurrent
+    entityName: Employee
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeAssignmentCurrent
+    entityName: EmployeeAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeePositionCurrent
+    entityName: EmployeePosition
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: InstructionalAssignmentCurrent
+    entityName: InstructionalAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: MajorCurrent
+    entityName: Major
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: RegistrationCurrent
+    entityName: Registration
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: StudentCurrent
+    entityName: Student
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FALL_ENROLLMENT_2:
+  - viewName: AcademicTermCurrent
+    entityName: AcademicTerm
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: AcademicTrackCurrent
+    entityName: AcademicTrack
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CampusCurrent
+    entityName: Campus
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CohortExculusionCurrent
+    entityName: CohortExclusion
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseCurrent
+    entityName: Course
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseSectionCurrent
+    entityName: CourseSection
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseSectionScheduleCurrent
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeCurrent
+    entityName: Employee
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeAssignmentCurrent
+    entityName: EmployeeAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeePositionCurrent
+    entityName: EmployeePosition
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: InstructionalAssignmentCurrent
+    entityName: InstructionalAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: MajorCurrent
+    entityName: Major
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: RegistrationCurrent
+    entityName: Registration
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: StudentCurrent
+    entityName: Student
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FALL_ENROLLMENT_3:
+  - viewName: AcademicTermCurrent
+    entityName: AcademicTerm
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: AcademicTrackCurrent
+    entityName: AcademicTrack
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CampusCurrent
+    entityName: Campus
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CohortExculusionCurrent
+    entityName: CohortExclusion
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseCurrent
+    entityName: Course
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseSectionCurrent
+    entityName: CourseSection
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseSectionScheduleCurrent
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeCurrent
+    entityName: Employee
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeAssignmentCurrent
+    entityName: EmployeeAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeePositionCurrent
+    entityName: EmployeePosition
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: InstructionalAssignmentCurrent
+    entityName: InstructionalAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: MajorCurrent
+    entityName: Major
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: RegistrationCurrent
+    entityName: Registration
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: StudentCurrent
+    entityName: Student
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FALL_ENROLLMENT_4:
+  - viewName: AcademicTermCurrent
+    entityName: AcademicTerm
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: AcademicTrackCurrent
+    entityName: AcademicTrack
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CampusCurrent
+    entityName: Campus
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CohortExculusionCurrent
+    entityName: CohortExclusion
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseCurrent
+    entityName: Course
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseSectionCurrent
+    entityName: CourseSection
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: CourseSectionScheduleCurrent
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeCurrent
+    entityName: Employee
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeAssignmentCurrent
+    entityName: EmployeeAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeePositionCurrent
+    entityName: EmployeePosition
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: InstructionalAssignmentCurrent
+    entityName: InstructionalAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: MajorCurrent
+    entityName: Major
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: RegistrationCurrent
+    entityName: Registration
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: StudentCurrent
+    entityName: Student
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FINANCE_1:
+  - viewName: ChartOfAccountsCurrent
+    entityName: ChartOfAccounts
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FiscalYearCurrent
+    entityName: FiscalYear
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: GeneralLedgerReportingCurrent
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: OperatingLedgerReportingCurrent
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FINANCE_2:
+  - viewName: ChartOfAccountsCurrent
+    entityName: ChartOfAccounts
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FiscalYearCurrent
+    entityName: FiscalYear
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: GeneralLedgerReportingCurrent
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: OperatingLedgerReportingCurrent
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FINANCE_3:
+  - viewName: ChartOfAccountsCurrent
+    entityName: ChartOfAccounts
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FiscalYearCurrent
+    entityName: FiscalYear
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: GeneralLedgerReportingCurrent
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: OperatingLedgerReportingCurrent
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FINANCE_4:
+  - viewName: ChartOfAccountsCurrent
+    entityName: ChartOfAccounts
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FiscalYearCurrent
+    entityName: FiscalYear
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: GeneralLedgerReportingCurrent
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: OperatingLedgerReportingCurrent
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FINANCE_5:
+  - viewName: ChartOfAccountsCurrent
+    entityName: ChartOfAccounts
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FiscalYearCurrent
+    entityName: FiscalYear
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: GeneralLedgerReportingCurrent
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: OperatingLedgerReportingCurrent
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+FINANCE_6:
+  - viewName: ChartOfAccountsCurrent
+    entityName: ChartOfAccounts
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FiscalYearCurrent
+    entityName: FiscalYear
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: GeneralLedgerReportingCurrent
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: OperatingLedgerReportingCurrent
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+HUMAN_RESOURCES_1:
+  - viewName: EmployeeCurrent
+    entityName: Employee
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeAssignmentCurrent
+    entityName: EmployeeAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeePositionCurrent
+    entityName: EmployeePosition
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FacultyCurrent
+    entityName: Faculty
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+HUMAN_RESOURCES_2:
+  - viewName: EmployeeCurrent
+    entityName: Employee
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeAssignmentCurrent
+    entityName: EmployeeAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeePositionCurrent
+    entityName: EmployeePosition
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FacultyCurrent
+    entityName: Faculty
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+HUMAN_RESOURCES_3:
+  - viewName: EmployeeCurrent
+    entityName: Employee
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeAssignmentCurrent
+    entityName: EmployeeAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeePositionCurrent
+    entityName: EmployeePosition
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FacultyCurrent
+    entityName: Faculty
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+HUMAN_RESOURCES_4:
+  - viewName: EmployeeCurrent
+    entityName: Employee
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeeAssignmentCurrent
+    entityName: EmployeeAssignment
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: EmployeePositionCurrent
+    entityName: EmployeePosition
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: FacultyCurrent
+    entityName: Faculty
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Spring
+    snapshotDateRange:
+      start: 2019-12-09
+      end: 2020-04-07
+
+INSTITUTIONAL_CHARACTERISTICS_1:
+  - viewName: InstitCharDoctorateCurrent
+    entityName: InstitCharDoctorate
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: InstitCharUndergradGradCurrent
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+INSTITUTIONAL_CHARACTERISTICS_3:
+  - viewName: InstitCharDoctorateCurrent
+    entityName: InstitCharDoctorate
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: InstitCharUndergradGradCurrent
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+INSTITUTIONAL_CHARACTERISTICS_5:
+  - viewName: InstitCharDoctorateCurrent
+    entityName: InstitCharDoctorate
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: InstitCharUndergradGradCurrent
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+INSTITUTIONAL_CHARACTERISTICS_7:
+  - viewName: InstitCharDoctorateCurrent
+    entityName: InstitCharDoctorate
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: InstitCharUndergradGradCurrent
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+TWELVE_MONTH_ENROLLMENT_1:
+  - viewName: AcademicTermCurrent
+    entityName: AcademicTerm
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CampusCurrent
+    entityName: Campus
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CourseCurrent
+    entityName: Course
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CourseSectionCurrent
+    entityName: CourseSection
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CourseSectionScheduleCurrent
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: DegreeCurrent
+    entityName: Degree
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: RegistrationCurrent
+    entityName: Registration
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: StudentCurrent
+    entityName: Student
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+TWELVE_MONTH_ENROLLMENT_2:
+  - viewName: AcademicTermCurrent
+    entityName: AcademicTerm
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CampusCurrent
+    entityName: Campus
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CourseCurrent
+    entityName: Course
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CourseSectionCurrent
+    entityName: CourseSection
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: CourseSectionScheduleCurrent
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: DegreeCurrent
+    entityName: Degree
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSClientConfigCurrent
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: IPEDSReportingPeriodCurrent
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: PersonCurrent
+    entityName: Person
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: RegistrationCurrent
+    entityName: Registration
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
+
+  - viewName: StudentCurrent
+    entityName: Student
+    tagNames:
+      - Fall
+    snapshotDateRange:
+      start: 2019-09-09
+      end: 2019-10-14
