@@ -16,6 +16,12 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
+20200629            jhanicak                                    Changed Major.curriculumRuleActivityDate to Major.curriculumRuleActionDate in MajorCIPC view PF-1536
+                                                                Changed Degree.curriculumRuleActivityDate to Degree.curriculumRuleActionDate in DegreeACAT view PF-1536
+                                                                Added filter for Person.visaStartDate and Person.visaEndDate to CohortRefactorSTU view PF-1536
+                                                                Replaced CAST('2015-10-01' as DATE) with CAST(award.awardedDate as DATE) in CohortSTU view
+                                                                Brought IPEDSClientConfig.genderForNonBinary and genderForUnknown thru to AwardMCR and used in CohortRefactorSTU
+                                                                Added additional test cases in DefaultValues -Run time 3m 46s (Prod default) 7m 21s (test defaults - added additional parts of term)
 20200618			akhasawneh				ak 20200618			Modify Completions report query with standardized view naming/aliasing convention (PF-1530) -Run time 3m 58s (Prod default) 4m 12s (test defaults)
 20200611            akhasawneh              ak 20200611         Modified to not reference term code as a numeric indicator of term ordering (PF-1494) -Run time 6m 42s (Prod default) 9m 26s (test defaults)
 20200605            akhasawneh          			    		Initial version (Run time 12m 30s)
@@ -75,8 +81,34 @@ select '1415' surveyYear,
     'COM' surveyId,
     '201330' termCode,
     '1' partOfTermCode,
-    CAST('2013-07-01' as DATE) reportingDateStart, --CAST('2013-06-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, --CAST('2014-05-30' as DATE) reportingDateEnd,
+    CAST('2013-07-01' as DATE) reportingDateStart,
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
+    'A' acadOrProgReporter, --A = Academic, P = Program
+    'M' genderForUnknown, --M = Male, F = Female
+    'F' genderForNonBinary,  --M = Male, F = Female
+    'T' compGradDateOrTerm --D = Date, T = Term
+
+union
+
+select '1415' surveyYear,
+    'COM' surveyId,
+    '201330' termCode,
+    'A' partOfTermCode,
+    CAST('2013-07-01' as DATE) reportingDateStart, 
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
+    'A' acadOrProgReporter, --A = Academic, P = Program
+    'M' genderForUnknown, --M = Male, F = Female
+    'F' genderForNonBinary,  --M = Male, F = Female
+    'T' compGradDateOrTerm --D = Date, T = Term
+
+union
+
+select '1415' surveyYear,
+    'COM' surveyId,
+    '201330' termCode,
+    'B' partOfTermCode,
+    CAST('2013-07-01' as DATE) reportingDateStart, 
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
     'A' acadOrProgReporter, --A = Academic, P = Program
     'M' genderForUnknown, --M = Male, F = Female
     'F' genderForNonBinary,  --M = Male, F = Female
@@ -88,21 +120,73 @@ select '1415' surveyYear,
     'COM' surveyId,
     '201410' termCode,
     '1' partOfTermCode,
-    CAST('2013-07-01' as DATE) reportingDateStart, --CAST('2013-06-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, --CAST('2014-05-30' as DATE) reportingDateEnd,
+    CAST('2013-07-01' as DATE) reportingDateStart, 
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
     'A' acadOrProgReporter, --A = Academic, P = Program
     'M' genderForUnknown, --M = Male, F = Female
     'F' genderForNonBinary,  --M = Male, F = Female
     'T' compGradDateOrTerm --D = Date, T = Term
-    
+
+union
+
+select '1415' surveyYear,
+    'COM' surveyId,
+    '201410' termCode,
+    'A' partOfTermCode,
+    CAST('2013-07-01' as DATE) reportingDateStart, 
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
+    'A' acadOrProgReporter, --A = Academic, P = Program
+    'M' genderForUnknown, --M = Male, F = Female
+    'F' genderForNonBinary,  --M = Male, F = Female
+    'T' compGradDateOrTerm --D = Date, T = Term
+
+union
+
+select '1415' surveyYear,
+    'COM' surveyId,
+    '201410' termCode,
+    'B' partOfTermCode,
+    CAST('2013-07-01' as DATE) reportingDateStart, 
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
+    'A' acadOrProgReporter, --A = Academic, P = Program
+    'M' genderForUnknown, --M = Male, F = Female
+    'F' genderForNonBinary,  --M = Male, F = Female
+    'T' compGradDateOrTerm --D = Date, T = Term
+       
 union
 
 select '1415' surveyYear,
     'COM' surveyId,
     '201420' termCode,
     '1' partOfTermCode,
-    CAST('2013-07-01' as DATE) reportingDateStart, --CAST('2013-06-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, --CAST('2014-05-30' as DATE) reportingDateEnd,
+    CAST('2013-07-01' as DATE) reportingDateStart, 
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
+    'A' acadOrProgReporter, --A = Academic, P = Program
+    'M' genderForUnknown, --M = Male, F = Female
+    'F' genderForNonBinary,  --M = Male, F = Female
+    'T' compGradDateOrTerm --D = Date, T = Term
+       
+union
+
+select '1415' surveyYear,
+    'COM' surveyId,
+    '201420' termCode,
+    'A' partOfTermCode,
+    CAST('2013-07-01' as DATE) reportingDateStart, 
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
+    'A' acadOrProgReporter, --A = Academic, P = Program
+    'M' genderForUnknown, --M = Male, F = Female
+    'F' genderForNonBinary,  --M = Male, F = Female
+    'T' compGradDateOrTerm --D = Date, T = Term
+       
+union
+
+select '1415' surveyYear,
+    'COM' surveyId,
+    '201420' termCode,
+    'B' partOfTermCode,
+    CAST('2013-07-01' as DATE) reportingDateStart,
+    CAST('2014-06-30' as DATE) reportingDateEnd, 
     'A' acadOrProgReporter, --A = Academic, P = Program
     'M' genderForUnknown, --M = Male, F = Female
     'F' genderForNonBinary,  --M = Male, F = Female
@@ -210,7 +294,9 @@ select DISTINCT
         then RepDates.reportingDateEnd
         else RepDates.maxEndDate
 	end censusEnd,  
-    RepDates.compGradDateOrTerm compGradDateOrTerm
+    RepDates.compGradDateOrTerm compGradDateOrTerm,
+    RepDates.genderForUnknown genderForUnknown,
+    RepDates.genderForNonBinary genderForNonBinary
 from (
     select repPeriodENT.surveyCollectionYear surveyYear,
         clientconfig.surveyId surveyId,
@@ -295,6 +381,8 @@ from (
     select awardENT.*,
 --ak 20200611 Adding term order indicator (PF-1494)
         repperiod.termOrder termOrder,
+        repperiod.genderForUnknown genderForUnknown,
+        repperiod.genderForNonBinary genderForNonBinary,
         row_number() over (
             partition by                              
                 awardENT.personId,
@@ -501,11 +589,15 @@ select DISTINCT
     person.isMultipleRaces isMultipleRaces,
     person.ethnicity ethnicity,
     person.isInUSOnVisa isInUSOnVisa,
+    person.visaStartDate visaStartDate,
+    person.visaEndDate visaEndDate,
     person.isUSCitizen isUSCitizen,
-    floor(DATEDIFF(CAST('2015-10-01' as DATE), CAST(person.birthDate as DATE)) / 365) asOfAge,
+    floor(DATEDIFF(CAST(award.awardedDate as DATE), CAST(person.birthDate as DATE)) / 365) asOfAge,
     award.degree,
     award.awardedDate,
     award.awardedTermCode,
+    award.genderForUnknown,
+    award.genderForNonBinary,
     campus.isInternational,
     acadtrack.FOSPriority,
     degree.awardLevel,
@@ -535,11 +627,8 @@ select DISTINCT
     cohortstu.personId personId,
     case when cohortstu.gender = 'Male' then 'M'
         when cohortstu.gender = 'Female' then 'F'
-        when cohortstu.gender = 'Non-Binary' then 
-            (select genderForNonBinary
-             from IPEDSClientConfig)
-        else (select genderForUnknown
-			 from IPEDSClientConfig)
+        when cohortstu.gender = 'Non-Binary' then cohortstu.genderForNonBinary
+        else cohortstu.genderForUnknown
     end IPEDSGender,
     case when cohortstu.isUSCitizen = 1 then 
         (case when cohortstu.isHispanic = true then 2 -- 'hispanic/latino'
@@ -553,7 +642,7 @@ select DISTINCT
                            when cohortstu.ethnicity = 'Caucasian' then 7
                     else 9 end) 
 			    else 9 end) -- 'race and ethnicity unknown'
-            else (case when cohortstu.isInUSOnVisa = 1 then 1 -- 'nonresident alien'
+            else (case when cohortstu.isInUSOnVisa = 1 and cohortstu.awardedDate between cohortstu.visaStartDate and cohortstu.visaEndDate then 1 -- 'nonresident alien'
                     else 9 end) -- 'race and ethnicity unknown'
     end IPEDSethnicity,
     case when cohortstu.asOfAge < 18 then 'AGE1' --Under 18
@@ -606,7 +695,7 @@ from (
 				degreeENT.awardLevel,
 				degreeENT.curriculumRule
 			order by
-				degreeENT.curriculumRuleActivityDate desc,
+				degreeENT.curriculumRuleActionDate desc,
 				degreeENT.recordActivityDate desc
 		) as degreeRn
     from Degree degreeENT
@@ -614,7 +703,7 @@ from (
 --ak 20200611 Adding term order indicator (PF-1494)
 		inner join AcademicTermMCR acadterm
 			on acadterm.termCode = degreeENT.curriculumRuleTermCodeEff
-    where degreeENT.curriculumRuleActivityDate <= repperiod.censusEnd
+    where degreeENT.curriculumRuleActionDate <= repperiod.censusEnd
 		and degreeENT.isIpedsReportable = 1 --true
 		and acadterm.termOrder <= (select max(repperiod2.termOrder) 
 								   from reportingPeriodMCR repperiod2)
@@ -639,7 +728,7 @@ from (
 				majorENT.cipCode,
 				majorENT.curriculumRule
 			order by
-				majorENT.curriculumRuleActivityDate desc,
+				majorENT.curriculumRuleActionDate desc,
 				majorENT.recordActivityDate desc
 		) as majorRn
     from Major majorENT
@@ -647,7 +736,7 @@ from (
 --ak 20200611 Adding term order indicator (PF-1494)
 		inner join AcademicTermMCR acadterm
 			on acadterm.termCode = majorENT.curriculumRuleTermCodeEff
-    where majorENT.curriculumRuleActivityDate <= repperiod.censusEnd
+    where majorENT.curriculumRuleActionDate <= repperiod.censusEnd
 		and majorENT.isIpedsReportable = 1 --true
 		and acadterm.termOrder <= (select max(repperiod2.termOrder) 
 									from reportingPeriodMCR repperiod2)

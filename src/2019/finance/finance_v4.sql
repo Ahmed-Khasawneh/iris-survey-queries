@@ -15,6 +15,7 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag              Comments
 -----------------   ----------------    -------------    --------------------------------------------------------------------------------
+20200622			akhasawneh			ak 20200622		 Modify Finance report query with standardized view naming/aliasing convention (PF-1532) -Run time 5m 23s
 20200412			jhanicak			jh 20204012		 Added dummy date option for recordActivityDate in most current record queries PF-1374
 														 Added DefaultValues query and rewrote other queries to use PF-1418
 														 Removed all 'prior' queries - not needed
@@ -24,10 +25,10 @@ Date(yyyymmdd)      Author              Tag              Comments
                                                          - Move IPEDSClientConfig values into COASPerFYAsOfDate/COASPerFYPriorAsOfDate
                                                          - Added GL cte for most recent record views for GeneralLedgerReporting
                                                          - Added GL_Prior cte for most recent record views for GeneralLedgerReporting for prior fiscal year
-                                                         - Added OL cte for most recent record views for OperatingLedgerReporting
+                                                         - Added oppledger cte for most recent record views for OperatingLedgerReporting
                                                          - Added OL_Prior cte for most recent record views for OperatingLedgerReporting for prior fiscal year
-                                                         - Removed cross join with ConfigPerAsOfDate since values are now already in COASPerFYAsOfDate
-                                                         - Changed PART Queries to use new in-line GL/OL Structure
+                                                         - Removed cross join with ClientConfigMCR since values are now already in COASPerFYAsOfDate
+                                                         - Changed PART Queries to use new in-line GL/oppledger Structure
                                                                 --  1-Changed GeneralLedgerReporting to GL inline view  
                                                                 --  2-Removed the join to COAS       
                                                                 --  3-Removed GL.isIpedsReportable = 1 
@@ -48,98 +49,98 @@ The views below are used to determine the dates, academic terms, academic year, 
 WITH DefaultValues AS
 (
 select '1920' surveyYear,
-        CAST(UNIX_TIMESTAMP('10/01/2019', 'MM/dd/yyyy') AS TIMESTAMP) asOfDate,      
-        CAST(UNIX_TIMESTAMP('10/01/2018', 'MM/dd/yyyy') AS TIMESTAMP) priorAsOfDate, 
-        'F1C' surveyId,
-		'Current' currentSection,
-		'Prior' priorSection,
-        'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
-	    'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
-	    'Y' finEndowmentAssets,  --Y = Yes -- all versions
-	    'Y' finPensionBenefits,  --Y = Yes -- all versions
-	    'B' finReportingModel,  --B = Business -- v1, v4
-		'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
-		'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
-		'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
-	    'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
+	CAST(UNIX_TIMESTAMP('10/01/2019', 'MM/dd/yyyy') AS TIMESTAMP) asOfDate,      
+	CAST(UNIX_TIMESTAMP('10/01/2018', 'MM/dd/yyyy') AS TIMESTAMP) priorAsOfDate, 
+	'F1C' surveyId,
+	'Current' currentSection,
+	'Prior' priorSection,
+	'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
+	'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
+	'Y' finEndowmentAssets,  --Y = Yes -- all versions
+	'Y' finPensionBenefits,  --Y = Yes -- all versions
+	'B' finReportingModel,  --B = Business -- v1, v4
+	'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
+	'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
+	'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
+	'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
 
 /*
 --used for internal testing only
 select '1415' surveyYear,
-        CAST(UNIX_TIMESTAMP('10/01/2014', 'MM/dd/yyyy') AS TIMESTAMP) asOfDate,     
-        CAST(UNIX_TIMESTAMP('10/01/2013', 'MM/dd/yyyy') AS TIMESTAMP) priorAsOfDate, 
-        'F1C' surveyId,
-		'Current' currentSection,
-		'Prior' priorSection,
-        'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
-	    'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
-	    'Y' finEndowmentAssets,  --Y = Yes -- all versions
-	    'Y' finPensionBenefits,  --Y = Yes -- all versions
-	    'B' finReportingModel,  --B = Business -- v1, v4
-		'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
-		'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
-		'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
-	    'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
+	CAST(UNIX_TIMESTAMP('10/01/2014', 'MM/dd/yyyy') AS TIMESTAMP) asOfDate,     
+	CAST(UNIX_TIMESTAMP('10/01/2013', 'MM/dd/yyyy') AS TIMESTAMP) priorAsOfDate, 
+	'F1C' surveyId,
+	'Current' currentSection,
+	'Prior' priorSection,
+	'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
+	'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
+	'Y' finEndowmentAssets,  --Y = Yes -- all versions
+	'Y' finPensionBenefits,  --Y = Yes -- all versions
+	'B' finReportingModel,  --B = Business -- v1, v4
+	'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
+	'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
+	'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
+	'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
 */
 ),
 
 --jh 20200412 Added DefaultValues query and rewrote other queries to use PF-1418
-ReportingDates AS
+ReportingPeriodMCR AS
 (
 select repValues.surveyYear surveyYear,
-       repValues.surveyId surveyId,
-       MAX(repValues.asOfDate) asOfDate,
-       MAX(repValues.priorAsOfDate) priorAsOfDate,
-       repValues.currentSection currentSection,
-	   repValues.priorSection priorSection,
-       repValues.finGPFSAuditOpinion finGPFSAuditOpinion,
-	   repValues.finPensionBenefits finPensionBenefits
-from 
-    (select nvl(CASE WHEN upper(reportPeriod.surveySection) = upper(defaultValues.currentSection) THEN reportPeriod.asOfDate END, defaultValues.asOfDate) asOfDate,
-			nvl(CASE WHEN upper(reportPeriod.surveySection) = upper(defaultValues.priorSection) THEN reportPeriod.asOfDate END, defaultValues.priorAsOfDate) priorAsOfDate,
-            reportPeriod.surveyCollectionYear surveyYear,
-            reportPeriod.surveyId surveyId,
-            defaultValues.currentSection currentSection,
-		    defaultValues.priorSection priorSection,
-            defaultValues.finGPFSAuditOpinion finGPFSAuditOpinion,
-	        defaultValues.finPensionBenefits finPensionBenefits,
-                          ROW_NUMBER() OVER (
-                            PARTITION BY
-                                reportPeriod.surveyCollectionYear,
-                                reportPeriod.surveyId,
-                                reportPeriod.surveySection
-                          ORDER BY
-                                reportPeriod.recordActivityDate DESC
-                            ) AS reportPeriodRn
-                    from DefaultValues defaultValues
-                        cross join IPEDSReportingPeriod reportPeriod
-                    where reportPeriod.surveyCollectionYear = defaultValues.surveyYear
-                            and reportPeriod.surveyId = defaultValues.surveyId
-	    ) repValues 
+	repValues.surveyId surveyId,
+	MAX(repValues.asOfDate) asOfDate,
+	MAX(repValues.priorAsOfDate) priorAsOfDate,
+	repValues.currentSection currentSection,
+	repValues.priorSection priorSection,
+	repValues.finGPFSAuditOpinion finGPFSAuditOpinion,
+	repValues.finPensionBenefits finPensionBenefits
+from (
+	select NVL(CASE WHEN UPPER(repPeriodENT.surveySection) = UPPER(defvalues.currentSection) THEN repPeriodENT.asOfDate END, defvalues.asOfDate) asOfDate,
+		NVL(CASE WHEN UPPER(repPeriodENT.surveySection) = UPPER(defvalues.priorSection) THEN repPeriodENT.asOfDate END, defvalues.priorAsOfDate) priorAsOfDate,
+		repPeriodENT.surveyCollectionYear surveyYear,
+		repPeriodENT.surveyId surveyId,
+		defvalues.currentSection currentSection,
+		defvalues.priorSection priorSection,
+		defvalues.finGPFSAuditOpinion finGPFSAuditOpinion,
+		defvalues.finPensionBenefits finPensionBenefits,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				repPeriodENT.surveyCollectionYear,
+				repPeriodENT.surveyId,
+				repPeriodENT.surveySection
+			ORDER BY
+				repPeriodENT.recordActivityDate DESC
+		) AS reportPeriodRn
+	from DefaultValues defvalues
+		cross join IPEDSReportingPeriod repPeriodENT
+	where repPeriodENT.surveyCollectionYear = defvalues.surveyYear
+		and repPeriodENT.surveyId = defvalues.surveyId
+	) repValues 
 where repValues.reportPeriodRn = 1
 group by repValues.surveyYear, 
-        repValues.surveyId,
-        repValues.currentSection,
-	    repValues.priorSection,
-        repValues.finGPFSAuditOpinion,
-	    repValues.finPensionBenefits
+	repValues.surveyId,
+	repValues.currentSection,
+	repValues.priorSection,
+	repValues.finGPFSAuditOpinion,
+	repValues.finPensionBenefits
 
 union
 
-select defaultValues.surveyYear surveyYear,
-    defaultValues.surveyId surveyId,
-    defaultValues.asOfDate asOfDate,
-    defaultValues.priorAsOfDate priorAsOfDate,
-    defaultValues.currentSection currentSection,
-	defaultValues.priorSection priorSection,
-    defaultValues.finGPFSAuditOpinion finGPFSAuditOpinion,
-	defaultValues.finPensionBenefits finPensionBenefits
-from DefaultValues defaultValues
-where defaultValues.surveyYear not in (select surveyYear
-                                    from DefaultValues defValues
-                                        cross join IPEDSReportingPeriod reportPeriod
-                                    where reportPeriod.surveyCollectionYear = defValues.surveyYear
-                                        and reportPeriod.surveyId = defValues.surveyId)
+select defvalues.surveyYear surveyYear,
+    defvalues.surveyId surveyId,
+    defvalues.asOfDate asOfDate,
+    defvalues.priorAsOfDate priorAsOfDate,
+    defvalues.currentSection currentSection,
+	defvalues.priorSection priorSection,
+    defvalues.finGPFSAuditOpinion finGPFSAuditOpinion,
+	defvalues.finPensionBenefits finPensionBenefits
+from DefaultValues defvalues
+where defvalues.surveyYear not in (select surveyYear
+                                    from DefaultValues defvalues1
+										cross join IPEDSReportingPeriod repPeriodENT
+                                    where repPeriodENT.surveyCollectionYear = defvalues1.surveyYear
+										and repPeriodENT.surveyId = defvalues.surveyId)
 ),
 
 /*****
@@ -147,7 +148,7 @@ BEGIN SECTION - Most Recent Records
 The views below pull the most recent records based on activity date and other fields, as required
 *****/
 
-ConfigPerAsOfDate AS
+ClientConfigMCR AS
 --Pulls client-given data for part 9, including:
 --finGPFSAuditOpinion - all versions
 --finAthleticExpenses - all versions
@@ -161,64 +162,65 @@ ConfigPerAsOfDate AS
 
 (
 select surveyCollectionYear surveyYear,
-    	asOfDate asOfDate,
-	    priorAsOfDate priorAsOfDate,
-	    finGPFSAuditOpinion finGPFSAuditOpinion,
-		finPensionBenefits finPensionBenefits
+	asOfDate asOfDate,
+	priorAsOfDate priorAsOfDate,
+	finGPFSAuditOpinion finGPFSAuditOpinion,
+	finPensionBenefits finPensionBenefits
 from ( 
-	select ReportingDates.surveyYear surveyCollectionYear,
-	            ReportingDates.asOfDate asOfDate,
-                ReportingDates.priorAsOfDate priorAsOfDate,
-                nvl(config.finGPFSAuditOpinion, ReportingDates.finGPFSAuditOpinion) finGPFSAuditOpinion,
-				nvl(config.finPensionBenefits, ReportingDates.finPensionBenefits) finPensionBenefits,
-                ROW_NUMBER() OVER (
-                        PARTITION BY
-                                config.surveyCollectionYear
-                        ORDER BY
-                                config.recordActivityDate DESC
-                ) AS configRn
-	from IPEDSClientConfig config
-		inner join ReportingDates ReportingDates on ReportingDates.surveyYear = config.surveyCollectionYear
+	select repperiod.surveyYear surveyCollectionYear,
+		repperiod.asOfDate asOfDate,
+		repperiod.priorAsOfDate priorAsOfDate,
+		NVL(clientConfigENT.finGPFSAuditOpinion, repperiod.finGPFSAuditOpinion) finGPFSAuditOpinion,
+		NVL(clientConfigENT.finPensionBenefits, repperiod.finPensionBenefits) finPensionBenefits,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				clientConfigENT.surveyCollectionYear
+			ORDER BY
+				clientConfigENT.recordActivityDate DESC
+		) AS configRn
+	from IPEDSClientConfig clientConfigENT
+		inner join ReportingPeriodMCR repperiod on repperiod.surveyYear = clientConfigENT.surveyCollectionYear
 	)
 where configRn = 1
 
 union
 
-select ReportingDates.surveyYear,
-      ReportingDates.asOfDate asOfDate,
-      ReportingDates.priorAsOfDate priorAsOfDate,
-	  ReportingDates.finGPFSAuditOpinion finGPFSAuditOpinion,
-	  ReportingDates.finPensionBenefits finPensionBenefits
-from ReportingDates ReportingDates
-where ReportingDates.surveyYear not in (select config.surveyCollectionYear
-                                        from IPEDSClientConfig config
-		                                    inner join ReportingDates ReportingDates on ReportingDates.surveyYear = config.surveyCollectionYear)
+select repperiod.surveyYear,
+	repperiod.asOfDate asOfDate,
+	repperiod.priorAsOfDate priorAsOfDate,
+	repperiod.finGPFSAuditOpinion finGPFSAuditOpinion,
+	repperiod.finPensionBenefits finPensionBenefits
+from ReportingPeriodMCR repperiod
+where repperiod.surveyYear not in (select clientconfigENT.surveyCollectionYear
+								   from IPEDSClientConfig clientconfigENT
+									inner join ReportingPeriodMCR repperiod1 
+									on repperiod1.surveyYear = clientconfigENT.surveyCollectionYear)
 ),
  
  --jdh 2020-03-04 Removed FYPerAsOfDate/FYPerPriorAsOfDate
 
-COASPerAsOfDate AS (
+ChartOfAccountsMCR AS (
 select *
 from (
-    select COAS.*,
-      ROW_NUMBER() OVER (
-        PARTITION BY
-          COAS.chartOfAccountsId
-        ORDER BY
-          COAS.startDate DESC,
-          COAS.recordActivityDate DESC
-      ) AS COASRn
-    from ConfigPerAsOfDate config
-         inner join ChartOfAccounts COAS ON COAS.startDate <= config.asOfDate
---jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-         and ((COAS.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-		            and COAS.recordActivityDate <= config.asOfDate)
-			    or COAS.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-         and (COAS.endDate IS NULL or COAS.endDate >= config.asOfDate)
-         and COAS.statusCode = 'Active'  
-         and COAS.isIPEDSReportable = 1
+    select coasENT.*,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				coasENT.chartOfAccountsId
+			ORDER BY
+				coasENT.startDate DESC,
+				coasENT.recordActivityDate DESC
+		) AS coasRn
+    from ClientConfigMCR clientconfig
+		inner join ChartOfAccounts coasENT ON coasENT.startDate <= clientconfig.asOfDate
+	--jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
+			and ((coasENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+				and coasENT.recordActivityDate <= clientconfig.asOfDate)
+					or coasENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			and (coasENT.endDate IS NULL or coasENT.endDate >= clientconfig.asOfDate)
+			and coasENT.statusCode = 'Active'  
+			and coasENT.isIPEDSReportable = 1
   )
-where COASRn = 1
+where coasRn = 1
 ),
 
 --jdh 2020-03-04 Modified COASPerFYAsOfDate to include IPEDSClientConfig values
@@ -226,14 +228,14 @@ where COASRn = 1
 
 --jh 20200412 Added DefaultValues query and rewrote other queries to use PF-1418
 
-COASPerFYAsOfDate AS (
+FiscalYearMCR AS (
 select FYData.asOfDate asOfDate,
-        FYData.priorAsOfDate priorAsOfDate,
-        CASE FYData.finGPFSAuditOpinion
-                    when 'Q' then 1
-                    when 'UQ' then 2
-                    when 'U' then 3 END finGPFSAuditOpinion, --1=Unqualified, 2=Qualified, 3=Don't know
-        FYData.fiscalYear4Char fiscalYear4Char,
+	FYData.priorAsOfDate priorAsOfDate,
+	CASE FYData.finGPFSAuditOpinion
+		when 'Q' then 1
+		when 'UQ' then 2
+		when 'U' then 3 END finGPFSAuditOpinion, --1=Unqualified, 2=Qualified, 3=Don't know
+	FYData.fiscalYear4Char fiscalYear4Char,
 	FYData.fiscalYear2Char fiscalYear2Char,
 	FYData.fiscalPeriodCode fiscalPeriodCode,
 	--case when FYData.fiscalPeriod = '1st Month' then 'Year Begin' else 'Year End' end fiscalPeriod, --test only
@@ -241,93 +243,94 @@ select FYData.asOfDate asOfDate,
 	FYData.startDate startDate,
 	FYData.endDate endDate,
 	FYData.chartOfAccountsId chartOfAccountsId,
-    case when COAS.isParent = 1 then 'P'
-             when COAS.isChild = 1 then 'C' end COASParentChild
-from (select FY.*,
-                config.asOfDate asOfDate,
-                config.priorAsOfDate priorAsOfDate,
-                config.finGPFSAuditOpinion finGPFSAuditOpinion,
-		        ROW_NUMBER() OVER (
-			        PARTITION BY
-				        FY.chartOfAccountsId,
-				        FY.fiscalYear4Char,
-				        FY.fiscalPeriodCode
-			        ORDER BY
-				        FY.fiscalYear4Char DESC,
-				        FY.fiscalPeriodCode DESC,
-				        FY.recordActivityDate DESC
-		        ) AS FYRn
-	    from ConfigPerAsOfDate config
-		    left join FiscalYear FY on FY.startDate <= config.asOfDate
-                and FY.fiscalPeriod in ('Year Begin', 'Year End')
-                --and FY.fiscalPeriod in ('1st Month', '12th Month') --test only
+	case when coas.isParent = 1 then 'P'
+		 when coas.isChild = 1 then 'C' end COASParentChild
+from (
+	select fiscalyearENT.*,
+		clientconfig.asOfDate asOfDate,
+		clientconfig.priorAsOfDate priorAsOfDate,
+		clientconfig.finGPFSAuditOpinion finGPFSAuditOpinion,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				fiscalyearENT.chartOfAccountsId,
+				fiscalyearENT.fiscalYear4Char,
+				fiscalyearENT.fiscalPeriodCode
+			ORDER BY
+				fiscalyearENT.fiscalYear4Char DESC,
+				fiscalyearENT.fiscalPeriodCode DESC,
+				fiscalyearENT.recordActivityDate DESC
+		) AS FYRn
+	from ClientConfigMCR clientconfig
+		left join FiscalYear fiscalyearENT on fiscalyearENT.startDate <= clientconfig.asOfDate
+			and fiscalyearENT.fiscalPeriod in ('Year Begin', 'Year End')
+--and fiscalyearENT.fiscalPeriod in ('1st Month', '12th Month') --test only
 --jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-                and ((FY.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-		            and FY.recordActivityDate <= config.asOfDate)
-			    or FY.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-		        and (FY.endDate IS NULL or FY.endDate >= config.asOfDate)
-                and FY.isIPEDSReportable = 1
-        ) FYData 
-            left join COASPerAsOfDate COAS on FYData.chartOfAccountsId = COAS.chartOfAccountsId	
+			and ((fiscalyearENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+				and fiscalyearENT.recordActivityDate <= clientconfig.asOfDate)
+					or fiscalyearENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			and (fiscalyearENT.endDate IS NULL or fiscalyearENT.endDate >= clientconfig.asOfDate)
+			and fiscalyearENT.isIPEDSReportable = 1
+	) FYData 
+	left join ChartOfAccountsMCR coas on FYData.chartOfAccountsId = coas.chartOfAccountsId	
 where FYData.FYRn = 1
 ),
 
 --jdh 2020-03-04 Added GL most recent record views for GeneralLedgerReporting
 
-GL AS (
+GeneralLedgerMCR AS (
 select *
 from (
-    select GL.*,
-		COAS.fiscalPeriod fiscalPeriod,
+    select genledgerENT.*,
+		fiscalyr.fiscalPeriod fiscalPeriod,
 		ROW_NUMBER() OVER (
             PARTITION BY
-                GL.chartOfAccountsId,
-                GL.fiscalYear2Char,
-		        GL.fiscalPeriodCode,
-		        GL.accountingString
+                genledgerENT.chartOfAccountsId,
+                genledgerENT.fiscalYear2Char,
+		        genledgerENT.fiscalPeriodCode,
+		        genledgerENT.accountingString
             ORDER BY
-                GL.recordActivityDate DESC
-		    ) AS GLRn
-    from COASPerFYAsOfDate COAS
-		left join GeneralLedgerReporting GL on GL.chartOfAccountsId = COAS.chartOfAccountsId
-				and GL.fiscalYear2Char = COAS.fiscalYear2Char  
-				and GL.fiscalPeriodCode = COAS.fiscalPeriodCode
---jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-				and ((GL.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-				    and GL.recordActivityDate <= COAS.asOfDate)
-				   or GL.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-				and GL.isIPEDSReportable = 1
+                genledgerENT.recordActivityDate DESC
+		    ) AS genledgerRn
+    from FiscalYearMCR fiscalyr
+		left join GeneralLedgerReporting genledgerENT on genledgerENT.chartOfAccountsId = fiscalyr.chartOfAccountsId
+			and genledgerENT.fiscalYear2Char = fiscalyr.fiscalYear2Char  
+			and genledgerENT.fiscalPeriodCode = fiscalyr.fiscalPeriodCode
+		--jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
+			and ((genledgerENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+				and genledgerENT.recordActivityDate <= fiscalyr.asOfDate)
+					or genledgerENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			and genledgerENT.isIPEDSReportable = 1
   )
-where GLRn = 1
+where genledgerRn = 1
 ),
 
---jdh 2020-03-04 Added OL cte for most recent record views for OperatingLedgerReporting
+--jdh 2020-03-04 Added oppledger cte for most recent record views for OperatingLedgerReporting
 
-OL AS (
+OperatingLedgerMCR AS (
 select *
 from (
-    select OL.*,
-	    COAS.fiscalPeriod fiscalPeriod,
+    select oppledgerENT.*,
+	    fiscalyr.fiscalPeriod fiscalPeriod,
 	    ROW_NUMBER() OVER (
               PARTITION BY
-                OL.chartOfAccountsId,
-                OL.fiscalYear2Char,
-		        OL.fiscalPeriodCode,
-		        OL.accountingString
+                oppledgerENT.chartOfAccountsId,
+                oppledgerENT.fiscalYear2Char,
+		        oppledgerENT.fiscalPeriodCode,
+		        oppledgerENT.accountingString
               ORDER BY
-                OL.recordActivityDate DESC
-		    ) AS OLRn
-    from COASPerFYAsOfDate COAS
-		left join OperatingLedgerReporting OL on OL.chartOfAccountsId = COAS.chartOfAccountsId
-			and OL.fiscalYear2Char = COAS.fiscalYear2Char  
-			and OL.fiscalPeriodCode = COAS.fiscalPeriodCode
---jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-			and ((OL.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-				    and OL.recordActivityDate <= COAS.asOfDate)
-				   or OL.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-			and OL.isIPEDSReportable = 1
+                oppledgerENT.recordActivityDate DESC
+		) AS oppledgerRn
+    from FiscalYearMCR fiscalyr
+		left join OperatingLedgerReporting oppledgerENT on oppledgerENT.chartOfAccountsId = fiscalyr.chartOfAccountsId
+			and oppledgerENT.fiscalYear2Char = fiscalyr.fiscalYear2Char  
+			and oppledgerENT.fiscalPeriodCode = fiscalyr.fiscalPeriodCode
+		--jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
+			and ((oppledgerENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+				and oppledgerENT.recordActivityDate <= fiscalyr.asOfDate)
+					or oppledgerENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			and oppledgerENT.isIPEDSReportable = 1
   )
-where OLRn = 1
+where oppledgerRn = 1
 )
 
 /*****
@@ -346,15 +349,15 @@ PARTS:
 -- General Information 
 
 select DISTINCT '9' part,
-	            0 sort,
-                CAST(MONTH(nvl(COAS.startDate, COAS.priorAsOfDate))  as BIGINT) field1,
-                CAST(YEAR(nvl(COAS.startDate, COAS.priorAsOfDate)) as BIGINT) field2,
-                CAST(MONTH(nvl(COAS.endDate, COAS.asOfDate)) as BIGINT) field3,
-                CAST(YEAR(nvl(COAS.endDate, COAS.asOfDate)) as BIGINT) field4,
-	            COAS.finGPFSAuditOpinion field5, --1=Unqualified, 2=Qualified, 3=Don't know
-	            NULL field6,
-	            NULL field7
-from COASPerFYAsOfDate COAS 
+	0 sort,
+	CAST(MONTH(NVL(fiscalyr.startDate, fiscalyr.priorAsOfDate))  as BIGINT) field1,
+	CAST(YEAR(NVL(fiscalyr.startDate, fiscalyr.priorAsOfDate)) as BIGINT) field2,
+	CAST(MONTH(NVL(fiscalyr.endDate, fiscalyr.asOfDate)) as BIGINT) field3,
+	CAST(YEAR(NVL(fiscalyr.endDate, fiscalyr.asOfDate)) as BIGINT) field4,
+	fiscalyr.finGPFSAuditOpinion field5, --1=Unqualified, 2=Qualified, 3=Don't know
+	NULL field6,
+	NULL field7
+from FiscalYearMCR fiscalyr 
 
 union
 
@@ -375,125 +378,125 @@ union
 select 'E',
 	1,
 	'1', --Pell grants
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.expFAPellGrant  = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.expFAPellGrant  = 'Y'
 
 union
 
 select 'E',
 	2,
 	'2', --Other Federal grants
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.expFANonPellFedGrants = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.expFANonPellFedGrants = 'Y'
 
 union
 
 select 'E',
 	3,
 	'3'  , --Grants by state government
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.expFAStateGrants = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.expFAStateGrants = 'Y'
 
 union
 
 select 'E',
 	4,
 	'4' , --Grants by local government
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.expFALocalGrants = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.expFALocalGrants = 'Y'
 
 union
 
 select 'E',
 	5 ,
 	'5' , --Institutional grants from restricted resources
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.expFAInstitGrantsRestr = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.expFAInstitGrantsRestr = 'Y'
 
 union
 
 select 'E',
 	7 ,
 	'7', -- Total revenue that funds scholarships and fellowships
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (OL.expFAPellGrant  = 'Y' 			    --E1 Pell grants
-		or OL.expFANonPellFedGrants = 'Y'		  --E2 Other federal grants
-		or OL.expFAStateGrants = 'Y' 			    --E3 Grants by state government
-		or OL.expFALocalGrants = 'Y'   		    --E4 Grants by local government
-		or OL.expFAInstitGrantsRestr = 'Y'  	--E5 Institutional grants from restricted resources
-		or OL.expFAInstitGrantsUnrestr = 'Y' ) 	--E6 Institutional grants from unrestricted resources  
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (oppledger.expFAPellGrant  = 'Y' 			    --E1 Pell grants
+		or oppledger.expFANonPellFedGrants = 'Y'		  --E2 Other federal grants
+		or oppledger.expFAStateGrants = 'Y' 			    --E3 Grants by state government
+		or oppledger.expFALocalGrants = 'Y'   		    --E4 Grants by local government
+		or oppledger.expFAInstitGrantsRestr = 'Y'  	--E5 Institutional grants from restricted resources
+		or oppledger.expFAInstitGrantsUnrestr = 'Y' ) 	--E6 Institutional grants from unrestricted resources  
 
 union
 
 select 'E',
 	8,
 	'8' , --Discounts and allowances applied to tuition and fees
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-    and OL.discAllowTuitionFees = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+    and oppledger.discAllowTuitionFees = 'Y'
 
 union
 
 select 'E',
 	9 ,
 	'9' , -- Discounts and allowances applied to sales and services of auxiliary enterprises
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-   and OL.discAllowAuxEnterprise = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+   and oppledger.discAllowAuxEnterprise = 'Y'
 
 union
 
@@ -503,92 +506,92 @@ union
 select 'B',
 	12 ,
 	'1' , --Tuition and fees (after deducting discounts and allowances)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.revTuitionAndFees = 'Y' THEN OL.endBalance ELSE 0 END)
-		- SUM(CASE WHEN OL.discAllowTuitionFees = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revTuitionAndFees = 'Y' THEN oppledger.endBalance ELSE 0 END)
+		- SUM(CASE WHEN oppledger.discAllowTuitionFees = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-    and (OL.revTuitionAndFees = 'Y'
-	    or OL.discAllowTuitionFees = 'Y')
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+    and (oppledger.revTuitionAndFees = 'Y'
+	    or oppledger.discAllowTuitionFees = 'Y')
 
 union
 
 select 'B',
 	13 ,
 	'2'  , --Federal operating grants and contracts
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revFedGrantsContractsOper = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revFedGrantsContractsOper = 'Y'
 
 union
 
 select 'B',
 	14,
 	'3', --State operating grants and contracts
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revStateGrantsContractsOper = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revStateGrantsContractsOper = 'Y'
 
 union
 
 select 'B',
 	16,
 	'4a' , --Local government operating grants and contracts
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revLocalGrantsContractsOper = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revLocalGrantsContractsOper = 'Y'
 
 union
 
 select 'B',
 	17 ,
 	'4b' , --Private operating grants and contracts
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revPrivGrantsContractsOper = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revPrivGrantsContractsOper = 'Y'
 
 union
 
 select 'B',
 	18 ,
 	'26', --Sales & services of educational activities
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT) ,
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT) ,
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revEducActivSalesServices = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revEducActivSalesServices = 'Y'
 
 union
 
@@ -597,212 +600,212 @@ union
 select 'B',
 	20,
 	'9' , --Total operating revenues
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.revTuitionAndFees = 'Y'          			--B1 Tuition and fees (after deducting discounts and allowances)
-										or OL.revFedGrantsContractsOper = 'Y'      	--B2 Federal operating grants and contracts
-										or OL.revStateGrantsContractsOper = 'Y'   	--B3 State operating grants and contracts
-										or OL.revLocalGrantsContractsOper = 'Y'   	--B4a Local government operating grants and contracts
-										or OL.revPrivGrantsContractsOper = 'Y'    	--B5b Private operating grants and contracts
-										or OL.revAuxEnterprSalesServices = 'Y'   	--B5 Sales and services of auxiliary enterprises (after deducting discounts and allowances)
-										or OL.revHospitalSalesServices = 'Y'     	--B6 Sales and services of hospitals (after deducting patient contractual allowances)
-										or OL.revEducActivSalesServices = 'Y'       --B26 Sales & services of educational activities
-										or OL.revOtherSalesServices = 'Y'
-										or OL.revIndependentOperations = 'Y'        --B7 Independent operations
-										or OL.revOtherOper = 'Y')                   --B8 Other sources - operating
-                                THEN OL.endBalance ELSE 0 END)
-		-   SUM(CASE WHEN (OL.discAllowTuitionFees = 'Y'           	   --B1 Tuition and fees discounts and allowances
-							or OL.discAllowAuxEnterprise = 'Y'         --B5 auxiliary enterprises discounts and allowances
-							or OL.discAllowPatientContract = 'Y')     --B6 patient contractual allowances
-					 THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.revTuitionAndFees = 'Y'          			--B1 Tuition and fees (after deducting discounts and allowances)
+										or oppledger.revFedGrantsContractsOper = 'Y'      	--B2 Federal operating grants and contracts
+										or oppledger.revStateGrantsContractsOper = 'Y'   	--B3 State operating grants and contracts
+										or oppledger.revLocalGrantsContractsOper = 'Y'   	--B4a Local government operating grants and contracts
+										or oppledger.revPrivGrantsContractsOper = 'Y'    	--B5b Private operating grants and contracts
+										or oppledger.revAuxEnterprSalesServices = 'Y'   	--B5 Sales and services of auxiliary enterprises (after deducting discounts and allowances)
+										or oppledger.revHospitalSalesServices = 'Y'     	--B6 Sales and services of hospitals (after deducting patient contractual allowances)
+										or oppledger.revEducActivSalesServices = 'Y'       --B26 Sales & services of educational activities
+										or oppledger.revOtherSalesServices = 'Y'
+										or oppledger.revIndependentOperations = 'Y'        --B7 Independent operations
+										or oppledger.revOtherOper = 'Y')                   --B8 Other sources - operating
+                                THEN oppledger.endBalance ELSE 0 END)
+		-   SUM(CASE WHEN (oppledger.discAllowTuitionFees = 'Y'           	   --B1 Tuition and fees discounts and allowances
+							or oppledger.discAllowAuxEnterprise = 'Y'         --B5 auxiliary enterprises discounts and allowances
+							or oppledger.discAllowPatientContract = 'Y')     --B6 patient contractual allowances
+					 THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (OL.revTuitionAndFees = 'Y'   
-		or OL.revFedGrantsContractsOper = 'Y'
-		or OL.revStateGrantsContractsOper = 'Y' 
-		or OL.revLocalGrantsContractsOper = 'Y' 
-		or OL.revPrivGrantsContractsOper = 'Y' 
-		or OL.revAuxEnterprSalesServices = 'Y'  
-		or OL.revHospitalSalesServices = 'Y'  
-		or OL.revEducActivSalesServices = 'Y' 
-		or OL.revOtherSalesServices = 'Y' 
-		or OL.revIndependentOperations = 'Y' 
-		or OL.revOtherOper = 'Y'  
-		or OL.discAllowTuitionFees = 'Y' 
-		or OL.discAllowAuxEnterprise = 'Y' 
-		or OL.discAllowPatientContract = 'Y')
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (oppledger.revTuitionAndFees = 'Y'   
+		or oppledger.revFedGrantsContractsOper = 'Y'
+		or oppledger.revStateGrantsContractsOper = 'Y' 
+		or oppledger.revLocalGrantsContractsOper = 'Y' 
+		or oppledger.revPrivGrantsContractsOper = 'Y' 
+		or oppledger.revAuxEnterprSalesServices = 'Y'  
+		or oppledger.revHospitalSalesServices = 'Y'  
+		or oppledger.revEducActivSalesServices = 'Y' 
+		or oppledger.revOtherSalesServices = 'Y' 
+		or oppledger.revIndependentOperations = 'Y' 
+		or oppledger.revOtherOper = 'Y'  
+		or oppledger.discAllowTuitionFees = 'Y' 
+		or oppledger.discAllowAuxEnterprise = 'Y' 
+		or oppledger.discAllowPatientContract = 'Y')
 
 union
 
 select 'B',
 	21,
 	'10' , --Federal appropriations
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT) ,
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT) ,
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-    and OL.revFedApproprations = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+    and oppledger.revFedApproprations = 'Y'
 
 union
 
 select 'B',
 	22,
 	'11' , --State appropriations
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revStateApproprations = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revStateApproprations = 'Y'
 
 union
 
 select 'B',
 	23,
 	'12' , --Local appropriations, education district taxes, and similar support
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (OL.revLocalApproprations = 'Y' 
-		or OL.revLocalTaxApproprations = 'Y')
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (oppledger.revLocalApproprations = 'Y' 
+		or oppledger.revLocalTaxApproprations = 'Y')
 
 union
 
 select 'B',
 	25,
 	'13' , --Federal nonoperating grants
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-  and OL.revFedGrantsContractsNOper = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+  and oppledger.revFedGrantsContractsNOper = 'Y'
 
 union
 
 select 'B',
 	26 ,
 	'14' , --State nonoperating grants
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-  and OL.revStateGrantsContractsNOper = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+  and oppledger.revStateGrantsContractsNOper = 'Y'
 
 union
 
 select 'B',
 	27,
 	'15', --Local government nonoperating grants
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-  and OL.revLocalGrantsContractsNOper = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+  and oppledger.revLocalGrantsContractsNOper = 'Y'
 
 union
 
 select 'B',
 	28,
 	'16', --Gifts, including contributions from affiliated organizations
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-  and (OL.revPrivGifts = 'Y' 
-	or OL.revAffiliatedOrgnGifts = 'Y')
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+  and (oppledger.revPrivGifts = 'Y' 
+	or oppledger.revAffiliatedOrgnGifts = 'Y')
 
 union
 
 select 'B',
 	29,
 	'17' , --Investment income
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OperatingLedgerReporting OL
-	inner join COASPerFYAsOfDate COAS ON OL.chartOfAccountsId = COAS.chartOfAccountsId
-		and OL.fiscalYear2Char = COAS.fiscalYear2Char
-		and OL.fiscalPeriodCode = COAS.fiscalPeriodCode
-		and COAS.fiscalPeriod = 'Year End'
-where OL.isIPEDSReportable = 1
-	and OL.revInvestmentIncome = 'Y'
+from OperatingLedgerReporting oppledger
+	inner join FiscalYearMCR fiscalyr ON oppledger.chartOfAccountsId = fiscalyr.chartOfAccountsId
+		and oppledger.fiscalYear2Char = fiscalyr.fiscalYear2Char
+		and oppledger.fiscalPeriodCode = fiscalyr.fiscalPeriodCode
+		and fiscalyr.fiscalPeriod = 'Year End'
+where oppledger.isIPEDSReportable = 1
+	and oppledger.revInvestmentIncome = 'Y'
 	
 union
 
 select 'B',
 	31,
 	'19' , --Total nonoperating revenues
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-  and (OL.revFedApproprations = 'Y'             --B10 Federal appropriations
-		or OL.revStateApproprations = 'Y'         --B11 State appropriations
-		or OL.revLocalApproprations = 'Y'         --B12 Local appropriations, education district taxes, and similar support
-		or OL.revLocalTaxApproprations = 'Y'      --B12 Local appropriations, education district taxes, and similar support
-		or OL.revFedGrantsContractsNOper = 'Y'    --B13 Federal nonoperating grants
-		or OL.revStateGrantsContractsNOper = 'Y'  --B14 State nonoperating grants
-		or OL.revLocalGrantsContractsNOper = 'Y'  --B15 Local government nonoperating grants
-		or OL.revPrivGifts = 'Y'                  --B16 Gifts, including contributions from affiliated organizations
-		or OL.revAffiliatedOrgnGifts = 'Y'        --B16 Gifts, including contributions from affiliated organizations
-		or OL.revInvestmentIncome = 'Y'           --B17 Investment income
-		or OL.revOtherNOper = 'Y'                 --Other sources - nonoperating
-		or OL.revPrivGrantsContractsNOper = 'Y')  --Other - Private nonoperating grants
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (oppledger.revFedApproprations = 'Y'             --B10 Federal appropriations
+		or oppledger.revStateApproprations = 'Y'         --B11 State appropriations
+		or oppledger.revLocalApproprations = 'Y'         --B12 Local appropriations, education district taxes, and similar support
+		or oppledger.revLocalTaxApproprations = 'Y'      --B12 Local appropriations, education district taxes, and similar support
+		or oppledger.revFedGrantsContractsNOper = 'Y'    --B13 Federal nonoperating grants
+		or oppledger.revStateGrantsContractsNOper = 'Y'  --B14 State nonoperating grants
+		or oppledger.revLocalGrantsContractsNOper = 'Y'  --B15 Local government nonoperating grants
+		or oppledger.revPrivGifts = 'Y'                  --B16 Gifts, including contributions from affiliated organizations
+		or oppledger.revAffiliatedOrgnGifts = 'Y'        --B16 Gifts, including contributions from affiliated organizations
+		or oppledger.revInvestmentIncome = 'Y'           --B17 Investment income
+		or oppledger.revOtherNOper = 'Y'                 --Other sources - nonoperating
+		or oppledger.revPrivGrantsContractsNOper = 'Y')  --Other - Private nonoperating grants
 
 union
 
 select 'B',
 	55,
 	'25', --Total all revenues and other additions
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.accountType = 'Revenue' THEN OL.endBalance ELSE 0 END)
-		-  SUM(CASE WHEN OL.accountType = 'Revenue Discount' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.accountType = 'Revenue' THEN oppledger.endBalance ELSE 0 END)
+		-  SUM(CASE WHEN oppledger.accountType = 'Revenue Discount' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-  and (OL.accountType = 'Revenue'
-	or OL.accountType = 'Revenue Discount')
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (oppledger.accountType = 'Revenue'
+		or oppledger.accountType = 'Revenue Discount')
 
 union
 
@@ -814,119 +817,119 @@ union
 select 'C',
 	37,
 	'1', -- Instruction
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT) , --Total amount (1-7,11-13,19)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expSalariesWages = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19))
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT) , --Total amount (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expSalariesWages = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19))
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-  and OL.accountType = 'Expense'
-  and OL.isInstruction = 1
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.accountType = 'Expense'
+	and oppledger.isInstruction = 1
 
 union
 
 select 'C',
 	38,
 	'2', --Research
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expSalariesWages = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expSalariesWages = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.accountType = 'Expense'
-	and OL.isResearch = 1
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.accountType = 'Expense'
+	and oppledger.isResearch = 1
 
 union
 
 select 'C',
 	39,
 	'3', --Public service
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expSalariesWages = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expSalariesWages = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.accountType = 'Expense'
-	and OL.isPublicService = 1
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.accountType = 'Expense'
+	and oppledger.isPublicService = 1
 
 union
 
 select 'C',
 	40,
 	'5', --Academic support
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN  OL.expSalariesWages = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN  oppledger.expSalariesWages = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.accountType = 'Expense'
-	and OL.isAcademicSupport = 1
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.accountType = 'Expense'
+	and oppledger.isAcademicSupport = 1
 
 union
 
 select 'C',
 	41,
 	'6', --Student services
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expSalariesWages = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expSalariesWages = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.accountType = 'Expense'
-	and OL.isStudentServices = 1
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.accountType = 'Expense'
+	and oppledger.isStudentServices = 1
 
 union
 
 select 'C',
 	42,
 	'7', --Institutional support
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expSalariesWages = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expSalariesWages = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19)
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.accountType = 'Expense'
-	and OL.isInstitutionalSupport = 1
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.accountType = 'Expense'
+	and oppledger.isInstitutionalSupport = 1
 
 union
 
 select 'C',
 	45,
 	'19', --Total expenses and deductions
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.accountType = 'Expense' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.accountType = 'Expense' and OL.expSalariesWages = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19) 19_2
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expBenefits = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Benefits 19_3
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expOperMaintSalariesWages = 'Y'
-										or OL.expOperMaintBenefits = 'Y'
-										or OL.expOperMaintOther = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Oper and Maint of Plant 19_4
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expDepreciation = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Depreciation 19_5
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN OL.expInterest = 'Y' THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT)  --Interest 19
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (OL.accountType = 'Expense'
-		or  OL.expBenefits = 'Y'
-		or  OL.expOperMaintSalariesWages = 'Y'
-		or  OL.expOperMaintBenefits = 'Y'
-		or  OL.expOperMaintOther = 'Y'
-		or  OL.expDepreciation = 'Y'
-		or  OL.expInterest = 'Y')
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.accountType = 'Expense' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Total amount (1-7,11-13,19)
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.accountType = 'Expense' and oppledger.expSalariesWages = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Salaries and wages (1-7,11-13,19) 19_2
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expBenefits = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Benefits 19_3
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expOperMaintSalariesWages = 'Y'
+										or oppledger.expOperMaintBenefits = 'Y'
+										or oppledger.expOperMaintOther = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Oper and Maint of Plant 19_4
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expDepreciation = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Depreciation 19_5
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expInterest = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT)  --Interest 19
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (oppledger.accountType = 'Expense'
+		or  oppledger.expBenefits = 'Y'
+		or  oppledger.expOperMaintSalariesWages = 'Y'
+		or  oppledger.expOperMaintBenefits = 'Y'
+		or  oppledger.expOperMaintOther = 'Y'
+		or  oppledger.expDepreciation = 'Y'
+		or  oppledger.expInterest = 'Y')
 union
 
 --jh 20200218 added conditional for IPEDSClientConfig.finPensionBenefits
@@ -939,8 +942,8 @@ union
 select 'M',
 	55,
 	'1' , 
-	CAST(case when (select config.finPensionBenefits
-						from ConfigPerAsOfDate config) = 'Y' then NVL(ABS(ROUND(SUM(OL.endBalance))), 0) 
+	CAST(case when (select clientconfig.finPensionBenefits
+						from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) 
 			 else 0
 		end as BIGINT),
 	NULL,
@@ -948,10 +951,10 @@ select 'M',
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.accountType = 'Expense'
-	and OL.isPensionGASB = 1
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.accountType = 'Expense'
+	and oppledger.isPensionGASB = 1
 
 union
 
@@ -961,8 +964,8 @@ union
 select 'M',
 	56,
 	'2' , 
-	CAST(case when (select config.finPensionBenefits
-					from ConfigPerAsOfDate config) = 'Y' then NVL(ABS(ROUND(SUM(GL.endBalance))), 0) 
+	CAST(case when (select clientconfig.finPensionBenefits
+					from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) 
 			 else 0
 		end as BIGINT),
 	NULL,
@@ -970,10 +973,10 @@ select 'M',
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Liability'
-	and GL.isPensionGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Liability'
+	and genledger.isPensionGASB = 1
 
 union
 
@@ -982,8 +985,8 @@ union
 select 'M',
 	57,
 	'3' ,
-	CAST(case when (select config.finPensionBenefits
-					from ConfigPerAsOfDate config) = 'Y' then NVL(ABS(ROUND(SUM(GL.endBalance))), 0) 
+	CAST(case when (select clientconfig.finPensionBenefits
+					from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) 
 			 else 0
 		end as BIGINT),
 	NULL,
@@ -991,11 +994,11 @@ select 'M',
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Liability'
-	and GL.deferredInflow = 'Y'
-	and GL.isPensionGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Liability'
+	and genledger.deferredInflow = 'Y'
+	and genledger.isPensionGASB = 1
 
 union
 
@@ -1004,8 +1007,8 @@ union
 select 'M',
 	58,
 	'4' ,
-	CAST(case when (select config.finPensionBenefits
-					from ConfigPerAsOfDate config) = 'Y' then NVL(ABS(ROUND(SUM(GL.endBalance))), 0) 
+	CAST(case when (select clientconfig.finPensionBenefits
+					from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) 
 			 else 0
 		end as BIGINT),
 	NULL,
@@ -1013,11 +1016,11 @@ select 'M',
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Asset'
-	and GL.deferredOutflow = 'Y'
-	and GL.isPensionGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Asset'
+	and genledger.deferredOutflow = 'Y'
+	and genledger.isPensionGASB = 1
 
 union
 
@@ -1026,8 +1029,8 @@ union
 select 'M',
 	59,
 	'5' ,
-	CAST(case when (select config.finPensionBenefits
-					from ConfigPerAsOfDate config) = 'Y' then NVL(ABS(ROUND(SUM(OL.endBalance))), 0) 
+	CAST(case when (select clientconfig.finPensionBenefits
+					from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) 
 			 else 0
 		end as BIGINT),
 	NULL,
@@ -1035,10 +1038,10 @@ select 'M',
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.accountType = 'Expense'
-	and OL.isOPEBRelatedGASB = 1
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.accountType = 'Expense'
+	and oppledger.isOPEBRelatedGASB = 1
 
 union
 
@@ -1047,8 +1050,8 @@ union
 select 'M',
 	60,
 	'6' ,
-	CAST(case when (select config.finPensionBenefits
-					from ConfigPerAsOfDate config) = 'Y' then NVL(ABS(ROUND(SUM(GL.endBalance))), 0) 
+	CAST(case when (select clientconfig.finPensionBenefits
+					from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) 
 			 else 0
 		end as BIGINT),
 	NULL,
@@ -1056,10 +1059,10 @@ select 'M',
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Liability'
-	and GL.isOPEBRelatedGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Liability'
+	and genledger.isOPEBRelatedGASB = 1
 
 union
 
@@ -1068,8 +1071,8 @@ union
 select 'M',
 	61,
 	'7' ,
-	CAST(case when (select config.finPensionBenefits
-					from ConfigPerAsOfDate config) = 'Y' then NVL(ABS(ROUND(SUM(GL.endBalance))), 0) 
+	CAST(case when (select clientconfig.finPensionBenefits
+					from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) 
 			 else 0
 		end as BIGINT),
 	NULL,
@@ -1077,11 +1080,11 @@ select 'M',
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Liability'
-	and GL.deferredInflow = 'Y'
-	and GL.isOPEBRelatedGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Liability'
+	and genledger.deferredInflow = 'Y'
+	and genledger.isOPEBRelatedGASB = 1
 
 union
 
@@ -1090,8 +1093,8 @@ union
 select 'M',
 	62,
 	'8' , 
-	CAST(case when (select config.finPensionBenefits
-					from ConfigPerAsOfDate config) = 'Y' then NVL(ABS(ROUND(SUM(GL.endBalance))), 0) 
+	CAST(case when (select clientconfig.finPensionBenefits
+					from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) 
 			 else 0
 		end as BIGINT),
 	NULL,
@@ -1099,11 +1102,11 @@ select 'M',
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Asset'
-	and GL.deferredOutflow = 'Y'
-	and GL.isOPEBRelatedGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Asset'
+	and genledger.deferredOutflow = 'Y'
+	and genledger.isOPEBRelatedGASB = 1
 
 -- J 
 -- Revenue Data for the Census Bureau
@@ -1128,27 +1131,27 @@ select 'J',
 	64,
 	'2',   
 	NULL,  --    Totals Calculated by IPEDS  -- (Do not include in the file)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 
-										and OL.isAuxiliaryEnterprises = 0 
-										and OL.isHospitalServices = 0) 
-										and (OL.revEducActivSalesServices = 'Y' 
-											or OL.revOtherSalesServices = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 
+										and oppledger.isAuxiliaryEnterprises = 0 
+										and oppledger.isHospitalServices = 0) 
+										and (oppledger.revEducActivSalesServices = 'Y' 
+											or oppledger.revOtherSalesServices = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations 2-7
 	NULL, -- J2,3 Aux Enterprises
 	NULL, -- J2,4 Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 
-										and OL.revOtherSalesServices = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
+										and oppledger.revOtherSalesServices = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-    and (((OL.isAgricultureOrExperiment = 0 
-		and OL.isAuxiliaryEnterprises = 0 
-		and OL.isHospitalServices = 0) 
-		and (OL.revEducActivSalesServices = 'Y' 
-			or OL.revOtherSalesServices = 'Y'))
-		or (OL.isAgricultureOrExperiment = 1 
-			and OL.revOtherSalesServices = 'Y'))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+    and (((oppledger.isAgricultureOrExperiment = 0 
+		and oppledger.isAuxiliaryEnterprises = 0 
+		and oppledger.isHospitalServices = 0) 
+		and (oppledger.revEducActivSalesServices = 'Y' 
+			or oppledger.revOtherSalesServices = 'Y'))
+		or (oppledger.isAgricultureOrExperiment = 1 
+			and oppledger.revOtherSalesServices = 'Y'))
 			
 union
 
@@ -1161,28 +1164,28 @@ select 'J',
 	65,
 	'3',
 	NULL,  --Totals Calculated by IPEDS -- (Do not include in export file)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and (OL.revFedGrantsContractsOper = 'Y' or OL.revFedGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations 2-7
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 and (OL.revFedGrantsContractsOper = 'Y' or OL.revFedGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), -- J3,3 Aux Enterprises
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 and (OL.revFedGrantsContractsOper = 'Y' 
-										or OL.revFedGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), -- J3,4 Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 
-										and (OL.revFedGrantsContractsOper = 'Y' or OL.revFedGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and (oppledger.revFedGrantsContractsOper = 'Y' or oppledger.revFedGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 and (oppledger.revFedGrantsContractsOper = 'Y' or oppledger.revFedGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), -- J3,3 Aux Enterprises
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 and (oppledger.revFedGrantsContractsOper = 'Y' 
+										or oppledger.revFedGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), -- J3,4 Hospitals
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
+										and (oppledger.revFedGrantsContractsOper = 'Y' or oppledger.revFedGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services 2-7
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-			and (OL.revFedGrantsContractsOper = 'Y' or OL.revFedGrantsContractsNOper = 'Y'))
-		or (OL.isAuxiliaryEnterprises = 1 
-			and (OL.revFedGrantsContractsOper = 'Y' or OL.revFedGrantsContractsNOper = 'Y'))
-		or (OL.isHospitalServices = 1 
-			and (OL.revFedGrantsContractsOper = 'Y' or OL.revFedGrantsContractsNOper = 'Y'))
-		or (OL.isAgricultureOrExperiment = 1 
-			and (OL.revFedGrantsContractsOper = 'Y' or OL.revFedGrantsContractsNOper = 'Y')))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+			and (oppledger.revFedGrantsContractsOper = 'Y' or oppledger.revFedGrantsContractsNOper = 'Y'))
+		or (oppledger.isAuxiliaryEnterprises = 1 
+			and (oppledger.revFedGrantsContractsOper = 'Y' or oppledger.revFedGrantsContractsNOper = 'Y'))
+		or (oppledger.isHospitalServices = 1 
+			and (oppledger.revFedGrantsContractsOper = 'Y' or oppledger.revFedGrantsContractsNOper = 'Y'))
+		or (oppledger.isAgricultureOrExperiment = 1 
+			and (oppledger.revFedGrantsContractsOper = 'Y' or oppledger.revFedGrantsContractsNOper = 'Y')))
 
 union
 
@@ -1193,32 +1196,32 @@ select 'J',
 	66,
 	'4', 
 	NULL, --Total amount  -- (Do not include in export file)
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and (OL.revStateApproprations = 'Y' or OL.revStateCapitalAppropriations = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 and (OL.revStateApproprations = 'Y' or OL.revStateCapitalAppropriations = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 
-										and (OL.revStateApproprations = 'Y' or OL.revStateCapitalAppropriations = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 
-										and (OL.revStateApproprations = 'Y' or OL.revStateCapitalAppropriations = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and (oppledger.revStateApproprations = 'Y' or oppledger.revStateCapitalAppropriations = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 and (oppledger.revStateApproprations = 'Y' or oppledger.revStateCapitalAppropriations = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 
+										and (oppledger.revStateApproprations = 'Y' or oppledger.revStateCapitalAppropriations = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Hospitals
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
+										and (oppledger.revStateApproprations = 'Y' or oppledger.revStateCapitalAppropriations = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 
-		and OL.isAuxiliaryEnterprises = 0 
-		and OL.isHospitalServices = 0) 
-		and (OL.revStateApproprations = 'Y' 
-			or OL.revStateCapitalAppropriations = 'Y'))
-		or (OL.isAuxiliaryEnterprises = 1 
-			and (OL.revStateApproprations = 'Y' 
-				or OL.revStateCapitalAppropriations = 'Y'))
-		or (OL.isHospitalServices = 1 
-			and (OL.revStateApproprations = 'Y' or OL.revStateCapitalAppropriations = 'Y'))
-		or (OL.isAgricultureOrExperiment = 1 
-			and (OL.revStateApproprations = 'Y' or OL.revStateCapitalAppropriations = 'Y'))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 
+		and oppledger.isAuxiliaryEnterprises = 0 
+		and oppledger.isHospitalServices = 0) 
+		and (oppledger.revStateApproprations = 'Y' 
+			or oppledger.revStateCapitalAppropriations = 'Y'))
+		or (oppledger.isAuxiliaryEnterprises = 1 
+			and (oppledger.revStateApproprations = 'Y' 
+				or oppledger.revStateCapitalAppropriations = 'Y'))
+		or (oppledger.isHospitalServices = 1 
+			and (oppledger.revStateApproprations = 'Y' or oppledger.revStateCapitalAppropriations = 'Y'))
+		or (oppledger.isAgricultureOrExperiment = 1 
+			and (oppledger.revStateApproprations = 'Y' or oppledger.revStateCapitalAppropriations = 'Y'))
 		)
 
 union
@@ -1230,28 +1233,28 @@ select 'J',
 	67 ,
 	'5', 
 	NULL, --Total amount
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and (OL.revStateGrantsContractsOper = 'Y' or OL.revStateGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 and (OL.revStateGrantsContractsOper = 'Y' or OL.revStateGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 
-										and (OL.revStateGrantsContractsOper = 'Y' or OL.revStateGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 
-										and (OL.revStateGrantsContractsOper = 'Y' or OL.revStateGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and (oppledger.revStateGrantsContractsOper = 'Y' or oppledger.revStateGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 and (oppledger.revStateGrantsContractsOper = 'Y' or oppledger.revStateGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 
+										and (oppledger.revStateGrantsContractsOper = 'Y' or oppledger.revStateGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Hospitals
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
+										and (oppledger.revStateGrantsContractsOper = 'Y' or oppledger.revStateGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Agriculture extension/experiment services
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-		and (OL.revStateGrantsContractsOper = 'Y' or OL.revStateGrantsContractsNOper = 'Y'))
-		or (OL.isAuxiliaryEnterprises = 1 
-			and (OL.revStateGrantsContractsOper = 'Y' or OL.revStateGrantsContractsNOper = 'Y'))
-		or (OL.isHospitalServices = 1 
-			and (OL.revStateGrantsContractsOper = 'Y' or OL.revStateGrantsContractsNOper = 'Y'))
-		or (OL.isAgricultureOrExperiment = 1 
-			and (OL.revStateGrantsContractsOper = 'Y' or OL.revStateGrantsContractsNOper = 'Y')))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+		and (oppledger.revStateGrantsContractsOper = 'Y' or oppledger.revStateGrantsContractsNOper = 'Y'))
+		or (oppledger.isAuxiliaryEnterprises = 1 
+			and (oppledger.revStateGrantsContractsOper = 'Y' or oppledger.revStateGrantsContractsNOper = 'Y'))
+		or (oppledger.isHospitalServices = 1 
+			and (oppledger.revStateGrantsContractsOper = 'Y' or oppledger.revStateGrantsContractsNOper = 'Y'))
+		or (oppledger.isAgricultureOrExperiment = 1 
+			and (oppledger.revStateGrantsContractsOper = 'Y' or oppledger.revStateGrantsContractsNOper = 'Y')))
 
 union
 
@@ -1263,28 +1266,28 @@ select 'J',
 	68,
 	'6', 
 	NULL, --Total amount
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and (OL.revLocalApproprations = 'Y' or OL.revLocalCapitalAppropriations = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 
-										and (OL.revLocalApproprations = 'Y' or OL.revLocalCapitalAppropriations = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 
-										and (OL.revLocalApproprations = 'Y' or OL.revLocalCapitalAppropriations = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 
-										and (OL.revLocalApproprations = 'Y' or OL.revLocalCapitalAppropriations = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and (oppledger.revLocalApproprations = 'Y' or oppledger.revLocalCapitalAppropriations = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 
+										and (oppledger.revLocalApproprations = 'Y' or oppledger.revLocalCapitalAppropriations = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 
+										and (oppledger.revLocalApproprations = 'Y' or oppledger.revLocalCapitalAppropriations = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Hospitals
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
+										and (oppledger.revLocalApproprations = 'Y' or oppledger.revLocalCapitalAppropriations = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-		and (OL.revLocalApproprations = 'Y' or OL.revLocalCapitalAppropriations = 'Y'))
-		or (OL.isAuxiliaryEnterprises = 1 and (OL.revLocalApproprations = 'Y' or OL.revLocalCapitalAppropriations = 'Y'))
-		or (OL.isHospitalServices = 1 
-			and (OL.revLocalApproprations = 'Y' or OL.revLocalCapitalAppropriations = 'Y'))
-		or (OL.isAgricultureOrExperiment = 1 
-			and (OL.revLocalApproprations = 'Y' or OL.revLocalCapitalAppropriations = 'Y')))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+		and (oppledger.revLocalApproprations = 'Y' or oppledger.revLocalCapitalAppropriations = 'Y'))
+		or (oppledger.isAuxiliaryEnterprises = 1 and (oppledger.revLocalApproprations = 'Y' or oppledger.revLocalCapitalAppropriations = 'Y'))
+		or (oppledger.isHospitalServices = 1 
+			and (oppledger.revLocalApproprations = 'Y' or oppledger.revLocalCapitalAppropriations = 'Y'))
+		or (oppledger.isAgricultureOrExperiment = 1 
+			and (oppledger.revLocalApproprations = 'Y' or oppledger.revLocalCapitalAppropriations = 'Y')))
 
 union
 
@@ -1292,29 +1295,29 @@ select 'J',
 	69 ,
 	'7',  --Local grants and contracts
 	NULL, --Total amount
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and (OL.revLocalGrantsContractsOper = 'Y' or OL.revLocalGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Education and general/independent operations
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 
-										and (OL.revLocalGrantsContractsOper = 'Y' or OL.revLocalGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 
-										and (OL.revLocalGrantsContractsOper = 'Y' or OL.revLocalGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 
-										and (OL.revLocalGrantsContractsOper = 'Y' or OL.revLocalGrantsContractsNOper = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and (oppledger.revLocalGrantsContractsOper = 'Y' or oppledger.revLocalGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Education and general/independent operations
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 
+										and (oppledger.revLocalGrantsContractsOper = 'Y' or oppledger.revLocalGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 
+										and (oppledger.revLocalGrantsContractsOper = 'Y' or oppledger.revLocalGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
+										and (oppledger.revLocalGrantsContractsOper = 'Y' or oppledger.revLocalGrantsContractsNOper = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-		and (OL.revLocalGrantsContractsOper = 'Y' or OL.revLocalGrantsContractsNOper = 'Y'))
-		or (OL.isAuxiliaryEnterprises = 1 
-			and (OL.revLocalGrantsContractsOper = 'Y' or OL.revLocalGrantsContractsNOper = 'Y'))
-		or (OL.isHospitalServices = 1 
-			and (OL.revLocalGrantsContractsOper = 'Y' or OL.revLocalGrantsContractsNOper = 'Y'))
-		or (OL.isAgricultureOrExperiment = 1 
-			and (OL.revLocalGrantsContractsOper = 'Y' or OL.revLocalGrantsContractsNOper = 'Y')))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+		and (oppledger.revLocalGrantsContractsOper = 'Y' or oppledger.revLocalGrantsContractsNOper = 'Y'))
+		or (oppledger.isAuxiliaryEnterprises = 1 
+			and (oppledger.revLocalGrantsContractsOper = 'Y' or oppledger.revLocalGrantsContractsNOper = 'Y'))
+		or (oppledger.isHospitalServices = 1 
+			and (oppledger.revLocalGrantsContractsOper = 'Y' or oppledger.revLocalGrantsContractsNOper = 'Y'))
+		or (oppledger.isAgricultureOrExperiment = 1 
+			and (oppledger.revLocalGrantsContractsOper = 'Y' or oppledger.revLocalGrantsContractsNOper = 'Y')))
 
 union
 
@@ -1328,15 +1331,15 @@ union
 select 'J',
 	70,
 	'8',
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT) , --Total amount 8-12
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT) , --Total amount 8-12
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revPropAndNonPropTaxes = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revPropAndNonPropTaxes = 'Y'
 
 union
 
@@ -1348,18 +1351,18 @@ union
 select 'J',
 	71,
 	'9', 
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT) , --Total amount 8-12
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT) , --Total amount 8-12
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (OL.revPrivGrantsContractsOper = 'Y'
-		or OL.revPrivGrantsContractsNOper = 'Y'
-		or OL.revPrivGifts = 'Y'
-		or OL.revAffiliatedOrgnGifts = 'Y')
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (oppledger.revPrivGrantsContractsOper = 'Y'
+		or oppledger.revPrivGrantsContractsNOper = 'Y'
+		or oppledger.revPrivGifts = 'Y'
+		or oppledger.revAffiliatedOrgnGifts = 'Y')
 
 union
 
@@ -1369,15 +1372,15 @@ union
 select 'J',
 	72 ,
 	'10',
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT), --Total amount 8-12
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT), --Total amount 8-12
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revInterestEarnings = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revInterestEarnings = 'Y'
 
 union
 
@@ -1390,15 +1393,15 @@ union
 select 'J',
 	73,
 	'11', 
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT) , --Total amount 8-12
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT) , --Total amount 8-12
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revDividendEarnings = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revDividendEarnings = 'Y'
 
 union
 
@@ -1409,15 +1412,15 @@ union
 select 'J',
 	74 ,
 	'12', 
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT), --Total amount 8-12
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT), --Total amount 8-12
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.revRealizedCapitalGains = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.revRealizedCapitalGains = 'Y'
 
 union
 
@@ -1432,29 +1435,29 @@ select 'K',
 	75,
 	'2', 
 	NULL, --Total amount 8
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations 2-7
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 
-										and (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises 2-7
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 
-										and (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) K24, --Hospitals 2-7
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 
-										and (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y')) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 
+										and (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 
+										and (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) K24, --Hospitals 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
+										and (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y')) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services 2-7
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-		and (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y'))
-			or (OL.isAuxiliaryEnterprises = 1 
-				and (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y'))
-			or (OL.isHospitalServices = 1 
-				and (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y'))
-			or (OL.isAgricultureOrExperiment = 1 
-				and (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y')))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+		and (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y'))
+			or (oppledger.isAuxiliaryEnterprises = 1 
+				and (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y'))
+			or (oppledger.isHospitalServices = 1 
+				and (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y'))
+			or (oppledger.isAgricultureOrExperiment = 1 
+				and (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y')))
 
 union
 
@@ -1468,23 +1471,23 @@ select 'K',
 	76,
 	'3', 
 	NULL, --Total amount 8
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and OL.accountType = 'Expense' and OL.isStateRetireFundGASB = 1) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 and OL.accountType = 'Expense' and OL.isStateRetireFundGASB = 1) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Auxiliary enterprises
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 and OL.accountType = 'Expense' and OL.isStateRetireFundGASB = 1) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 and OL.accountType = 'Expense' and OL.isStateRetireFundGASB = 1) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and oppledger.accountType = 'Expense' and oppledger.isStateRetireFundGASB = 1) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 and oppledger.accountType = 'Expense' and oppledger.isStateRetireFundGASB = 1) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Auxiliary enterprises
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 and oppledger.accountType = 'Expense' and oppledger.isStateRetireFundGASB = 1) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 and oppledger.accountType = 'Expense' and oppledger.isStateRetireFundGASB = 1) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Agriculture extension/experiment services
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-		and OL.accountType = 'Expense' and OL.isStateRetireFundGASB = 1)
-			or (OL.isAuxiliaryEnterprises = 1 and OL.accountType = 'Expense' and OL.isStateRetireFundGASB = 1)
-			or (OL.isHospitalServices = 1 and OL.accountType = 'Expense' and OL.isStateRetireFundGASB = 1)
-			or (OL.isAgricultureOrExperiment = 1 and OL.accountType = 'Expense' and OL.isStateRetireFundGASB = 1))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+		and oppledger.accountType = 'Expense' and oppledger.isStateRetireFundGASB = 1)
+			or (oppledger.isAuxiliaryEnterprises = 1 and oppledger.accountType = 'Expense' and oppledger.isStateRetireFundGASB = 1)
+			or (oppledger.isHospitalServices = 1 and oppledger.accountType = 'Expense' and oppledger.isStateRetireFundGASB = 1)
+			or (oppledger.isAgricultureOrExperiment = 1 and oppledger.accountType = 'Expense' and oppledger.isStateRetireFundGASB = 1))
 
 union
 
@@ -1499,37 +1502,37 @@ select 'K',
 	77,
 	'4',
 	NULL, --Total amount
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and ((OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y' or OL.expOperMaintOther = 'Y' or OL.expOther = 'Y') 
-											and OL.isStateRetireFundGASB = 1)) 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Education and general/independent operations
-        CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 
-											and ((OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y' or OL.expOperMaintOther = 'Y' or OL.expOther = 'Y') 
-												and OL.isStateRetireFundGASB = 1)) 
-									THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
-        CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 
-											and ((OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y' or OL.expOperMaintOther = 'Y' or OL.expOther = 'Y') 
-												and OL.isStateRetireFundGASB = 1)) 
-									THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals
-        CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 
-											and ((OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y' or OL.expOperMaintOther = 'Y' or OL.expOther = 'Y') 
-												and OL.isStateRetireFundGASB = 1)) 
-									THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and ((oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintOther = 'Y' or oppledger.expOther = 'Y') 
+											and oppledger.isStateRetireFundGASB = 1)) 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Education and general/independent operations
+        CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 
+											and ((oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintOther = 'Y' or oppledger.expOther = 'Y') 
+												and oppledger.isStateRetireFundGASB = 1)) 
+									THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
+        CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 
+											and ((oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintOther = 'Y' or oppledger.expOther = 'Y') 
+												and oppledger.isStateRetireFundGASB = 1)) 
+									THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals
+        CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
+											and ((oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintOther = 'Y' or oppledger.expOther = 'Y') 
+												and oppledger.isStateRetireFundGASB = 1)) 
+									THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
         NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-		and ((OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y' or OL.expOperMaintOther = 'Y' or OL.expOther = 'Y') 
-			and OL.isStateRetireFundGASB = 1))
-	 or (OL.isAuxiliaryEnterprises = 1 
-		and ((OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y' or OL.expOperMaintOther = 'Y' or OL.expOther = 'Y') 
-			and OL.isStateRetireFundGASB = 1))
-	 or (OL.isHospitalServices = 1 
-		and ((OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y' or OL.expOperMaintOther = 'Y' or OL.expOther = 'Y') 
-			and OL.isStateRetireFundGASB = 1))
-	 or (OL.isAgricultureOrExperiment = 1 
-		and ((OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y' or OL.expOperMaintOther = 'Y' or OL.expOther = 'Y') 
-			and OL.isStateRetireFundGASB = 1)))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+		and ((oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintOther = 'Y' or oppledger.expOther = 'Y') 
+			and oppledger.isStateRetireFundGASB = 1))
+	 or (oppledger.isAuxiliaryEnterprises = 1 
+		and ((oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintOther = 'Y' or oppledger.expOther = 'Y') 
+			and oppledger.isStateRetireFundGASB = 1))
+	 or (oppledger.isHospitalServices = 1 
+		and ((oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintOther = 'Y' or oppledger.expOther = 'Y') 
+			and oppledger.isStateRetireFundGASB = 1))
+	 or (oppledger.isAgricultureOrExperiment = 1 
+		and ((oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintOther = 'Y' or oppledger.expOther = 'Y') 
+			and oppledger.isStateRetireFundGASB = 1)))
 
 union
 
@@ -1542,23 +1545,23 @@ select 'K',
 	78,
 	'5', 
 	NULL, --Total amount
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and OL.expCapitalConstruction = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 and OL.expCapitalConstruction = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises 2-7
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 and OL.expCapitalConstruction = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals 2-7
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 and OL.expCapitalConstruction = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Agriculture extension/experiment services 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and oppledger.expCapitalConstruction = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 and oppledger.expCapitalConstruction = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 and oppledger.expCapitalConstruction = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals 2-7
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 and oppledger.expCapitalConstruction = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Agriculture extension/experiment services 2-7
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-		and OL.expCapitalConstruction = 'Y')
-			or (OL.isAuxiliaryEnterprises = 1 and OL.expCapitalConstruction = 'Y')
-			or (OL.isHospitalServices = 1 and OL.expCapitalConstruction = 'Y')
-			or (OL.isAgricultureOrExperiment = 1 and OL.expCapitalConstruction = 'Y'))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+		and oppledger.expCapitalConstruction = 'Y')
+			or (oppledger.isAuxiliaryEnterprises = 1 and oppledger.expCapitalConstruction = 'Y')
+			or (oppledger.isHospitalServices = 1 and oppledger.expCapitalConstruction = 'Y')
+			or (oppledger.isAgricultureOrExperiment = 1 and oppledger.expCapitalConstruction = 'Y'))
 
 union
 
@@ -1569,23 +1572,23 @@ select 'K',
 	79,
 	'6',
 	NULL, --Total amount
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and OL.expCapitalEquipPurch = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Education and general/independent operations
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 and OL.expCapitalEquipPurch = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 and OL.expCapitalEquipPurch = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 and OL.expCapitalEquipPurch = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and oppledger.expCapitalEquipPurch = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Education and general/independent operations
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 and oppledger.expCapitalEquipPurch = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Auxiliary enterprises
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 and oppledger.expCapitalEquipPurch = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Hospitals
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 and oppledger.expCapitalEquipPurch = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Agriculture extension/experiment services
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-   and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-        and OL.expCapitalEquipPurch = 'Y')
-		or (OL.isAuxiliaryEnterprises = 1 and OL.expCapitalEquipPurch = 'Y')
-		or (OL.isHospitalServices = 1 and OL.expCapitalEquipPurch = 'Y')
-		or (OL.isAgricultureOrExperiment = 1 and OL.expCapitalEquipPurch = 'Y'))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+   and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+        and oppledger.expCapitalEquipPurch = 'Y')
+		or (oppledger.isAuxiliaryEnterprises = 1 and oppledger.expCapitalEquipPurch = 'Y')
+		or (oppledger.isHospitalServices = 1 and oppledger.expCapitalEquipPurch = 'Y')
+		or (oppledger.isAgricultureOrExperiment = 1 and oppledger.expCapitalEquipPurch = 'Y'))
 
 union
 
@@ -1598,23 +1601,23 @@ select 'K',
 	80,
 	'7',
 	NULL, --Total amount
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-										and OL.expCapitalLandPurchOther = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAuxiliaryEnterprises = 1 and OL.expCapitalLandPurchOther = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Auxiliary enterprises
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isHospitalServices = 1 and OL.expCapitalLandPurchOther = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT) , --Hospitals
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (OL.isAgricultureOrExperiment = 1 and OL.expCapitalLandPurchOther = 'Y') 
-								THEN OL.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+										and oppledger.expCapitalLandPurchOther = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Education and general/independent operations
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAuxiliaryEnterprises = 1 and oppledger.expCapitalLandPurchOther = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Auxiliary enterprises
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isHospitalServices = 1 and oppledger.expCapitalLandPurchOther = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT) , --Hospitals
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 and oppledger.expCapitalLandPurchOther = 'Y') 
+								THEN oppledger.endBalance ELSE 0 END))), 0) AS BIGINT), --Agriculture extension/experiment services
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and (((OL.isAgricultureOrExperiment = 0 and OL.isAuxiliaryEnterprises = 0 and OL.isHospitalServices = 0) 
-		and OL.expCapitalLandPurchOther = 'Y')
-			or (OL.isAuxiliaryEnterprises = 1 and OL.expCapitalLandPurchOther = 'Y')
-			or (OL.isHospitalServices = 1 and OL.expCapitalLandPurchOther = 'Y')
-			or (OL.isAgricultureOrExperiment = 1 and OL.expCapitalLandPurchOther = 'Y'))
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and (((oppledger.isAgricultureOrExperiment = 0 and oppledger.isAuxiliaryEnterprises = 0 and oppledger.isHospitalServices = 0) 
+		and oppledger.expCapitalLandPurchOther = 'Y')
+			or (oppledger.isAuxiliaryEnterprises = 1 and oppledger.expCapitalLandPurchOther = 'Y')
+			or (oppledger.isHospitalServices = 1 and oppledger.expCapitalLandPurchOther = 'Y')
+			or (oppledger.isAgricultureOrExperiment = 1 and oppledger.expCapitalLandPurchOther = 'Y'))
 
 union
 
@@ -1628,15 +1631,15 @@ union
 select 'K',
 	81,
 	'8', 
-	CAST(NVL(ABS(ROUND(SUM(OL.endBalance))), 0) AS BIGINT), --Total amount
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) AS BIGINT), --Total amount
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from OL OL 
-where OL.fiscalPeriod = 'Year End'
-	and OL.expInterest = 'Y'
+from OperatingLedgerMCR oppledger 
+where oppledger.fiscalPeriod = 'Year End'
+	and oppledger.expInterest = 'Y'
 
 union
 
@@ -1654,16 +1657,16 @@ union
 select 'L',
 	82,
 	'1' ,
-	CAST(NVL(ABS(ROUND(SUM(GL.beginBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(genledger.beginBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year Begin'
-	and (GL.liabCurrentLongtermDebt = 'Y' 
-		or GL.liabNoncurrentLongtermDebt = 'Y')
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year Begin'
+	and (genledger.liabCurrentLongtermDebt = 'Y' 
+		or genledger.liabNoncurrentLongtermDebt = 'Y')
 
 union
 
@@ -1681,15 +1684,15 @@ select 'L',
 	NULL,
 	NULL
 from ( 
-	select CAST(NVL(ABS(ROUND(SUM(CASE WHEN GL.liabCurrentLongtermDebt = 'Y' or GL.liabNoncurrentLongtermDebt = 'Y' 
-                                       THEN GL.endBalance ELSE 0 END))), 0) AS BIGINT) LongTermDebt
-	from GL GL 
-	where GL.fiscalPeriod = 'Year End') CurrLongTerm
+	select CAST(NVL(ABS(ROUND(SUM(CASE WHEN genledger.liabCurrentLongtermDebt = 'Y' or genledger.liabNoncurrentLongtermDebt = 'Y' 
+                                       THEN genledger.endBalance ELSE 0 END))), 0) AS BIGINT) LongTermDebt
+	from GeneralLedgerMCR genledger 
+	where genledger.fiscalPeriod = 'Year End') CurrLongTerm
         cross join (
-				select CAST(NVL(ABS(ROUND(SUM(CASE WHEN GL.liabCurrentLongtermDebt = 'Y' or GL.liabNoncurrentLongtermDebt = 'Y' 
-												   THEN GL.beginBalance ELSE 0 END))), 0) AS BIGINT) LongTermDebt
-				from GL GL 
-				where GL.fiscalPeriod = 'Year Begin') PriorLongTerm
+				select CAST(NVL(ABS(ROUND(SUM(CASE WHEN genledger.liabCurrentLongtermDebt = 'Y' or genledger.liabNoncurrentLongtermDebt = 'Y' 
+												   THEN genledger.beginBalance ELSE 0 END))), 0) AS BIGINT) LongTermDebt
+				from GeneralLedgerMCR genledger 
+				where genledger.fiscalPeriod = 'Year Begin') PriorLongTerm
 
 union
 
@@ -1707,15 +1710,15 @@ select 'L',
 	NULL,
 	NULL
 from (
-	select CAST(NVL(ABS(ROUND(SUM(CASE WHEN GL.liabCurrentLongtermDebt = 'Y' or GL.liabNoncurrentLongtermDebt = 'Y' 
-									   THEN GL.beginBalance ELSE 0 END))), 0) AS BIGINT) LongTermDebt
-	from GL GL 
-	where GL.fiscalPeriod = 'Year Begin') CurrLongTerm
+	select CAST(NVL(ABS(ROUND(SUM(CASE WHEN genledger.liabCurrentLongtermDebt = 'Y' or genledger.liabNoncurrentLongtermDebt = 'Y' 
+									   THEN genledger.beginBalance ELSE 0 END))), 0) AS BIGINT) LongTermDebt
+	from GeneralLedgerMCR genledger 
+	where genledger.fiscalPeriod = 'Year Begin') CurrLongTerm
         cross join (
-			select CAST(NVL(ABS(ROUND(SUM(CASE WHEN GL.liabCurrentLongtermDebt = 'Y' or GL.liabNoncurrentLongtermDebt = 'Y' 
-											   THEN GL.beginBalance ELSE 0 END))), 0) AS BIGINT) LongTermDebt
-			from GL GL 
-			where GL.fiscalPeriod = 'Year Begin') PriorLongTerm
+			select CAST(NVL(ABS(ROUND(SUM(CASE WHEN genledger.liabCurrentLongtermDebt = 'Y' or genledger.liabNoncurrentLongtermDebt = 'Y' 
+											   THEN genledger.beginBalance ELSE 0 END))), 0) AS BIGINT) LongTermDebt
+			from GeneralLedgerMCR genledger 
+			where genledger.fiscalPeriod = 'Year Begin') PriorLongTerm
 
 union
 
@@ -1724,16 +1727,16 @@ union
 select 'L',
 	85,
 	'4',
-	CAST(NVL(ABS(ROUND(SUM(GL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from GL GL 
+from GeneralLedgerMCR genledger 
 where fiscalPeriod = 'Year End'
-	and (GL.liabCurrentLongtermDebt = 'Y' 
-		or GL.liabNoncurrentLongtermDebt = 'Y')
+	and (genledger.liabCurrentLongtermDebt = 'Y' 
+		or genledger.liabNoncurrentLongtermDebt = 'Y')
 
 union
 
@@ -1742,16 +1745,16 @@ union
 select 'L',
 	86,
 	'5',
-	CAST(NVL(ABS(ROUND(SUM(GL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year Begin'
-	and (GL.liabCurrentOther = 'Y' 
-		or GL.liabNoncurrentOther = 'Y')
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year Begin'
+	and (genledger.liabCurrentOther = 'Y' 
+		or genledger.liabNoncurrentOther = 'Y')
 
 union
 
@@ -1760,16 +1763,16 @@ union
 select 'L',
 	87,
 	'6',
-	CAST(NVL(ABS(ROUND(SUM(GL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and (GL.liabCurrentOther = 'Y' 
-		or GL.liabNoncurrentOther = 'Y')
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and (genledger.liabCurrentOther = 'Y' 
+		or genledger.liabNoncurrentOther = 'Y')
 
 union 
 
@@ -1787,17 +1790,17 @@ union
 select 'L',
 	88,
 	'7', 
-	CAST(NVL(ABS(ROUND(SUM(GL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Asset'
-	and GL.isSinkingOrDebtServFundGASB = 1
-	and GL.isCashOrSecurityAssetGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Asset'
+	and genledger.isSinkingOrDebtServFundGASB = 1
+	and genledger.isCashOrSecurityAssetGASB = 1
 
 union
 
@@ -1806,17 +1809,17 @@ union
 select 'L',
 	89,
 	'8', 
-	CAST(NVL(ABS(ROUND(SUM(GL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Asset'
-	and GL.isBondFundGASB = 1
-	and GL.isCashOrSecurityAssetGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Asset'
+	and genledger.isBondFundGASB = 1
+	and genledger.isCashOrSecurityAssetGASB = 1
 
 union
 
@@ -1825,16 +1828,16 @@ union
 select 'L',
 	90,
 	'9', 
-	CAST(NVL(ABS(ROUND(SUM(GL.endBalance))), 0) AS BIGINT),
+	CAST(NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) AS BIGINT),
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	NULL
-from GL GL 
-where GL.fiscalPeriod = 'Year End'
-	and GL.accountType = 'Asset'
-	and GL.isNonBondFundGASB = 1
-	and GL.isCashOrSecurityAssetGASB = 1
+from GeneralLedgerMCR genledger 
+where genledger.fiscalPeriod = 'Year End'
+	and genledger.accountType = 'Asset'
+	and genledger.isNonBondFundGASB = 1
+	and genledger.isCashOrSecurityAssetGASB = 1
  
 --Order by 2

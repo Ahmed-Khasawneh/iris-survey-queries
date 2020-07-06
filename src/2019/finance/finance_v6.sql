@@ -15,6 +15,7 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag              Comments
 -----------------   ----------------    -------------    --------------------------------------------------------------------------------
+20200622			akhasawneh			ak 20200622		 Modify Finance report query with standardized view naming/aliasing convention (PF-1532) -Run time 1m 11s
 20200412			jhanicak			jh 20204012		 Added dummy date option for recordActivityDate in most current record queries PF-1374
 														 Added DefaultValues query and rewrote other queries to use PF-1418
 														 Removed all 'prior' queries - not needed
@@ -26,7 +27,7 @@ Date(yyyymmdd)      Author              Tag              Comments
                                                          - Added GL_Prior cte for most recent record views for GeneralLedgerReporting for prior fiscal year
                                                          - Added OL cte for most recent record views for OperatingLedgerReporting
                                                          - Added OL_Prior cte for most recent record views for OperatingLedgerReporting for prior fiscal year
-                                                         - Removed cross join with ConfigPerAsOfDate since values are now already in COASPerFYAsOfDate
+                                                         - Removed cross join with ClientConfigMCR since values are now already in COASPerFYAsOfDate
                                                          - Changed PART Queries to use new in-line GL/OL Structure
                                                                 --  1-Changed GeneralLedgerReporting to GL inline view  
                                                                 --  2-Removed the join to COAS       
@@ -49,106 +50,106 @@ The views below are used to determine the dates, academic terms, academic year, 
 WITH DefaultValues AS
 (
 select '1920' surveyYear,
-        CAST(UNIX_TIMESTAMP('10/01/2019', 'MM/dd/yyyy') AS TIMESTAMP) asOfDate,      
-        CAST(UNIX_TIMESTAMP('10/01/2018', 'MM/dd/yyyy') AS TIMESTAMP) priorAsOfDate, 
-        'F3B' surveyId,
-		'Current' currentSection,
-		'Prior' priorSection,
-        'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
-	    'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
-	    'Y' finEndowmentAssets,  --Y = Yes -- all versions
-	    'Y' finPensionBenefits,  --Y = Yes -- all versions
-	    'B' finReportingModel,  --B = Business -- v1, v4
-		'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
-		'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
-		'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
-	    'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
+	CAST(UNIX_TIMESTAMP('10/01/2019', 'MM/dd/yyyy') AS TIMESTAMP) asOfDate,      
+	CAST(UNIX_TIMESTAMP('10/01/2018', 'MM/dd/yyyy') AS TIMESTAMP) priorAsOfDate, 
+	'F3B' surveyId,
+	'Current' currentSection,
+	'Prior' priorSection,
+	'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
+	'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
+	'Y' finEndowmentAssets,  --Y = Yes -- all versions
+	'Y' finPensionBenefits,  --Y = Yes -- all versions
+	'B' finReportingModel,  --B = Business -- v1, v4
+	'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
+	'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
+	'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
+	'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
 	    
 /*
 --used for internal testing only
 select '1415' surveyYear,
-        CAST(UNIX_TIMESTAMP('10/01/2014', 'MM/dd/yyyy') AS TIMESTAMP) asOfDate,     
-        CAST(UNIX_TIMESTAMP('10/01/2013', 'MM/dd/yyyy') AS TIMESTAMP) priorAsOfDate, 
-        'F3B' surveyId,
-		'Current' currentSection,
-		'Prior' priorSection,
-        'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
-	    'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
-	    'Y' finEndowmentAssets,  --Y = Yes -- all versions
-	    'Y' finPensionBenefits,  --Y = Yes -- all versions
-	    'B' finReportingModel,  --B = Business -- v1, v4
-		'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
-		'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
-		'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
-	    'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
+	CAST(UNIX_TIMESTAMP('10/01/2014', 'MM/dd/yyyy') AS TIMESTAMP) asOfDate,     
+	CAST(UNIX_TIMESTAMP('10/01/2013', 'MM/dd/yyyy') AS TIMESTAMP) priorAsOfDate, 
+	'F3B' surveyId,
+	'Current' currentSection,
+	'Prior' priorSection,
+	'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
+	'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
+	'Y' finEndowmentAssets,  --Y = Yes -- all versions
+	'Y' finPensionBenefits,  --Y = Yes -- all versions
+	'B' finReportingModel,  --B = Business -- v1, v4
+	'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
+	'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
+	'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
+	'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
 */
 ),
 
 --jh 20200412 Added DefaultValues query and rewrote other queries to use PF-1418
 
-ReportingDates AS
+ReportingPeriodMCR AS
 (
 select repValues.surveyYear surveyYear,
-       repValues.surveyId surveyId,
-       MAX(repValues.asOfDate) asOfDate,
-       MAX(repValues.priorAsOfDate) priorAsOfDate,
-       repValues.currentSection currentSection,
-	   repValues.priorSection priorSection,
-       repValues.finGPFSAuditOpinion finGPFSAuditOpinion,
-	   repValues.finPellTransactions finPellTransactions,
-	   repValues.finBusinessStructure finBusinessStructure,
-	   repValues.finTaxExpensePaid finTaxExpensePaid
-from 
-    (select nvl(CASE WHEN upper(reportPeriod.surveySection) = upper(defaultValues.currentSection) THEN reportPeriod.asOfDate END, defaultValues.asOfDate) asOfDate,
-			nvl(CASE WHEN upper(reportPeriod.surveySection) = upper(defaultValues.priorSection) THEN reportPeriod.asOfDate END, defaultValues.priorAsOfDate) priorAsOfDate,
-        reportPeriod.surveyCollectionYear surveyYear,
-            reportPeriod.surveyId surveyId,
-            defaultValues.currentSection currentSection,
-		    defaultValues.priorSection priorSection,
-            defaultValues.finGPFSAuditOpinion finGPFSAuditOpinion,
-	        defaultValues.finPellTransactions finPellTransactions,
-			defaultValues.finBusinessStructure finBusinessStructure,
-			defaultValues.finTaxExpensePaid finTaxExpensePaid,
-        ROW_NUMBER() OVER (
-            PARTITION BY
-                reportPeriod.surveyCollectionYear,
-                                reportPeriod.surveyId,
-                reportPeriod.surveySection
-            ORDER BY
-                reportPeriod.recordActivityDate DESC
-        ) AS reportPeriodRn
-                    from DefaultValues defaultValues
-                        cross join IPEDSReportingPeriod reportPeriod
-                    where reportPeriod.surveyCollectionYear = defaultValues.surveyYear
-                            and reportPeriod.surveyId = defaultValues.surveyId
-	    ) repValues 
+	repValues.surveyId surveyId,
+	MAX(repValues.asOfDate) asOfDate,
+	MAX(repValues.priorAsOfDate) priorAsOfDate,
+	repValues.currentSection currentSection,
+	repValues.priorSection priorSection,
+	repValues.finGPFSAuditOpinion finGPFSAuditOpinion,
+	repValues.finPellTransactions finPellTransactions,
+	repValues.finBusinessStructure finBusinessStructure,
+	repValues.finTaxExpensePaid finTaxExpensePaid
+from (
+	select NVL(CASE WHEN UPPER(repPeriodENT.surveySection) = UPPER(defvalues.currentSection) THEN repPeriodENT.asOfDate END, defvalues.asOfDate) asOfDate,
+		NVL(CASE WHEN UPPER(repPeriodENT.surveySection) = UPPER(defvalues.priorSection) THEN repPeriodENT.asOfDate END, defvalues.priorAsOfDate) priorAsOfDate,
+		repPeriodENT.surveyCollectionYear surveyYear,
+		repPeriodENT.surveyId surveyId,
+		defvalues.currentSection currentSection,
+		defvalues.priorSection priorSection,
+		defvalues.finGPFSAuditOpinion finGPFSAuditOpinion,
+		defvalues.finPellTransactions finPellTransactions,
+		defvalues.finBusinessStructure finBusinessStructure,
+		defvalues.finTaxExpensePaid finTaxExpensePaid,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				repPeriodENT.surveyCollectionYear,
+				repPeriodENT.surveyId,
+				repPeriodENT.surveySection
+			ORDER BY
+				repPeriodENT.recordActivityDate DESC
+		) AS reportPeriodRn
+	from DefaultValues defvalues
+		cross join IPEDSReportingPeriod repPeriodENT
+	where repPeriodENT.surveyCollectionYear = defvalues.surveyYear
+		and repPeriodENT.surveyId = defvalues.surveyId
+	) repValues 
 where repValues.reportPeriodRn = 1
 group by repValues.surveyYear, 
-        repValues.surveyId,
-        repValues.currentSection,
-	    repValues.priorSection,
-        repValues.finGPFSAuditOpinion,
-	    repValues.finPellTransactions,
-		repValues.finBusinessStructure,
-		repValues.finTaxExpensePaid
+	repValues.surveyId,
+	repValues.currentSection,
+	repValues.priorSection,
+	repValues.finGPFSAuditOpinion,
+	repValues.finPellTransactions,
+	repValues.finBusinessStructure,
+	repValues.finTaxExpensePaid
 union
 
-select defaultValues.surveyYear surveyYear,
-    defaultValues.surveyId surveyId,
-    defaultValues.asOfDate asOfDate,
-    defaultValues.priorAsOfDate priorAsOfDate,
-    defaultValues.currentSection currentSection,
-	defaultValues.priorSection priorSection,
-    defaultValues.finGPFSAuditOpinion finGPFSAuditOpinion, 
-	defaultValues.finPellTransactions finPellTransactions,
-	defaultValues.finBusinessStructure finBusinessStructure,
-	defaultValues.finTaxExpensePaid finTaxExpensePaid
-from DefaultValues defaultValues
-where defaultValues.surveyYear not in (select surveyYear
-                                    from DefaultValues defValues
-                                        cross join IPEDSReportingPeriod reportPeriod
-                                    where reportPeriod.surveyCollectionYear = defValues.surveyYear
-                                        and reportPeriod.surveyId = defValues.surveyId)
+select defvalues.surveyYear surveyYear,
+    defvalues.surveyId surveyId,
+    defvalues.asOfDate asOfDate,
+    defvalues.priorAsOfDate priorAsOfDate,
+    defvalues.currentSection currentSection,
+	defvalues.priorSection priorSection,
+    defvalues.finGPFSAuditOpinion finGPFSAuditOpinion, 
+	defvalues.finPellTransactions finPellTransactions,
+	defvalues.finBusinessStructure finBusinessStructure,
+	defvalues.finTaxExpensePaid finTaxExpensePaid
+from DefaultValues defvalues
+where defvalues.surveyYear not in (select surveyYear
+                                    from DefaultValues defvalues1
+										cross join IPEDSReportingPeriod repPeriodENT
+                                    where repPeriodENT.surveyCollectionYear = defvalues1.surveyYear
+										and repPeriodENT.surveyId = defvalues1.surveyId)
 ),
 
 /*****
@@ -158,7 +159,7 @@ The views below pull the most recent records based on activity date and other fi
 
 --jh 20200412 Added DefaultValues query and rewrote other queries to use PF-1418
 
-ConfigPerAsOfDate AS
+ClientConfigMCR AS
 --Pulls client-given data for part 9, including:
 --finGPFSAuditOpinion - all versions
 --finAthleticExpenses - all versions
@@ -172,69 +173,70 @@ ConfigPerAsOfDate AS
 
 (
 select surveyCollectionYear surveyYear,
-    	asOfDate asOfDate,
-	    priorAsOfDate priorAsOfDate,
-        finGPFSAuditOpinion finGPFSAuditOpinion,
-		finPellTransactions finPellTransactions,
-		finBusinessStructure finBusinessStructure,
-		finTaxExpensePaid finTaxExpensePaid
+	asOfDate asOfDate,
+	priorAsOfDate priorAsOfDate,
+	finGPFSAuditOpinion finGPFSAuditOpinion,
+	finPellTransactions finPellTransactions,
+	finBusinessStructure finBusinessStructure,
+	finTaxExpensePaid finTaxExpensePaid
 from (
-    select ReportingDates.surveyYear surveyCollectionYear,
-	            ReportingDates.asOfDate asOfDate,
-                ReportingDates.priorAsOfDate priorAsOfDate,
-                nvl(config.finGPFSAuditOpinion, ReportingDates.finGPFSAuditOpinion) finGPFSAuditOpinion,
-                nvl(config.finPellTransactions, ReportingDates.finPellTransactions) finPellTransactions,
-                nvl(config.finBusinessStructure, ReportingDates.finBusinessStructure) finBusinessStructure,
-                nvl(config.finTaxExpensePaid, ReportingDates.finTaxExpensePaid) finTaxExpensePaid,
-                ROW_NUMBER() OVER (
-                        PARTITION BY
-                                config.surveyCollectionYear
-                        ORDER BY
-                                config.recordActivityDate DESC
-                ) AS configRn
-    from IPEDSClientConfig config
-       inner join ReportingDates ReportingDates on ReportingDates.surveyYear = config.surveyCollectionYear
+    select repperiod.surveyYear surveyCollectionYear,
+		repperiod.asOfDate asOfDate,
+		repperiod.priorAsOfDate priorAsOfDate,
+		NVL(clientConfigENT.finGPFSAuditOpinion, repperiod.finGPFSAuditOpinion) finGPFSAuditOpinion,
+		nvl(clientConfigENT.finPellTransactions, repperiod.finPellTransactions) finPellTransactions,
+		nvl(clientConfigENT.finBusinessStructure, repperiod.finBusinessStructure) finBusinessStructure,
+		nvl(clientConfigENT.finTaxExpensePaid, repperiod.finTaxExpensePaid) finTaxExpensePaid,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				clientConfigENT.surveyCollectionYear
+			ORDER BY
+				clientConfigENT.recordActivityDate DESC
+		) AS configRn
+    from IPEDSClientConfig clientConfigENT
+		inner join ReportingPeriodMCR repperiod on repperiod.surveyYear = clientConfigENT.surveyCollectionYear
       )
-where configRn = 1
+	where configRn = 1
 
-union
+	union
 
-select ReportingDates.surveyYear,
-      ReportingDates.asOfDate asOfDate,
-      ReportingDates.priorAsOfDate priorAsOfDate,
-	  ReportingDates.finGPFSAuditOpinion finGPFSAuditOpinion,
-	  ReportingDates.finPellTransactions finPellTransactions,
-	  ReportingDates.finBusinessStructure finBusinessStructure,
-	  ReportingDates.finTaxExpensePaid finTaxExpensePaid
-from ReportingDates ReportingDates
-where ReportingDates.surveyYear not in (select config.surveyCollectionYear
-                        from IPEDSClientConfig config
-		                	inner join ReportingDates ReportingDates on ReportingDates.surveyYear = config.surveyCollectionYear)
+	select repperiod.surveyYear,
+		repperiod.asOfDate asOfDate,
+		repperiod.priorAsOfDate priorAsOfDate,
+		repperiod.finGPFSAuditOpinion finGPFSAuditOpinion,
+		repperiod.finPellTransactions finPellTransactions,
+		repperiod.finBusinessStructure finBusinessStructure,
+		repperiod.finTaxExpensePaid finTaxExpensePaid
+	from ReportingPeriodMCR repperiod
+	where repperiod.surveyYear not in (select clientconfigENT.surveyCollectionYear
+									   from IPEDSClientConfig clientconfigENT
+										inner join ReportingPeriodMCR repperiod1 
+										on repperiod1.surveyYear = clientconfigENT.surveyCollectionYear)
 ),
 
  --jdh 2020-03-04 Removed FYPerAsOfDate/FYPerPriorAsOfDate
 
-COASPerAsOfDate AS (
+ChartOfAccountsMCR AS (
 select *
 from (
-    select COAS.*,
-      ROW_NUMBER() OVER (
-        PARTITION BY
-          COAS.chartOfAccountsId
-        ORDER BY
-          COAS.startDate DESC,
-          COAS.recordActivityDate DESC
-      ) AS COASRn
-    from ConfigPerAsOfDate config
-         inner join ChartOfAccounts COAS ON COAS.startDate <= config.asOfDate
---jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-         and ((COAS.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-		            and COAS.recordActivityDate <= config.asOfDate)
-			    or COAS.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-         and (COAS.endDate IS NULL or COAS.endDate >= config.asOfDate)
-         and COAS.statusCode = 'Active'  
-         and COAS.isIPEDSReportable = 1
-  )
+    select coasENT.*,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				coasENT.chartOfAccountsId
+			ORDER BY
+				coasENT.startDate DESC,
+				coasENT.recordActivityDate DESC
+		) AS coasRn
+    from ClientConfigMCR clientconfig
+		inner join ChartOfAccounts coasENT ON coasENT.startDate <= clientconfig.asOfDate
+	--jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
+			and ((coasENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+				and coasENT.recordActivityDate <= clientconfig.asOfDate)
+					or coasENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			and (coasENT.endDate IS NULL or coasENT.endDate >= clientconfig.asOfDate)
+			and coasENT.statusCode = 'Active'  
+			and coasENT.isIPEDSReportable = 1
+	)
 where COASRn = 1
 ),
 
@@ -243,119 +245,120 @@ where COASRn = 1
 
 --jh 20200412 Added DefaultValues query and rewrote other queries to use PF-1418
 
-COASPerFYAsOfDate AS (
+FiscalYearMCR AS (
 select FYData.asOfDate asOfDate,
-        FYData.priorAsOfDate priorAsOfDate,
-        CASE FYData.finGPFSAuditOpinion
-             WHEN 'Q' THEN 1
-             WHEN 'UQ' THEN 2
-             WHEN 'U' THEN 3 END finGPFSAuditOpinion, --1=Unqualified, 2=Qualified, 3=Don't know
-        CASE FYData.finPellTransactions
-             WHEN 'P' THEN 1
-             WHEN 'F' THEN 2
-             WHEN 'N' THEN 3 END finPellTransactions, --P = Pass through, F = Federal Grant Revenue, N = Does not award Pell grants 
-        CASE FYData.finBusinessStructure
-             WHEN 'SP' THEN 1
-             WHEN 'P' THEN 2
-             WHEN 'C' THEN 3 
-             WHEN 'SC' THEN 4 
-             WHEN 'LLC' THEN 5 END finBusinessStructure,  --SP = Sole Proprietorship, P = Partnership, C = C Corp, SC = S Corp, LLC = LLC
-        FYData.fiscalYear4Char fiscalYear4Char,
-		FYData.fiscalYear2Char fiscalYear2Char,
-		FYData.fiscalPeriodCode fiscalPeriodCode,
-		--case when FYData.fiscalPeriod = '1st Month' then 'Year Begin' else 'Year End' end fiscalPeriod, --test only
-		FYData.fiscalPeriod fiscalPeriod,
-		FYData.startDate startDate,
-		FYData.endDate endDate,
-		FYData.chartOfAccountsId chartOfAccountsId,
-        case when COAS.isParent = 1 then 'P'
-             when COAS.isChild = 1 then 'C' end COASParentChild
-from (select FY.*,
-                config.asOfDate asOfDate,
-                config.priorAsOfDate priorAsOfDate,
-                config.finGPFSAuditOpinion finGPFSAuditOpinion,
-				config.finPellTransactions finPellTransactions,				                
-                config.finBusinessStructure finBusinessStructure,
+	FYData.priorAsOfDate priorAsOfDate,
+	CASE FYData.finGPFSAuditOpinion
+		 when 'Q' THEN 1
+		 when 'UQ' then 2
+		 when 'U' then 3 END finGPFSAuditOpinion, --1=Unqualified, 2=Qualified, 3=Don't know
+	CASE FYData.finPellTransactions
+		 when 'P' then 1
+		 when 'F' then 2
+		 when 'N' then 3 END finPellTransactions, --P = Pass through, F = Federal Grant Revenue, N = Does not award Pell grants 
+	CASE FYData.finBusinessStructure
+		 when 'SP' then 1
+		 when 'P' then 2
+		 when 'C' then 3 
+		 when 'SC' then 4 
+		 when 'LLC' then 5 END finBusinessStructure,  --SP = Sole Proprietorship, P = Partnership, C = C Corp, SC = S Corp, LLC = LLC
+	FYData.fiscalYear4Char fiscalYear4Char,
+	FYData.fiscalYear2Char fiscalYear2Char,
+	FYData.fiscalPeriodCode fiscalPeriodCode,
+	--case when FYData.fiscalPeriod = '1st Month' then 'Year Begin' else 'Year End' end fiscalPeriod, --test only
+	FYData.fiscalPeriod fiscalPeriod,
+	FYData.startDate startDate,
+	FYData.endDate endDate,
+	FYData.chartOfAccountsId chartOfAccountsId,
+	case when coas.isParent = 1 then 'P'
+		 when coas.isChild = 1 then 'C' end COASParentChild
+from (
+	select fiscalyearENT.*,
+		clientconfig.asOfDate asOfDate,
+		clientconfig.priorAsOfDate priorAsOfDate,
+		clientconfig.finGPFSAuditOpinion finGPFSAuditOpinion,
+		clientconfig.finPellTransactions finPellTransactions,				                
+		clientconfig.finBusinessStructure finBusinessStructure,
 		ROW_NUMBER() OVER (
 			PARTITION BY
-				FY.chartOfAccountsId,
-				        FY.fiscalYear4Char,
-				        FY.fiscalPeriodCode
+				fiscalyearENT.chartOfAccountsId,
+				fiscalyearENT.fiscalYear4Char,
+				fiscalyearENT.fiscalPeriodCode
 			ORDER BY
-				FY.fiscalYear4Char DESC,
-				FY.fiscalPeriodCode DESC,
-				FY.recordActivityDate DESC
+				fiscalyearENT.fiscalYear4Char DESC,
+				fiscalyearENT.fiscalPeriodCode DESC,
+				fiscalyearENT.recordActivityDate DESC
 		) AS FYRn
-	    from ConfigPerAsOfDate config
-		    left join FiscalYear FY on FY.startDate <= config.asOfDate
-           and FY.fiscalPeriod in ('Year Begin', 'Year End')
-                --and FY.fiscalPeriod in ('1st Month', '12th Month') --test only
---jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-                and ((FY.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-		            and FY.recordActivityDate <= config.asOfDate)
-			    or FY.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-		        and (FY.endDate IS NULL or FY.endDate >= config.asOfDate)
-                and FY.isIPEDSReportable = 1
-        ) FYData 
-            left join COASPerAsOfDate COAS on FYData.chartOfAccountsId = COAS.chartOfAccountsId	
+	from ClientConfigMCR clientConfig
+		left join FiscalYear fiscalyearENT on fiscalyearENT.startDate <= clientconfig.asOfDate
+			and fiscalyearENT.fiscalPeriod in ('Year Begin', 'Year End')
+			--and fiscalyearENT.fiscalPeriod in ('1st Month', '12th Month') --test only
+		--jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
+			and ((fiscalyearENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+				and fiscalyearENT.recordActivityDate <= clientconfig.asOfDate)
+					or fiscalyearENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			and (fiscalyearENT.endDate IS NULL or fiscalyearENT.endDate >= clientconfig.asOfDate)
+			and fiscalyearENT.isIPEDSReportable = 1
+	) FYData 
+	left join ChartOfAccountsMCR coas on FYData.chartOfAccountsId = coas.chartOfAccountsId	
 where FYData.FYRn = 1
 ),
  
 --jdh 2020-03-04 Added GL most recent record views for GeneralLedgerReporting
 --jh 20200226 Added most recent record views for GeneralLedgerReporting
 
-GL AS (
+GeneralLedgerMCR AS (
 select *
 from (
-    select GL.*,
-		COAS.fiscalPeriod fiscalPeriod,
+    select genledgerENT.*,
+		fiscalyr.fiscalPeriod fiscalPeriod,
 		ROW_NUMBER() OVER (
-            PARTITION BY
-                GL.chartOfAccountsId,
-                GL.fiscalYear2Char,
-		        GL.fiscalPeriodCode,
-		        GL.accountingString
-            ORDER BY
-                GL.recordActivityDate DESC
-		    ) AS GLRn
-    from COASPerFYAsOfDate COAS
-		left join GeneralLedgerReporting GL on GL.chartOfAccountsId = COAS.chartOfAccountsId
-				and GL.fiscalYear2Char = COAS.fiscalYear2Char  
-				and GL.fiscalPeriodCode = COAS.fiscalPeriodCode
---jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-				and ((GL.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-				    and GL.recordActivityDate <= COAS.asOfDate)
-				   or GL.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-				and GL.isIPEDSReportable = 1
+			PARTITION BY
+				genledgerENT.chartOfAccountsId,
+				genledgerENT.fiscalYear2Char,
+				genledgerENT.fiscalPeriodCode,
+				genledgerENT.accountingString
+			ORDER BY
+				genledgerENT.recordActivityDate DESC
+		) AS genledgerRn
+    from FiscalYearMCR fiscalyr
+		left join GeneralLedgerReporting genledgerENT on genledgerENT.chartOfAccountsId = fiscalyr.chartOfAccountsId
+			and genledgerENT.fiscalYear2Char = fiscalyr.fiscalYear2Char  
+			and genledgerENT.fiscalPeriodCode = fiscalyr.fiscalPeriodCode
+		--jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
+			and ((genledgerENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+				and genledgerENT.recordActivityDate <= fiscalyr.asOfDate)
+					or genledgerENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			and genledgerENT.isIPEDSReportable = 1
   )
-where GLRn = 1
+where genledgerRn = 1
 ),
 
 --jdh 2020-03-04 Added OL cte for most recent record views for OperatingLedgerReporting
 
-OL AS (
+OperatingLedgerMCR AS (
 select *
 from (
-    select OL.*,
-	    COAS.fiscalPeriod fiscalPeriod,
-	    ROW_NUMBER() OVER (
-              PARTITION BY
-                OL.chartOfAccountsId,
-                OL.fiscalYear2Char,
-		        OL.fiscalPeriodCode,
-		        OL.accountingString
-              ORDER BY
-                OL.recordActivityDate DESC
-		    ) AS OLRn
-    from COASPerFYAsOfDate COAS
-		left join OperatingLedgerReporting OL on OL.chartOfAccountsId = COAS.chartOfAccountsId
-				and OL.fiscalYear2Char = COAS.fiscalYear2Char  
-				and OL.fiscalPeriodCode = COAS.fiscalPeriodCode
---jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-			and ((OL.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-				    and OL.recordActivityDate <= COAS.asOfDate)
-				   or OL.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-				and OL.isIPEDSReportable = 1
+    select oppledgerENT.*,
+		fiscalyr.fiscalPeriod fiscalPeriod,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				oppledgerENT.chartOfAccountsId,
+				oppledgerENT.fiscalYear2Char,
+				oppledgerENT.fiscalPeriodCode,
+				oppledgerENT.accountingString
+			ORDER BY
+				oppledgerENT.recordActivityDate DESC
+		) AS OLRn
+    from FiscalYearMCR fiscalyr
+		left join OperatingLedgerReporting oppledgerENT on oppledgerENT.chartOfAccountsId = fiscalyr.chartOfAccountsId
+			and oppledgerENT.fiscalYear2Char = fiscalyr.fiscalYear2Char  
+			and oppledgerENT.fiscalPeriodCode = fiscalyr.fiscalPeriodCode
+		--jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
+			and ((oppledgerENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+				and oppledgerENT.recordActivityDate <= fiscalyr.asOfDate)
+					or oppledgerENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			and oppledgerENT.isIPEDSReportable = 1
   )
 where OLRn = 1
 ),
@@ -365,49 +368,49 @@ where OLRn = 1
 
 PartC AS (
 select partClassification,
-	   case when partClassification = '3' then partSection else null end partSection,
-	   case when partClassification = '1' then partAmount.C1
-			when partClassification = '2' then partAmount.C2
-			when partClassification = '3' and partSection = 'a' then partAmount.C3a
-			when partClassification = '3' and partSection = 'b' then partAmount.C3b
-			when partClassification = '4' then partAmount.C4
-			when partClassification = '6' then partAmount.C6
-			when partClassification = '7' then partAmount.C7 end partClassAmount
+	case when partClassification = '3' then partSection else null end partSection,
+	case when partClassification = '1' then partAmount.C1
+		when partClassification = '2' then partAmount.C2
+		when partClassification = '3' and partSection = 'a' then partAmount.C3a
+		when partClassification = '3' and partSection = 'b' then partAmount.C3b
+		when partClassification = '4' then partAmount.C4
+		when partClassification = '6' then partAmount.C6
+		when partClassification = '7' then partAmount.C7 end partClassAmount
 from ( 
-	select nvl(ABS(ROUND(SUM(CASE WHEN OL.expFAPellGrant = 'Y' THEN OL.endBalance ELSE 0 END))), 0) C1,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.expFANonPellFedGrants = 'Y' THEN OL.endBalance ELSE 0 END))), 0) C2,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.expFAStateGrants = 'Y' THEN OL.endBalance ELSE 0 END))), 0) C3a,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.expFALocalGrants = 'Y' THEN OL.endBalance ELSE 0 END))), 0) C3b,
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.expFAInstitGrantsRestr = 'Y' OR OL.expFAInstitGrantsUnrestr = 'Y') THEN OL.endBalance ELSE 0 END))), 0) C4,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.discAllowTuitionFees = 'Y' THEN OL.endBalance ELSE 0 END))), 0) C6,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.discAllowAuxEnterprise = 'Y' THEN OL.endBalance ELSE 0 END))), 0) C7
-	from OL OL 
-	where OL.fiscalPeriod = 'Year End'
-		and OL.accountType IN ('Expense', 'Revenue Discount')
-		and (OL.expFAPellGrant = 'Y'
-		   or OL.expFANonPellFedGrants = 'Y'
-		   or OL.expFAStateGrants = 'Y'
-		   or OL.expFALocalGrants = 'Y'
-		   or OL.expFAInstitGrantsRestr = 'Y'
-		   or OL.expFAInstitGrantsUnrestr = 'Y'
-		   or OL.discAllowTuitionFees = 'Y'
-		   or OL.discAllowAuxEnterprise = 'Y')
+	select nvl(ABS(ROUND(SUM(CASE WHEN oppledger.expFAPellGrant = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) C1,
+		nvl(ABS(ROUND(SUM(CASE WHEN oppledger.expFANonPellFedGrants = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) C2,
+		nvl(ABS(ROUND(SUM(CASE WHEN oppledger.expFAStateGrants = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) C3a,
+		nvl(ABS(ROUND(SUM(CASE WHEN oppledger.expFALocalGrants = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) C3b,
+		nvl(ABS(ROUND(SUM(CASE WHEN (oppledger.expFAInstitGrantsRestr = 'Y' OR oppledger.expFAInstitGrantsUnrestr = 'Y') THEN oppledger.endBalance ELSE 0 END))), 0) C4,
+		nvl(ABS(ROUND(SUM(CASE WHEN oppledger.discAllowTuitionFees = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) C6,
+		nvl(ABS(ROUND(SUM(CASE WHEN oppledger.discAllowAuxEnterprise = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) C7
+	from OperatingLedgerMCR oppledger 
+	where oppledger.fiscalPeriod = 'Year End'
+		and oppledger.accountType IN ('Expense', 'Revenue Discount')
+		and (oppledger.expFAPellGrant = 'Y'
+			or oppledger.expFANonPellFedGrants = 'Y'
+			or oppledger.expFAStateGrants = 'Y'
+			or oppledger.expFALocalGrants = 'Y'
+			or oppledger.expFAInstitGrantsRestr = 'Y'
+			or oppledger.expFAInstitGrantsUnrestr = 'Y'
+			or oppledger.discAllowTuitionFees = 'Y'
+			or oppledger.discAllowAuxEnterprise = 'Y')
 	) partAmount
-		cross join ( select * from
-						(VALUES 
-							('1'),
-							('2'),
-							('3'),
-							('4'),
-							('6'),
-							('7')
-						) PartClass(partClassification)
+	cross join (select * 
+				from (VALUES 
+						('1'),
+						('2'),
+						('3'),
+						('4'),
+						('6'),
+						('7')
+					) PartClass(partClassification)
 				)
-		cross join ( select * from
-						(VALUES 
-							('a'),
-							('b')
-						) PartSection(partSection)
+	cross join (select * 
+				from (VALUES 
+						('a'),
+						('b')
+					) PartSection(partSection)
 				)
 ),
 
@@ -416,65 +419,65 @@ from (
 
 PartD as (
 select partClassification,
-	   case when partClassification = '2' and partSection in ('a', 'b') then partSection 
-			when partClassification = '3' then partSection 
-			else null 
-		end partSection,
-	   case when partClassification = '1' then partAmount.D1
-			when partClassification = '2' and partSection = 'a' then partAmount.D2a
-			when partClassification = '2' and partSection = 'b' then partAmount.D2b
-			when partClassification = '3' and partSection = 'a' then partAmount.D3a
-			when partClassification = '3' and partSection = 'b' then partAmount.D3b
-			when partClassification = '3' and partSection = 'c' then partAmount.D3c
-			when partClassification = '3' and partSection = 'd' then partAmount.D3d
-			when partClassification = '4' then partAmount.D4
-			when partClassification = '5' then partAmount.D5
-			when partClassification = '6' then partAmount.D6
-			when partClassification = '9' then partAmount.D9 
-	   end partClassAmount
+	case when partClassification = '2' and partSection in ('a', 'b') then partSection 
+		when partClassification = '3' then partSection 
+		else null 
+	end partSection,
+	case when partClassification = '1' then partAmount.D1
+		when partClassification = '2' and partSection = 'a' then partAmount.D2a
+		when partClassification = '2' and partSection = 'b' then partAmount.D2b
+		when partClassification = '3' and partSection = 'a' then partAmount.D3a
+		when partClassification = '3' and partSection = 'b' then partAmount.D3b
+		when partClassification = '3' and partSection = 'c' then partAmount.D3c
+		when partClassification = '3' and partSection = 'd' then partAmount.D3d
+		when partClassification = '4' then partAmount.D4
+		when partClassification = '5' then partAmount.D5
+		when partClassification = '6' then partAmount.D6
+		when partClassification = '9' then partAmount.D9 
+	end partClassAmount
 from ( 
-	select nvl(ABS(ROUND(SUM(CASE WHEN OL.revTuitionAndFees = 'Y' THEN OL.endBalance ELSE 0 END) 
-		- SUM(CASE WHEN OL.discAllowTuitionFees = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D1,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.revFedApproprations = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D2a,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.revFedGrantsContractsOper = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D2b,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.revStateApproprations = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D3a,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.revStateGrantsContractsOper = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D3b,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.revLocalApproprations = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D3c,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.revLocalGrantsContractsOper = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D3d,
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.revPrivGifts = 'Y'
-								or OL.revPrivGrantsContractsOper = 'Y'
-								or OL.revPrivGrantsContractsNOper = 'Y') THEN OL.endBalance ELSE 0 END))), 0) D4,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.revInvestmentIncome = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D5,
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.revEducActivSalesServices = 'Y' THEN OL.endBalance ELSE 0 END))), 0) D6,
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.revRealizedCapitalGains != 'Y'
-								and OL.revRealizedOtherGains != 'Y'
-								and OL.revExtraordGains != 'Y'
-								and OL.revOwnerEquityAdjustment != 'Y'
-								and OL.revSumOfChangesAdjustment != 'Y') THEN OL.endBalance ELSE 0 END))), 0) D9
-		from OL OL 
-		where OL.fiscalPeriod = 'Year End'
-			and (OL.accountType = 'Revenue'
-			   or OL.discAllowTuitionFees = 'Y')
-		) partAmount
-			cross join ( select * from
-							(VALUES 
-								('1'),
-								('2'),
-								('3'),
-								('4'),
-								('5'),
-								('6'),
-								('9')
-							) PartClass(partClassification)
-					)
-			cross join ( select * from
-							(VALUES 
-								('a'),
-								('b'),
-								('c'),
-								('d')
-							) PartSection(partSection)
-					)
+	select NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revTuitionAndFees = 'Y' THEN oppledger.endBalance ELSE 0 END) 
+			- SUM(CASE WHEN oppledger.discAllowTuitionFees = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D1,
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revFedApproprations = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D2a,
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revFedGrantsContractsOper = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D2b,
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revStateApproprations = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D3a,
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revStateGrantsContractsOper = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D3b,
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revLocalApproprations = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D3c,
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revLocalGrantsContractsOper = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D3d,
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.revPrivGifts = 'Y'
+							or oppledger.revPrivGrantsContractsOper = 'Y'
+							or oppledger.revPrivGrantsContractsNOper = 'Y') THEN oppledger.endBalance ELSE 0 END))), 0) D4,
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revInvestmentIncome = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D5,
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.revEducActivSalesServices = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) D6,
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.revRealizedCapitalGains != 'Y'
+							and oppledger.revRealizedOtherGains != 'Y'
+							and oppledger.revExtraordGains != 'Y'
+							and oppledger.revOwnerEquityAdjustment != 'Y'
+							and oppledger.revSumOfChangesAdjustment != 'Y') THEN oppledger.endBalance ELSE 0 END))), 0) D9
+	from OperatingLedgerMCR oppledger 
+	where oppledger.fiscalPeriod = 'Year End'
+		and (oppledger.accountType = 'Revenue'
+			or oppledger.discAllowTuitionFees = 'Y')
+	) partAmount
+	cross join (select * 
+				from (VALUES 
+						('1'),
+						('2'),
+						('3'),
+						('4'),
+						('5'),
+						('6'),
+						('9')
+					) PartClass(partClassification)
+				)
+	cross join (select * 
+				from (VALUES 
+						('a'),
+						('b'),
+						('c'),
+						('d')
+					) PartSection(partSection)
+				)
 ),
 
 --jh 20200127
@@ -482,113 +485,113 @@ from (
 
 PartE as (
 select partClassification,
-	   case when partClassification in ('1', '2a', '2b', '3a', '3b', '3c') and partSection in ('1', '2') then partSection 
-			when partClassification = '5' and partSection = '1' then partSection 
-			when partClassification = '7' then partSection 
-			else null 
-		end partSection,
-	   case when partClassification = '1' and partSection = '1' then partAmount.E1_1
-			when partClassification = '1' and partSection = '2' then partAmount.E1_2
-			when partClassification = '2a' and partSection = '1' then partAmount.E2a_1
-			when partClassification = '2a' and partSection = '2' then partAmount.E2a_2
-			when partClassification = '2b' and partSection = '1' then partAmount.E2b_1
-			when partClassification = '2b' and partSection = '2' then partAmount.E2b_2
-			when partClassification = '3a' and partSection = '1' then partAmount.E3a_1
-			when partClassification = '3a' and partSection = '2' then partAmount.E3a_2
-			when partClassification = '3b' and partSection = '1' then partAmount.E3b_1
-			when partClassification = '3b' and partSection = '2' then partAmount.E3b_2
-			when partClassification = '3c' and partSection = '1' then partAmount.E3c_1
-			when partClassification = '3c' and partSection = '2' then partAmount.E3c_2
-			when partClassification = '5' and partSection = '1' then partAmount.E5_1
-			when partClassification = '7' and partSection = '1' then partAmount.E7_1
-			when partClassification = '7' and partSection = '2' then partAmount.E7_2
-			when partClassification = '7' and partSection = '3' then partAmount.E7_3
-			when partClassification = '7' and partSection = '4' then partAmount.E7_4
-			when partClassification = '7' and partSection = '5' then partAmount.E7_5
-			when partClassification = '7' and partSection = '6' then partAmount.E7_6
-	   end partClassAmount
+	case when partClassification in ('1', '2a', '2b', '3a', '3b', '3c') and partSection in ('1', '2') then partSection 
+		when partClassification = '5' and partSection = '1' then partSection 
+		when partClassification = '7' then partSection 
+		else null 
+	end partSection,
+	case when partClassification = '1' and partSection = '1' then partAmount.E1_1
+		when partClassification = '1' and partSection = '2' then partAmount.E1_2
+		when partClassification = '2a' and partSection = '1' then partAmount.E2a_1
+		when partClassification = '2a' and partSection = '2' then partAmount.E2a_2
+		when partClassification = '2b' and partSection = '1' then partAmount.E2b_1
+		when partClassification = '2b' and partSection = '2' then partAmount.E2b_2
+		when partClassification = '3a' and partSection = '1' then partAmount.E3a_1
+		when partClassification = '3a' and partSection = '2' then partAmount.E3a_2
+		when partClassification = '3b' and partSection = '1' then partAmount.E3b_1
+		when partClassification = '3b' and partSection = '2' then partAmount.E3b_2
+		when partClassification = '3c' and partSection = '1' then partAmount.E3c_1
+		when partClassification = '3c' and partSection = '2' then partAmount.E3c_2
+		when partClassification = '5' and partSection = '1' then partAmount.E5_1
+		when partClassification = '7' and partSection = '1' then partAmount.E7_1
+		when partClassification = '7' and partSection = '2' then partAmount.E7_2
+		when partClassification = '7' and partSection = '3' then partAmount.E7_3
+		when partClassification = '7' and partSection = '4' then partAmount.E7_4
+		when partClassification = '7' and partSection = '5' then partAmount.E7_5
+		when partClassification = '7' and partSection = '6' then partAmount.E7_6
+	end partClassAmount
 from ( 
-	select nvl(ABS(ROUND(SUM(CASE WHEN (OL.accountType = 'Expense' 
-									and OL.isInstruction = 1) THEN OL.endBalance ELSE 0 END))), 0) E1_1, -- Instruction
-			nvl(ABS(ROUND(SUM(CASE WHEN ((OL.accountType = 'Expense' 
-											and OL.isInstruction = 1)
-										and (OL.expSalariesWages = 'Y'
-											or OL.expOperMaintSalariesWages = 'Y')) THEN OL.endBalance ELSE 0 END))), 0) E1_2, -- Instruction
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.accountType = 'Expense' 
-											and OL.isResearch = 1) THEN OL.endBalance ELSE 0 END))), 0) E2a_1, -- Research
-			nvl(ABS(ROUND(SUM(CASE WHEN ((OL.accountType = 'Expense' 
-											and OL.isResearch = 1)
-										and (OL.expSalariesWages = 'Y'
-											or OL.expOperMaintSalariesWages = 'Y')) THEN OL.endBalance ELSE 0 END))), 0) E2a_2, -- Research
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.accountType = 'Expense' 
-											and OL.isPublicService = 1) THEN OL.endBalance ELSE 0 END))), 0) E2b_1, -- Public service
-			nvl(ABS(ROUND(SUM(CASE WHEN ((OL.accountType = 'Expense' 
-											and OL.isPublicService = 1)
-										and (OL.expSalariesWages = 'Y'
-											or OL.expOperMaintSalariesWages = 'Y')) THEN OL.endBalance ELSE 0 END))), 0) E2b_2, -- Public service
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.accountType = 'Expense' 
-											and OL.isAcademicSupport = 1) THEN OL.endBalance ELSE 0 END))), 0) E3a_1, -- Academic support
-			nvl(ABS(ROUND(SUM(CASE WHEN ((OL.accountType = 'Expense' 
-											and OL.isAcademicSupport = 1)
-										and (OL.expSalariesWages = 'Y'
-											or OL.expOperMaintSalariesWages = 'Y')) THEN OL.endBalance ELSE 0 END))), 0) E3a_2, -- Academic support
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.accountType = 'Expense' 
-											and OL.isStudentServices = 1) THEN OL.endBalance ELSE 0 END))), 0) E3b_1, -- Student services
-			nvl(ABS(ROUND(SUM(CASE WHEN ((OL.accountType = 'Expense' 
-											and OL.isStudentServices = 1)
-										and (OL.expSalariesWages = 'Y'
-											or OL.expOperMaintSalariesWages = 'Y')) THEN OL.endBalance ELSE 0 END))), 0) E3b_2, -- Student services
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.accountType = 'Expense' 
-											and OL.isInstitutionalSupport = 1) THEN OL.endBalance ELSE 0 END))), 0) E3c_1, -- Institutional support total 
-			nvl(ABS(ROUND(SUM(CASE WHEN ((OL.accountType = 'Expense' 
-											and OL.isInstitutionalSupport = 1)
-										and (OL.expSalariesWages = 'Y'
-											or OL.expOperMaintSalariesWages = 'Y')) THEN OL.endBalance ELSE 0 END))), 0) E3c_2, -- Institutional support salaries and wages
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.expFAPellGrant = 'Y'            			--Pell grants
-												or OL.expFANonPellFedGrants = 'Y'		--Other federal grants
-												or OL.expFAStateGrants = 'Y'			--Grants by state government
-												or OL.expFALocalGrants = 'Y'			--Grants by local government
-												or OL.expFAInstitGrantsRestr = 'Y'		--Institutional grants from restricted resources
-												or OL.expFAInstitGrantsUnrestr = 'Y') 	--Institutional grants from unrestricted resources
-										THEN OL.endBalance ELSE 0 END)
-				- SUM(CASE WHEN OL.discAllowTuitionFees = 'Y' THEN OL.endBalance  --Discounts and allowances applied to tuition and fees
-							ELSE 0 END))), 0) E5_1,
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.expFedIncomeTax != 'Y'
-										and OL.expExtraordLosses != 'Y') THEN OL.endBalance ELSE 0 END))), 0) E7_1, -- Total expenses and deductions
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.expSalariesWages = 'Y' or OL.expOperMaintSalariesWages = 'Y') THEN OL.endBalance ELSE 0 END))), 0) E7_2, -- Salaries and wages
-			nvl(ABS(ROUND(SUM(CASE WHEN (OL.expBenefits = 'Y' or OL.expOperMaintBenefits = 'Y') THEN OL.endBalance ELSE 0 END))), 0) E7_3, -- Benefits
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.expOperMaintOther = 'Y' THEN OL.endBalance ELSE 0 END))), 0) E7_4, -- Operation and Maintenance of Plant
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.expDepreciation = 'Y' THEN OL.endBalance ELSE 0 END))), 0) E7_5, -- Depreciation
-			nvl(ABS(ROUND(SUM(CASE WHEN OL.expInterest = 'Y' THEN OL.endBalance ELSE 0 END))), 0) E7_6 -- Interest
-		from OL OL 
-		where OL.fiscalPeriod = 'Year End'
-			and (OL.accountType = 'Expense'
-			   or (OL.discAllowTuitionFees = 'Y' 
-			   or OL.discAllowAuxEnterprise = 'Y'
-			   or OL.discAllowPatientContract = 'Y'))
-		) partAmount
-			cross join ( select * from
-							(VALUES 
-								('1'),
-								('2a'),
-								('2b'),
-								('3a'),
-								('3b'),
-								('3c'),
-								('5'),
-								('7')
-							) PartClass(partClassification)
-					)
-			cross join ( select * from
-							(VALUES 
-								('1'),
-								('2'),
-								('3'),
-								('4'),
-								('5'),
-								('6')
-							) PartSection(partSection)
-					)
+	select NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.accountType = 'Expense' 
+								and oppledger.isInstruction = 1) THEN oppledger.endBalance ELSE 0 END))), 0) E1_1, -- Instruction
+		NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.accountType = 'Expense' 
+										and oppledger.isInstruction = 1)
+											and (oppledger.expSalariesWages = 'Y'
+												or oppledger.expOperMaintSalariesWages = 'Y')) THEN oppledger.endBalance ELSE 0 END))), 0) E1_2, -- Instruction
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.accountType = 'Expense' 
+										and oppledger.isResearch = 1) THEN oppledger.endBalance ELSE 0 END))), 0) E2a_1, -- Research
+		NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.accountType = 'Expense' 
+										and oppledger.isResearch = 1)
+										and (oppledger.expSalariesWages = 'Y'
+											or oppledger.expOperMaintSalariesWages = 'Y')) THEN oppledger.endBalance ELSE 0 END))), 0) E2a_2, -- Research
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.accountType = 'Expense' 
+										and oppledger.isPublicService = 1) THEN oppledger.endBalance ELSE 0 END))), 0) E2b_1, -- Public service
+		NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.accountType = 'Expense' 
+										and oppledger.isPublicService = 1)
+									and (oppledger.expSalariesWages = 'Y'
+										or oppledger.expOperMaintSalariesWages = 'Y')) THEN oppledger.endBalance ELSE 0 END))), 0) E2b_2, -- Public service
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.accountType = 'Expense' 
+										and oppledger.isAcademicSupport = 1) THEN oppledger.endBalance ELSE 0 END))), 0) E3a_1, -- Academic support
+		NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.accountType = 'Expense' 
+										and oppledger.isAcademicSupport = 1)
+										and (oppledger.expSalariesWages = 'Y'
+											or oppledger.expOperMaintSalariesWages = 'Y')) THEN oppledger.endBalance ELSE 0 END))), 0) E3a_2, -- Academic support
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.accountType = 'Expense' 
+										and oppledger.isStudentServices = 1) THEN oppledger.endBalance ELSE 0 END))), 0) E3b_1, -- Student services
+		NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.accountType = 'Expense' 
+										and oppledger.isStudentServices = 1)
+										and (oppledger.expSalariesWages = 'Y'
+											or oppledger.expOperMaintSalariesWages = 'Y')) THEN oppledger.endBalance ELSE 0 END))), 0) E3b_2, -- Student services
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.accountType = 'Expense' 
+										and oppledger.isInstitutionalSupport = 1) THEN oppledger.endBalance ELSE 0 END))), 0) E3c_1, -- Institutional support total 
+		NVL(ABS(ROUND(SUM(CASE WHEN ((oppledger.accountType = 'Expense' 
+										and oppledger.isInstitutionalSupport = 1)
+										and (oppledger.expSalariesWages = 'Y'
+											or oppledger.expOperMaintSalariesWages = 'Y')) THEN oppledger.endBalance ELSE 0 END))), 0) E3c_2, -- Institutional support salaries and wages
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.expFAPellGrant = 'Y'            			--Pell grants
+											or oppledger.expFANonPellFedGrants = 'Y'		--Other federal grants
+											or oppledger.expFAStateGrants = 'Y'			--Grants by state government
+											or oppledger.expFALocalGrants = 'Y'			--Grants by local government
+											or oppledger.expFAInstitGrantsRestr = 'Y'		--Institutional grants from restricted resources
+											or oppledger.expFAInstitGrantsUnrestr = 'Y') 	--Institutional grants from unrestricted resources
+									THEN oppledger.endBalance ELSE 0 END)
+			- SUM(CASE WHEN oppledger.discAllowTuitionFees = 'Y' THEN oppledger.endBalance  --Discounts and allowances applied to tuition and fees
+						ELSE 0 END))), 0) E5_1,
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.expFedIncomeTax != 'Y'
+									and oppledger.expExtraordLosses != 'Y') THEN oppledger.endBalance ELSE 0 END))), 0) E7_1, -- Total expenses and deductions
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.expSalariesWages = 'Y' or oppledger.expOperMaintSalariesWages = 'Y') THEN oppledger.endBalance ELSE 0 END))), 0) E7_2, -- Salaries and wages
+		NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.expBenefits = 'Y' or oppledger.expOperMaintBenefits = 'Y') THEN oppledger.endBalance ELSE 0 END))), 0) E7_3, -- Benefits
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expOperMaintOther = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) E7_4, -- Operation and Maintenance of Plant
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expDepreciation = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) E7_5, -- Depreciation
+		NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expInterest = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) E7_6 -- Interest
+	from OperatingLedgerMCR oppledger 
+	where oppledger.fiscalPeriod = 'Year End'
+		and (oppledger.accountType = 'Expense'
+			or (oppledger.discAllowTuitionFees = 'Y' 
+			   or oppledger.discAllowAuxEnterprise = 'Y'
+			   or oppledger.discAllowPatientContract = 'Y'))
+	) partAmount
+	cross join (select * 
+				from (VALUES 
+						('1'),
+						('2a'),
+						('2b'),
+						('3a'),
+						('3b'),
+						('3c'),
+						('5'),
+						('7')
+					) PartClass(partClassification)
+				)
+	cross join (select * 
+				from (VALUES 
+						('1'),
+						('2'),
+						('3'),
+						('4'),
+						('5'),
+						('6')
+					) PartSection(partSection)
+				)
 )
 
 /*****
@@ -606,18 +609,18 @@ PARTS:
 -- 9
 -- General Information 
 
---jdh 2020-03-04 Removed cross join with ConfigPerAsOfDate since values are now already in COASPerFYAsOfDate
+--jdh 2020-03-04 Removed cross join with ClientConfigMCR since values are now already in COASPerFYAsOfDate
 --swapped CASE Statements for COAS fields used for Section 9 (General Information)
 
 select DISTINCT '9' part,
-		CAST(MONTH(nvl(COAS.startDate, COAS.priorAsOfDate))  as BIGINT) field1,
-        CAST(YEAR(nvl(COAS.startDate, COAS.priorAsOfDate)) as BIGINT) field2,
-        CAST(MONTH(nvl(COAS.endDate, COAS.asOfDate)) as BIGINT) field3,
-        CAST(YEAR(nvl(COAS.endDate, COAS.asOfDate)) as BIGINT) field4,
-		COAS.finGPFSAuditOpinion  field5, --1=Unqualified, 2=Qualified, 3=Don't know
-		COAS.finPellTransactions  field6, --P = Pass through, F = Federal Grant Revenue, N = Does not award Pell grants
-		COAS.finBusinessStructure field7  --SP = Sole Proprietorship, P = Partnership, C = C Corp, SC = S Corp, LLC = LLC
-from COASPerFYAsOfDate COAS 
+	CAST(MONTH(NVL(fiscalyr.startDate, fiscalyr.priorAsOfDate))  as BIGINT) field1,
+	CAST(YEAR(NVL(fiscalyr.startDate, fiscalyr.priorAsOfDate)) as BIGINT) field2,
+	CAST(MONTH(NVL(fiscalyr.endDate, fiscalyr.asOfDate)) as BIGINT) field3,
+	CAST(YEAR(NVL(fiscalyr.endDate, fiscalyr.asOfDate)) as BIGINT) field4,
+	fiscalyr.finGPFSAuditOpinion  field5, --1=Unqualified, 2=Qualified, 3=Don't know
+	fiscalyr.finPellTransactions  field6, --P = Pass through, F = Federal Grant Revenue, N = Does not award Pell grants
+	fiscalyr.finBusinessStructure field7  --SP = Sole Proprietorship, P = Partnership, C = C Corp, SC = S Corp, LLC = LLC
+from FiscalYearMCR fiscalyr 
 
 union
 
@@ -640,13 +643,13 @@ union
 --Modified select statement for Part C to pull from WITH and loop through all values
 
 select 'C',
-		PartC.partClassification partClassification,
-		PartC.partSection partSection,
-		CAST(PartC.partClassAmount AS BIGINT) partAmount,
-		null,
-		null,
-		null,
-		null
+	PartC.partClassification partClassification,
+	PartC.partSection partSection,
+	CAST(PartC.partClassAmount AS BIGINT) partAmount,
+	null,
+	null,
+	null,
+	null
 from PartC PartC
 where (PartC.partClassification in ('1', '2', '4', '6', '7') 
 		and PartC.partSection is null)
@@ -667,13 +670,13 @@ union
 --Modified select statement for Part D to pull from WITH and loop through all values
 
 select distinct 'D',
-		PartD.partClassification partClassification,
-		PartD.partSection partSection,
-		CAST(PartD.partClassAmount AS BIGINT) partAmount,
-		null,
-		null,
-		null,
-		null
+	PartD.partClassification partClassification,
+	PartD.partSection partSection,
+	CAST(PartD.partClassAmount AS BIGINT) partAmount,
+	null,
+	null,
+	null,
+	null
 from PartD PartD
 where (PartD.partClassification in ('1', '4', '5', '6', '9') 
 		and PartD.partSection is null)
@@ -705,13 +708,13 @@ union
 --Modified select statement for Part E to pull from WITH and loop through all values
 
 select distinct 'E',
-		PartE.partClassification partClassification,
-		PartE.partSection partSection,
-		CAST(PartE.partClassAmount AS BIGINT) partAmount,
-		null,
-		null,
-		null,
-		null
+	PartE.partClassification partClassification,
+	PartE.partSection partSection,
+	CAST(PartE.partClassAmount AS BIGINT) partAmount,
+	null,
+	null,
+	null,
+	null
 from PartE PartE
 where (PartE.partClassification in ('1', '2a', '2b', '3a', '3b', '3c') 
 		and PartE.partSection in ('1', '2'))

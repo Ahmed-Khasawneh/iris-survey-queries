@@ -18,6 +18,8 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
+20200702			akhasawneh			ak 20200702		Modify HR report query with standardized view naming/aliasing convention (PF-1533) (Run time 3m 50s)																			
+20200701            jhanicak                            Added new Faculty fields filtering and fixed OccCat case stmts PF-1536 (run time 3m 14s)
 20200527            jhanicak                            Remove reference to IPEDSClientConfig.hrIncludeTenure field PF-1488
 20200427			jhanicak			jh 20200428		Add default values and filter most current record queries on prior query PF-1318
 20200424 	    	akhasawneh 			ak 20200424 	Adding dummy date considerations (PF-1375)
@@ -37,128 +39,128 @@ WITH DefaultValues as (
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
 
 select '1920' surveyYear, 
-        'HR1' surveyId,
-		CAST('2019-11-01' AS TIMESTAMP) asOfDate,
-		CAST('2018-11-01' AS TIMESTAMP) newHireStartDate,
-		CAST('2019-10-31' AS TIMESTAMP) newHireEndDate,
-		'N' hrIncludeSecondarySalary, --Y = Yes, N = No
-		'M' genderForUnknown, --M = Male, F = Female
-		'F' genderForNonBinary  --M = Male, F = Female
+	'HR1' surveyId,
+	CAST('2019-11-01' AS TIMESTAMP) asOfDate,
+	CAST('2018-11-01' AS TIMESTAMP) newHireStartDate,
+	CAST('2019-10-31' AS TIMESTAMP) newHireendDate,
+	'N' hrIncludeSecondarySalary, --Y = Yes, N = No
+	'M' genderForUnknown, --M = Male, F = Female
+	'F' genderForNonBinary  --M = Male, F = Female
 
 --Use for testing internally only
 /*
 select '1516' surveyYear, 
-        'HR1' surveyId,
-		CAST('2015-11-01' AS TIMESTAMP) asOfDate,
-		CAST('2014-11-01' AS TIMESTAMP) newHireStartDate,
-		CAST('2015-10-31' AS TIMESTAMP) newHireEndDate,
-		'N' hrIncludeSecondarySalary, --Y = Yes, N = No
-		'M' genderForUnknown, --M = Male, F = Female
-		'F' genderForNonBinary  --M = Male, F = Female
+	'HR1' surveyId,
+	CAST('2015-11-01' AS TIMESTAMP) asOfDate,
+	CAST('2014-11-01' AS TIMESTAMP) newHireStartDate,
+	CAST('2015-10-31' AS TIMESTAMP) newHireendDate,
+	'N' hrIncludeSecondarySalary, --Y = Yes, N = No
+	'M' genderForUnknown, --M = Male, F = Female
+	'F' genderForNonBinary  --M = Male, F = Female
 */
 ),
 
-ConfigPerAsOfDate as (
+ClientConfigMCR as (
 -- Pulls client reporting preferences from the IPEDSClientConfig entity. 
 
 --jh 20200428 rewrote and added default fields
 
 select ConfigLatest.surveyYear surveyYear,
-			ConfigLatest.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-			ConfigLatest.genderForUnknown genderForUnknown,
-			ConfigLatest.genderForNonBinary genderForNonBinary,
-			ConfigLatest.surveyId surveyId,
-		    ConfigLatest.asOfDate asOfDate,
-		    ConfigLatest.newHireStartDate newHireStartDate,
-		    ConfigLatest.newHireEndDate newHireEndDate
+	ConfigLatest.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+	ConfigLatest.genderForUnknown genderForUnknown,
+	ConfigLatest.genderForNonBinary genderForNonBinary,
+	ConfigLatest.surveyId surveyId,
+	ConfigLatest.asOfDate asOfDate,
+	ConfigLatest.newHireStartDate newHireStartDate,
+	ConfigLatest.newHireendDate newHireendDate
 from (
-		select config.surveyCollectionYear surveyYear,
-				nvl(config.hrIncludeSecondarySalary, defaultValues.hrIncludeSecondarySalary) hrIncludeSecondarySalary,
-				nvl(config.genderForUnknown, defaultValues.genderForUnknown) genderForUnknown,
-				nvl(config.genderForNonBinary, defaultValues.genderForNonBinary) genderForNonBinary,
-				defaultValues.surveyId surveyId,
-		        defaultValues.asOfDate asOfDate,
-		        defaultValues.newHireStartDate newHireStartDate,
-		        defaultValues.newHireEndDate newHireEndDate,
-		        row_number() over (
-					partition by
-			config.surveyCollectionYear
-					order by
-						config.recordActivityDate desc
-				) configRn
-    from IPEDSClientConfig config
-			cross join DefaultValues defaultValues
-		where config.surveyCollectionYear = defaultValues.surveyYear
+	select clientconfigENT.surveyCollectionYear surveyYear,
+		NVL(clientconfigENT.hrIncludeSecondarySalary, defvalues.hrIncludeSecondarySalary) hrIncludeSecondarySalary,
+		NVL(clientconfigENT.genderForUnknown, defvalues.genderForUnknown) genderForUnknown,
+		NVL(clientconfigENT.genderForNonBinary, defvalues.genderForNonBinary) genderForNonBinary,
+		defvalues.surveyId surveyId,
+		defvalues.asOfDate asOfDate,
+		defvalues.newHireStartDate newHireStartDate,
+		defvalues.newHireendDate newHireendDate,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				clientconfigENT.surveyCollectionYear
+			ORDER BY
+				clientconfigENT.recordActivityDate DESC
+		) configRn
+	from IPEDSClientConfig clientconfigENT
+		cross join DefaultValues defvalues
+	where clientconfigENT.surveyCollectionYear = defvalues.surveyYear
 
-union
+	union
 
 -- Defaults config information to avoid IRIS validator errors if an applicable 'IPEDSClientConfig' record is not present. 
-        select defaultValues.surveyYear surveyYear,
-				defaultValues.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-				defaultValues.genderForUnknown genderForUnknown,
-				defaultValues.genderForNonBinary genderForNonBinary,
-				defaultValues.surveyId surveyId,
-		        defaultValues.asOfDate asOfDate,
-		        defaultValues.newHireStartDate newHireStartDate,
-		        defaultValues.newHireEndDate newHireEndDate,
-				1 configRn
-        from DefaultValues defaultValues
-		where defaultValues.surveyYear not in (select config.surveyCollectionYear
-												from IPEDSClientConfig config
-												where config.surveyCollectionYear = defaultValues.surveyYear)
-		) ConfigLatest
+	select defvalues.surveyYear surveyYear,
+		defvalues.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+		defvalues.genderForUnknown genderForUnknown,
+		defvalues.genderForNonBinary genderForNonBinary,
+		defvalues.surveyId surveyId,
+		defvalues.asOfDate asOfDate,
+		defvalues.newHireStartDate newHireStartDate,
+		defvalues.newHireendDate newHireendDate,
+		1 configRn
+	from DefaultValues defvalues
+	where defvalues.surveyYear not in (select clientconfigENT.surveyCollectionYear
+										from IPEDSClientConfig clientconfigENT
+										where clientconfigENT.surveyCollectionYear = defvalues.surveyYear)
+	) ConfigLatest
 where ConfigLatest.configRn = 1
 ),
 
-ReportingDates as (
+ReportingPeriodMCR as (
 --Returns client specified reporting period for HR reporting and defaults to IPEDS specified date range if not otherwise defined 
 
 --jh 20200428 rewrote and added Config fields
 
 select surveyYear surveyYear,
-		asOfDate asOfDate,
-		newHireStartDate newHireStartDate,
-		newHireEndDate newHireEndDate,
-		hrIncludeSecondarySalary hrIncludeSecondarySalary,
-		genderForUnknown genderForUnknown,
-		genderForNonBinary genderForNonBinary
+	asOfDate asOfDate,
+	newHireStartDate newHireStartDate,
+	newHireendDate newHireendDate,
+	hrIncludeSecondarySalary hrIncludeSecondarySalary,
+	genderForUnknown genderForUnknown,
+	genderForNonBinary genderForNonBinary
 from (
-	select ReportPeriod.surveyCollectionYear surveyYear,
-			nvl(ReportPeriod.asOfDate, defaultValues.asOfDate) asOfDate,
-			nvl(ReportPeriod.reportingDateStart, defaultValues.newHireStartDate) newHireStartDate,
-			nvl(ReportPeriod.reportingDateEnd, defaultValues.newHireEndDate) newHireEndDate,
-			defaultValues.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-			defaultValues.genderForUnknown genderForUnknown,
-			defaultValues.genderForNonBinary genderForNonBinary,
-			row_number() over (
-				partition by
-					reportPeriod.surveyCollectionYear
-				order by
-					reportPeriod.recordActivityDate desc
-			) reportPeriodRn
-	from ConfigPerAsOfDate defaultValues
-		cross join IPEDSReportingPeriod ReportPeriod
-	where reportPeriod.surveyCollectionYear = defaultValues.surveyYear
-		and reportPeriod.surveyId like defaultValues.surveyId
+	select repperiodENT.surveyCollectionYear surveyYear,
+		NVL(repperiodENT.asOfDate, clientconfig.asOfDate) asOfDate,
+		NVL(repperiodENT.reportingDateStart, clientconfig.newHireStartDate) newHireStartDate,
+		NVL(repperiodENT.reportingDateend, clientconfig.newHireendDate) newHireendDate,
+		clientconfig.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+		clientconfig.genderForUnknown genderForUnknown,
+		clientconfig.genderForNonBinary genderForNonBinary,
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				repperiodENT.surveyCollectionYear
+			ORDER BY
+				repperiodENT.recordActivityDate DESC
+		) repperiodRn
+	from ClientConfigMCR clientconfig
+		cross join IPEDSReportingPeriod repperiodENT
+	where repperiodENT.surveyCollectionYear = clientconfig.surveyYear
+		and repperiodENT.surveyId like clientconfig.surveyId
 	
 	union
 	
-	select defValues.surveyYear surveyYear,
-			defValues.asOfDate asOfDate,
-			defValues.newHireStartDate newHireStartDate,
-			defValues.newHireEndDate newHireEndDate,
-			defValues.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-			defValues.genderForUnknown genderForUnknown,
-			defValues.genderForNonBinary genderForNonBinary,
-			1 reportPeriodRn
-	from ConfigPerAsOfDate defValues
-		where defValues.surveyYear not in (select reportPeriod.surveyCollectionYear
-											from ConfigPerAsOfDate defaultValues
-												cross join IPEDSReportingPeriod reportPeriod
-											where reportPeriod.surveyCollectionYear = defaultValues.surveyYear
-												and reportPeriod.surveyId like defaultValues.surveyId)
-    )
-where reportPeriodRn = 1
+	select clientconfig.surveyYear surveyYear,
+		clientconfig.asOfDate asOfDate,
+		clientconfig.newHireStartDate newHireStartDate,
+		clientconfig.newHireendDate newHireendDate,
+		clientconfig.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+		clientconfig.genderForUnknown genderForUnknown,
+		clientconfig.genderForNonBinary genderForNonBinary,
+		1 repperiodRn
+	from ClientConfigMCR clientconfig
+		where clientconfig.surveyYear not in (select repperiodENT.surveyCollectionYear
+											  from ClientConfigMCR clientconfig
+												cross join IPEDSReportingPeriod repperiodENT
+											  where repperiodENT.surveyCollectionYear = clientconfig.surveyYear
+												and repperiodENT.surveyId like clientconfig.surveyId)
+	)
+where repperiodRn = 1
 ),
 
 /*****
@@ -166,190 +168,197 @@ BEGIN SECTION - Most Recent Records
 The views below pull the most recent records based on activity date and other fields, as required
 *****/
 
-EmployeePerAsOfDate AS (
+EmployeeMCR AS (
 select *
 from (
---jh 20200428 added ReportingDates and Config fields
-    select employee.*,
-		ReportingDates.asOfDate asOfDate,
-		ReportingDates.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-		ReportingDates.genderForUnknown genderForUnknown,
-		ReportingDates.genderForNonBinary genderForNonBinary,
---jh 20200123 added isNewHire and isCurrentEmployee fields here in order to remove ReportingDates from EmployeeBase
-            CASE WHEN (employee.hireDate >= ReportingDates.newHireStartDate
-                        and employee.hireDate <= ReportingDates.newHireEndDate)
-                        THEN 1 
-                 ELSE null 
-            END isNewHire,
-        CASE WHEN ((employee.terminationDate is null) 
-					or (employee.terminationDate > ReportingDates.asOfDate
-                    and employee.hireDate <= ReportingDates.asOfDate)) THEN 1 
-			 ELSE null 
-		END isCurrentEmployee,
+--jh 20200428 added ReportingPeriodMCR and Config fields
+	select empENT.*,
+		repperiod.asOfDate asOfDate,
+		repperiod.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+		repperiod.genderForUnknown genderForUnknown,
+		repperiod.genderForNonBinary genderForNonBinary,
+--jh 20200123 added isNewHire and isCurrentEmployee fields here in order to remove repperiod from EmployeeBase
+		case when (empENT.hireDate >= repperiod.newHireStartDate
+                        and empENT.hireDate <= repperiod.newHireendDate)
+                        then 1 
+                 else null 
+            end isNewHire,
+        case when ((empENT.terminationDate is null) 
+					or (empENT.terminationDate > repperiod.asOfDate
+                    and empENT.hireDate <= repperiod.asOfDate)) then 1 
+			 else null 
+		end isCurrentEmployee,
 		ROW_NUMBER() OVER (
-		PARTITION BY
-			employee.personId
-		ORDER BY
-			employee.recordActivityDate DESC
-	) employeeRn
-    from ReportingDates ReportingDates
+			PARTITION BY
+				empENT.personId
+			ORDER BY
+				empENT.recordActivityDate DESC
+		) empRn
+    from ReportingPeriodMCR repperiod
 -- ak 20200424 Adding dummy date considerations (PF-1375).
-		inner join Employee employee 
-			on ((employee.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and employee.recordActivityDate <= ReportingDates.asOfDate)
-			        or employee.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-    where ((employee.terminationDate is null) -- all non-terminated employees
-		or (employee.hireDate BETWEEN ReportingDates.newHireStartDate 
-			and ReportingDates.newHireEndDate) -- new hires between Nov 1 and Oct 31
-			or (employee.terminationDate > ReportingDates.asOfDate
-				and employee.hireDate <= ReportingDates.asOfDate)) -- employees terminated after the as-of date
---and employee.employeeStatus = 'Active'
-            and employee.isIpedsReportable = 1
+		inner join Employee empENT 
+			on ((empENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and empENT.recordActivityDate <= repperiod.asOfDate
+                and empENT.employeeStatus = 'Active')
+			        or empENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
+    where ((empENT.terminationDate is null) -- all non-terminated employees
+			or (empENT.hireDate BETWEEN repperiod.newHireStartDate 
+				and repperiod.newHireendDate) -- new hires between Nov 1 and Oct 31
+			or (empENT.terminationDate > repperiod.asOfDate
+				and empENT.hireDate <= repperiod.asOfDate)) -- employees terminated after the as-of date
+            and empENT.isIpedsReportable = 1
     )
-where employeeRn = 1
+where empRn = 1
 ),
 
-PrimaryJobPerAsOfDate AS (
+EmployeeAssignmentMCR AS (
 select *
 from (
-    select job.*,
-		employee.asOfDate asOfDate,
-        row_number() over (
-					partition by
-						job.personId,
-						job.position,
-						job.suffix
-					order by
-						job.recordActivityDate desc
-         ) jobRn
---jh 20200428 filter on records in EmployeePerAsOfDate and removed ReportingDates since needed fields have been added to EmployeePerAsOfDate
-    from EmployeePerAsOfDate employee
+    select empassignENT.*,
+		emp.asOfDate asOfDate,
+        ROW_NUMBER() OVER (
+			PARTITION BY
+				empassignENT.personId,
+				empassignENT.position,
+				empassignENT.suffix
+			ORDER BY
+				empassignENT.recordActivityDate DESC
+		) jobRn
+--jh 20200428 filter on records in EmployeeMCR and removed ReportingDates since needed fields have been added to EmployeeMCR
+    from EmployeeMCR emp
 -- ak 20200423 Adding dummy date considerations (PF-1375).
-		inner join EmployeeAssignment job on employee.personId = job.personId
-			and ((job.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and job.recordActivityDate <= employee.asOfDate)
-			        or job.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-			and job.assignmentStartDate <= employee.asOfDate
-			and (job.assignmentEndDate is null 
-				or job.assignmentEndDate >= employee.asOfDate)
-			and job.isUndergradStudent = 0
-			and job.isWorkStudy = 0
-			and job.isTempOrSeasonal = 0
-			and job.isIpedsReportable = 1
-			and job.assignmentType = 'Primary'
+		inner join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
+			and ((empassignENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and empassignENT.recordActivityDate <= emp.asOfDate
+                and empassignENT.assignmentStatus = 'Active')
+			        or empassignENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
+			and empassignENT.assignmentStartDate <= emp.asOfDate
+			and (empassignENT.assignmentendDate is null 
+				or empassignENT.assignmentendDate >= emp.asOfDate)
+			and empassignENT.isUndergradStudent = 0
+			and empassignENT.isWorkStudy = 0
+			and empassignENT.isTempOrSeasonal = 0
+			and empassignENT.isIpedsReportable = 1
+			and empassignENT.assignmentType = 'Primary'
   )
 where jobRn = 1
 ),
 
-PersonPerAsOfDate AS (
+PersonMCR AS (
 select *
 from (
-    select person.*,
+    select personENT.*,
         ROW_NUMBER() OVER (
             PARTITION BY
-                person.personId
+                personENT.personId
             ORDER BY
-                person.recordActivityDate DESC
-            ) personRn
---jh 20200428 filter on records in EmployeePerAsOfDate and removed ReportingDates since needed fields have been added to EmployeePerAsOfDate
-    from EmployeePerAsOfDate employee
+                personENT.recordActivityDate DESC
+		) personRn
+--jh 20200428 filter on records in EmployeeMCR and removed ReportingDates since needed fields have been added to EmployeeMCR
+    from EmployeeMCR employee
 -- ak 20200424 Adding dummy date considerations (PF-1375).
-		inner join Person person on employee.personId = person.personId
-			and ((person.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and person.recordActivityDate <= employee.asOfDate)
-			        or person.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-    where person.isIpedsReportable = 1
+		inner join Person personENT on employee.personId = personENT.personId
+			and ((personENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and personENT.recordActivityDate <= employee.asOfDate)
+			        or personENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
+    where personENT.isIpedsReportable = 1
     )
 where personRn = 1
 ),
 
-PositionPerAsOfDate AS (
+EmployeePositionMCR AS (
 select *
 from (
-	select position.*,
+	select empposENT.*,
 		ROW_NUMBER() OVER (
-		PARTITION BY
-			position.position
-		ORDER BY
-			position.startDate DESC,
-			position.recordActivityDate DESC
-        ) positionRn
---jh 20200428 filter on records in PrimaryJobPerAsOfDate and removed ReportingDates since needed fields have been added to PrimaryJobPerAsOfDate
-    from PrimaryJobPerAsOfDate job 
+			PARTITION BY
+				empposENT.position
+			ORDER BY
+				empposENT.startDate DESC,
+				empposENT.recordActivityDate DESC
+        ) empposRn
+--jh 20200428 filter on records in EmployeeAssignmentMCR and removed ReportingDates since needed fields have been added to EmployeeAssignmentMCR
+    from EmployeeAssignmentMCR empassign
 -- ak 20200424 Adding dummy date considerations (PF-1375).
-		inner join EmployeePosition position on job.position = position.position
-			and ((position.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and position.recordActivityDate <= job.asOfDate)
-			        or position.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-			and position.startDate <= job.asOfDate
-			and (position.endDate is null 
-				or position.endDate >= job.asOfDate)
---and position.positionStatus = 'Active'
-			and position.isIpedsReportable = 1
-  )
-where positionRn = 1
+		inner join EmployeePosition empposENT on empassign.position = empposENT.position
+			and ((empposENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and empposENT.recordActivityDate <= empassign.asOfDate
+                and empposENT.positionStatus = 'Active')
+			        or empposENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
+			and empposENT.startDate <= empassign.asOfDate
+			and (empposENT.endDate is null 
+				or empposENT.endDate >= empassign.asOfDate)
+			and empposENT.isIpedsReportable = 1
+	)
+where empposRn = 1
 ),
 
-SecondaryJobSalary AS (
+EmployeeAssignmentMCR_SEC AS (
 select personId personId,
-         SUM(annualSalary) annualSalary
---jh 20200428 filter on records in EmployeePerAsOfDate and removed ReportingDates and ConfigPerAsOfDate since needed fields have been added to EmployeePerAsOfDate
+	SUM(annualSalary) annualSalary
+--jh 20200428 filter on records in EmployeeMCR and removed ReportingDates and ConfigPerAsOfDate since needed fields have been added to EmployeeMCR
 from(
-    select job.*,
-		employee.asOfDate asOfDate,
-        row_number() over (
-					partition by
-						job.personId,
-						job.position,
-						job.suffix
-					order by
-						job.recordActivityDate desc
-         ) jobRn
---jh 20200428 filter on records in EmployeePerAsOfDate and removed ReportingDates since needed fields have been added to EmployeePerAsOfDate
-from EmployeePerAsOfDate employee
+    select empassignENT.*,
+		emp.asOfDate asOfDate,
+        ROW_NUMBER() OVER (
+			PARTITION BY
+				empassignENT.personId,
+				empassignENT.position,
+				empassignENT.suffix
+			ORDER BY
+				empassignENT.recordActivityDate DESC
+         ) empassignRn
+--jh 20200428 filter on records in EmployeeMCR and removed ReportingDates since needed fields have been added to EmployeeMCR
+	from EmployeeMCR emp
 -- ak 20200423 Adding dummy date considerations (PF-1375).
-		inner join EmployeeAssignment job on employee.personId = job.personId 
-			and ((job.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and job.recordActivityDate <= employee.asOfDate)
-			        or job.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 	
-			and job.assignmentStartDate <= employee.asOfDate
-		and (job.assignmentEndDate is null 
-				or job.assignmentEndDate >= employee.asOfDate)
-		and job.isUndergradStudent = 0
-		and job.isWorkStudy = 0
-		and job.isTempOrSeasonal = 0
-			and job.isIpedsReportable = 1
-		and job.assignmentType = 'Secondary'
+		inner join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId 
+			and ((empassignENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and empassignENT.recordActivityDate <= emp.asOfDate
+				and empassignENT.assignmentStatus = 'Active')
+					or empassignENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 	
+			and empassignENT.assignmentStartDate <= emp.asOfDate
+			and (empassignENT.assignmentendDate is null 
+					or empassignENT.assignmentendDate >= emp.asOfDate)
+			and empassignENT.isUndergradStudent = 0
+			and empassignENT.isWorkStudy = 0
+			and empassignENT.isTempOrSeasonal = 0
+				and empassignENT.isIpedsReportable = 1
+			and empassignENT.assignmentType = 'Secondary'
   )
-where jobRn = 1
+where empassignRn = 1
 group by personId
 ),
 
-FacultyPerAsOfDate AS (
+FacultyMCR AS (
 select *
 from (
-    select faculty.*,
+    select facultyENT.*,
 		ROW_NUMBER() OVER (
-		PARTITION BY
-			faculty.personId
-		ORDER BY
-			faculty.appointmentStartDate DESC,
-			faculty.recordActivityDate DESC
+			PARTITION BY
+				facultyENT.personId,
+				facultyENT.appointmentStartDate,
+				facultyENT.facultyRankStartDate
+			ORDER BY
+				facultyENT.appointmentStartDate DESC,
+				facultyENT.recordActivityDate DESC
           ) facultyRn
---jh 20200428 filter on records in EmployeePerAsOfDate and removed ReportingDates since needed fields have been added to EmployeePerAsOfDate
-    from EmployeePerAsOfDate employee
+--jh 20200428 filter on records in EmployeeMCR and removed ReportingDates since needed fields have been added to EmployeeMCR
+    from EmployeeMCR emp
 -- ak 20200424 Adding dummy date considerations (PF-1375).
-		left join Faculty faculty on employee.personId = faculty.personId
-			and ((faculty.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and faculty.recordActivityDate <= employee.asOfDate)
-			        or faculty.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 		
-			and ((faculty.appointmentDecisionDate is not null
-					and faculty.appointmentDecision = 'Accepted'
-					and (faculty.appointmentStartDate <= employee.asOfDate
-					and (faculty.appointmentEndDate is null 
-						or faculty.appointmentEndDate >= employee.asOfDate)))
-					or (faculty.facultyRank is not null))
-			and faculty.isIpedsReportable = 1
+		left join Faculty facultyENT on emp.personId = facultyENT.personId
+			and ((facultyENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and facultyENT.recordActivityDate <= emp.asOfDate)
+			        or facultyENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 		
+			and ((facultyENT.appointmentDecisionDate is not null
+					and facultyENT.appointmentDecision = 'Accepted'
+                    and facultyENT.appointmentActionDate <= emp.asOfDate
+					and (facultyENT.appointmentStartDate <= emp.asOfDate
+					and (facultyENT.appointmentendDate is null 
+						or facultyENT.appointmentendDate >= emp.asOfDate)))
+					or (facultyENT.facultyRank is not null
+                        and facultyENT.facultyRankStartDate <= emp.asOfDate
+                        and facultyENT.facultyRankActionDate <= emp.asOfDate))
+			and facultyENT.isIpedsReportable = 1
   )
 where facultyRn = 1
 ),
@@ -359,7 +368,7 @@ BEGIN SECTION - Formatting Views
 The views below are used to ensure that records exist for all IPEDS expected values even if the query result set doesn't contain records that meet all value conditions.
 *****/
 
-TenureValues AS (
+TenureFMT AS (
 select * 
 from (
 	VALUES
@@ -373,7 +382,7 @@ from (
 	) tenure (ipedsTenure)
 ),
 
-RegValues AS (
+RaceEthnicityGenderFMT AS (
 select * 
 from (
 	VALUES
@@ -398,7 +407,7 @@ from (
 	) reg (ipedsReg)
 ),
 
-RankValues AS (
+FacultyRankFMT AS (
 select * 
 from (
     VALUES
@@ -412,7 +421,7 @@ from (
 	) rank (ipedsRank)
 ),
 
-MedValues AS (
+MedicalIndFMT AS (
 select * 
 from (
     VALUES
@@ -421,10 +430,10 @@ from (
 	) med (ipedsMed)
 ),
 
-OccCat1Values AS (
+OccupationalCat1FMT AS (
 select * 
 from (
-    VALUES
+	VALUES
 		(1), -- Instructional Staff
 		(2), -- Research Staff
 		(3), -- Public Service Staff
@@ -445,10 +454,10 @@ from (
 	) occCat1 (ipedsOccCat1)
 ),
 
-OccCat2Values AS (
+OccupationalCat2FMT AS (
 select * 
 from (
-    VALUES
+	VALUES
 		(1), -- Research Staff
 		(2), -- Public Service Staff
 		(3), -- Library and Student and Academic Affairs and Other Education Services Occupations (25-4000 + 25-2000 + 25-3000 + 25-9000)
@@ -465,7 +474,7 @@ from (
 	) occCat2 (ipedsOccCat2)
 ),
 
-OccCat3Values AS (
+OccupationalCat3FMT AS (
 select * 
 from (
     VALUES
@@ -495,7 +504,7 @@ from (
 	) occCat3 (ipedsOccCat3)
 ),
 
-OccCat4Values AS (
+OccupationalCat4FMT AS (
 select * 
 from (
     VALUES
@@ -505,7 +514,7 @@ from (
 	) occCat4 (ipedsOccCat4)
 ),
 
-OccCat5Values AS (
+OccupationalCat5FMT AS (
 select * 
 from (
     VALUES
@@ -526,10 +535,10 @@ from (
 	) occCat5 (ipedsOccCat5)
 ),
 
-InstrFuncValues AS (
+InstructionFunctionFMT AS (
 select * 
 from (
-    VALUES
+	VALUES
 		(1), --Exclusively credit
 		(2), --Exclusively not-for-credit
 		(3), --Combined credit/not-for-credit
@@ -537,13 +546,13 @@ from (
 	) instrFunc (ipedsInstrFunc)
 ),
 
-GenderValues AS (
+GenderFMT AS (
 select * 
 from (
     VALUES
 		(1), --Male
 		(2)  --Female
-  ) gender (ipedsGender)
+	) gender (ipedsGender)
 ),
 
 /*****
@@ -551,51 +560,54 @@ BEGIN SECTION - Cohort Creation
 The view below pulls the base cohort based on IPEDS survey requirements and the data model definitions
 *****/
 
-EmployeeBase AS (
-select employee.personId personId,
---jh 20200123 moved the assignment of the isNewHire and isCurrentEmployee fields to EmployeePerAsOfDate
-       employee.isNewHire isNewHire,
-       employee.isCurrentEmployee isCurrentEmployee,
-	job.fullOrPartTimeStatus fullOrPartTimeStatus,
-	employee.isIpedsMedicalOrDental isIpedsMedicalOrDental,
-		case when person.gender = 'Male' then 'M'
-			when person.gender = 'Female' then 'F'
+CohortEMP AS (
+select emp.personId personId,
+--jh 20200123 moved the assignment of the isNewHire and isCurrentEmployee fields to EmployeeMCR
+	emp.isNewHire isNewHire,
+	emp.asOfDate asOfDate,
+	emp.isCurrentEmployee isCurrentEmployee,
+	empassign.fullOrPartTimeStatus fullOrPartTimeStatus,
+	emp.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+	case when person.gender = 'Male' then 'M'
+		when person.gender = 'Female' then 'F'
 --jh 20200428 added config values
-			when person.gender = 'Non-Binary' then employee.genderForNonBinary
-			else employee.genderForUnknown
-		end gender,
---jh 20200428 added ethnicity fields and moved reg field to EmployeeFinal in order to use modified gender values
-        person.isInUSOnVisa isInUSOnVisa,
-        person.isUSCitizen isUSCitizen,
-        person.isHispanic isHispanic,
-        person.isMultipleRaces isMultipleRaces,
+		when person.gender = 'Non-Binary' then emp.genderForNonBinary
+		else emp.genderForUnknown
+	end gender,
+--jh 20200428 added ethnicity fields and moved reg field to refactoremp in order to use modified gender values
+	person.isInUSOnVisa isInUSOnVisa,
+	person.visaStartDate visaStartDate,
+	person.visaendDate visaendDate,
+	person.isUSCitizen isUSCitizen,
+	person.isHispanic isHispanic,
+	person.isMultipleRaces isMultipleRaces,
 	person.ethnicity ethnicity,
-	job.isFaculty isFaculty,
+	empassign.isFaculty isFaculty,
 	faculty.tenureStatus tenureStatus,
 	faculty.nonTenureContractLength nonTenureContractLength,
 	faculty.facultyRank facultyRank,
-	job.position jobPosition,
-	job.assignmentDescription jobDescription,
+	empassign.position jobPosition,
+	empassign.assignmentDescription jobDescription,
 	position.positionDescription positionDescription,
 	position.standardOccupationalCategory ESOC,
 	position.skillClass skillClass,
 	position.positionGroup positionGroup,
 	position.positionClass positionClass,
-	employee.primaryFunction primaryFunction,
-	employee.employeeGroup employeeGroup,
-	job.employeeClass employeeClass,
-        position.federalEmploymentCategory ECIP, 
-	job.annualSalary + nvl(secondJob.annualSalary,0) annualSalary,
-	CASE WHEN employee.primaryFunction != 'None' 
-				and employee.primaryFunction is not null THEN employee.primaryFunction
-		 ELSE position.standardOccupationalCategory 
-	END employeeFunction
-from EmployeePerAsOfDate employee
-	inner join PersonPerAsOfDate person on employee.personId = person.personId
-	inner join PrimaryJobPerAsOfDate job on employee.personId = job.personId
-	left join FacultyPerAsOfDate faculty on employee.personId = faculty.personId
-	left join PositionPerAsOfDate position on job.position = position.position
-	left join SecondaryJobSalary secondJob on employee.personId = secondJob.personId
+	emp.primaryFunction primaryFunction,
+	emp.employeeGroup employeeGroup,
+	empassign.employeeClass employeeClass,
+	position.federalEmploymentCategory ECIP, 
+	empassign.annualSalary + NVL(empassignsec.annualSalary,0) annualSalary,
+	case when emp.primaryFunction != 'None' 
+				and emp.primaryFunction is not null then emp.primaryFunction
+		 else position.standardOccupationalCategory 
+	end employeeFunction
+from EmployeeMCR emp
+	inner join PersonMCR person on emp.personId = person.personId
+	inner join EmployeeAssignmentMCR empassign on emp.personId = empassign.personId
+	left join FacultyMCR faculty on emp.personId = faculty.personId
+	left join EmployeePositionMCR position on empassign.position = position.position
+	left join EmployeeAssignmentMCR_SEC empassignsec on emp.personId = empassignsec.personId
 ),
 
 /*****
@@ -603,184 +615,242 @@ BEGIN SECTION - Cohort Refactoring
 The view below reformats and configures the base cohort fields based on the IPEDS survey specs
 *****/
 
-EmployeeFinal AS (
-select EmployeeBase.personId personId,
-	EmployeeBase.isCurrentEmployee currentEmployee, --1, null
-	EmployeeBase.isNewHire newHire, --1, null
-	EmployeeBase.fullOrPartTimeStatus fullPartInd, --Full Time, Part Time, Other
-	CASE WHEN EmployeeBase.isIpedsMedicalOrDental = 1 THEN 1 ELSE 2 END isMedical, --1, null
-    CASE WHEN EmployeeBase.gender = 'M' then 
+CohortRefactorEMP AS (
+select cohortemp.personId personId,
+	cohortemp.isCurrentEmployee currentEmployee, --1, null
+	cohortemp.isNewHire newHire, --1, null
+	cohortemp.fullOrPartTimeStatus fullPartInd, --Full Time, Part Time, Other
+	case when cohortemp.isIpedsMedicalOrDental = 1 then 1 else 2 end isMedical, --1, null
+	case when cohortemp.gender = 'M' then 
 --ak 20200423 (PF-1441) Modification to use 'isInUSOnVisa' and 'isUSCitizen' for ethnicity assignments
-                        case when EmployeeBase.isUSCitizen = 1 then 
-		                    (case when EmployeeBase.isHispanic = true then 2 -- 'hispanic/latino'
-	    	                    when EmployeeBase.isMultipleRaces = true then 8 -- 'two or more races'
-			                    when EmployeeBase.ethnicity != 'Unknown' and EmployeeBase.ethnicity is not null
-				                then (case when EmployeeBase.ethnicity = 'Hispanic or Latino' then 2
-                                        when EmployeeBase.ethnicity = 'American Indian or Alaskan Native' then 3
-							            when EmployeeBase.ethnicity = 'Asian' then 4
-							            when EmployeeBase.ethnicity = 'Black or African American' then 5
-							            when EmployeeBase.ethnicity = 'Native Hawaiian or Other Pacific Islander' then 6
-							            when EmployeeBase.ethnicity = 'Caucasian' then 7
+                        case when cohortemp.isUSCitizen = 1 then 
+		                    (case when cohortemp.isHispanic = true then 2 -- 'hispanic/latino'
+	    	                    when cohortemp.isMultipleRaces = true then 8 -- 'two or more races'
+			                    when cohortemp.ethnicity != 'Unknown' and cohortemp.ethnicity is not null
+				                then (case when cohortemp.ethnicity = 'Hispanic or Latino' then 2
+                                        when cohortemp.ethnicity = 'American Indian or Alaskan Native' then 3
+							            when cohortemp.ethnicity = 'Asian' then 4
+							            when cohortemp.ethnicity = 'Black or African American' then 5
+							            when cohortemp.ethnicity = 'Native Hawaiian or Other Pacific Islander' then 6
+							            when cohortemp.ethnicity = 'Caucasian' then 7
 							            else 9 end) 
 			                        else 9 end) -- 'race and ethnicity unknown'
-                                else (case when EmployeeBase.isInUSOnVisa = 1 then 1 -- 'nonresident alien'
+                                else (case when cohortemp.isInUSOnVisa = 1 and cohortemp.asOfDate BETWEEN cohortemp.visaStartDate and cohortemp.visaendDate then 1 -- 'nonresident alien'
                             else 9 end) -- 'race and ethnicity unknown'
 		                end
-            WHEN EmployeeBase.gender = 'F' then
+            when cohortemp.gender = 'F' then
 --ak 20200423 (PF-1441) Modification to use 'isInUSOnVisa' and 'isUSCitizen' for ethnicity assignments
-                        case when EmployeeBase.isUSCitizen = 1 then 
-		                    (case when EmployeeBase.isHispanic = true then 11 -- 'hispanic/latino'
-	    	                    when EmployeeBase.isMultipleRaces = true then 17 -- 'two or more races'
-			                    when EmployeeBase.ethnicity != 'Unknown' and EmployeeBase.ethnicity is not null
-				                then (case when EmployeeBase.ethnicity = 'Hispanic or Latino' then 11
-                                        when EmployeeBase.ethnicity = 'American Indian or Alaskan Native' then 12
-							            when EmployeeBase.ethnicity = 'Asian' then 13
-							            when EmployeeBase.ethnicity = 'Black or African American' then 14
-							            when EmployeeBase.ethnicity = 'Native Hawaiian or Other Pacific Islander' then 15
-							            when EmployeeBase.ethnicity = 'Caucasian' then 16
+                        case when cohortemp.isUSCitizen = 1 then 
+		                    (case when cohortemp.isHispanic = true then 11 -- 'hispanic/latino'
+	    	                    when cohortemp.isMultipleRaces = true then 17 -- 'two or more races'
+			                    when cohortemp.ethnicity != 'Unknown' and cohortemp.ethnicity is not null
+				                then (case when cohortemp.ethnicity = 'Hispanic or Latino' then 11
+                                        when cohortemp.ethnicity = 'American Indian or Alaskan Native' then 12
+							            when cohortemp.ethnicity = 'Asian' then 13
+							            when cohortemp.ethnicity = 'Black or African American' then 14
+							            when cohortemp.ethnicity = 'Native Hawaiian or Other Pacific Islander' then 15
+							            when cohortemp.ethnicity = 'Caucasian' then 16
 							            else 18 end) 
 			                        else 18 end) -- 'race and ethnicity unknown'
-                                else (case when EmployeeBase.isInUSOnVisa = 1 then 10 -- 'nonresident alien'
+                                else (case when cohortemp.isInUSOnVisa = 1 and cohortemp.asOfDate BETWEEN cohortemp.visaStartDate and cohortemp.visaendDate then 1 -- 'nonresident alien'
                             else 18 end) -- 'race and ethnicity unknown'
 		                end
-        END reg,
-	CASE WHEN EmployeeBase.gender = 'M' THEN 1 ELSE 2 END gender,
-	EmployeeBase.employeeFunction employeeFunction,
-	EmployeeBase.ESOC ESOC,
-	EmployeeBase.isFaculty isFaculty,
-	CASE WHEN EmployeeBase.employeeFunction in (
+        end reg,
+	case when cohortemp.gender = 'M' then 1 else 2 end gender,
+	cohortemp.employeeFunction employeeFunction,
+	cohortemp.ESOC ESOC,
+	cohortemp.isFaculty isFaculty,
+	case when cohortemp.employeeFunction in (
 					'Instruction with Research/Public Service',
 					'Instruction - Credit',
-					'Instruction - Non-Credit',
+					'Instruction - Non-credit',
 					'Instruction - Combined Credit/Non-credit'
-				) THEN 1
-		ELSE null
-	END isInstructional,
-	EmployeeBase.tenureStatus tenureStatus,
-	EmployeeBase.nonTenureContractLength nonTenureContractLength,
-	CASE --WHEN EmployeeBase.tenureStatus = 'tenure' THEN 1
-		 --WHEN EmployeeBase.tenureStatus = 'On tenure Track' THEN 2
-		 WHEN EmployeeBase.nonTenureContractLength = 'Multi-year' THEN 3
-		 WHEN EmployeeBase.nonTenureContractLength = 'Less than Annual' THEN 4
-		 WHEN EmployeeBase.nonTenureContractLength = 'Annual' THEN 5
-		 WHEN EmployeeBase.isFaculty is null THEN 6
-		 WHEN EmployeeBase.nonTenureContractLength = 'Indefinite' THEN 7
-		 ELSE 7 
-	END tenure,
-	CASE WHEN EmployeeBase.facultyRank = 'Professor' THEN 1
-		WHEN EmployeeBase.facultyRank = 'Associate Professor' THEN 2
-		WHEN EmployeeBase.facultyRank = 'Assistant Professor' THEN 3
-		WHEN EmployeeBase.facultyRank = 'Instructor' THEN 4
-		WHEN EmployeeBase.facultyRank = 'Lecturer' THEN 5
-		WHEN EmployeeBase.facultyRank = 'No Academic Rank' THEN 6
-		WHEN EmployeeBase.isFaculty is null THEN 7
-		ELSE 6 
-	END rankCode,
-	EmployeeBase.annualSalary annualSalary,
+				) then 1
+		else null
+	end isInstructional,
+	cohortemp.tenureStatus tenureStatus,
+	cohortemp.nonTenureContractLength nonTenureContractLength,
+	case --when cohortemp.tenureStatus = 'Tenured' then 1
+		--when cohortemp.tenureStatus = 'On Tenure Track' then 2
+		when cohortemp.nonTenureContractLength = 'Multi-year' then 3
+		when cohortemp.nonTenureContractLength = 'Less than Annual' then 4
+		when cohortemp.nonTenureContractLength = 'Annual' then 5
+		when cohortemp.isFaculty is null then 6
+		when cohortemp.nonTenureContractLength = 'Indefinite' then 7
+		else 7 
+	end tenure,
+	case when cohortemp.facultyRank = 'Professor' then 1
+		when cohortemp.facultyRank = 'Associate Professor' then 2
+		when cohortemp.facultyRank = 'Assistant Professor' then 3
+		when cohortemp.facultyRank = 'Instructor' then 4
+		when cohortemp.facultyRank = 'Lecturer' then 5
+		when cohortemp.facultyRank = 'No Academic Rank' then 6
+		when cohortemp.isFaculty is null then 7
+		else 6 
+	end rankCode,
+	cohortemp.annualSalary annualSalary,
 --Occupational Category 1 - All Staff
-	CASE WHEN EmployeeBase.isCurrentEmployee = 1 THEN
-		CASE WHEN EmployeeBase.employeeFunction in ('Instruction with Research/Public Service', 'Instruction - Credit', 'Instruction - Non-Credit', 'Instruction - Combined Credit/Non-credit') THEN 1 -- Instruction
-			WHEN EmployeeBase.employeeFunction = 'Research' THEN 2 --Research
-			WHEN EmployeeBase.employeeFunction = 'Public Service' THEN 3 --Public Service
-			WHEN EmployeeBase.employeeFunction = '25-4010' THEN 4
-            WHEN EmployeeBase.employeeFunction = '25-4020' THEN 5
-            WHEN EmployeeBase.employeeFunction = '25-4030' THEN 6
-            WHEN EmployeeBase.employeeFunction in ('25-2000', '25-3000', '25-9000') THEN 7
-            WHEN EmployeeBase.employeeFunction = '11-0000' THEN 8
-            WHEN EmployeeBase.employeeFunction = '13-0000' THEN 9
-            WHEN EmployeeBase.employeeFunction in ('15-0000', '17-0000', '19-0000') THEN 10
-            WHEN EmployeeBase.employeeFunction in ('21-0000', '23-0000', '27-0000') THEN 11
-            WHEN EmployeeBase.employeeFunction = '29-0000' THEN 12
-            WHEN EmployeeBase.employeeFunction in ('31-0000', '33-0000', '35-0000', '37-0000', '39-0000') THEN 13
-            WHEN EmployeeBase.employeeFunction = '41-0000' THEN 14
-            WHEN EmployeeBase.employeeFunction = '43-0000' THEN 15
-            WHEN EmployeeBase.employeeFunction in ('45-0000', '47-0000', '49-0000') THEN 16
-            WHEN EmployeeBase.employeeFunction in ('51-0000', '53-0000') THEN 17
-			ELSE null 
-            END END occCat1,
+	case when cohortemp.isCurrentEmployee = 1 then
+		case when cohortemp.employeeFunction in ('Instruction with Research/Public Service', 'Instruction - Credit', 'Instruction - Non-credit', 'Instruction - Combined Credit/Non-credit') then 1 
+            when cohortemp.employeeFunction = 'Research' then 2 --Research
+			when cohortemp.employeeFunction = 'Public Service' then 3 --Public Service
+			when cohortemp.employeeFunction like '25-401%' then 4
+			when cohortemp.employeeFunction like '25-402%' then 5
+			when cohortemp.employeeFunction like '25-403%' then 6
+			when cohortemp.employeeFunction like '25-2%' then 7
+            when cohortemp.employeeFunction like '25-3%' then 7
+            when cohortemp.employeeFunction like '25-9%' then 7
+			when cohortemp.employeeFunction like '11-%' then 8
+			when cohortemp.employeeFunction like '13-%' then 9
+			when cohortemp.employeeFunction like '15-%' then 9
+            when cohortemp.employeeFunction like '17-%' then 9
+            when cohortemp.employeeFunction like '19-%' then 10
+			when cohortemp.employeeFunction like '21-%' then 11
+            when cohortemp.employeeFunction like '23-%' then 11
+            when cohortemp.employeeFunction like '27-%' then 11
+			when cohortemp.employeeFunction like '29-%' then 12
+			when cohortemp.employeeFunction like '31-%' then 13
+            when cohortemp.employeeFunction like '33-%' then 13 
+            when cohortemp.employeeFunction like '35-%' then 13 
+            when cohortemp.employeeFunction like '37-%' then 13 
+            when cohortemp.employeeFunction like '39-%' then 13
+			when cohortemp.employeeFunction like '41-%' then 14
+			when cohortemp.employeeFunction like '43-%' then 15
+			when cohortemp.employeeFunction like '45-%' then 16
+            when cohortemp.employeeFunction like '47-%' then 16
+            when cohortemp.employeeFunction like '49-%' then 16
+			when cohortemp.employeeFunction like '51-%' then 17
+            when cohortemp.employeeFunction like '53-%' then 17
+			else null 
+		end end occCat1,
 --Occupational Category 2 - Full time salaries
-	CASE WHEN EmployeeBase.fullOrPartTimeStatus = 'Full Time' and EmployeeBase.isCurrentEmployee = 1 THEN
-		CASE WHEN EmployeeBase.employeeFunction = 'Research' THEN 1 --Research
-			WHEN EmployeeBase.employeeFunction = 'Public Service' THEN 2 --Public Service
-            WHEN EmployeeBase.employeeFunction in ('25-4010', '25-4020', '25-4030', '25-2000', '25-3000', '25-9000') THEN 3
-            WHEN EmployeeBase.employeeFunction = '11-0000' THEN 4
-            WHEN EmployeeBase.employeeFunction = '13-0000' THEN 5
-            WHEN EmployeeBase.employeeFunction in ('15-0000', '17-0000', '19-0000') THEN 6
-            WHEN EmployeeBase.employeeFunction in ('21-0000', '23-0000', '27-0000') THEN 7
-            WHEN EmployeeBase.employeeFunction = '29-0000' THEN 8
-            WHEN EmployeeBase.employeeFunction in ('31-0000', '33-0000', '35-0000', '37-0000', '39-0000') THEN 9
-            WHEN EmployeeBase.employeeFunction = '41-0000' THEN 10
-            WHEN EmployeeBase.employeeFunction = '43-0000' THEN 11
-            WHEN EmployeeBase.employeeFunction in ('45-0000', '47-0000', '49-0000') THEN 12
-            WHEN EmployeeBase.employeeFunction in ('51-0000', '53-0000') THEN 13
-            ELSE null
-            END ELSE null END occCat2,
+	case when cohortemp.fullOrPartTimeStatus = 'Full Time' and cohortemp.isCurrentEmployee = 1 then
+		case when cohortemp.employeeFunction = 'Research' then 1 --Research
+			when cohortemp.employeeFunction = 'Public Service' then 2 --Public Service
+            when cohortemp.employeeFunction like '25-401%' then 3
+			when cohortemp.employeeFunction like '25-402%' then 3
+			when cohortemp.employeeFunction like '25-403%' then 3
+			when cohortemp.employeeFunction like '25-2%' then 3
+            when cohortemp.employeeFunction like '25-3%' then 3
+            when cohortemp.employeeFunction like '25-9%' then 3
+            when cohortemp.employeeFunction like '11-%' then 4
+			when cohortemp.employeeFunction like '13-%' then 5
+			when cohortemp.employeeFunction like '15-%' then 6
+            when cohortemp.employeeFunction like '17-%' then 6
+            when cohortemp.employeeFunction like '19-%' then 6
+			when cohortemp.employeeFunction like '21-%' then 7
+            when cohortemp.employeeFunction like '23-%' then 7
+            when cohortemp.employeeFunction like '27-%' then 7
+            when cohortemp.employeeFunction like '29-%' then 8           
+			when cohortemp.employeeFunction like '31-%' then 9
+            when cohortemp.employeeFunction like '33-%' then 9 
+            when cohortemp.employeeFunction like '35-%' then 9 
+            when cohortemp.employeeFunction like '37-%' then 9 
+            when cohortemp.employeeFunction like '39-%' then 9
+            when cohortemp.employeeFunction like '41-%' then 10
+			when cohortemp.employeeFunction like '43-%' then 11
+			when cohortemp.employeeFunction like '45-%' then 12
+            when cohortemp.employeeFunction like '47-%' then 12
+            when cohortemp.employeeFunction like '49-%' then 12
+			when cohortemp.employeeFunction like '51-%' then 13
+            when cohortemp.employeeFunction like '53-%' then 13
+            else null
+            end else null end occCat2,
 --Occupational Category 3 - Part-time Staff
-	CASE WHEN EmployeeBase.fullOrPartTimeStatus = 'Part Time' and EmployeeBase.isCurrentEmployee = 1 THEN
-		CASE WHEN EmployeeBase.employeeFunction = 'Instruction - Credit' THEN 1 --'Credit'
-			WHEN EmployeeBase.employeeFunction = 'Instruction - Non-Credit' THEN 2 --'NonCredit'
-			WHEN EmployeeBase.employeeFunction = 'Instruction - Combined Credit/Non-credit' THEN 3 --'CombCredNonCred'
-			WHEN EmployeeBase.employeeFunction = 'Instruction with Research/Public Service' THEN 4 --'IRP'
-			WHEN EmployeeBase.employeeFunction = 'Research' THEN 5 --'R'
-			WHEN EmployeeBase.employeeFunction = 'Public Service' THEN 6 --'PS'
-			WHEN EmployeeBase.employeeFunction = '25-4010' THEN 7
-			WHEN EmployeeBase.employeeFunction = '25-4020' THEN 8
-			WHEN EmployeeBase.employeeFunction = '25-4030' THEN 9
-			WHEN EmployeeBase.employeeFunction in ('25-2000', '25-3000', '25-9000') THEN 10
-			WHEN EmployeeBase.employeeFunction = '11-0000' THEN 11
-			WHEN EmployeeBase.employeeFunction = '13-0000' THEN 12
-			WHEN EmployeeBase.employeeFunction in ('15-0000', '17-0000', '19-0000') THEN 13
-			WHEN EmployeeBase.employeeFunction in ('21-0000', '23-0000', '27-0000') THEN 14
-			WHEN EmployeeBase.employeeFunction = '29-0000' THEN 15
-			WHEN EmployeeBase.employeeFunction in ('31-0000', '33-0000', '35-0000', '37-0000', '39-0000') THEN 16
-			WHEN EmployeeBase.employeeFunction = '41-0000' THEN 17
-			WHEN EmployeeBase.employeeFunction = '43-0000' THEN 18
-			WHEN EmployeeBase.employeeFunction in ('45-0000', '47-0000', '49-0000') THEN 19
-			WHEN EmployeeBase.employeeFunction in ('51-0000', '53-0000') THEN 20
-			WHEN EmployeeBase.employeeFunction = 'Graduate Assistant - Teaching' THEN 22 -- Teaching Assistants, Postsecondary (25-9044) , '25-9000'
-			WHEN EmployeeBase.employeeFunction = 'Graduate Assistant - Research' THEN 23 -- Graduate Assistant Research
-			WHEN EmployeeBase.employeeFunction = 'Graduate Assistant - Other' THEN 24
-            END ELSE null 
-	END occCat3,
+	case when cohortemp.fullOrPartTimeStatus = 'Part Time' and cohortemp.isCurrentEmployee = 1 then
+		case when cohortemp.employeeFunction = 'Instruction - Credit' then 1 --'Credit'
+			when cohortemp.employeeFunction = 'Instruction - Non-credit' then 2 --'NonCredit'
+			when cohortemp.employeeFunction = 'Instruction - Combined Credit/Non-credit' then 3 --'CombCredNonCred'
+			when cohortemp.employeeFunction = 'Instruction with Research/Public Service' then 4 --'IRP'
+			when cohortemp.employeeFunction = 'Research' then 5 --'R'
+			when cohortemp.employeeFunction = 'Public Service' then 6 --'PS'
+			when cohortemp.employeeFunction like '25-401%' then 7
+			when cohortemp.employeeFunction like '25-402%' then 8
+			when cohortemp.employeeFunction like '25-403%' then 9            
+			when cohortemp.employeeFunction like '25-2%' then 10
+            when cohortemp.employeeFunction like '25-3%' then 10
+            when cohortemp.employeeFunction like '25-9%' then 10
+            when cohortemp.employeeFunction like '11-%' then 11
+			when cohortemp.employeeFunction like '13-%' then 12
+            when cohortemp.employeeFunction like '15-%' then 13
+            when cohortemp.employeeFunction like '17-%' then 13
+            when cohortemp.employeeFunction like '19-%' then 13
+            when cohortemp.employeeFunction like '21-%' then 14
+            when cohortemp.employeeFunction like '23-%' then 14
+            when cohortemp.employeeFunction like '27-%' then 14
+			when cohortemp.employeeFunction like '29-%' then 15
+            when cohortemp.employeeFunction like '31-%' then 16
+            when cohortemp.employeeFunction like '33-%' then 16 
+            when cohortemp.employeeFunction like '35-%' then 16 
+            when cohortemp.employeeFunction like '37-%' then 16 
+            when cohortemp.employeeFunction like '39-%' then 16
+			when cohortemp.employeeFunction like '41-%' then 17
+			when cohortemp.employeeFunction like '43-%' then 18
+            when cohortemp.employeeFunction like '45-%' then 19
+			when cohortemp.employeeFunction like '47-%' then 19
+            when cohortemp.employeeFunction like '49-%' then 19
+            when cohortemp.employeeFunction like '51-%' then 20
+            when cohortemp.employeeFunction like '53-%' then 20
+			when cohortemp.employeeFunction = 'Graduate Assistant - Teaching' then 22 -- Teaching Assistants, Postsecondary (25-9044) , '25-9000'
+			when cohortemp.employeeFunction = 'Graduate Assistant - Research' then 23 -- Graduate Assistant Research
+			when cohortemp.employeeFunction = 'Graduate Assistant - Other' then 24
+		end else null 
+	end occCat3,
 --Occupational category(4) - graduate assistants
-	CASE 
-		WHEN EmployeeBase.isCurrentEmployee = 1
-			THEN CASE 
-					WHEN EmployeeBase.employeeFunction = 'Graduate Assistant - Teaching' THEN 1 -- Teaching Assistants, Postsecondary (25-9044) , '25-9000'
-					WHEN EmployeeBase.employeeFunction = 'Graduate Assistant - Research' THEN 2 -- Research
-					WHEN EmployeeBase.employeeFunction = 'Graduate Assistant - Other' THEN 3 -- Other
-				END
-	END occCat4,
+	case 
+		when cohortemp.isCurrentEmployee = 1
+			then case 
+					when cohortemp.employeeFunction = 'Graduate Assistant - Teaching' then 1 -- Teaching Assistants, Postsecondary (25-9044) , '25-9000'
+					when cohortemp.employeeFunction = 'Graduate Assistant - Research' then 2 -- Research
+					when cohortemp.employeeFunction = 'Graduate Assistant - Other' then 3 -- Other
+				end
+	end occCat4,
 --Occupational category(5) - new hires
-	CASE WHEN EmployeeBase.fullOrPartTimeStatus = 'Full Time' and EmployeeBase.isNewHire = 1 THEN
-		CASE WHEN EmployeeBase.employeeFunction = 'Research' THEN 2 --Research
-		WHEN EmployeeBase.employeeFunction = 'Public Service' THEN 3 --Public Service
-			WHEN EmployeeBase.employeeFunction in ('25-4010', '25-4020', '25-4030', '25-2000', '25-3000', '25-9000') THEN 4
-			WHEN EmployeeBase.employeeFunction = '11-0000' THEN 5
-			WHEN EmployeeBase.employeeFunction = '13-0000' THEN 6
-			WHEN EmployeeBase.employeeFunction in ('15-0000', '17-0000', '19-0000') THEN 7
-			WHEN EmployeeBase.employeeFunction in ('21-0000', '23-0000', '27-0000') THEN 8
-			WHEN EmployeeBase.employeeFunction = '29-0000' THEN 9
-			WHEN EmployeeBase.employeeFunction in ('31-0000', '33-0000', '35-0000', '37-0000', '39-0000') THEN 10
-			WHEN EmployeeBase.employeeFunction = '41-0000' THEN 11
-			WHEN EmployeeBase.employeeFunction = '43-0000' THEN 12
-			WHEN EmployeeBase.employeeFunction in ('45-0000', '47-0000', '49-0000') THEN 13
-			WHEN EmployeeBase.employeeFunction in ('51-0000', '53-0000') THEN 14
-			ELSE null 
-		END ELSE null END occCat5,
-	CASE WHEN EmployeeBase.ECIP = '12 Month Instructional' THEN 1 ELSE 0 END count12M,
-	CASE WHEN EmployeeBase.ECIP = '11 Month Instructional' THEN 1 ELSE 0 END count11M,
-	CASE WHEN EmployeeBase.ECIP = '10 Month Instructional' THEN 1 ELSE 0 END count10M,
-	CASE WHEN EmployeeBase.ECIP = '9 Month Instructional' THEN 1 ELSE 0 END count9M,
-	CASE WHEN EmployeeBase.ECIP = 'Other Full Time' THEN 1 ELSE 0 END countL9M,
-	CASE WHEN EmployeeBase.ECIP = 'Unreported' THEN 1 ELSE 0 END countOther,
-	CASE WHEN EmployeeBase.ECIP = '12 Month Instructional' THEN EmployeeBase.annualSalary ELSE 0 END sal12M,
-	CASE WHEN EmployeeBase.ECIP = '11 Month Instructional' THEN EmployeeBase.annualSalary ELSE 0 END sal11M,
-	CASE WHEN EmployeeBase.ECIP = '10 Month Instructional' THEN EmployeeBase.annualSalary ELSE 0 END sal10M,
-	CASE WHEN EmployeeBase.ECIP = '9 Month Instructional' THEN EmployeeBase.annualSalary ELSE 0 END sal9M,
-	CASE WHEN EmployeeBase.ECIP = 'Other Full Time' THEN EmployeeBase.annualSalary ELSE 0 END salL9M,
-	CASE WHEN EmployeeBase.ECIP = 'Unreported' THEN EmployeeBase.annualSalary ELSE 0 END salOther
-from EmployeeBase EmployeeBase
+	case when cohortemp.fullOrPartTimeStatus = 'Full Time' and cohortemp.isNewHire = 1 then
+		case when cohortemp.employeeFunction = 'Research' then 2 --Research
+			when cohortemp.employeeFunction = 'Public Service' then 3 --Public Service
+			when cohortemp.employeeFunction like '25-401%' then 4
+			when cohortemp.employeeFunction like '25-402%' then 4
+			when cohortemp.employeeFunction like '25-403%' then 4            
+			when cohortemp.employeeFunction like '25-2%' then 4
+            when cohortemp.employeeFunction like '25-3%' then 4
+            when cohortemp.employeeFunction like '25-9%' then 4
+            when cohortemp.employeeFunction like '11-%' then 5
+			when cohortemp.employeeFunction like '13-%' then 6
+            when cohortemp.employeeFunction like '15-%' then 7
+            when cohortemp.employeeFunction like '17-%' then 7
+            when cohortemp.employeeFunction like '19-%' then 7
+            when cohortemp.employeeFunction like '21-%' then 8
+            when cohortemp.employeeFunction like '23-%' then 8
+            when cohortemp.employeeFunction like '27-%' then 8
+			when cohortemp.employeeFunction like '29-%' then 9
+            when cohortemp.employeeFunction like '31-%' then 10
+            when cohortemp.employeeFunction like '33-%' then 10 
+            when cohortemp.employeeFunction like '35-%' then 10 
+            when cohortemp.employeeFunction like '37-%' then 10 
+            when cohortemp.employeeFunction like '39-%' then 10
+			when cohortemp.employeeFunction like '41-%' then 11
+			when cohortemp.employeeFunction like '43-%' then 12
+            when cohortemp.employeeFunction like '45-%' then 13
+			when cohortemp.employeeFunction like '47-%' then 13
+            when cohortemp.employeeFunction like '49-%' then 13
+            when cohortemp.employeeFunction like '51-%' then 14
+            when cohortemp.employeeFunction like '53-%' then 14
+			else null 
+		end else null end occCat5,
+	case when cohortemp.ECIP = '12 Month Instructional' then 1 else 0 end count12M,
+	case when cohortemp.ECIP = '11 Month Instructional' then 1 else 0 end count11M,
+	case when cohortemp.ECIP = '10 Month Instructional' then 1 else 0 end count10M,
+	case when cohortemp.ECIP = '9 Month Instructional' then 1 else 0 end count9M,
+	case when cohortemp.ECIP = 'Other Full Time' then 1 else 0 end countL9M,
+	case when cohortemp.ECIP = 'Unreported' then 1 else 0 end countOther,
+	case when cohortemp.ECIP = '12 Month Instructional' then cohortemp.annualSalary else 0 end sal12M,
+	case when cohortemp.ECIP = '11 Month Instructional' then cohortemp.annualSalary else 0 end sal11M,
+	case when cohortemp.ECIP = '10 Month Instructional' then cohortemp.annualSalary else 0 end sal10M,
+	case when cohortemp.ECIP = '9 Month Instructional' then cohortemp.annualSalary else 0 end sal9M,
+	case when cohortemp.ECIP = 'Other Full Time' then cohortemp.annualSalary else 0 end salL9M,
+	case when cohortemp.ECIP = 'Unreported' then cohortemp.annualSalary else 0 end salOther
+from CohortEMP cohortemp
 )
 
 /*****
@@ -807,35 +877,35 @@ select 'A1' part,
 	null field10,
 	null field11
 from (
-	select EmployeeFinal.tenure tenure,
-		EmployeeFinal.rankCode rankCode,
-		EmployeeFinal.reg reg,
-		COUNT(EmployeeFinal.personId) totalCount
-    from EmployeeFinal EmployeeFinal
-    where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.isMedical = 2 -- Med = 1, NonMed = 2
-		and EmployeeFinal.fullPartInd = 'Full Time'
-		and EmployeeFinal.isInstructional = 1 
-    group by EmployeeFinal.tenure,
-		EmployeeFinal.rankCode,
-        EmployeeFinal.reg
+	select refactoremp.tenure tenure,
+		refactoremp.rankCode rankCode,
+		refactoremp.reg reg,
+		COUNT(refactoremp.personId) totalCount
+    from CohortRefactorEMP refactoremp
+    where refactoremp.currentEmployee = 1
+		and refactoremp.isMedical = 2 -- Med = 1, NonMed = 2
+		and refactoremp.fullPartInd = 'Full Time'
+		and refactoremp.isInstructional = 1 
+    group by refactoremp.tenure,
+		refactoremp.rankCode,
+        refactoremp.reg
     
     union
     
     select tenure.ipedsTenure,
-		rank.ipedsRank,
-		reg.ipedsReg,
-		0
-    from TenureValues tenure
-		cross join RankValues rank
-		cross join RegValues reg
+            facrank.ipedsRank,
+            raceethngender.ipedsReg,
+            0
+    from TenureFMT tenure
+		cross join FacultyRankFMT facrank
+		cross join RaceEthnicityGenderFMT raceethngender
 )
-where rankCode < 7
-            or (rankCode = 7 
-                and tenure = 6)
+where (rankCode < 7
+	or (rankCode = 7 
+		and tenure = 6))
 group by tenure,
-    	rankCode,
-    	reg
+	rankCode,
+	reg
 
 union all
 
@@ -844,7 +914,7 @@ union all
 
 select 'A2', --part
 	tenure,-- field1
-	CASE WHEN isMedical = 2 THEN 0 ELSE isMedical END, -- Med = 1, NonMed = 2
+	case when isMedical = 2 then 0 else isMedical end, -- Med = 1, NonMed = 2
 	instrucFunction,-- field3
 	SUM(totalCount), -- field4
 	null, -- field5
@@ -855,35 +925,35 @@ select 'A2', --part
 	null, -- field10
 	null -- field11
 from (
-    select EmployeeFinal.tenure tenure,
-		EmployeeFinal.isMedical isMedical,
-		CASE WHEN EmployeeFinal.employeeFunction = 'Instruction - Credit' THEN 1 --'Credit'
-			WHEN EmployeeFinal.employeeFunction = 'Instruction - Non-Credit' THEN 2 --'NonCredit'
-			WHEN EmployeeFinal.employeeFunction = 'Instruction - Combined Credit/Non-credit' THEN 3 --'CombCredNonCred'
-			WHEN EmployeeFinal.employeeFunction = 'Instruction with Research/Public Service' THEN 5 --'IRP'
-		END instrucFunction,
-		COUNT(EmployeeFinal.personId) totalCount
-	from EmployeeFinal EmployeeFinal
-	where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.fullPartInd = 'Full Time'
-		and EmployeeFinal.isInstructional = 1
-	group by EmployeeFinal.tenure,
-		EmployeeFinal.isMedical,
-		EmployeeFinal.employeeFunction
+    select refactoremp.tenure tenure,
+		refactoremp.isMedical isMedical,
+		case when refactoremp.employeeFunction = 'Instruction - Credit' then 1 --'Credit'
+			when refactoremp.employeeFunction = 'Instruction - Non-credit' then 2 --'NonCredit'
+			when refactoremp.employeeFunction = 'Instruction - Combined Credit/Non-credit' then 3 --'CombCredNonCred'
+			when refactoremp.employeeFunction = 'Instruction with Research/Public Service' then 5 --'IRP'
+		end instrucFunction,
+		COUNT(refactoremp.personId) totalCount
+	from CohortRefactorEMP refactoremp
+	where refactoremp.currentEmployee = 1
+		and refactoremp.fullPartInd = 'Full Time'
+		and refactoremp.isInstructional = 1
+	group by refactoremp.tenure,
+		refactoremp.isMedical,
+		refactoremp.employeeFunction
     
 	union
     
 	select tenure.ipedsTenure,
-		med.ipedsMed,
-		instrFunc.ipedsInstrFunc,
+		medind.ipedsMed,
+		instrfunc.ipedsInstrFunc,
 		0
-	from TenureValues tenure
-		cross join MedValues med
-		cross join InstrFuncValues instrFunc
+	from TenureFMT tenure
+		cross join MedicalIndFMT medind
+		cross join InstructionFunctionFMT instrfunc
 )
 group by tenure,
-		isMedical,
-		instrucFunction
+	isMedical,
+	instrucFunction
 
 union all
 
@@ -903,25 +973,25 @@ select 'B1', --part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.occCat1 occCat1,
-		EmployeeFinal.reg reg,
-		COUNT(EmployeeFinal.personId) totalCount
-	from EmployeeFinal EmployeeFinal
-	where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.fullPartInd = 'Full Time'
-		and EmployeeFinal.isInstructional is null
-        and EmployeeFinal.occCat1 > 1
-    group by EmployeeFinal.occCat1,
-		EmployeeFinal.reg
+    select refactoremp.occCat1 occCat1,
+		refactoremp.reg reg,
+		COUNT(refactoremp.personId) totalCount
+    from CohortRefactorEMP refactoremp
+    where refactoremp.currentEmployee = 1
+        and refactoremp.fullPartInd = 'Full Time'
+        and refactoremp.isInstructional is null
+        and refactoremp.occCat1 > 1
+    group by refactoremp.occCat1,
+            refactoremp.reg
     
-	union
+    union
     
-    select occCat1.ipedsOccCat1,
-		reg.ipedsReg,
+    select occcat1.ipedsOccCat1,
+		raceethngender.ipedsReg,
 		0
-    from OccCat1Values occCat1
-		cross join RegValues reg
-    where occCat1.ipedsOccCat1 > 1
+    from OccupationalCat1FMT occcat1
+		cross join RaceEthnicityGenderFMT raceethngender
+    where occcat1.ipedsOccCat1 > 1
 )
 group by occCat1,
         reg
@@ -933,7 +1003,7 @@ union all
 
 select 'B2', -- part
 	tenure, -- field1
-	CASE WHEN isMedical = 2 THEN 0 ELSE isMedical END, -- field2
+	case when isMedical = 2 then 0 else isMedical end, -- field2
 	occCat1, -- field3
 	SUM(totalCount), -- field4
 	null, -- field5
@@ -944,33 +1014,33 @@ select 'B2', -- part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.tenure tenure,
-		EmployeeFinal.isMedical isMedical,
-        EmployeeFinal.occCat1 occCat1,
-        COUNT(EmployeeFinal.personId) totalCount
-	from EmployeeFinal EmployeeFinal
-	where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.fullPartInd = 'Full Time'
-        and EmployeeFinal.isInstructional is null
-        and EmployeeFinal.occCat1 between 2 and 12
-	group by EmployeeFinal.tenure, 
-		EmployeeFinal.isMedical,
-		EmployeeFinal.occCat1
+	select refactoremp.tenure tenure,
+		refactoremp.isMedical isMedical,
+		refactoremp.occCat1 occCat1,
+		COUNT(refactoremp.personId) totalCount
+	from CohortRefactorEMP refactoremp
+	where refactoremp.currentEmployee = 1
+		and refactoremp.fullPartInd = 'Full Time'
+        and refactoremp.isInstructional is null
+        and refactoremp.occCat1 BETWEEN 2 and 12
+	group by refactoremp.tenure, 
+		refactoremp.isMedical,
+		refactoremp.occCat1
 
-  union all
+	union all
 
 	select tenure.ipedsTenure,
-		med.ipedsMed,
-        occCat1.ipedsOccCat1,
+		medind.ipedsMed,
+		occcat1.ipedsOccCat1,
         0
-	from OccCat1Values occCat1
-		cross join TenureValues tenure
-		cross join MedValues med
-	where occCat1.ipedsOccCat1 between 2 and 12
+	from OccupationalCat1FMT occcat1
+		cross join TenureFMT tenure
+		cross join MedicalIndFMT medind
+	where occcat1.ipedsOccCat1 BETWEEN 2 and 12
 )
 group by tenure, 
-		isMedical,
-		occCat1
+	isMedical,
+	occCat1
 
 union all
 
@@ -978,7 +1048,7 @@ union all
 --Full-time non-instructional staff by medical school, and occupational category
 
 select 'B3', -- part
-	CASE WHEN isMedical = 2 THEN 0 ELSE isMedical END, -- field1
+	case when isMedical = 2 then 0 else isMedical end, -- field1
 	occCat1, -- field2
 	SUM(totalCount), -- field3
 	null, -- field4
@@ -990,27 +1060,27 @@ select 'B3', -- part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.occCat1 occCat1,
-		EmployeeFinal.isMedical isMedical,
-        COUNT(EmployeeFinal.personId) totalCount
-	from EmployeeFinal EmployeeFinal
-	where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.fullPartInd = 'Full Time'
-		and EmployeeFinal.isInstructional is null
-        and EmployeeFinal.occCat1 between 13 and 17
-	group by EmployeeFinal.occCat1, EmployeeFinal.isMedical
-	
+	select refactoremp.occCat1 occCat1,
+		refactoremp.isMedical isMedical,
+        COUNT(refactoremp.personId) totalCount
+	from CohortRefactorEMP refactoremp
+	where refactoremp.currentEmployee = 1
+		and refactoremp.fullPartInd = 'Full Time'
+        and refactoremp.isInstructional is null
+        and refactoremp.occCat1 BETWEEN 13 and 17
+	group by refactoremp.occCat1, refactoremp.isMedical
+
 	union
 
-	select occCat1.ipedsOccCat1,
-		med.ipedsMed,
+	select occcat1.ipedsOccCat1,
+		medind.ipedsMed,
         0
-	from OccCat1Values occCat1
-		cross join MedValues med
-	where occCat1.ipedsOccCat1 between 13 and 17
+	from OccupationalCat1FMT occcat1
+		cross join MedicalIndFMT medind
+	where occcat1.ipedsOccCat1 BETWEEN 13 and 17
 )
 group by isMedical,
-    	occCat1
+        occCat1
 
 union all
 
@@ -1030,25 +1100,25 @@ select 'D1', -- part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.occCat1 occCat1,
-		EmployeeFinal.reg reg,
-        COUNT(EmployeeFinal.personId) totalCount
-	from EmployeeFinal EmployeeFinal
-	where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.fullPartInd = 'Part Time'
-		and EmployeeFinal.occCat1 is not null
-	group by EmployeeFinal.occCat1, 
-			EmployeeFinal.reg
+	select refactoremp.occCat1 occCat1,
+		refactoremp.reg reg,
+        COUNT(refactoremp.personId) totalCount
+	from CohortRefactorEMP refactoremp
+	where refactoremp.currentEmployee = 1
+		and refactoremp.fullPartInd = 'Part Time'
+		and refactoremp.occCat1 is not null
+	group by refactoremp.occCat1, 
+			refactoremp.reg
 
 	union
 
-	select occCat1.ipedsOccCat1,
-		reg.ipedsReg,
+	select occcat1.ipedsOccCat1,
+        raceethngender.ipedsReg,
         0
-	from OccCat1Values occCat1
-		cross join RegValues reg
+	from OccupationalCat1FMT occcat1
+		cross join RaceEthnicityGenderFMT raceethngender
 )
-group by occCat1, 
+group by occcat1, 
         reg
 
 union all
@@ -1069,23 +1139,23 @@ select 'D2', -- part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.occCat4 occCat4,
-		EmployeeFinal.reg reg,
-        COUNT(EmployeeFinal.personId) totalCount
-    from EmployeeFinal EmployeeFinal
-    where EmployeeFinal.currentEmployee = 1
-        and EmployeeFinal.occCat4 in (1,2,3)
-    group by EmployeeFinal.occCat4,
-		EmployeeFinal.reg
+    select refactoremp.occCat4 occCat4,
+		refactoremp.reg reg,
+        COUNT(refactoremp.personId) totalCount
+    from CohortRefactorEMP refactoremp
+    where refactoremp.currentEmployee = 1
+        and refactoremp.occCat4 in (1,2,3)
+    group by refactoremp.occCat4,
+            refactoremp.reg
     
     union
     
-	select occCat4.ipedsOccCat4,
-		reg.ipedsReg,
-		0
-	from OccCat4Values occCat4
-		cross join RegValues reg
-    where occCat4.ipedsOccCat4 in (1,2,3)
+    select occcat4.ipedsOccCat4,
+           raceethngender.ipedsReg,
+           0
+    from OccupationalCat4FMT occcat4
+       cross join RaceEthnicityGenderFMT raceethngender
+    where occcat4.ipedsOccCat4 in (1,2,3)
 )
 group by occCat4, 
 		reg
@@ -1097,7 +1167,7 @@ union all
 
 select 'D3', -- part
 	tenure, -- field1
-	CASE WHEN isMedical = 2 THEN 0 ELSE isMedical END, -- field2
+	case when isMedical = 2 then 0 else isMedical end, -- field2
 	occCat3, -- field3
 	SUM(totalCount), -- field4
 	null, -- field5
@@ -1108,32 +1178,32 @@ select 'D3', -- part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.tenure,
-		EmployeeFinal.isMedical isMedical,
-		EmployeeFinal.occCat3 occCat3,
-		COUNT(EmployeeFinal.personId) totalCount
-	from EmployeeFinal EmployeeFinal
-	where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.fullPartInd = 'Part Time'
-		and EmployeeFinal.occCat3 < 16
-	group by EmployeeFinal.tenure,
-              EmployeeFinal.isMedical,
-              EmployeeFinal.occCat3
+	select refactoremp.tenure,
+		refactoremp.isMedical isMedical,
+		refactoremp.occCat3 occCat3,
+		COUNT(refactoremp.personId) totalCount
+	from CohortRefactorEMP refactoremp
+	where refactoremp.currentEmployee = 1
+		and refactoremp.fullPartInd = 'Part Time'
+		and refactoremp.occCat3 < 16
+	group by refactoremp.tenure,
+		refactoremp.isMedical,
+		refactoremp.occCat3
 
     union
     
 	select tenure.ipedsTenure,
-		med.ipedsMed,
+		medind.ipedsMed,
 		occCat3.ipedsOccCat3,
 		0
-	from TenureValues tenure
-		cross join MedValues med
-		cross join OccCat3Values occCat3
-	where occCat3.ipedsOccCat3 < 16
+	from TenureFMT tenure
+		cross join MedicalIndFMT medind
+		cross join OccupationalCat3FMT occcat3
+	where occcat3.ipedsOccCat3 < 16
 )
 group by tenure,
-	isMedical,
-	occCat3
+	    isMedical,
+	    occcat3
 
 union all
 
@@ -1141,7 +1211,7 @@ union all
 --Part-time Non-instructional staff by medical school, and occupational category
 
 select 'D4', -- part
-	CASE WHEN isMedical = 2 THEN 0 ELSE isMedical END,-- field1
+	case when isMedical = 2 then 0 else isMedical end,-- field1
 	occCat3, -- field2
 	SUM(totalCount), -- field3
 	null, -- field4
@@ -1153,28 +1223,28 @@ select 'D4', -- part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.isMedical isMedical,
-		EmployeeFinal.occCat3 occCat3,
-		COUNT(EmployeeFinal.personId) totalCount
-	from EmployeeFinal EmployeeFinal
-	where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.fullPartInd = 'Part Time'
-		and EmployeeFinal.isInstructional is null
-		and EmployeeFinal.occCat3 > 15
-	group by EmployeeFinal.isMedical,
-		EmployeeFinal.occCat3
-	
+	select refactoremp.isMedical isMedical,
+		refactoremp.occCat3 occCat3,
+		COUNT(refactoremp.personId) totalCount
+	from CohortRefactorEMP refactoremp
+	where refactoremp.currentEmployee = 1
+		and refactoremp.fullPartInd = 'Part Time'
+		and refactoremp.isInstructional is null
+		and refactoremp.occCat3 > 15
+	group by refactoremp.isMedical,
+		refactoremp.occCat3
+    
 	union
     
-	select med.ipedsMed,
+	select medind.ipedsMed,
 		occCat3.ipedsOccCat3,
 		0
-	from MedValues med
-		cross join OccCat3Values occCat3
-	where occCat3.ipedsOccCat3 > 15
+	from MedicalIndFMT medind
+		cross join OccupationalCat3FMT occcat3
+	where occcat3.ipedsOccCat3 > 15
 )
 group by isMedical,
-        occCat3
+        occcat3
 
 union all
 
@@ -1199,44 +1269,44 @@ select 'G1',
 	CAST(ROUND(SUM(sal9M), 0) AS BIGINT)  -- field11
 from ( 
 --added Without faculty Status employees to No Academic Rank COUNT per RTI (see comment above)
-	select CASE WHEN EmployeeFinal.rankCode = 7 THEN 6 ELSE EmployeeFinal.rankCode END rankCode,
-		EmployeeFinal.gender gender,
-		SUM(EmployeeFinal.count12M) count12M,
-		SUM(EmployeeFinal.count11M) count11M,
-		SUM(EmployeeFinal.count10M) count10M,
-		SUM(EmployeeFinal.count9M) count9M,
-		SUM(EmployeeFinal.countL9M) countL9M,
-		SUM(EmployeeFinal.sal12M) sal12M,
-		SUM(EmployeeFinal.sal11M) sal11M,
-		SUM(EmployeeFinal.sal10M) sal10M,
-		SUM(EmployeeFinal.sal9M) sal9M
-    from EmployeeFinal EmployeeFinal
-    where EmployeeFinal.currentEmployee = 1
-		and EmployeeFinal.isMedical = 2
-        and EmployeeFinal.fullPartInd = 'Full Time'
-        and EmployeeFinal.isInstructional = 1
-    group by EmployeeFinal.rankCode,
-            EmployeeFinal.gender
+    select case when refactoremp.rankCode = 7 then 6 else refactoremp.rankCode end rankCode,
+		refactoremp.gender gender,
+		SUM(refactoremp.count12M) count12M,
+		SUM(refactoremp.count11M) count11M,
+		SUM(refactoremp.count10M) count10M,
+		SUM(refactoremp.count9M) count9M,
+		SUM(refactoremp.countL9M) countL9M,
+		SUM(refactoremp.sal12M) sal12M,
+		SUM(refactoremp.sal11M) sal11M,
+		SUM(refactoremp.sal10M) sal10M,
+		SUM(refactoremp.sal9M) sal9M
+    from CohortRefactorEMP refactoremp
+    where refactoremp.currentEmployee = 1
+        and refactoremp.isMedical = 2
+        and refactoremp.fullPartInd = 'Full Time'
+        and refactoremp.isInstructional = 1
+    group by refactoremp.rankCode,
+		    refactoremp.gender
 
 	union
 
-    select rank.ipedsRank,
-            gender.ipedsGender,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-	from RankValues rank
-		cross join GenderValues gender
-	where rank.ipedsRank < 7)
+    select facrank.ipedsRank,
+		gender.ipedsGender,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0
+	from FacultyRankFMT facrank
+		cross join GenderFMT gender
+	where facrank.ipedsRank < 7)
 where rankCode is not null
 group by rankCode,
-        gender
+	gender
 
 union all
 
@@ -1256,23 +1326,23 @@ select 'G2', -- part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.occCat2 occCat2,
-		SUM(EmployeeFinal.annualSalary) annualSalary
-    from EmployeeFinal EmployeeFinal
-    where EmployeeFinal.currentEmployee = 1
-        and EmployeeFinal.isMedical = 2
-        and EmployeeFinal.fullPartInd = 'Full Time'
-        and EmployeeFinal.isInstructional  is null
-        and EmployeeFinal.occCat2 is not null
-    group by EmployeeFinal.occCat2
+	select refactoremp.occCat2 occCat2,
+		SUM(refactoremp.annualSalary) annualSalary
+    from CohortRefactorEMP refactoremp
+    where refactoremp.currentEmployee = 1
+		and refactoremp.isMedical = 2
+		and refactoremp.fullPartInd = 'Full Time'
+        and refactoremp.isInstructional is null
+        and refactoremp.occCat2 is not null
+    group by refactoremp.occCat2
     
-	union
+    union
     
-	select occCat2.ipedsOccCat2,
+	select occcat2.ipedsOccCat2,
 		0
-	from OccCat2Values occCat2
+	from OccupationalCat2FMT occcat2
 )
-group by occCat2
+group by occcat2
 
 union all
 
@@ -1292,26 +1362,26 @@ select 'H1', -- part
 	null, -- field10
 	null -- field11
 from (
-    select EmployeeFinal.tenure tenure,
-		EmployeeFinal.reg reg,
-		COUNT(EmployeeFinal.personId) totalCount
-	from EmployeeFinal EmployeeFinal
-	where EmployeeFinal.newHire = 1
-		and EmployeeFinal.fullPartInd = 'Full Time'
-        and EmployeeFinal.isInstructional = 1
-    group by EmployeeFinal.tenure,
-            EmployeeFinal.reg
+	select refactoremp.tenure tenure,
+		refactoremp.reg reg,
+		COUNT(refactoremp.personId) totalCount
+	from CohortRefactorEMP refactoremp
+	where refactoremp.newHire = 1
+		and refactoremp.fullPartInd = 'Full Time'
+        and refactoremp.isInstructional = 1
+	group by refactoremp.tenure,
+		refactoremp.reg
     
     union
     
     select tenure.ipedsTenure,
-        reg.ipedsReg,
-        0
-    from TenureValues tenure
-        cross join RegValues reg
+		raceethngender.ipedsReg,
+		0
+    from TenureFMT tenure
+		cross join RaceEthnicityGenderFMT raceethngender
 )
 group by tenure,
-        reg
+	    reg
 
 union all
 
@@ -1331,24 +1401,24 @@ select 'H2', -- part
 	null, -- field10
 	null -- field11
 from (
-	select EmployeeFinal.occCat5 occCat5,
-		EmployeeFinal.reg reg,
-        COUNT(EmployeeFinal.personId) totalCount
-    from EmployeeFinal EmployeeFinal
-    where EmployeeFinal.newHire = 1
-        and EmployeeFinal.fullPartInd = 'Full Time'
-    group by EmployeeFinal.occCat5,
-            EmployeeFinal.reg
+    select refactoremp.occCat5 occCat5,
+        refactoremp.reg reg,
+        COUNT(refactoremp.personId) totalCount
+    from CohortRefactorEMP refactoremp
+    where refactoremp.newHire = 1
+        and refactoremp.fullPartInd = 'Full Time'
+    group by refactoremp.occCat5,
+            refactoremp.reg
     
     union
     
-    select occCat5.ipedsOccCat5,
-        reg.ipedsReg,
+    select occcat5.ipedsOccCat5,
+        raceethngender.ipedsReg,
         0
-    from OccCat5Values occCat5
-        cross join RegValues reg
+    from OccupationalCat5FMT occcat5
+		cross join RaceEthnicityGenderFMT raceethngender
     )
-group by occCat5,
-	reg
-       
---order by 1, 2, 3, 4
+group by occcat5,
+        reg
+     
+--ORDER BY 1, 2, 3, 4
