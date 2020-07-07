@@ -18,6 +18,9 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
+20200706		akhasawneh				ak 20200706			Added new Person fields visaStartDate and visaEndDate
+															Change curriculumRuleActivityDate to curriculumRuleActionDate in both Major and Degree
+															Changed registrationStatusActionDate to registrationStatusActionDate (PF-1536) -Run time 13m 36s
 20200618		akhasawneh				ak 20200618			Modify FE report query with standardized view naming/aliasing convention (PF-1531) -Run time 13m 06s
 20200611        akhasawneh              ak 20200611         Modified to not reference term code as a numeric indicator of term ordering (PF-1494) -Run time 12m 13s
 20200519		akhasawneh				ak 20200519			Changes for credit hours and FT/PT determination (PF-1480) -Run time 12m 24s
@@ -136,7 +139,8 @@ select ConfigLatest.surveyYear surveyYear,
 	ConfigLatest.censusDateRetSummer censusDateRetSummer,
 	ConfigLatest.partOfTermCode partOfTermCode,
 	ConfigLatest.surveyIdHR surveyIdHR,
-	ConfigLatest.asOfDateHR asOfDateHR
+	ConfigLatest.asOfDateHR asOfDateHR,
+	ConfigLatest.instructionalActivityType instructionalActivityType 
 from (
 	select clientconfigENT.surveyCollectionYear surveyYear,
 		NVL(clientconfigENT.acadOrProgReporter, defvalues.acadOrProgReporter) acadOrProgReporter,
@@ -161,6 +165,7 @@ from (
 		defvalues.partOfTermCode partOfTermCode,
 		defvalues.surveyIdHR surveyIdHR,
 		defvalues.asOfDateHR asOfDateHR,
+		defvalues.instructionalActivityType instructionalActivityType,
 		row_number() over (
 			partition by
 				clientconfigENT.surveyCollectionYear
@@ -522,11 +527,12 @@ from (
 		inner join Registration regENT on repperiod.termCode = regENT.termCode 
 -- ak 20200330 added Registration.partOfTermCode (PF-1253)
 			and regENT.partOfTermCode = repperiod.partOfTermCode
--- ak 20200330 added Registration.registrationStatusDate (PF-1253)
---ak 20200406 Including dummy date changes. (PF-1368)
-			and ((regENT.registrationStatusDate != CAST('9999-09-09' AS TIMESTAMP)
-				and regENT.registrationStatusDate <= repperiod.censusDate)
-					or regENT.registrationStatusDate = CAST('9999-09-09' AS TIMESTAMP))
+-- ak 20200330 added Registration.registrationStatusActionDate  (PF-1253)
+-- ak 20200406 Including dummy date changes. (PF-1368)
+-- ak 20200707 Change registrationStatusDate to registrationStatusActionDate (PF-1536)
+			and ((regENT.registrationStatusActionDate  != CAST('9999-09-09' AS TIMESTAMP)
+				and regENT.registrationStatusActionDate  <= repperiod.censusDate)
+					or regENT.registrationStatusActionDate  = CAST('9999-09-09' AS TIMESTAMP))
 			--and regENT.recordActivityDate <= repperiod.censusDate
 -- ak 20200330 Modified to use 'isEnrolled' field instead of registrationStatus = 'Enrolled'(PF-1253)
 			--and regENT.registrationStatus = 'Enrolled'
@@ -644,14 +650,17 @@ from (
 			partition by
 				majorENT.major
 			order by
+				majorENT.curriculumRuleActionDate desc,
 				majorENT.recordActivityDate desc
 		) majorRn
 	from AcademicTrackMCR acadtrack
 		left join Major majorENT ON majorENT.major = acadtrack.curriculumCode
---ak 20200406 Including dummy date changes. (PF-1368)
+-- ak 20200406 Including dummy date changes. (PF-1368)
+-- ak 20200707 change curriculumRuleActivityDate to curriculumRuleActionDate in both Major and Degree (PF-1536)
+			and majorENT.curriculumRuleActivityDate <= acadtrack.censusDate
 			and ((majorENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and majorENT.recordActivityDate <= acadtrack.censusDate)
-					or majorENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
+				and majorENT.recordActivityDate  <= acadtrack.censusDate)
+					or majorENT.recordActivityDate  = CAST('9999-09-09' AS TIMESTAMP)) 
 			and majorENT.isIpedsReportable = 1
 	where (select clientconfig.reportResidency
 		   from ClientConfigMCR clientconfig) = 'Y'
@@ -675,15 +684,18 @@ from (
 			partition by
 				degreeENT.degree
 			order by
+				degreeENT.curriculumRuleActionDate desc,
 				degreeENT.recordActivityDate desc
 		) degreeRn
 	from AcademicTrackMCR acadtrack
 		inner join ClientConfigMCR clientconfig ON acadTrack.cohortInd = clientconfig.sectionRetFall
 		inner join Degree degreeENT ON degreeENT.degree = acadtrack.degree
 --ak 20200406 Including dummy date changes. (PF-1368)
-			and ((degreeENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and degreeENT.recordActivityDate <= acadtrack.censusDate)
-					or degreeENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
+-- ak 20200707 change curriculumRuleActivityDate to curriculumRuleActionDate in both Major and Degree (PF-1536)
+			and degreeENT.curriculumRuleActivityDate <= acadtrack.censusDate
+			and ((degreeENT.recordActivityDate  != CAST('9999-09-09' AS TIMESTAMP)
+				and degreeENT.recordActivityDate  <= acadtrack.censusDate)
+					or degreeENT.recordActivityDate  = CAST('9999-09-09' AS TIMESTAMP)) 
 			and degreeENT.isIpedsReportable = 1
 --ak 20200611 Adding changes for termCode ordering. (PF-1494)
 		inner join AcadTermOrder termorder
@@ -845,20 +857,20 @@ select reg.cohortInd cohortInd,
 	reg.personId personId,
 	reg.termCode termCode,
 	reg.partOfTermCode partOfTermCode,
-	SUM(case when NVL(course.creditHrs, 0) is not null then 1 else 0 end) totalCourses,
+	COUNT(case when NVL(course.creditHrs, 0) is not null then 1 else 0 end) totalCourses,
 	SUM(NVL(course.creditHrs, 0)) totalHrs,
-	SUM(case when NVL(course.creditHrs, 0) = 0 then 1 else 0 end) totalNonCredCourses,
-	SUM(case when NVL(course.creditHrs, 0) != 0 then 1 else 0 end) totalCredCourses,
-	SUM(case when course.meetingType = 'Online/Distance Learning' then 1 else 0 end) totalDECourses,
-	SUM(case when course.courseLevel = 'Undergrad' then 1 else 0 end) totalUGCourses,
-	SUM(case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end) totalGRCourses,
-	SUM(case when course.courseLevel = 'Postgraduate' then 1 else 0 end) totalPostGRCourses,
-	SUM(case when course.courseLevel = 'Continuing Ed' then 1 else 0 end) totalCECourses,
-	SUM(case when course.isESL = 'Y' then 1 else 0 end) totalESLCourses,
-	SUM(case when course.isRemedial = 'Y' then 1 else 0 end) totalRemCourses,
-	SUM(case when reg.isInternational = 1 then 1 else 0 end) totalIntlCourses,
+	COUNT(case when NVL(course.creditHrs, 0) = 0 then 1 else 0 end) totalNonCredCourses,
+	COUNT(case when NVL(course.creditHrs, 0) != 0 then 1 else 0 end) totalCredCourses,
+	COUNT(case when course.meetingType = 'Online/Distance Learning' then 1 else 0 end) totalDECourses,
+	COUNT(case when course.courseLevel = 'Undergrad' then 1 else 0 end) totalUGCourses,
+	COUNT(case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end) totalGRCourses,
+	COUNT(case when course.courseLevel = 'Postgraduate' then 1 else 0 end) totalPostGRCourses,
+	COUNT(case when course.courseLevel = 'Continuing Ed' then 1 else 0 end) totalCECourses,
+	COUNT(case when course.isESL = 'Y' then 1 else 0 end) totalESLCourses,
+	COUNT(case when course.isRemedial = 'Y' then 1 else 0 end) totalRemCourses,
+	COUNT(case when reg.isInternational = 1 then 1 else 0 end) totalIntlCourses,
 -- ak 20200330 added Registration.crnGradingMode (PF-1253)
-	SUM(case when reg.crnGradingMode = 'Audit' then 1 else 0 end) totalAuditCourses
+	COUNT(case when reg.crnGradingMode = 'Audit' then 1 else 0 end) totalAuditCourses
 from RegistrationMCR reg
 	inner join CourseMCR course on course.termCode = reg.termCode
 		and course.partOfTermCode = reg.partOfTermCode
@@ -946,6 +958,9 @@ from (
 		person.gender gender,
 -- ak 20200421 (PF-1417) Modification to replace 'isInternational' with 'isInUSOnVisa' and 'isUSCitizen'
 		person.isInUSOnVisa isInUSOnVisa,
+-- ak 20200707 Modify the cohort or cohort refactor view to include the visaStartDate and visaEndDate (PF-1536)
+		person.visaStartDate visaStartDate,
+		person.visaEndDate visaEndDate,
 		person.isUSCitizen isUSCitizen,
 		person.isHispanic isHispanic,
 		person.isMultipleRaces isMultipleRaces,
@@ -1097,7 +1112,9 @@ select cohortstu.personId personId,
 					when cohortstu.ethnicity = 'Caucasian' then 7
 					else 9 end) 
 			    else 9 end) -- 'race and ethnicity unknown'
-            else (case when cohortstu.isInUSOnVisa = 1 then 1 -- 'nonresident alien'
+-- ak 20200707 Modify the cohort or cohort refactor view to include the visaStartDate and visaEndDate (PF-1536)
+            else (case when cohortstu.isInUSOnVisa = 1 
+						and cohortstu.censusDate between cohortstu.visaStartDate and cohortstu.visaEndDate then '1' -- 'nonresident alien'
 		else 9 end) -- 'race and ethnicity unknown'
 	end ipedsEthnicity,
 -- ak 20200413 (PF-1371) Mod to move all formatting to the 'Formatting Views'
