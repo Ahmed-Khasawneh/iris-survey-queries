@@ -15,7 +15,7 @@ const S3_REGEX_PARSER = /s3:\/\/([^\/]+)\/?(.*)/;
 
 function santizeFileName(fileName) {
   if (process.platform === 'win32') {
-    return fileName.replace(/[\/\\:]/g, '_');
+    return fileName.replace(/[:]/g, '_');
   }
   return fileName;
 }
