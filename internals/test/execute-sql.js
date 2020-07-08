@@ -13,6 +13,13 @@ const SparkStageManager = require('./spark-stage-manager');
 const OUTPUT_PATH_PARSER = /##OUTPUT##: (s3:\/\/[^\s]+)/;
 const S3_REGEX_PARSER = /s3:\/\/([^\/]+)\/?(.*)/;
 
+function santizeFileName(fileName) {
+  if (process.platform === 'win32') {
+    return fileName.replace(/[\/\\:]/g, '_');
+  }
+  return fileName;
+}
+
 async function getS3Object({ uri, credentials }) {
   const s3 = new AWS.S3({ credentials });
   const { bucket, key } = parseS3Uri(uri);
@@ -298,13 +305,17 @@ async function main() {
     await fs.ensureDir(Path.normalize(`./.spark-logs/${surveyType}`));
     stdOutLogFileId = await fs.open(
       Path.normalize(
-        `./.spark-logs/${surveyType}/${startTimeFormatted}.stdout.txt`,
+        santizeFileName(
+          `./.spark-logs/${surveyType}/${startTimeFormatted}.stdout.txt`,
+        ),
       ),
       'a',
     );
     stdErrLogFileId = await fs.open(
       Path.normalize(
-        `./.spark-logs/${surveyType}/${startTimeFormatted}.stderr.txt`,
+        santizeFileName(
+          `./.spark-logs/${surveyType}/${startTimeFormatted}.stderr.txt`,
+        ),
       ),
       'a',
     );
@@ -350,7 +361,11 @@ async function main() {
 
     await fs.ensureDir(Path.normalize(`./.json-output/${surveyType}`));
     await fs.writeFile(
-      Path.normalize(`./.json-output/${surveyType}/${startTimeFormatted}.json`),
+      Path.normalize(
+        santizeFileName(
+          `./.json-output/${surveyType}/${startTimeFormatted}.json`,
+        ),
+      ),
       JSON.stringify(
         {
           // store s3 output location for reference
@@ -380,7 +395,9 @@ async function main() {
     await fs.ensureDir(Path.normalize(`./.flatfile-output/${surveyType}`));
     await fs.writeFile(
       Path.normalize(
-        `./.flatfile-output/${surveyType}/${startTimeFormatted}.txt`,
+        santizeFileName(
+          `./.flatfile-output/${surveyType}/${startTimeFormatted}.txt`,
+        ),
       ),
       surveyFile,
       'utf8',
