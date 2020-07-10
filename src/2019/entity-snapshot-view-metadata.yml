@@ -1,6 +1,6 @@
 ---
 # ----------------------------------------------------------------------------------------------------------------------
-# DORIS Entity Snapshot View Properties
+# DORIS Entity Snapshot View Properties IPEDS Survey Year 2019-20
 #
 # This file defines the set of DORIS entities to be included in an IPEDS report for a specific survey type.  For each
 # IPEDS survey type, a collection of one or more DORIS entity snapshot view configurations is defined.  Each entity
@@ -23,1515 +23,2349 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2019-20
 # 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
 #
 # ----------------------------------------------------------------------------------------------------------------------
+
 ACADEMIC_LIBRARIES_1:
-  - viewName: FiscalYearCurrent
+# reporting period: fiscal year ending prior to 2019-10-01
+
+  - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: InterlibraryLoanStatisticCurrent
+  - viewName: InterlibraryLoanStatistic
     entityName: InterlibraryLoanStatistic
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: LibraryBranchCurrent
+  - viewName: LibraryBranch
     entityName: LibraryBranch
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: LibraryCirculationStatisticCurrent
+  - viewName: LibraryCirculationStatistic
     entityName: LibraryCirculationStatistic
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: LibraryCollectionStatisticCurrent
+  - viewName: LibraryCollectionStatistic
     entityName: LibraryCollectionStatistic
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: LibraryExpensesCurrent
+  - viewName: LibraryExpenses
     entityName: LibraryExpenses
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: LibraryInventoryCurrent
+  - viewName: LibraryInventory
     entityName: LibraryInventory
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: LibraryItemTransactionCurrent
+  - viewName: LibraryItemTransaction
     entityName: LibraryItemTransaction
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
 COMPLETIONS_1:
-  - viewName: AcademicTermCurrent
+# reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+
+  - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: AcademicTrackCurrent
+  - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: AwardCurrent
+  - viewName: Award
     entityName: Award
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CampusCurrent
+  - viewName: Campus
     entityName: Campus
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: DegreeCurrent
+  - viewName: Degree
     entityName: Degree
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
-
-  - viewName: IPEDSClientConfigCurrent
+      start: 2018-05-01
+      end: 2019-08-01
+      
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
-
-  - viewName: MajorCurrent
+      start: 2018-05-01
+      end: 2019-08-01
+      
+  - viewName: Major
     entityName: Major
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: PersonCurrent
+  - viewName: Person
     entityName: Person
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
 FALL_ENROLLMENT_1:
-  - viewName: AcademicTermCurrent
+# reporting period for Cohort: Fall 2019 and prior summer 
+# reporting period for Retention: Fall 2018 and prior summer
+# reporting period for HR: as of 10/31/19
+
+  - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: AcademicTrackCurrent
+  - viewName: AcademicTermRetention
+    entityName: AcademicTerm
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+      
+  - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CampusCurrent
+  - viewName: AcademicTrackRetention
+    entityName: AcademicTrack
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Campus
     entityName: Campus
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CohortExculusionCurrent
+  - viewName: CampusRetention
+    entityName: Campus
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CohortExclusionRetention
     entityName: CohortExclusion
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2018-05-01
+      end: 2018-12-31
 
-  - viewName: CourseCurrent
+  - viewName: Course
     entityName: Course
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CourseSectionCurrent
+  - viewName: CourseRetention
+    entityName: Course
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CourseSection
     entityName: CourseSection
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CourseSectionScheduleCurrent
+  - viewName: CourseSectionRetention
+    entityName: CourseSection
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: DegreeCurrent
+  - viewName: CourseSectionScheduleRetention
+    entityName: CourseSectionSchedule
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Degree
     entityName: Degree
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: EmployeeCurrent
+  - viewName: DegreeRetention
+    entityName: Degree
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Employee
     entityName: Employee
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeeAssignmentCurrent
+  - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeePositionCurrent
+  - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: InstructionalAssignmentCurrent
+  - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSClientConfigRetention
+    entityName: IPEDSClientConfig
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: MajorCurrent
+  - viewName: IPEDSReportingPeriodRetention
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Major
     entityName: Major
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: PersonCurrent
+  - viewName: MajorRetention
+    entityName: Major
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Person
     entityName: Person
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: RegistrationCurrent
+  - viewName: PersonRetention
+    entityName: Person
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Registration
     entityName: Registration
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: StudentCurrent
+  - viewName: RegistrationRetention
+    entityName: Registration
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Student
     entityName: Student
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: StudentRetention
+    entityName: Student
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
 
 FALL_ENROLLMENT_2:
-  - viewName: AcademicTermCurrent
+# reporting period for Cohort: Fall 2019 and prior summer 
+# reporting period for Retention: Fall 2018 and prior summer
+# reporting period for HR: as of 10/31/19
+
+  - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: AcademicTrackCurrent
+  - viewName: AcademicTermRetention
+    entityName: AcademicTerm
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+      
+  - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CampusCurrent
+  - viewName: AcademicTrackRetention
+    entityName: AcademicTrack
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Campus
     entityName: Campus
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CohortExculusionCurrent
+  - viewName: CampusRetention
+    entityName: Campus
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CohortExclusionRetention
     entityName: CohortExclusion
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2018-05-01
+      end: 2018-12-31
 
-  - viewName: CourseCurrent
+  - viewName: Course
     entityName: Course
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CourseSectionCurrent
+  - viewName: CourseRetention
+    entityName: Course
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CourseSection
     entityName: CourseSection
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CourseSectionScheduleCurrent
+  - viewName: CourseSectionRetention
+    entityName: CourseSection
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: EmployeeCurrent
+  - viewName: CourseSectionScheduleRetention
+    entityName: CourseSectionSchedule
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: DegreeRetention
+    entityName: Degree
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Employee
     entityName: Employee
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeeAssignmentCurrent
+  - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeePositionCurrent
+  - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: InstructionalAssignmentCurrent
+  - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSClientConfigRetention
+    entityName: IPEDSClientConfig
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: MajorCurrent
+  - viewName: IPEDSReportingPeriodRetention
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Major
     entityName: Major
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: PersonCurrent
+  - viewName: MajorRetention
+    entityName: Major
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Person
     entityName: Person
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: RegistrationCurrent
+  - viewName: PersonRetention
+    entityName: Person
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Registration
     entityName: Registration
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: StudentCurrent
+  - viewName: RegistrationRetention
+    entityName: Registration
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Student
     entityName: Student
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
+  - viewName: StudentRetention
+    entityName: Student
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+      
 FALL_ENROLLMENT_3:
-  - viewName: AcademicTermCurrent
+# reporting period for Cohort: Fall 2019 and prior summer 
+# reporting period for Retention: Fall 2018 and prior summer
+# reporting period for HR: as of 10/31/19
+
+  - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: AcademicTrackCurrent
+  - viewName: AcademicTermRetention
+    entityName: AcademicTerm
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+      
+  - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CampusCurrent
+  - viewName: AcademicTrackRetention
+    entityName: AcademicTrack
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Campus
     entityName: Campus
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CohortExculusionCurrent
+  - viewName: CampusRetention
+    entityName: Campus
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CohortExclusionRetention
     entityName: CohortExclusion
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2018-05-01
+      end: 2018-12-31
 
-  - viewName: CourseCurrent
+  - viewName: Course
     entityName: Course
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CourseSectionCurrent
+  - viewName: CourseRetention
+    entityName: Course
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CourseSection
     entityName: CourseSection
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CourseSectionScheduleCurrent
+  - viewName: CourseSectionRetention
+    entityName: CourseSection
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: EmployeeCurrent
+  - viewName: CourseSectionScheduleRetention
+    entityName: CourseSectionSchedule
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: DegreeRetention
+    entityName: Degree
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Employee
     entityName: Employee
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeeAssignmentCurrent
+  - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeePositionCurrent
+  - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: InstructionalAssignmentCurrent
+  - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSClientConfigRetention
+    entityName: IPEDSClientConfig
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: MajorCurrent
+  - viewName: IPEDSReportingPeriodRetention
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Major
     entityName: Major
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: PersonCurrent
+  - viewName: MajorRetention
+    entityName: Major
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Person
     entityName: Person
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: RegistrationCurrent
+  - viewName: PersonRetention
+    entityName: Person
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Registration
     entityName: Registration
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: StudentCurrent
+  - viewName: RegistrationRetention
+    entityName: Registration
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Student
     entityName: Student
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: StudentRetention
+    entityName: Student
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
 
 FALL_ENROLLMENT_4:
-  - viewName: AcademicTermCurrent
+# reporting period for Cohort: Fall 2019 and prior summer 
+# reporting period for Retention: Fall 2018 and prior summer
+# reporting period for HR: as of 10/31/19
+
+  - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: AcademicTrackCurrent
+  - viewName: AcademicTermRetention
+    entityName: AcademicTerm
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+      
+  - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CampusCurrent
+  - viewName: AcademicTrackRetention
+    entityName: AcademicTrack
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Campus
     entityName: Campus
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CohortExculusionCurrent
+  - viewName: CampusRetention
+    entityName: Campus
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CohortExclusionRetention
     entityName: CohortExclusion
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2018-05-01
+      end: 2018-12-31
 
-  - viewName: CourseCurrent
+  - viewName: Course
     entityName: Course
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CourseSectionCurrent
+  - viewName: CourseRetention
+    entityName: Course
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CourseSection
     entityName: CourseSection
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: CourseSectionScheduleCurrent
+  - viewName: CourseSectionRetention
+    entityName: CourseSection
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: EmployeeCurrent
+  - viewName: CourseSectionScheduleRetention
+    entityName: CourseSectionSchedule
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: DegreeRetention
+    entityName: Degree
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Employee
     entityName: Employee
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeeAssignmentCurrent
+  - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeePositionCurrent
+  - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: InstructionalAssignmentCurrent
+  - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSClientConfigRetention
+    entityName: IPEDSClientConfig
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: MajorCurrent
+  - viewName: IPEDSReportingPeriodRetention
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Major
     entityName: Major
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: PersonCurrent
+  - viewName: MajorRetention
+    entityName: Major
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Person
     entityName: Person
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: RegistrationCurrent
+  - viewName: PersonRetention
+    entityName: Person
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Registration
     entityName: Registration
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
-  - viewName: StudentCurrent
+  - viewName: RegistrationRetention
+    entityName: Registration
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+
+  - viewName: Student
     entityName: Student
     tagNames:
-      - Spring
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-05-01
+      end: 2019-12-31
 
+  - viewName: StudentRetention
+    entityName: Student
+    tagNames:
+      - PreFallSummer
+      - Fall
+      - PostSpringSummer
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-12-31
+      
 FINANCE_1:
-  - viewName: ChartOfAccountsCurrent
+# reporting period: fiscal year ending prior to 2019-10-01
+
+  - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: FiscalYearCurrent
+  - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: GeneralLedgerReportingCurrent
+  - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: OperatingLedgerReportingCurrent
+  - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
 FINANCE_2:
-  - viewName: ChartOfAccountsCurrent
+# reporting period: fiscal year ending prior to 2019-10-01
+
+  - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: FiscalYearCurrent
+  - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: GeneralLedgerReportingCurrent
+  - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: OperatingLedgerReportingCurrent
+  - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
 FINANCE_3:
-  - viewName: ChartOfAccountsCurrent
+# reporting period: fiscal year ending prior to 2019-10-01
+
+  - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: FiscalYearCurrent
+  - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: GeneralLedgerReportingCurrent
+  - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: OperatingLedgerReportingCurrent
+  - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
 FINANCE_4:
-  - viewName: ChartOfAccountsCurrent
+# reporting period: fiscal year ending prior to 2019-10-01
+
+  - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: FiscalYearCurrent
+  - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: GeneralLedgerReportingCurrent
+  - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: OperatingLedgerReportingCurrent
+  - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
 FINANCE_5:
-  - viewName: ChartOfAccountsCurrent
+# reporting period: fiscal year ending prior to 2019-10-01
+
+  - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: FiscalYearCurrent
+  - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: GeneralLedgerReportingCurrent
+  - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: OperatingLedgerReportingCurrent
+  - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
 FINANCE_6:
-  - viewName: ChartOfAccountsCurrent
+# reporting period: fiscal year ending prior to 2019-10-01
+
+  - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: FiscalYearCurrent
+  - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: GeneralLedgerReportingCurrent
+  - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
-  - viewName: OperatingLedgerReportingCurrent
+  - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
-      - Spring
+      - FiscalYearLockdown
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-01-01
+      end: 2019-10-01
 
 HUMAN_RESOURCES_1:
-  - viewName: EmployeeCurrent
+# reporting period: as of 10/31/19
+
+  - viewName: Employee
     entityName: Employee
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeeAssignmentCurrent
+  - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeePositionCurrent
+  - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: FacultyCurrent
+  - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: PersonCurrent
+  - viewName: Person
     entityName: Person
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
 HUMAN_RESOURCES_2:
-  - viewName: EmployeeCurrent
+# reporting period: as of 10/31/19
+
+  - viewName: Employee
     entityName: Employee
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeeAssignmentCurrent
+  - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeePositionCurrent
+  - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: FacultyCurrent
+  - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: PersonCurrent
+  - viewName: Person
     entityName: Person
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
 HUMAN_RESOURCES_3:
-  - viewName: EmployeeCurrent
+# reporting period: as of 10/31/19
+
+  - viewName: Employee
     entityName: Employee
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeeAssignmentCurrent
+  - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeePositionCurrent
+  - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: FacultyCurrent
+  - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: PersonCurrent
+  - viewName: Person
     entityName: Person
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
-
+      start: 2019-10-15
+      end: 2019-11-15
+      
 HUMAN_RESOURCES_4:
-  - viewName: EmployeeCurrent
+# reporting period: as of 10/31/19
+
+  - viewName: Employee
     entityName: Employee
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeeAssignmentCurrent
+  - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: EmployeePositionCurrent
+  - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: FacultyCurrent
+  - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
+      start: 2019-10-15
+      end: 2019-11-15
 
-  - viewName: PersonCurrent
+  - viewName: Person
     entityName: Person
     tagNames:
-      - Spring
+      - HRPeriodEnd
     snapshotDateRange:
-      start: 2019-12-09
-      end: 2020-04-07
-
+      start: 2019-10-15
+      end: 2019-11-15
+      
 INSTITUTIONAL_CHARACTERISTICS_1:
-  - viewName: InstitCharDoctorateCurrent
+# reporting period: survey reporting date
+
+  - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
-  - viewName: InstitCharUndergradGradCurrent
+  - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_3:
-  - viewName: InstitCharDoctorateCurrent
+# reporting period: survey reporting date
+
+  - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
-  - viewName: InstitCharUndergradGradCurrent
+  - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_5:
-  - viewName: InstitCharDoctorateCurrent
+# reporting period: survey reporting date
+
+  - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
-  - viewName: InstitCharUndergradGradCurrent
+  - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_7:
-  - viewName: InstitCharDoctorateCurrent
+# reporting period: survey reporting date
+
+  - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
-  - viewName: InstitCharUndergradGradCurrent
+  - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Fall
+      - InstitChar
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2019-08-01
+      end: 2019-10-15
 
 TWELVE_MONTH_ENROLLMENT_1:
-  - viewName: AcademicTermCurrent
+# reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+
+  - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CampusCurrent
+  - viewName: Campus
     entityName: Campus
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CourseCurrent
+  - viewName: Course
     entityName: Course
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CourseSectionCurrent
+  - viewName: CourseSection
     entityName: CourseSection
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CourseSectionScheduleCurrent
+  - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: DegreeCurrent
+  - viewName: Degree
     entityName: Degree
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: PersonCurrent
+  - viewName: Person
     entityName: Person
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: RegistrationCurrent
+  - viewName: Registration
     entityName: Registration
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: StudentCurrent
+  - viewName: Student
     entityName: Student
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
 TWELVE_MONTH_ENROLLMENT_2:
-  - viewName: AcademicTermCurrent
+# reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+
+  - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CampusCurrent
+  - viewName: Campus
     entityName: Campus
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CourseCurrent
+  - viewName: Course
     entityName: Course
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CourseSectionCurrent
+  - viewName: CourseSection
     entityName: CourseSection
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: CourseSectionScheduleCurrent
+  - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: DegreeCurrent
+  - viewName: Degree
     entityName: Degree
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: IPEDSClientConfigCurrent
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: IPEDSReportingPeriodCurrent
+  - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: PersonCurrent
+  - viewName: Person
     entityName: Person
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: RegistrationCurrent
+  - viewName: Registration
     entityName: Registration
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
 
-  - viewName: StudentCurrent
+  - viewName: Student
     entityName: Student
     tagNames:
+      - PreFallSummer
       - Fall
+      - Spring
+      - PostSpringSummer
+      - JuneEnd
     snapshotDateRange:
-      start: 2019-09-09
-      end: 2019-10-14
+      start: 2018-05-01
+      end: 2019-08-01
