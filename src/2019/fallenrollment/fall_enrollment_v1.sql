@@ -75,7 +75,8 @@ select '1920' surveyYear,
 	'Y' feIncludeOptSurveyData, --Y = Yes, N = No
 	'Y' includeNonDegreeAsUG, --Y = Yes, N = No
 	'M' genderForUnknown, --M = Male, F = Female
-	'F' genderForNonBinary  --M = Male, F = Female
+	'F' genderForNonBinary,  --M = Male, F = Female
+    'CR' instructionalActivityType --CR = Credit, CL = Clock, B = Both
 
 --Use for testing internally only
 /*
@@ -102,7 +103,8 @@ select '1516' surveyYear, --testing '1516'
 	'Y' feIncludeOptSurveyData, --Y = Yes, N = No
 	'Y' includeNonDegreeAsUG, --Y = Yes, N = No
 	'M' genderForUnknown, --M = Male, F = Female
-	'F' genderForNonBinary  --M = Male, F = Female
+	'F' genderForNonBinary,  --M = Male, F = Female
+    'CR' instructionalActivityType --CR = Credit, CL = Clock, B = Both
 */
 ),
 
@@ -202,6 +204,7 @@ from (
 		defvalues.partOfTermCode partOfTermCode,
 		defvalues.surveyIdHR surveyIdHR,
 		defvalues.asOfDateHR asOfDateHR, 
+        defvalues.instructionalActivityType instructionalActivityType,
 		1 configRn
 	from DefaultValues defvalues
 	where defvalues.surveyYear not in (select clientconfigENT.surveyCollectionYear
