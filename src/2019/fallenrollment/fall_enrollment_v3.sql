@@ -74,7 +74,8 @@ select '1920' surveyYear,
 	'Y' feIncludeOptSurveyData, --Y = Yes, N = No
 	'Y' includeNonDegreeAsUG, --Y = Yes, N = No
 	'M' genderForUnknown, --M = Male, F = Female
-	'F' genderForNonBinary  --M = Male, F = Female
+	'F' genderForNonBinary,  --M = Male, F = Female
+    'CR' instructionalActivityType --CR = Credit, CL = Clock, B = Both
 
 --Use for testing internally only
 /*
@@ -101,7 +102,8 @@ select '1516' surveyYear, --testing '1516'
 	'Y' feIncludeOptSurveyData, --Y = Yes, N = No
 	'Y' includeNonDegreeAsUG, --Y = Yes, N = No
 	'M' genderForUnknown, --M = Male, F = Female
-	'F' genderForNonBinary  --M = Male, F = Female
+	'F' genderForNonBinary,  --M = Male, F = Female
+    'CR' instructionalActivityType --CR = Credit, CL = Clock, B = Both
 */
 ),
 
@@ -138,7 +140,8 @@ select ConfigLatest.surveyYear surveyYear,
 	ConfigLatest.censusDateRetSummer censusDateRetSummer,
 	ConfigLatest.partOfTermCode partOfTermCode,
 	ConfigLatest.surveyIdHR surveyIdHR,
-	ConfigLatest.asOfDateHR asOfDateHR
+	ConfigLatest.asOfDateHR asOfDateHR,
+	ConfigLatest.instructionalActivityType instructionalActivityType 
 from (
 	select clientconfigENT.surveyCollectionYear surveyYear,
 		NVL(clientconfigENT.acadOrProgReporter, defvalues.acadOrProgReporter) acadOrProgReporter,
@@ -163,6 +166,7 @@ from (
 		defvalues.partOfTermCode partOfTermCode,
 		defvalues.surveyIdHR surveyIdHR,
 		defvalues.asOfDateHR asOfDateHR,
+		defvalues.instructionalActivityType instructionalActivityType,
 		row_number() over (
 			partition by
 				clientconfigENT.surveyCollectionYear
@@ -199,12 +203,13 @@ from (
 		defvalues.partOfTermCode partOfTermCode,
 		defvalues.surveyIdHR surveyIdHR,
 		defvalues.asOfDateHR asOfDateHR, 
+        defvalues.instructionalActivityType instructionalActivityType,
 		1 configRn
 	from DefaultValues defvalues
 	where defvalues.surveyYear not in (select clientconfigENT.surveyCollectionYear
 										from IPEDSClientConfig clientconfigENT
 										where clientconfigENT.surveyCollectionYear = defvalues.surveyYear)
-		) ConfigLatest
+	) ConfigLatest
 where ConfigLatest.configRn = 1
 ),
 

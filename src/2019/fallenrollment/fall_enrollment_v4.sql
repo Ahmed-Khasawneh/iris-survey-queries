@@ -50,7 +50,7 @@ The views below are used to determine the dates, academic terms, academic year, 
 
 WITH DefaultValues as (
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
-/*
+
 select '1920' surveyYear, 
 	CAST('2019-08-01' AS TIMESTAMP) startDateProg,
 	CAST('2019-10-31' AS TIMESTAMP) endDateProg, 
@@ -74,10 +74,11 @@ select '1920' surveyYear,
 	'Y' feIncludeOptSurveyData, --Y = Yes, N = No
 	'Y' includeNonDegreeAsUG, --Y = Yes, N = No
 	'M' genderForUnknown, --M = Male, F = Female
-	'F' genderForNonBinary  --M = Male, F = Female
-*/
---Use for testing internally only
+	'F' genderForNonBinary,  --M = Male, F = Female
+    'CR' instructionalActivityType --CR = Credit, CL = Clock, B = Both
 
+--Use for testing internally only
+/*
 select '1516' surveyYear, --testing '1516'
 	CAST('2015-08-01' AS TIMESTAMP) startDateProg,
 	CAST('2015-10-31' AS TIMESTAMP) endDateProg, 
@@ -101,8 +102,9 @@ select '1516' surveyYear, --testing '1516'
 	'Y' feIncludeOptSurveyData, --Y = Yes, N = No
 	'Y' includeNonDegreeAsUG, --Y = Yes, N = No
 	'M' genderForUnknown, --M = Male, F = Female
-	'F' genderForNonBinary  --M = Male, F = Female
-
+	'F' genderForNonBinary,  --M = Male, F = Female
+    'CR' instructionalActivityType --CR = Credit, CL = Clock, B = Both
+*/
 ),
 
 --jh 20200422 Added default values to ConfigPerAsOfDate and moved before ReportingPeriod
@@ -138,7 +140,8 @@ select ConfigLatest.surveyYear surveyYear,
 	ConfigLatest.censusDateRetSummer censusDateRetSummer,
 	ConfigLatest.partOfTermCode partOfTermCode,
 	ConfigLatest.surveyIdHR surveyIdHR,
-	ConfigLatest.asOfDateHR asOfDateHR
+	ConfigLatest.asOfDateHR asOfDateHR,
+	ConfigLatest.instructionalActivityType instructionalActivityType 
 from (
 	select clientconfigENT.surveyCollectionYear surveyYear,
 		NVL(clientconfigENT.acadOrProgReporter, defvalues.acadOrProgReporter) acadOrProgReporter,
@@ -163,6 +166,7 @@ from (
 		defvalues.partOfTermCode partOfTermCode,
 		defvalues.surveyIdHR surveyIdHR,
 		defvalues.asOfDateHR asOfDateHR,
+		defvalues.instructionalActivityType instructionalActivityType,
 		row_number() over (
 			partition by
 				clientconfigENT.surveyCollectionYear
@@ -173,7 +177,7 @@ from (
 		cross join DefaultValues defvalues
 	where clientconfigENT.surveyCollectionYear = defvalues.surveyYear
 		
-		union
+	union
 
 -- Defaults config information to avoid IRIS validator errors if an applicable 'IPEDSClientConfig' record is not present. 
 	select defvalues.surveyYear surveyYear,
@@ -199,6 +203,7 @@ from (
 		defvalues.partOfTermCode partOfTermCode,
 		defvalues.surveyIdHR surveyIdHR,
 		defvalues.asOfDateHR asOfDateHR, 
+        defvalues.instructionalActivityType instructionalActivityType,
 		1 configRn
 	from DefaultValues defvalues
 	where defvalues.surveyYear not in (select clientconfigENT.surveyCollectionYear
