@@ -9,6 +9,7 @@ CREATED:        20200609
 SECTIONS:
 Reporting Dates/Terms
 Most Recent Records 
+Transformations
 Cohort Creation
 Formatting Views
 Survey Formatting
@@ -16,6 +17,10 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
+20200715            jhanicak                                    Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views (PF-1533) Run time 3m 53s
+20200713			akhasawneh				ak 20200713 		Modification to course/hour counts (PF-1553) -Run time 2m 23s
+																	Added course section status filter. 
+																	Added course status filter.
 20200706            jhanicak                                    Added new IPEDSClientConfig fields tmAnnualDPPCreditHoursFTE, instructionalActivityType, 
                                                                     icOfferUndergradAwardLevel, icOfferGraduateAwardLevel, icOfferDoctorAwardLevel PF-1536
                                                                 Added new Person fields visaStartDate and visaEndDate PF-1536
@@ -448,7 +453,7 @@ select personId,
 	isInternational,    
 	crnGradingMode,                    
 	crn,
-	crnLevel, 
+	crnLevel,
 	includeNonDegreeAsUG,
 	genderForUnknown,
 	genderForNonBinary,
@@ -534,37 +539,27 @@ from (
 where studRn = 1
 ),
 
-StudentLevelRefactor as (
--- Included to get the Max Student level for the Reporting Period as a whole. 
-
-select student.personId,  
-	max(student.stuLevelCalc) maxStuLevelCalcA
-from StudentMCR student
-group by student.personId 
-), 
-
 CourseSectionMCR as (
 --Included to get enrollment hours of a CRN
 
-select termCode,
-	partOfTermCode,
-	crn,
-	section,
-	subject,
-	courseNumber,
-	crnLevel,
-	censusDate,
-	enrollmentHours,
-	isClockHours
-from ( 
+select distinct reg2.termCode,
+	reg2.partOfTermCode,
+	reg2.crn,
+	CourseSect.section,
+	CourseSect.subject,
+	CourseSect.courseNumber,
+	reg2.crnLevel,
+	reg2.censusDate,
+	CourseSect.enrollmentHours,
+	CourseSect.isClockHours
+from RegistrationMCR reg2 
+    left join (
     select distinct coursesectENT.termCode termCode,
 		coursesectENT.partOfTermCode partOfTermCode,
 		coursesectENT.crn crn,
 		coursesectENT.section section,
 		coursesectENT.subject subject,
 		coursesectENT.courseNumber courseNumber,
-		reg.crnLevel crnLevel,
-		reg.censusDate censusDate,
 		coursesectENT.recordActivityDate recordActivityDate,
 		CAST(coursesectENT.enrollmentHours as decimal(2,0)) enrollmentHours,
 		coursesectENT.isClockHours isClockHours,
@@ -583,12 +578,16 @@ from (
         inner join CourseSection coursesectENT on coursesectENT.termCode = reg.termCode
             and coursesectENT.partOfTermCode = reg.partOfTermCode
             and coursesectENT.crn = reg.crn
+-- ak 20200713 Added course section status filter (PF-1553)
+			and coursesectENT.sectionStatus = 'Active'
             and coursesectENT.isIpedsReportable = 1 
             and ((coursesectENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
                 and coursesectENT.recordActivityDate <= reg.censusDate)
                     or coursesectENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-	)
-where courseRn = 1
+	) CourseSect on reg2.termCode = CourseSect.termCode
+            and reg2.partOfTermCode = CourseSect.partOfTermCode
+            and reg2.crn = CourseSect.crn 
+where CourseSect.courseRn = 1
 ), 
 
 CourseSectionScheduleMCR  as (
@@ -596,23 +595,24 @@ CourseSectionScheduleMCR  as (
 --AcademicTerm.partOfTermCode, CourseSectionSchedule.partOfTermCode & AcademicTerm.censusDate together 
 --are used to define the period of valid course registration attempts. 
 
-select coursesect.termCode termCode,
+select coursesect2.termCode termCode,
 --ak 20200616 Adding term order indicator (PF-1494)
 	termOrder.termOrder termOrder,
-	coursesect.censusDate censusDate,
-	coursesect.crn crn,
-	coursesect.section section,
-	coursesect.partOfTermCode partOfTermCode,
-	coursesect.enrollmentHours enrollmentHours,
-	coursesect.isClockHours isClockHours,
-	coursesect.subject subject,
-	coursesect.courseNumber courseNumber,
-	coursesect.crnLevel crnLevel,
+	coursesect2.censusDate censusDate,
+	coursesect2.crn crn,
+	coursesect2.section section,
+	CourseSched.section sectionSched,
+	coursesect2.partOfTermCode partOfTermCode,
+	coursesect2.enrollmentHours enrollmentHours,
+	coursesect2.isClockHours isClockHours,
+	coursesect2.subject subject,
+	coursesect2.courseNumber courseNumber,
+	coursesect2.crnLevel crnLevel,
 	nvl(CourseSched.meetingType, 'Standard') meetingType
-from CourseSectionMCR coursesect
+from CourseSectionMCR coursesect2
 --ak 20200616 Adding term order indicator (PF-1494)
 	inner join AcadTermOrder termOrder 
-		on termOrder.TermCode = coursesect.termCode
+		on termOrder.TermCode = coursesect2.termCode
 	left join (
 		select courseSectSchedENT.termCode termCode,
 			courseSectSchedENT.crn crn,
@@ -632,16 +632,16 @@ from CourseSectionMCR coursesect
 			inner join CourseSectionSchedule courseSectSchedENT on courseSectSchedENT.termCode = coursesect.termCode
 				and courseSectSchedENT.partOfTermCode = coursesect.partOfTermCode
 				and courseSectSchedENT.crn = coursesect.crn
-				and courseSectSchedENT.section = coursesect.section
+				and (courseSectSchedENT.section = coursesect.section or coursesect.section is null)
 				and courseSectSchedENT.isIpedsReportable = 1  
 				and ((courseSectSchedENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 					and courseSectSchedENT.recordActivityDate <= coursesect.censusDate)
 						or courseSectSchedENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
 		) CourseSched 
-			on CourseSched.termCode = coursesect.termCode
-			and CourseSched.partOfTermCode = coursesect.partOfTermCode
-			and CourseSched.crn = coursesect.crn
-			and CourseSched.section = coursesect.section
+			on CourseSched.termCode = coursesect2.termCode
+			and CourseSched.partOfTermCode = coursesect2.partOfTermCode
+			and CourseSched.crn = coursesect2.crn
+			and (courseSched.section = coursesect2.section or coursesect2.section is null)
 			and CourseSched.courseSectSchedRn = 1		 
 ), 
 
@@ -649,102 +649,50 @@ CourseMCR as (
 -- Included to get course type information and it has included the most recent version
 -- prior to the census date. 
 
-select termCode,
-	crn,
-	section,
-	subject,
-	courseNumber,
-	partOfTermCode,
-	censusDate,
-	courseLevel,
-	isRemedial,
-	isESL,
-	meetingType,
-	enrollmentHours,
-	isClockHours
-from ( 
-    select distinct 
-        coursesectsched.termCode termCode,
-        coursesectsched.crn crn,
-        coursesectsched.section section,
+select *
+from (
+select distinct 
         courseENT.subject subject,
         courseENT.courseNumber courseNumber,
-        coursesectsched.partOfTermCode partOfTermCode,
-        coursesectsched.censusDate censusDate,
         courseENT.courseLevel courseLevel,
         courseENT.isRemedial isRemedial,
         courseENT.isESL isESL,
-        coursesectsched.meetingType meetingType,
-        coursesectsched.enrollmentHours enrollmentHours,
-        coursesectsched.isClockHours isClockHours,
         row_number() over (
             partition by
                 courseENT.subject,
                 courseENT.courseNumber,
-                courseENT.termCodeEffective,
                 courseENT.courseLevel
             order by
+                courseENT.termCodeEffective desc,
                 courseENT.recordActivityDate desc
         ) courseRn
-    from CourseSectionScheduleMCR  coursesectsched
-        inner join Course courseENT ON courseENT.subject = coursesectsched.subject
+    from CourseSectionScheduleMCR coursesectsched 
+        left join Course courseENT
+            on courseENT.subject = coursesectsched.subject
             and courseENT.courseNumber = coursesectsched.courseNumber
             and courseENT.courseLevel = coursesectsched.crnLevel
+            -- ak 20200713 Added course status filter (PF-1553)
+			and courseENT.courseStatus = 'Active'
             and courseENT.isIpedsReportable = 1  
             and ((courseENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
                 and courseENT.recordActivityDate <= coursesectsched.censusDate)
                     or courseENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
 --ak 20200616 Adding term order indicator (PF-1494)
 		inner join AcadTermOrder termOrder
-			on termOrder.termCode = courseENT.TermCodeEffective
-	where termOrder.TermOrder <= coursesectsched.termOrder
+			on termOrder.termCode = courseENT.termCodeEffective
+	where termOrder.termOrder <= coursesectsched.termOrder
 	)
 where courseRn = 1
 ), 
-
-CourseTypeCountsSTU as (
--- View used to break down course category type totals by type
-
-select reg.personId personId, 
-        --reg.termCode termCode,
-		--reg.partOfTermCode partOfTermCode,
-	sum(case when course.enrollmentHours >= 0 then 1 else 0 end) totalCourses,
-	sum(case when course.isClockHours = 0 and course.enrollmentHours >= 0 then course.enrollmentHours else 0 end) totalCreditHrs,
-	sum(case when course.isClockHours = 0 and course.enrollmentHours >= 0 and course.courseLevel = 'Undergrad' then nvl(course.enrollmentHours, 0) else 0 end) totalCreditUGHrs,
-	sum(case when course.isClockHours = 0 and course.enrollmentHours >= 0 and course.courseLevel in ('Graduate', 'Professional') then nvl(course.enrollmentHours, 0) else 0 end) totalCreditGRHrs,
-	sum(case when course.isClockHours = 0 and course.enrollmentHours >= 0 and course.courseLevel = 'Postgraduate' then nvl(course.enrollmentHours, 0) else 0 end) totalCreditPostGRHrs,
-	sum(case when course.isClockHours = 1 then nvl(course.enrollmentHours, 0) else 0 end) totalClockHrs,
-	sum(case when course.enrollmentHours = 0 then 1 else 0 end) totalNonCredCourses,
-	sum(case when course.enrollmentHours > 0 then 1 else 0 end) totalCredCourses,
-	sum(case when course.meetingType = 'Online/Distance Learning' then 1 else 0 end) totalDECourses,
-	sum(case when course.courseLevel = 'Undergrad' then 1 else 0 end) totalUGCourses,
-	sum(case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end) totalGRCourses,
-	sum(case when course.courseLevel = 'Postgraduate' then 1 else 0 end) totalPostGRCourses,
-	sum(case when course.courseLevel = 'Continuing Ed' then 1 else 0 end) totalCECourses,
-	sum(case when course.isESL = 'Y' then 1 else 0 end) totalESLCourses,
-	sum(case when course.isRemedial = 'Y' then 1 else 0 end) totalRemCourses,
-	sum(case when reg.isInternational = 1 then 1 else 0 end) totalIntlCourses, 
-	sum(case when reg.crnGradingMode = 'Audit' then 1 else 0 end) totalAuditCourses
-from RegistrationMCR reg
-	inner join CourseMCR course on course.termCode = reg.termCode
-	    and course.partOfTermCode = reg.partOfTermCode
-	    and course.crn = reg.crn 
-		and course.courseLevel = reg.crnLevel
---jh 20200707 Removed termCode and partOfTermCode from grouping, since not in select fields
-group by reg.personId--,
-        --reg.termCode,
-		--reg.partOfTermCode  
-),
 
 PersonMCR as (
 --Returns most up to date student personal information as of the reporting period and term census periods.
 --I used the RegistrationMCR to limit list to only students in the reportable terms, but limit the
 --Person Record to the latest record. 
 	
-select termCode, 
-	partOfTermCode, 
-	censusDate, 
+select regId,
 	personId,
+	censusDate,
 	birthDate,
 	ethnicity,
 	isHispanic,
@@ -755,8 +703,7 @@ select termCode,
 	isUSCitizen,
 	gender
 from (  
-    select reg.termCode termCode, 
-		reg.partOfTermCode partOfTermCode, 
+    select distinct reg.personId regId,
 		reg.censusDate censusDate, 
 		personENT.personId personId,
 		personENT.birthDate birthDate,
@@ -775,7 +722,7 @@ from (
 				personENT.recordActivityDate desc
 		) personRn
 	from RegistrationMCR reg
-		inner join Person personENT on reg.personId = personENT.personId 
+		left join Person personENT on reg.personId = personENT.personId 
 			and ((personENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and personENT.recordActivityDate <= reg.censusDate) 
 					or personENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
@@ -783,6 +730,53 @@ from (
 	)
 where personRn = 1
 ),
+
+/*****
+BEGIN SECTION - Transformations
+This set of views is used to transform and aggregate records from MCR views above.
+*****/
+
+StudentLevelRefactor as (
+-- Included to get the Max Student level for the Reporting Period as a whole. 
+
+select student.personId,  
+	max(student.stuLevelCalc) maxStuLevelCalcA
+from StudentMCR student
+group by student.personId 
+), 
+
+CourseTypeCountsSTU as (
+-- View used to break down course category type totals by type
+
+select reg.personId personId,
+	sum(case when coursesectsched.enrollmentHours >= 0 then 1 else 0 end) totalCourses,
+	sum(case when coursesectsched.isClockHours = 0 and coursesectsched.enrollmentHours > 0 then coursesectsched.enrollmentHours else 0 end) totalCreditHrs,
+	sum(case when coursesectsched.isClockHours = 0 and coursesectsched.enrollmentHours > 0 and course.courseLevel = 'Undergrad' then nvl(coursesectsched.enrollmentHours, 0) else 0 end) totalCreditUGHrs,
+	sum(case when coursesectsched.isClockHours = 0 and coursesectsched.enrollmentHours > 0 and course.courseLevel in ('Graduate', 'Professional') then nvl(coursesectsched.enrollmentHours, 0) else 0 end) totalCreditGRHrs,
+	sum(case when coursesectsched.isClockHours = 0 and coursesectsched.enrollmentHours > 0 and course.courseLevel = 'Postgraduate' then nvl(coursesectsched.enrollmentHours, 0) else 0 end) totalCreditPostGRHrs,
+	sum(case when coursesectsched.isClockHours = 1 and coursesectsched.enrollmentHours > 0 then coursesectsched.enrollmentHours else 0 end) totalClockHrs,
+	sum(case when coursesectsched.enrollmentHours = 0 then 1 else 0 end) totalNonCredCourses,
+	sum(case when coursesectsched.enrollmentHours > 0 then 1 else 0 end) totalCredCourses,
+	sum(case when coursesectsched.meetingType = 'Online/Distance Learning' then 1 else 0 end) totalDECourses,
+	sum(case when course.courseLevel = 'Undergrad' then 1 else 0 end) totalUGCourses,
+	sum(case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end) totalGRCourses,
+	sum(case when course.courseLevel = 'Postgraduate' then 1 else 0 end) totalPostGRCourses,
+	sum(case when course.courseLevel = 'Continuing Ed' then 1 else 0 end) totalCECourses,
+	sum(case when course.isESL = 'Y' then 1 else 0 end) totalESLCourses,
+	sum(case when course.isRemedial = 'Y' then 1 else 0 end) totalRemCourses,
+	sum(case when reg.isInternational = 1 then 1 else 0 end) totalIntlCourses, 
+	sum(case when reg.crnGradingMode = 'Audit' then 1 else 0 end) totalAuditCourses
+from RegistrationMCR reg
+	left join CourseSectionScheduleMCR coursesectsched on reg.termCode = coursesectsched.termCode
+	    and reg.partOfTermCode = coursesectsched.partOfTermCode
+	    and reg.crn = coursesectsched.crn 
+		and reg.crnLevel = coursesectsched.crnLevel
+    left join CourseMCR course on coursesectsched.subject = course.subject
+        and coursesectsched.courseNumber = course.courseNumber
+        and coursesectsched.crnLevel = course.courseLevel
+--jh 20200707 Removed termCode and partOfTermCode from grouping, since not in select fields
+group by reg.personId
+), 
 
 /*****
 BEGIN SECTION - Cohort Creation
@@ -807,7 +801,7 @@ select personID,
     icOfferUndergradAwardLevel,
 	icOfferGraduateAwardLevel,
     icOfferDoctorAwardLevel
-from (
+from ( 
      select distinct reg.personID personID,  
         stulevelref.maxStuLevelCalcA ipedsPartAStudentLevel, 
         reg.tmAnnualDPPCreditHoursFTE tmAnnualDPPCreditHoursFTE,
@@ -856,7 +850,7 @@ from (
              else 0 
         end ipedsInclude
     from RegistrationMCR reg  
-        inner join PersonMCR person on reg.personId = person.personId 
+        left join PersonMCR person on reg.personId = person.personId 
         inner join CourseTypeCountsSTU coursecnt on reg.personId = coursecnt.personId  
         inner join StudentMCR student on student.personId = reg.personId 
         inner join StudentLevelRefactor stulevelref on stulevelref.personId = reg.personId
@@ -989,22 +983,3 @@ from  (
                                 config.icOfferDoctorAwardLevel icOfferDoctorAwardLevel
                             from ClientConfigMCR config) configValues
     )
-
-
-
-/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
---** I CHECKED ALL QUERY REVISION VERSIONS UP TO THE INITIAL VERSION AND THE ISSUE HAS BEEN PRESENT SINCE THEN. 
---** I CHECKED BOTH REG AND COURSE VIEWS AND THERE DOES NOT SEEM TO BE AN ISSUE THERE. 
---** I CHECKED THE CourseTypeCountsSTU VOEW AND THE ISSE IS PRESENT WITH A SIMPLE... SELECT COUNT(DISTINCT PERSONID) FROM CourseTypeCountsSTU
---** THE ISSUE ONLY COMES UP ONCE WE INNER JOIN THE TWO VIEWS IN CourseTypeCountsSTU. 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-select count(*) --449 --539
---sum(cohortstu.totalCreditUGHrs) totalCreditUGHrs,
-  --             sum(cohortstu.totalClockHrs) totalClockHrs,
-    --           sum(cohortstu.totalCreditGRHrs) totalCreditGRHrs,
-      --         sum(cohortstu.totalCreditPostGRHrs) totalCreditPostGRHrs
-from CourseTypeCountsSTU cohortstu
---CohortSTU cohortstu
-*/
