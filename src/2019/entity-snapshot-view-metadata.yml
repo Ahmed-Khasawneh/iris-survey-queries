@@ -29,7 +29,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 ACADEMIC_LIBRARIES_1:
-# reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2019-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
@@ -112,7 +112,7 @@ ACADEMIC_LIBRARIES_1:
       end: 2019-10-01
 
 COMPLETIONS_1:
-# reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+  # reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -173,7 +173,7 @@ COMPLETIONS_1:
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
-      
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -197,7 +197,7 @@ COMPLETIONS_1:
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
-      
+
   - viewName: Major
     entityName: Major
     tagNames:
@@ -223,9 +223,9 @@ COMPLETIONS_1:
       end: 2019-08-01
 
 FALL_ENROLLMENT_1:
-# reporting period for Cohort: Fall Census 2019 and prior summer 
-# reporting period for Retention: Fall Census 2018 and prior summer
-# reporting period for HR: as of 10/31/19
+  # reporting period for Cohort: Fall Census 2019 and prior summer
+  # reporting period for Retention: Fall Census 2018 and prior summer
+  # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -246,7 +246,7 @@ FALL_ENROLLMENT_1:
     snapshotDateRange:
       start: 2018-05-01
       end: 2018-12-31
-      
+
   - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
@@ -287,7 +287,7 @@ FALL_ENROLLMENT_1:
       start: 2018-05-01
       end: 2018-12-31
 
-  - viewName: CohortExclusionRetention
+  - viewName: CohortExclusion
     entityName: CohortExclusion
     tagNames:
       - Pre-Fall Summer Census
@@ -530,9 +530,9 @@ FALL_ENROLLMENT_1:
       end: 2018-12-31
 
 FALL_ENROLLMENT_2:
-# reporting period for Cohort: Fall Census 2019 and prior summer 
-# reporting period for Retention: Fall Census 2018 and prior summer
-# reporting period for HR: as of 10/31/19
+  # reporting period for Cohort: Fall Census 2019 and prior summer
+  # reporting period for Retention: Fall Census 2018 and prior summer
+  # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -553,7 +553,7 @@ FALL_ENROLLMENT_2:
     snapshotDateRange:
       start: 2018-05-01
       end: 2018-12-31
-      
+
   - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
@@ -594,7 +594,7 @@ FALL_ENROLLMENT_2:
       start: 2018-05-01
       end: 2018-12-31
 
-  - viewName: CohortExclusionRetention
+  - viewName: CohortExclusion
     entityName: CohortExclusion
     tagNames:
       - Pre-Fall Summer Census
@@ -835,11 +835,11 @@ FALL_ENROLLMENT_2:
     snapshotDateRange:
       start: 2018-05-01
       end: 2018-12-31
-      
+
 FALL_ENROLLMENT_3:
-# reporting period for Cohort: Fall Census 2019 and prior summer 
-# reporting period for Retention: Fall Census 2018 and prior summer
-# reporting period for HR: as of 10/31/19
+  # reporting period for Cohort: Fall Census 2019 and prior summer
+  # reporting period for Retention: Fall Census 2018 and prior summer
+  # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -860,7 +860,7 @@ FALL_ENROLLMENT_3:
     snapshotDateRange:
       start: 2018-05-01
       end: 2018-12-31
-      
+
   - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
@@ -901,7 +901,7 @@ FALL_ENROLLMENT_3:
       start: 2018-05-01
       end: 2018-12-31
 
-  - viewName: CohortExclusionRetention
+  - viewName: CohortExclusion
     entityName: CohortExclusion
     tagNames:
       - Pre-Fall Summer Census
@@ -1144,9 +1144,9 @@ FALL_ENROLLMENT_3:
       end: 2018-12-31
 
 FALL_ENROLLMENT_4:
-# reporting period for Cohort: Fall Census 2019 and prior summer 
-# reporting period for Retention: Fall Census 2018 and prior summer
-# reporting period for HR: as of 10/31/19
+  # reporting period for Cohort: Fall Census 2019 and prior summer
+  # reporting period for Retention: Fall Census 2018 and prior summer
+  # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -1167,7 +1167,7 @@ FALL_ENROLLMENT_4:
     snapshotDateRange:
       start: 2018-05-01
       end: 2018-12-31
-      
+
   - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
@@ -1208,7 +1208,7 @@ FALL_ENROLLMENT_4:
       start: 2018-05-01
       end: 2018-12-31
 
-  - viewName: CohortExclusionRetention
+  - viewName: CohortExclusion
     entityName: CohortExclusion
     tagNames:
       - Pre-Fall Summer Census
@@ -1449,9 +1449,9 @@ FALL_ENROLLMENT_4:
     snapshotDateRange:
       start: 2018-05-01
       end: 2018-12-31
-      
+
 FINANCE_1:
-# reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2019-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1502,7 +1502,7 @@ FINANCE_1:
       end: 2019-10-01
 
 FINANCE_2:
-# reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2019-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1553,7 +1553,7 @@ FINANCE_2:
       end: 2019-10-01
 
 FINANCE_3:
-# reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2019-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1604,7 +1604,7 @@ FINANCE_3:
       end: 2019-10-01
 
 FINANCE_4:
-# reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2019-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1655,7 +1655,7 @@ FINANCE_4:
       end: 2019-10-01
 
 FINANCE_5:
-# reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2019-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1706,7 +1706,7 @@ FINANCE_5:
       end: 2019-10-01
 
 FINANCE_6:
-# reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2019-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1757,7 +1757,7 @@ FINANCE_6:
       end: 2019-10-01
 
 HUMAN_RESOURCES_1:
-# reporting period: as of 10/31/19
+  # reporting period: as of 10/31/19
 
   - viewName: Employee
     entityName: Employee
@@ -1816,7 +1816,7 @@ HUMAN_RESOURCES_1:
       end: 2019-11-15
 
 HUMAN_RESOURCES_2:
-# reporting period: as of 10/31/19
+  # reporting period: as of 10/31/19
 
   - viewName: Employee
     entityName: Employee
@@ -1875,7 +1875,7 @@ HUMAN_RESOURCES_2:
       end: 2019-11-15
 
 HUMAN_RESOURCES_3:
-# reporting period: as of 10/31/19
+  # reporting period: as of 10/31/19
 
   - viewName: Employee
     entityName: Employee
@@ -1932,9 +1932,9 @@ HUMAN_RESOURCES_3:
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
-      
+
 HUMAN_RESOURCES_4:
-# reporting period: as of 10/31/19
+  # reporting period: as of 10/31/19
 
   - viewName: Employee
     entityName: Employee
@@ -1991,9 +1991,9 @@ HUMAN_RESOURCES_4:
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
-      
+
 INSTITUTIONAL_CHARACTERISTICS_1:
-# reporting period: survey reporting date
+  # reporting period: survey reporting date
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
@@ -2020,7 +2020,7 @@ INSTITUTIONAL_CHARACTERISTICS_1:
       end: 2019-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_3:
-# reporting period: survey reporting date
+  # reporting period: survey reporting date
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
@@ -2047,7 +2047,7 @@ INSTITUTIONAL_CHARACTERISTICS_3:
       end: 2019-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_5:
-# reporting period: survey reporting date
+  # reporting period: survey reporting date
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
@@ -2074,7 +2074,7 @@ INSTITUTIONAL_CHARACTERISTICS_5:
       end: 2019-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_7:
-# reporting period: survey reporting date
+  # reporting period: survey reporting date
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
@@ -2101,7 +2101,7 @@ INSTITUTIONAL_CHARACTERISTICS_7:
       end: 2019-10-15
 
 TWELVE_MONTH_ENROLLMENT_1:
-# reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+  # reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -2236,7 +2236,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       end: 2019-08-01
 
 TWELVE_MONTH_ENROLLMENT_2:
-# reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+  # reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
