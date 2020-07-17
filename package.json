@@ -18,11 +18,15 @@
   "homepage": "https://github.com/evisions/iris-report-queries#readme",
   "dependencies": {
     "@types/ssh2": "^0.5.43",
+    "adm-zip": "^0.4.16",
     "aws-sdk": "^2.692.0",
     "fs-extra": "^9.0.1",
+    "got": "^11.5.1",
     "lodash": "^4.17.15",
     "ora": "^4.0.4",
     "ssh2": "^0.8.9",
+    "stream": "0.0.2",
+    "tar": "^6.0.2",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
