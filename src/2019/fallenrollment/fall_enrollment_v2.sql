@@ -764,21 +764,10 @@ left join (
 		coursesectENT.crn crn,
 		coursesectENT.section section,
 		coursesectENT.subject subject,
-		coursesectENT.courseNumber courseNumber,
-															 
-						  
-								  
-											  
-						
-							
-									  
+		coursesectENT.courseNumber courseNumber,										  
 		coursesectENT.recordActivityDate recordActivityDate,
-											
 		CAST(coursesectENT.enrollmentHours as decimal(2,0)) enrollmentHours,
-																		   
 		coursesectENT.isClockHours isClockHours,
-																												 
-														  
 		row_number() over (
 			partition by
 				coursesectENT.subject,
@@ -816,8 +805,6 @@ CourseSectionScheduleMCR as (
 --of valid course registration attempts. 
 -- ak 20200707 Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views
 
-		
-	  
 	select coursesect2.cohortInd cohortInd,
 		coursesect2.censusDate censusDate,
 		CourseSched.crn crn,
@@ -899,7 +886,6 @@ from (
 			partition by
 				courseENT.subject,
 				courseENT.courseNumber,
-								
 				courseENT.courseLevel
 			order by
 				courseENT.termCodeEffective desc,
@@ -1129,8 +1115,6 @@ from (
 		from ClientConfigMCR clientconfig
 --jh 20200422 added join to filter on fall cohort term code
 			inner join RegistrationMCR reg on reg.cohortInd = clientconfig.sectionFall 
-								   
-														   
 			inner join StudentMCR student on reg.personId = student.personId
 				and student.cohortInd = reg.cohortInd
 			inner join AcademicTermMCR acadterm on acadterm.termCode = reg.termCode
@@ -1579,7 +1563,7 @@ from (
 				empposENT.recordActivityDate desc
 		) positionRn
 	from EmployeeAssignmentMCR empassign
-		inner join EmployeePosition empposENT on empposENT.position = empassign.position																					
+		inner join EmployeePosition empposENT on empposENT.position = empassign.position
 			and empposENT.startDate <= empassign.asOfDate
 			and (empposENT.endDate IS NULL 
 				or empposENT.endDate >= empassign.asOfDate)
