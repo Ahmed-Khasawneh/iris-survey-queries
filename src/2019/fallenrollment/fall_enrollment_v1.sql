@@ -18,8 +18,13 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
+20200707		akhasawneh				ak 20200707			Modification to course/hour counts (PF-1552) -Run time 13m 26s
+															Adding position status filter
+															Adding employee assignment status filter
+															Adding employee status filter
+															Adding additional client config values for level offereings and instructor activity type 
+															Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views
 20200706		akhasawneh				ak 20200706			Added new Person fields visaStartDate and visaEndDate
-															Change curriculumRuleActivityDate to curriculumRuleActionDate in both Major and Degree
 															Changed registrationStatusActionDate to registrationStatusActionDate (PF-1536) -Run time 13m 36s
 20200618		akhasawneh				ak 20200618			Modify FE report query with standardized view naming/aliasing convention (PF-1531) -Run time 13m 06s
 20200611        akhasawneh              ak 20200611         Modified to not reference term code as a numeric indicator of term ordering (PF-1494) -Run time 12m 13s
@@ -76,7 +81,10 @@ select '1920' surveyYear,
 	'Y' includeNonDegreeAsUG, --Y = Yes, N = No
 	'M' genderForUnknown, --M = Male, F = Female
 	'F' genderForNonBinary,  --M = Male, F = Female
-    'CR' instructionalActivityType --CR = Credit, CL = Clock, B = Both
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+	'CR' instructionalActivityType, --CR = Credit, CL = Clock, B = Both
+    'Y' icOfferUndergradAwardLevel, --Y = Yes, N = No
+    'Y' icOfferGraduateAwardLevel --Y = Yes, N = No
 
 --Use for testing internally only
 /*
@@ -104,7 +112,9 @@ select '1516' surveyYear, --testing '1516'
 	'Y' includeNonDegreeAsUG, --Y = Yes, N = No
 	'M' genderForUnknown, --M = Male, F = Female
 	'F' genderForNonBinary,  --M = Male, F = Female
-    'CR' instructionalActivityType --CR = Credit, CL = Clock, B = Both
+	'CR' instructionalActivityType, --CR = Credit, CL = Clock, B = Both
+    'Y' icOfferUndergradAwardLevel, --Y = Yes, N = No
+    'Y' icOfferGraduateAwardLevel --Y = Yes, N = No
 */
 ),
 
@@ -142,7 +152,10 @@ select ConfigLatest.surveyYear surveyYear,
 	ConfigLatest.partOfTermCode partOfTermCode,
 	ConfigLatest.surveyIdHR surveyIdHR,
 	ConfigLatest.asOfDateHR asOfDateHR,
-	ConfigLatest.instructionalActivityType instructionalActivityType 
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+	ConfigLatest.instructionalActivityType instructionalActivityType,
+	ConfigLatest.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+	ConfigLatest.icOfferGraduateAwardLevel icOfferGraduateAwardLevel
 from (
 	select clientconfigENT.surveyCollectionYear surveyYear,
 		NVL(clientconfigENT.acadOrProgReporter, defvalues.acadOrProgReporter) acadOrProgReporter,
@@ -151,6 +164,10 @@ from (
 		case when NVL(clientconfigENT.acadOrProgReporter, defvalues.acadOrProgReporter) = 'P' then clientconfigENT.sfaLargestProgCIPC else NULL end sfaLargestProgCIPC,
 		NVL(clientconfigENT.genderForUnknown, defvalues.genderForUnknown) genderForUnknown,
 		NVL(clientconfigENT.genderForNonBinary, defvalues.genderForNonBinary) genderForNonBinary,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		NVL(clientconfigENT.icOfferUndergradAwardLevel, defvalues.icOfferUndergradAwardLevel) icOfferUndergradAwardLevel,
+		NVL(clientconfigENT.icOfferGraduateAwardLevel, defvalues.icOfferGraduateAwardLevel) icOfferGraduateAwardLevel,
+		NVL(clientconfigENT.instructionalActivityType, defvalues.instructionalActivityType) instructionalActivityType,
 		defvalues.surveyId surveyId,
 		defvalues.sectionFall sectionFall,
 		defvalues.sectionRetFall sectionRetFall,
@@ -167,7 +184,6 @@ from (
 		defvalues.partOfTermCode partOfTermCode,
 		defvalues.surveyIdHR surveyIdHR,
 		defvalues.asOfDateHR asOfDateHR,
-		defvalues.instructionalActivityType instructionalActivityType,
 		row_number() over (
 			partition by
 				clientconfigENT.surveyCollectionYear
@@ -188,6 +204,10 @@ from (
 		null sfaLargestProgCIPC,
 		defvalues.genderForUnknown genderForUnknown,
 		defvalues.genderForNonBinary genderForNonBinary,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		defvalues.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+		defvalues.icOfferGraduateAwardLevel icOfferGraduateAwardLevel,
+		defvalues.instructionalActivityType instructionalActivityType,
 		defvalues.surveyId surveyId,
 		defvalues.sectionFall sectionFall,
 		defvalues.sectionRetFall sectionRetFall,
@@ -204,7 +224,6 @@ from (
 		defvalues.partOfTermCode partOfTermCode,
 		defvalues.surveyIdHR surveyIdHR,
 		defvalues.asOfDateHR asOfDateHR, 
-        defvalues.instructionalActivityType instructionalActivityType,
 		1 configRn
 	from DefaultValues defvalues
 	where defvalues.surveyYear not in (select clientconfigENT.surveyCollectionYear
@@ -272,8 +291,15 @@ select RepDates.surveyYear surveyYear,
 	RepDates.genderForUnknown genderForUnknown,
 	RepDates.genderForNonBinary genderForNonBinary,
 -- ak 20200519 adding consideration for credit vs clock hour (PF-1480)
+    acadterm.requiredFTCreditHoursUG requiredFTCreditHoursUG,
+    acadterm.requiredFTClockHoursUG requiredFTClockHoursUG,
+    acadterm.requiredFTCreditHoursGR requiredFTCreditHoursGR,
 	NVL(acadterm.requiredFTCreditHoursUG/
-		NVL(acadterm.requiredFTClockHoursUG, acadterm.requiredFTCreditHoursUG), 1) equivCRHRFactor
+		NVL(acadterm.requiredFTClockHoursUG, acadterm.requiredFTCreditHoursUG), 1) equivCRHRFactor,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+	RepDates.instructionalActivityType instructionalActivityType,
+	RepDates.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+	RepDates.icOfferGraduateAwardLevel icOfferGraduateAwardLevel
 from (
 --Pulls reporting period and default configuration values for Fall, Summer, Retention Fall and Retention Summer from IPEDSReportingPeriod entity
 	select surveyYear surveyYear,
@@ -285,7 +311,11 @@ from (
 		feIncludeOptSurveyData feIncludeOptSurveyData,
 		includeNonDegreeAsUG includeNonDegreeAsUG,
 		genderForUnknown genderForUnknown,
-		genderForNonBinary genderForNonBinary
+		genderForNonBinary genderForNonBinary,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+        instructionalActivityType instructionalActivityType,
+        icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+		icOfferGraduateAwardLevel icOfferGraduateAwardLevel
 	from (
 		select repperiodENT.surveyCollectionYear surveyYear,
 			repperiodENT.surveySection surveySection,
@@ -301,6 +331,10 @@ from (
 			clientconfig.includeNonDegreeAsUG includeNonDegreeAsUG,
 			clientconfig.genderForUnknown genderForUnknown,
 			clientconfig.genderForNonBinary genderForNonBinary,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+			clientconfig.instructionalActivityType instructionalActivityType,
+			clientconfig.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+			clientconfig.icOfferGraduateAwardLevel icOfferGraduateAwardLevel,
 			row_number() over (	
 				partition by 
 					repperiodENT.surveyCollectionYear,
@@ -319,11 +353,11 @@ from (
 		)
 	where reportPeriodRn = 1
 	
-	--ak 20200122 added unions to use default values when IPEDSReportingPeriod record doesn't exist so valid output file will always be generated
+--ak 20200122 added unions to use default values when IPEDSReportingPeriod record doesn't exist so valid output file will always be generated
 	
 	union
 	
-	--Pulls default values for Fall when IPEDSReportingPeriod record doesn't exist
+--Pulls default values for Fall when IPEDSReportingPeriod record doesn't exist
 	select clientconfig.surveyYear surveyYear,
 		clientconfig.sectionFall surveySection,
 		clientconfig.termCodeFall termCode,
@@ -333,7 +367,11 @@ from (
 		clientconfig.feIncludeOptSurveyData feIncludeOptSurveyData,
 		clientconfig.includeNonDegreeAsUG includeNonDegreeAsUG,
 		clientconfig.genderForUnknown genderForUnknown,
-		clientconfig.genderForNonBinary genderForNonBinary
+		clientconfig.genderForNonBinary genderForNonBinary,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+        clientconfig.instructionalActivityType instructionalActivityType,
+        clientconfig.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+		clientconfig.icOfferGraduateAwardLevel icOfferGraduateAwardLevel
 	from ClientConfigMCR clientconfig
 	where clientconfig.surveyYear not in (select repperiodENT1.surveyCollectionYear
 										  from ClientConfigMCR clientconfig1
@@ -356,16 +394,20 @@ from (
 		clientconfig.feIncludeOptSurveyData feIncludeOptSurveyData,
 		clientconfig.includeNonDegreeAsUG includeNonDegreeAsUG,
 		clientconfig.genderForUnknown genderForUnknown,
-		clientconfig.genderForNonBinary genderForNonBinary
+		clientconfig.genderForNonBinary genderForNonBinary,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+        clientconfig.instructionalActivityType instructionalActivityType,
+        clientconfig.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+		clientconfig.icOfferGraduateAwardLevel icOfferGraduateAwardLevel
 	from ClientConfigMCR clientconfig
 	where clientconfig.surveyYear not in (select repperiodENT1.surveyCollectionYear
 										  from ClientConfigMCR clientconfig1
-										  cross join IPEDSReportingPeriod repperiodENT1
+											cross join IPEDSReportingPeriod repperiodENT1
 										  where repperiodENT1.surveyCollectionYear = clientconfig1.surveyYear
-										  and repperiodENT1.surveyId = clientconfig1.surveyId
-										  and repperiodENT1.surveySection = clientconfig1.sectionRetFall
-										  and repperiodENT1.termCode is not null
-										  and repperiodENT1.partOfTermCode is not null)
+											and repperiodENT1.surveyId = clientconfig1.surveyId
+											and repperiodENT1.surveySection = clientconfig1.sectionRetFall
+											and repperiodENT1.termCode is not null
+											and repperiodENT1.partOfTermCode is not null)
 	
 	union
 	
@@ -379,16 +421,20 @@ from (
 		clientconfig.feIncludeOptSurveyData feIncludeOptSurveyData,
 		clientconfig.includeNonDegreeAsUG includeNonDegreeAsUG,
 		clientconfig.genderForUnknown genderForUnknown,
-		clientconfig.genderForNonBinary genderForNonBinary
+		clientconfig.genderForNonBinary genderForNonBinary,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+        clientconfig.instructionalActivityType instructionalActivityType,
+        clientconfig.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+		clientconfig.icOfferGraduateAwardLevel icOfferGraduateAwardLevel
 	from ClientConfigMCR clientconfig
 	where clientconfig.surveyYear not in (select repperiodENT1.surveyCollectionYear
 										  from ClientConfigMCR clientconfig1
-										  cross join IPEDSReportingPeriod repperiodENT1
+											cross join IPEDSReportingPeriod repperiodENT1
 										  where repperiodENT1.surveyCollectionYear = clientconfig1.surveyYear
-										  and repperiodENT1.surveyId = clientconfig1.surveyId
-										  and repperiodENT1.surveySection = clientconfig1.sectionSummer
-										  and repperiodENT1.termCode is not null
-										  and repperiodENT1.partOfTermCode is not null)										
+											and repperiodENT1.surveyId = clientconfig1.surveyId
+											and repperiodENT1.surveySection = clientconfig1.sectionSummer
+											and repperiodENT1.termCode is not null
+											and repperiodENT1.partOfTermCode is not null)										
 	
 	union
 	
@@ -402,16 +448,20 @@ from (
 		clientconfig.feIncludeOptSurveyData feIncludeOptSurveyData,
 		clientconfig.includeNonDegreeAsUG includeNonDegreeAsUG,
 		clientconfig.genderForUnknown genderForUnknown,
-		clientconfig.genderForNonBinary genderForNonBinary
+		clientconfig.genderForNonBinary genderForNonBinary,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+        clientconfig.instructionalActivityType instructionalActivityType,
+        clientconfig.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+		clientconfig.icOfferGraduateAwardLevel icOfferGraduateAwardLevel
 	from ClientConfigMCR clientconfig
 	where clientconfig.surveyYear not in (select repperiodENT1.surveyCollectionYear
 										  from ClientConfigMCR clientconfig1
-										  cross join IPEDSReportingPeriod repperiodENT1
+											cross join IPEDSReportingPeriod repperiodENT1
 										  where repperiodENT1.surveyCollectionYear = clientconfig1.surveyYear
-										  and repperiodENT1.surveyId = clientconfig1.surveyId
-										  and repperiodENT1.surveySection = clientconfig1.sectionRetSummer
-										  and repperiodENT1.termCode is not null
-										  and repperiodENT1.partOfTermCode is not null)	
+											and repperiodENT1.surveyId = clientconfig1.surveyId
+											and repperiodENT1.surveySection = clientconfig1.sectionRetSummer
+											and repperiodENT1.termCode is not null
+											and repperiodENT1.partOfTermCode is not null)	
 	)  RepDates
 	inner join AcadTermOrder termorder on RepDates.termCode = termorder.termCode
 	left join AcademicTermMCR acadterm on RepDates.termCode = acadterm.termCode	
@@ -451,9 +501,9 @@ select clientconfig.surveyYear surveyYear,
 from ClientConfigMCR clientconfig
 where clientconfig.surveyYear not in (select repperiodENT.surveyCollectionYear
 									  from ClientConfigMCR clientconfig1
-									  cross join IPEDSReportingPeriod repperiodENT
+										cross join IPEDSReportingPeriod repperiodENT
 									  where repperiodENT.surveyCollectionYear = clientconfig1.surveyYear
-									  and repperiodENT.surveyId like clientconfig1.surveyIdHR)
+										and repperiodENT.surveyId like clientconfig1.surveyIdHR)
 ),
 
 /*****
@@ -498,7 +548,12 @@ select cohortInd cohortInd,
 	crnLevel crnLevel,
 	isInternational isInternational,
 	crnGradingMode crnGradingMode,
-	equivCRHRFactor equivCRHRFactor
+	equivCRHRFactor equivCRHRFactor,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+	instructionalActivityType instructionalActivityType,
+	requiredFTClockHoursUG requiredFTClockHoursUG,
+	requiredFTCreditHoursUG requiredFTCreditHoursUG,
+	requiredFTCreditHoursGR requiredFTCreditHoursGR
 from (
 	select repperiod.cohortInd cohortInd,
 		regENT.personId personId,
@@ -512,9 +567,14 @@ from (
 		regENT.crnGradingMode crnGradingMode,
 -- ak 20200519 Added equivalent hours for PT/FT hours multiplier (PF-1480).
 		repperiod.equivCRHRFactor equivCRHRFactor,
+		repperiod.requiredFTClockHoursUG requiredFTClockHoursUG,
+		repperiod.requiredFTCreditHoursUG requiredFTCreditHoursUG,
+		repperiod.requiredFTCreditHoursGR requiredFTCreditHoursGR,
 		regENT.crn crn,
 -- ak 20200330 Added crnLevel ENUM field with values Undergrad,Graduate,Postgraduate,Professional,Continuing Ed (PF-1253)
 		regENT.crnLevel crnLevel,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		repperiod.instructionalActivityType instructionalActivityType,
 		row_number() over (
 			partition by
 				regENT.personId,
@@ -530,6 +590,10 @@ from (
 		inner join Registration regENT on repperiod.termCode = regENT.termCode 
 -- ak 20200330 added Registration.partOfTermCode (PF-1253)
 			and regENT.partOfTermCode = repperiod.partOfTermCode
+-- ak 20200330 Modified to use 'isEnrolled' field instead of registrationStatus = 'Enrolled'(PF-1253)
+			--and regENT.registrationStatus = 'Enrolled'
+			and regENT.isEnrolled = 1
+			and regENT.isIpedsReportable = 1 
 -- ak 20200330 added Registration.registrationStatusActionDate  (PF-1253)
 -- ak 20200406 Including dummy date changes. (PF-1368)
 -- ak 20200707 Change registrationStatusDate to registrationStatusActionDate (PF-1536)
@@ -537,10 +601,6 @@ from (
 				and regENT.registrationStatusActionDate  <= repperiod.censusDate)
 					or regENT.registrationStatusActionDate  = CAST('9999-09-09' AS TIMESTAMP))
 			--and regENT.recordActivityDate <= repperiod.censusDate
--- ak 20200330 Modified to use 'isEnrolled' field instead of registrationStatus = 'Enrolled'(PF-1253)
-			--and regENT.registrationStatus = 'Enrolled'
-			and regENT.isEnrolled = 1
-			and regENT.isIpedsReportable = 1 
 		left join CampusMCR campus on regENT.campus = campus.campus
 	)
 where regRn = 1
@@ -563,14 +623,16 @@ from (
 		) studRn
 	from RegistrationMCR reg
 		inner join Student studentENT ON reg.personId = studentENT.personId
+			and reg.termCode = studentENT.termCode
+			and studentENT.isIpedsReportable = 1
+-- ak 20200707 Adding student status filter (PF-1552)
+			and studentENT.studentStatus = 'Active'
 --ak 20200406 Including dummy date changes. (PF-1368)
 --jh 20200422 Due to Student ingestion query timeout issue, commenting this filter out for testing
 --77 results with filter, 5335 results without filter
 			and ((studentENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) --77
 				and studentENT.recordActivityDate <= reg.censusDate)
 					or studentENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-			and reg.termCode = studentENT.termCode
-			and studentENT.isIpedsReportable = 1
 	)
 where studRn = 1
 ),
@@ -589,12 +651,13 @@ from (
 				personENT.recordActivityDate desc
 			) personRn
 	from RegistrationMCR reg
-		inner join Person personENT ON reg.personId = personENT.personId
+		left join Person personENT ON reg.personId = personENT.personId
+			and personENT.isIpedsReportable = 1
 --ak 20200406 Including dummy date changes. (PF-1368)
 			and ((personENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and personENT.recordActivityDate <= reg.censusDate)
 					or personENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-			and personENT.isIpedsReportable = 1
+
 	)
 where personRn = 1
 ),
@@ -624,13 +687,13 @@ from (
 		) acadtrackRn
 	from RegistrationMCR reg
 		left join AcademicTrack acadtrackENT ON acadtrackENT.personId = reg.personId
+			and acadtrackENT.fieldOfStudyType = 'Major'
+			and acadtrackENT.fieldOfStudyPriority = 1
+			and acadtrackENT.isIpedsReportable = 1
 --ak 20200406 Including dummy date changes. (PF-1368)
             and ((acadtrackENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and acadtrackENT.recordActivityDate <= reg.censusDate)
 			        or acadtrackENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-			and acadtrackENT.fieldOfStudyType = 'Major'
-			and acadtrackENT.fieldOfStudyPriority = 1
-			and acadtrackENT.isIpedsReportable = 1
 --ak 20200611 Adding changes for termCode ordering. (PF-1494)
 		inner join AcadTermOrder termorder
 		    on termorder.termCode = acadtrackENT.termCodeEffective
@@ -658,13 +721,12 @@ from (
 		) majorRn
 	from AcademicTrackMCR acadtrack
 		left join Major majorENT ON majorENT.major = acadtrack.curriculumCode
+			and majorENT.isIpedsReportable = 1
 -- ak 20200406 Including dummy date changes. (PF-1368)
--- ak 20200707 change curriculumRuleActivityDate to curriculumRuleActionDate in both Major and Degree (PF-1536)
-			and majorENT.curriculumRuleActivityDate <= acadtrack.censusDate
 			and ((majorENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and majorENT.recordActivityDate  <= acadtrack.censusDate)
 					or majorENT.recordActivityDate  = CAST('9999-09-09' AS TIMESTAMP)) 
-			and majorENT.isIpedsReportable = 1
+			
 	where (select clientconfig.reportResidency
 		   from ClientConfigMCR clientconfig) = 'Y'
 	)
@@ -693,13 +755,11 @@ from (
 	from AcademicTrackMCR acadtrack
 		inner join ClientConfigMCR clientconfig ON acadTrack.cohortInd = clientconfig.sectionRetFall
 		inner join Degree degreeENT ON degreeENT.degree = acadtrack.degree
+			and degreeENT.isIpedsReportable = 1
 --ak 20200406 Including dummy date changes. (PF-1368)
--- ak 20200707 change curriculumRuleActivityDate to curriculumRuleActionDate in both Major and Degree (PF-1536)
-			and degreeENT.curriculumRuleActivityDate <= acadtrack.censusDate
 			and ((degreeENT.recordActivityDate  != CAST('9999-09-09' AS TIMESTAMP)
 				and degreeENT.recordActivityDate  <= acadtrack.censusDate)
 					or degreeENT.recordActivityDate  = CAST('9999-09-09' AS TIMESTAMP)) 
-			and degreeENT.isIpedsReportable = 1
 --ak 20200611 Adding changes for termCode ordering. (PF-1494)
 		inner join AcadTermOrder termorder
 			on termorder.termCode = degreeENT.curriculumRuleTermCodeEff
@@ -712,32 +772,39 @@ where degreeRn = 1
 
 CourseSectionMCR as (
 --Included to get enrollment hours of a CRN
+-- ak 20200707 Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views
 
-select *, 
--- ak 20200519 Adding logic to convert clock hours using the the equivalent credit hour factor.
-	case when isClockHours = 1 
-		then enrollmentHours * equivCRHRFactor
-        else enrollmentHours
-	end creditHourEquivalent
-from (
-	select distinct 
-		reg.cohortInd cohortInd,
+select distinct 
+	reg2.cohortInd cohortInd,
+	CourseSect.crn crn,
+	CourseSect.section section,
+	CourseSect.subject subject,
+	CourseSect.courseNumber courseNumber,
+--ak 20200611 Adding changes for termCode ordering. (PF-1494)
+	reg2.termOrder termOrder,
+	CourseSect.termCode termCode,
+	CourseSect.partOfTermCode partOfTermCode,
+	reg2.crnLevel crnLevel,
+	reg2.censusDate censusDate,
+	reg2.equivCRHRFactor equivCRHRFactor,
+	CourseSect.recordActivityDate recordActivityDate,
+--ak 20200519 Changing CourseSchedule.enrollmentCreditHours to enrollmentHours (PF-1480)
+	CAST(CourseSect.enrollmentHours as DECIMAL(2,0)) enrollmentHours,
+	--CAST(CourseSect.creditOrClockHours as DECIMAL(2,0)) enrollmentHours,
+	CourseSect.isClockHours isClockHours, 
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+	reg2.instructionalActivityType instructionalActivityType
+from RegistrationMCR reg2 
+left join (
+	select distinct coursesectENT.termCode termCode,
+		coursesectENT.partOfTermCode partOfTermCode,
 		coursesectENT.crn crn,
 		coursesectENT.section section,
 		coursesectENT.subject subject,
 		coursesectENT.courseNumber courseNumber,
---ak 20200611 Adding changes for termCode ordering. (PF-1494)
-		reg.termOrder termOrder,
-		coursesectENT.termCode termCode,
-		coursesectENT.partOfTermCode partOfTermCode,
-		reg.crnLevel crnLevel,
-		reg.censusDate censusDate,
-		reg.equivCRHRFactor equivCRHRFactor,
 		coursesectENT.recordActivityDate recordActivityDate,
---ak 20200519 Changing CourseSchedule.enrollmentCreditHours to enrollmentHours (PF-1480)
-		CAST(coursesectENT.enrollmentHours as DECIMAL(2,0)) enrollmentHours,
-		--CAST(coursesectENT.creditOrClockHours as DECIMAL(2,0)) enrollmentHours,
-		coursesectENT.isClockHours isClockHours, 
+		CAST(coursesectENT.enrollmentHours as decimal(2,0)) enrollmentHours,
+		coursesectENT.isClockHours isClockHours,
 		row_number() over (
 			partition by
 				coursesectENT.subject,
@@ -750,98 +817,123 @@ from (
 				coursesectENT.recordActivityDate desc
 		) courseRn
 	from RegistrationMCR reg 
-		inner join CourseSection coursesectENT ON coursesectENT.termCode = reg.termCode
+		inner join CourseSection coursesectENT on coursesectENT.termCode = reg.termCode
 			and coursesectENT.partOfTermCode = reg.partOfTermCode
 			and coursesectENT.crn = reg.crn
-			and coursesectENT.isIpedsReportable = 1
+-- ak 20200713 Added course section status filter (PF-1553)
+			and coursesectENT.sectionStatus = 'Active'
+			and coursesectENT.isIpedsReportable = 1 
 --ak 20200406 Including dummy date changes. (PF-1368)
 			and ((coursesectENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and coursesectENT.recordActivityDate <= reg.censusDate)
 					or coursesectENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-	)
-where courseRn = 1
-),
+) CourseSect 
+	on reg2.termCode = CourseSect.termCode
+	and reg2.partOfTermCode = CourseSect.partOfTermCode
+    and reg2.crn = CourseSect.crn 
+where CourseSect.courseRn = 1
+), 
 
 CourseSectionScheduleMCR as (
 --Returns course scheduling related info for the registration CRN.
 --AcademicTerm.partOfTermCode, CourseSectionSchedule.partOfTermCode & AcademicTerm.censusDate together are used to define the period 
 --of valid course registration attempts. 
+-- ak 20200707 Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views
 
-select *
-from (
-	select coursesect.cohortInd cohortInd,
-		coursesect.censusDate censusDate,
-		coursesectschedENT.crn crn,
-		coursesectschedENT.section section,
-		coursesectschedENT.termCode termCode,
+	select coursesect2.cohortInd cohortInd,
+		coursesect2.censusDate censusDate,
+		CourseSched.crn crn,
+		CourseSched.section section,
+		CourseSched.termCode termCode,
 --ak 20200611 Adding changes for termCode ordering. (PF-1494)
-		coursesect.termOrder termOrder, 
-		coursesectschedENT.partOfTermCode partOfTermCode,
-		coursesect.creditHourEquivalent creditHourEquivalent,
-		coursesect.subject subject,
-		coursesect.courseNumber courseNumber,
-		coursesect.crnLevel crnLevel,
-		NVL(coursesectschedENT.meetingType, 'Standard') meetingType,
-		row_number() over (
-			partition by
-				coursesectschedENT.crn,
-				coursesectschedENT.section,
-				coursesectschedENT.termCode,
-				coursesectschedENT.partOfTermCode
-			order by
-				coursesectschedENT.recordActivityDate desc
-		) courseSectSchedRn
-	from CourseSectionMCR coursesect
-		left join CourseSectionSchedule coursesectschedENT ON coursesectschedENT.termCode = coursesect.termCode
-			and coursesectschedENT.partOfTermCode = coursesect.partOfTermCode
-			and coursesectschedENT.crn = coursesect.crn
-			and coursesectschedENT.section = coursesect.section
-			and coursesectschedENT.isIpedsReportable = 1 
+		coursesect2.termOrder termOrder, 
+		CourseSched.partOfTermCode partOfTermCode,
+		coursesect2.equivCRHRFactor equivCRHRFactor,
+		coursesect2.subject subject,
+		coursesect2.courseNumber courseNumber,
+		coursesect2.crnLevel crnLevel,
+		NVL(CourseSched.meetingType, 'Standard') meetingType,
+		coursesect2.enrollmentHours enrollmentHours,
+		coursesect2.isClockHours isClockHours,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		coursesect2.instructionalActivityType instructionalActivityType
+	from CourseSectionMCR coursesect2
+		left join (
+			select courseSectSchedENT.termCode termCode,
+				courseSectSchedENT.crn crn,
+				courseSectSchedENT.section section,
+				courseSectSchedENT.partOfTermCode partOfTermCode,
+				nvl(courseSectSchedENT.meetingType, 'Standard') meetingType,
+				row_number() over (
+					partition by
+						courseSectSchedENT.crn,
+						courseSectSchedENT.section,
+						courseSectSchedENT.termCode,
+						courseSectSchedENT.partOfTermCode
+					order by
+						courseSectSchedENT.recordActivityDate desc
+				) courseSectSchedRn 
+			from CourseSectionMCR coursesect
+				inner join CourseSectionSchedule courseSectSchedENT on courseSectSchedENT.termCode = coursesect.termCode
+					and courseSectSchedENT.partOfTermCode = coursesect.partOfTermCode
+					and courseSectSchedENT.crn = coursesect.crn
+					and (courseSectSchedENT.section = coursesect.section or coursesect.section is null)
+					and courseSectSchedENT.isIpedsReportable = 1  
 --ak 20200406 Including dummy date changes. (PF-1368)
-			and ((coursesectschedENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and coursesectschedENT.recordActivityDate <= coursesect.censusDate)
-					or coursesectschedENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-	)
-where courseSectSchedRn = 1
-),
+					and ((courseSectSchedENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+						and courseSectSchedENT.recordActivityDate <= coursesect.censusDate)
+							or courseSectSchedENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+			) CourseSched 
+			on CourseSched.termCode = coursesect2.termCode
+			and CourseSched.partOfTermCode = coursesect2.partOfTermCode
+			and CourseSched.crn = coursesect2.crn
+			and (courseSched.section = coursesect2.section or coursesect2.section is null)
+			and CourseSched.courseSectSchedRn = 1		 
+), 
 
 --jh 20200422 removed ReportingPeriod and CourseSectionMCR joins and added section field
 CourseMCR as (
 --Included to get course type information
+-- ak 20200707 Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views
 
 select *
 from (
 	select distinct coursesectsched.cohortInd cohortInd,
-		coursesectsched.crn crn,
-		coursesectsched.section section,
+--		coursesectsched.crn crn,
+--		coursesectsched.section section,
 		courseENT.subject subject,
 		courseENT.courseNumber courseNumber,
 --ak 20200611 Adding changes for termCode ordering. (PF-1494)
-		coursesectsched.termOrder,
-		coursesectsched.termCode termCode,
-		coursesectsched.partOfTermCode partOfTermCode,
-		coursesectsched.censusDate censusDate,
+--		coursesectsched.termOrder,
+--		coursesectsched.termCode termCode,
+--		coursesectsched.partOfTermCode partOfTermCode,
+--		coursesectsched.censusDate censusDate,
 		courseENT.courseLevel courseLevel,
 		courseENT.isRemedial isRemedial,
 		courseENT.isESL isESL,
-		coursesectsched.meetingType meetingType,
-		CAST(coursesectsched.creditHourEquivalent as DECIMAL(2,0)) creditHrs,
+--		coursesectsched.meetingType meetingType,
+--		NVL(coursesectsched.enrollmentHours, 0) enrollmentHours,
+--		coursesectsched.isClockHours isClockHours,
+--        coursesectsched.equivCRHRFactor equivCRHRFactor,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+--        coursesectsched.instructionalActivityType instructionalActivityType,
 		row_number() over (
 			partition by
 				courseENT.subject,
 				courseENT.courseNumber,
-				courseENT.termCodeEffective,
 				courseENT.courseLevel
 			order by
+				courseENT.termCodeEffective desc,
 				courseENT.recordActivityDate desc
 		) courseRn
 	from CourseSectionScheduleMCR coursesectsched
-		inner join Course courseENT ON courseENT.subject = coursesectsched.subject
+		left join Course courseENT ON courseENT.subject = coursesectsched.subject
 			and courseENT.courseNumber = coursesectsched.courseNumber
 			and courseENT.courseLevel = coursesectsched.crnLevel
 --ak 20200611 Adding changes for termCode ordering. (PF-1494)
 		inner join AcadTermOrder termorder on termorder.termCode = courseENT.termCodeEffective
 			and courseENT.isIpedsReportable = 1 --true
+			and courseENT.courseStatus = 'Active'
 --ak 20200406 Including dummy date changes. (PF-1368)
 			and ((courseENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and courseENT.recordActivityDate <= coursesectsched.censusDate)
@@ -853,57 +945,95 @@ where courseRn = 1
 
 --jh 20200422 removed CourseSectionScheduleMCR join
 
+/*****
+BEGIN SECTION - Transformations
+This set of views is used to transform, aggregate, etc. records from MCR views above.
+*****/
+
 CourseTypeCountsSTU as (
 -- View used to break down course category type counts by type
 
-select reg.cohortInd cohortInd,
-	reg.personId personId,
-	reg.termCode termCode,
-	reg.partOfTermCode partOfTermCode,
-	COUNT(case when NVL(course.creditHrs, 0) is not null then 1 else 0 end) totalCourses,
-	SUM(NVL(course.creditHrs, 0)) totalHrs,
-	COUNT(case when NVL(course.creditHrs, 0) = 0 then 1 else 0 end) totalNonCredCourses,
-	COUNT(case when NVL(course.creditHrs, 0) != 0 then 1 else 0 end) totalCredCourses,
-	COUNT(case when course.meetingType = 'Online/Distance Learning' then 1 else 0 end) totalDECourses,
-	COUNT(case when course.courseLevel = 'Undergrad' then 1 else 0 end) totalUGCourses,
-	COUNT(case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end) totalGRCourses,
-	COUNT(case when course.courseLevel = 'Postgraduate' then 1 else 0 end) totalPostGRCourses,
-	COUNT(case when course.courseLevel = 'Continuing Ed' then 1 else 0 end) totalCECourses,
-	COUNT(case when course.isESL = 'Y' then 1 else 0 end) totalESLCourses,
-	COUNT(case when course.isRemedial = 'Y' then 1 else 0 end) totalRemCourses,
-	COUNT(case when reg.isInternational = 1 then 1 else 0 end) totalIntlCourses,
+select cohortInd cohortInd,
+    personId personId,
+    termCode termCode,
+    partOfTermCode partOfTermCode,
+-- ak 20200707 Modification to course/hour counts & addition of clock hours (PF-1552)
+	SUM(totalCourses) totalCourses,
+	SUM(totalCreditHrs) totalCreditHrs,
+	SUM(totalClockHrs) totalClockHrs,
+	SUM(totalNonCredCourses) totalNonCredCourses,
+	SUM(totalCredCourses) totalCredCourses,
+	SUM(totalDECourses) totalDECourses,
+	SUM(totalUGCourses) totalUGCourses,
+	SUM(totalGRCourses) totalGRCourses,
+	SUM(totalPostGRCourses) totalPostGRCourses,
+	SUM(totalCECourses) totalCECourses,
+	SUM(totalESLCourses) totalESLCourses,
+	SUM(totalRemCourses) totalRemCourses,
+	SUM(totalIntlCourses) totalIntlCourses,
 -- ak 20200330 added Registration.crnGradingMode (PF-1253)
-	COUNT(case when reg.crnGradingMode = 'Audit' then 1 else 0 end) totalAuditCourses
-from RegistrationMCR reg
-	inner join CourseMCR course on course.termCode = reg.termCode
-		and course.partOfTermCode = reg.partOfTermCode
-		and course.crn = reg.crn
--- ak 20200330 Added crnLevel ENUM field with values Undergrad,Graduate,Postgraduate,Professional,Continuing Ed (PF-1253)
-		and course.courseLevel = reg.crnLevel 
-group by reg.cohortInd,
-		reg.personId,
-		reg.termCode,
-		reg.partOfTermCode
+	SUM(totalAuditCourses) totalAuditCourses
+from (
+	select reg.cohortInd cohortInd,
+		reg.personId personId,
+		reg.termCode termCode,
+		reg.partOfTermCode partOfTermCode,
+		reg.crn crn,
+	-- ak 20200707 Modification to course/hour counts & addition of clock hours (PF-1552)
+		case when coursesectsched.enrollmentHours >= 0 then 1 else 0 end totalCourses,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		case when reg.instructionalActivityType = 'CR' and coursesectsched.enrollmentHours >= 0 then coursesectsched.enrollmentHours 
+			when reg.instructionalActivityType = 'B' and coursesectsched.isClockHours = 0 then coursesectsched.enrollmentHours 
+            when reg.instructionalActivityType = 'B' and coursesectsched.isClockHours = 1 
+                then coursesectsched.equivCRHRFactor * coursesectsched.enrollmentHours
+            else 0 
+        end totalCreditHrs,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		case when reg.instructionalActivityType = ('CL') and coursesectsched.enrollmentHours >= 0 then coursesectsched.enrollmentHours 
+					else 0 end totalClockHrs,
+		case when coursesectsched.enrollmentHours = 0 then 1 else 0 end totalNonCredCourses,
+		case when coursesectsched.enrollmentHours > 0 then 1 else 0 end totalCredCourses,
+		case when coursesectsched.meetingType = 'Online/Distance Learning' then 1 else 0 end totalDECourses,
+		case when course.courseLevel = 'Undergrad' then 1 else 0 end totalUGCourses,
+		case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end totalGRCourses,
+		case when course.courseLevel = 'Postgraduate' then 1 else 0 end totalPostGRCourses,
+		case when course.courseLevel = 'Continuing Ed' then 1 else 0 end totalCECourses,
+		case when course.isESL = 'Y' then 1 else 0 end totalESLCourses,
+		case when course.isRemedial = 'Y' then 1 else 0 end totalRemCourses,
+		case when reg.isInternational = 1 then 1 else 0 end totalIntlCourses,
+	-- ak 20200330 added Registration.crnGradingMode (PF-1253)
+		case when reg.crnGradingMode = 'Audit' then 1 else 0 end totalAuditCourses
+	from RegistrationMCR reg
+		left join CourseSectionScheduleMCR coursesectsched on reg.termCode = coursesectsched.termCode
+			and reg.partOfTermCode = coursesectsched.partOfTermCode
+			and reg.crn = coursesectsched.crn 
+			and reg.crnLevel = coursesectsched.crnLevel
+		left join CourseMCR course on coursesectsched.subject = course.subject
+			and coursesectsched.courseNumber = course.courseNumber
+			and coursesectsched.crnLevel = course.courseLevel
+	)
+group by cohortInd,
+	personId,
+	termCode,
+	partOfTermCode
 --order by reg.cohortInd,
---		reg.personId,
---		reg.termCode
+--		personId,
+--		termCode
 ),
 
---jh 20200422 modified to only pull first time students from SUMmer term
- 
 StudentTypeRefactor as (
---View used to determine reporting year IPEDS defined student type using prior SUMmer considerations
+--View used to determine reporting year IPEDS defined student type using prior summer considerations
 --Student is considered 'First Time' if they enrolled for the first time in the reporting fall term or 
---if they enrolled for the first time in the prior SUMmer and continued on to also take fall courses. 
+--if they enrolled for the first time in the prior summer and continued on to also take fall courses. 
 
 select student.personId personId
 from ClientConfigMCR clientconfig
 	cross join StudentMCR student 
-where student.cohortInd = clientconfig.sectionSUMmer 
+where student.cohortInd = clientconfig.sectionSummer 
 	and student.studentType = 'First Time'
 ),
 
---jh 20200422 modified to only pull first time students from retention SUMmer term
+--jh 20200422 modified to only pull first time students from retention summer term
 
 StudentTypeRefactor_RET as (
 --This view is the same as 'StuReportableType' but it applies to the retention cohort
@@ -911,7 +1041,7 @@ StudentTypeRefactor_RET as (
 select student.personId personId
 from ClientConfigMCR clientconfig
 	cross join StudentMCR student 
-where student.cohortInd = clientconfig.sectionRetSUMmer 
+where student.cohortInd = clientconfig.sectionRetSummer 
 	and student.studentType = 'First Time'
 ),
 
@@ -932,9 +1062,13 @@ CohortSTU as (
 
 select CohView.*,
 	case when CohView.studentLevel = 'Undergraduate' then 
-		(case when CohView.totalHrs >= CohView.requiredUGhrs then 'Full' else 'Part' end)
-			when CohView.studentLevel = 'Graduate' then 
-				(case when CohView.totalHrs >= CohView.requiredGRhrs then 'Full' else 'Part' end)
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		(case when CohView.instructionalActivityType = 'CL' 
+		            and CohView.totalClockHrs >= CohView.requiredFTClockHoursUG then 'Full' 
+			 when CohView.totalCreditHrs >= CohView.requiredFTCreditHoursUG then 'Full' 
+			 else 'Part' end)
+		when CohView.studentLevel = 'Graduate' then 
+			(case when CohView.totalCreditHrs >= CohView.requiredFTCreditHoursGR then 'Full' else 'Part' end)
 		else 'Part' 
 	end timeStatus
 from (	
@@ -942,6 +1076,8 @@ from (
 		reg.personId personId,
 		reg.termCode termCode,
 		reg.censusDate censusDate,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		reg.instructionalActivityType instructionalActivityType, 
 --jh 20200422 added config fields
 		clientconfig.acadOrProgReporter acadOrProgReporter,
 		clientconfig.reportResidency reportResidency,
@@ -956,8 +1092,9 @@ from (
 		student.residency residency,
 		student.highSchoolGradDate hsGradDate,
 -- ak 20200519 Adding FT/PT credit hour comparison points (PF-1480)
-		NVL(acadterm.requiredFTCreditHoursUG, 12) requiredUGhrs,
-		NVL(acadterm.requiredFTCreditHoursGR, 9) requiredGRhrs,
+		NVL(acadterm.requiredFTCreditHoursUG, 12) requiredFTCreditHoursUG,
+		NVL(acadterm.requiredFTClockHoursUG, 24) requiredFTClockHoursUG,
+		NVL(acadterm.requiredFTCreditHoursGR, 9) requiredFTCreditHoursGR,
 		person.gender gender,
 -- ak 20200421 (PF-1417) Modification to replace 'isInternational' with 'isInUSOnVisa' and 'isUSCitizen'
 		person.isInUSOnVisa isInUSOnVisa,
@@ -973,7 +1110,8 @@ from (
 		person.nation nation,
 		person.state state,
 		--courseSch.meetingType meetingType,
-		coursecnt.totalHrs totalHrs,
+		coursecnt.totalCreditHrs totalCreditHrs,
+		coursecnt.totalClockHrs totalClockHrs,
 		coursecnt.totalCourses totalcourses,
 		coursecnt.totalDEcourses totalDEcourses,
 		coursecnt.totalUGCourses totalUGCourses,
@@ -983,7 +1121,7 @@ from (
 		coursecnt.totalESLCourses totalESLCourses,
 		coursecnt.totalRemCourses totalRemCourses,
 -- ak 20200330 Continuing ed is no longer considered a student type (PF-1382)
---jh 20200422 if cohort student type is not first time, check is SUMmer is. If not, value is student type
+--jh 20200422 if cohort student type is not first time, check is summer is. If not, value is student type
 		case when student.studentType = 'First Time' then 'First Time'
 			when student.personId = studtype.personId then 'First Time'
 			else student.studentType
@@ -1011,15 +1149,15 @@ from (
 		from ClientConfigMCR clientconfig
 --jh 20200422 added join to filter on fall cohort term code
 			inner join RegistrationMCR reg on reg.cohortInd = clientconfig.sectionFall 
-			inner join PersonMCR person on reg.personId = person.personId
-				and person.cohortInd = reg.cohortInd
 			inner join StudentMCR student on reg.personId = student.personId
 				and student.cohortInd = reg.cohortInd
 			inner join AcademicTermMCR acadterm on acadterm.termCode = reg.termCode
 --jh 20200422 changed inner join to left join
-			left join CourseTypeCountsSTU coursecnt on reg.personId = coursecnt.personId --5299
+			inner join CourseTypeCountsSTU coursecnt on reg.personId = coursecnt.personId --5299
 				and coursecnt.cohortInd = reg.cohortInd
 			left join StudentTypeRefactor studtype on studtype.personId = reg.personId
+			left join PersonMCR person on reg.personId = person.personId
+				and person.cohortInd = reg.cohortInd
 --ak 20200429 Adding student status filter. 
 		where student.studentStatus = 'Active'
 	) as CohView
@@ -1094,7 +1232,7 @@ select cohortstu.personId personId,
 		when cohortstu.timeStatus = 'Part'
 			and cohortstu.studentLevel = 'Graduate'
 		then 25 -- 25 - Part-time graduate
-		end as ipedsPartAStudentLevel,
+	end as ipedsPartAStudentLevel,
 -- ak 20200330 (PF-1253) Including client preferences for non-binary and unknown gender assignments
 	case when cohortstu.gender = 'Male' then 'M'
 		when cohortstu.gender = 'Female' then 'F'
@@ -1239,7 +1377,8 @@ This set of views is used to look at prior year data and return retention cohort
 *****/
 
 --jh 20200409 Removed inclusion and enrolled from values; moved exclusionReason to filter in joins
--- Added variables from DefaultValues to remove hard-coding			  
+--			  Added variables from DefaultValues to remove hard-coding			  
+
 CohortExclusion_RET as (
 --View used to build the retention student cohort. (CohortInd = 'Retention Fall')
 
@@ -1263,7 +1402,7 @@ from (
 			on termorder.termCode = exclusion.termCodeEffective
 	where termorder.termOrder >= repperiod.termOrder
 		and exclusion.exclusionReason in ('Died', 'Medical Leave', 'Military Leave', 'Foreign Aid Service', 'Religious Leave')
-		and exclusion.isIPEDSReportable = 1			
+		and exclusion.isIPEDSReportable = 1	
 	)   
 where exclusionRn = 1
 ),
@@ -1275,17 +1414,8 @@ select student.personId personId
 from ClientConfigMCR clientconfig
 	cross join StudentMCR student
 where student.studentStatus = 'Active'
-	and student.cohortInd = clientconfig.sectionSUMmer
-),   
-
---jh 20200422 Added variables from DefaultValues to remove hard-coding
---			  Added alias to cohortInd field
---			  Removed termCode and partOfTermCode fields from Person and Student joins
---			  Removed Graduate part of timeStatus case statement in outer query
---			  Added code to calculate Audit courses
---			  Modified exclusionInd field
---			  Added inclusionInd placeholder field
---			  Add enrolledInd field and join fo CohortRefactorSTU to determine if student enrolled in Fall cohort
+	and student.cohortInd = clientconfig.sectionSummer
+),
 
 CohortSTU_RET as (
 --View used to build the reportable retention student cohort. (CohortInd = 'Retention Fall')
@@ -1293,83 +1423,89 @@ CohortSTU_RET as (
 --specs to be included. 
 
 --jh 20200422 added filters for retention requirements, removed excess fields
-
 select CohView.personId personId,
-	case when CohView.totalHrs >= CohView.requiredUGhrs then 'Full' else 'Part' end timeStatus,
-	CohView.exclusionInd exclusionInd,
-	CohView.inclusionInd inclusionInd,
-	CohView.enrolledInd enrolledInd
-from (
-	select reg.personId personId,
-		case when exclusionret.personId is not null then 1 else null end exclusionInd,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+        case when CohView.instructionalActivityType = 'CL' 
+                and CohView.totalClockHrs >= CohView.requiredFTClockHoursUG then 'Full' 
+			 when CohView.totalCreditHrs >= CohView.requiredFTCreditHoursUG then 'Full' 
+			 else 'Part' end timeStatus,
+		CohView.exclusionInd exclusionInd,
+		case when CohView.inclusionInd = 1 and CohView.studentStatus = 'Study Abroad' then 1 end inclusionInd,
+		CohView.enrolledInd enrolledInd
+	from (
+		select reg.personId personId,
+			case when exclusionret.personId is not null then 1 else null end exclusionInd,
 --ak 20200429 adding inclusion determination code (PF-1435)
-		case when student.studentStatus = 'Active' then null --only look at Study Abroad status
-			when refactorstu.personId is not null then 1 --student enrolled in second year Fall semester
-			when inclusionret.personId is not null then 1 --student enrolled in second year SUMmer semester 
-			else null 
-		end inclusionInd,
-		case when refactorstu.personId is not null then 1 else null end enrolledInd,
+			case when student.studentStatus = 'Active' then null --only look at Study Abroad status
+				when refactorstu.personId is not null then 1 --student enrolled in second year Fall semester
+				when inclusionret.personId is not null then 1 --student enrolled in second year summer semester 
+				else null 
+			end inclusionInd,
+			case when refactorstu.personId is not null then 1 else null end enrolledInd,
 -- ak 20200519 Adding FT/PT credit hour comparison points (PF-1480)
-		NVL(acadterm.requiredFTCreditHoursUG, 12) requiredUGhrs,
-		coursecnt.totalHrs totalHrs,
+			NVL(acadterm.requiredFTCreditHoursUG, 12) requiredUGhrs,
+		NVL(acadterm.requiredFTCreditHoursUG, 12) requiredFTCreditHoursUG,
+		NVL(acadterm.requiredFTClockHoursUG, 24) requiredFTClockHoursUG,
+-- ak 20200707 Adding additional client config values for level offereings and instructor activity type (PF-1552)
+		reg.instructionalActivityType instructionalActivityType, 
+		coursecnt.totalCreditHrs totalCreditHrs,
+		coursecnt.totalClockHrs totalClockHrs,
 -- ak 20200330 Removed Continuing ed - it is no longer considered a student type (PF-1382)
---jh 20200422 if cohort student type is not first time, check is SUMmer is. If not, value is student type
-		case when student.studentType = 'First Time' then 'First Time'
-			when student.personId = studtyperet.personId then 'First Time'
-			else student.studentType
-		end studentType,
---confirm group and assign student levels based on IPEDS specs.
-		case when student.studentLevel = 'Continuing Ed' and clientconfig.includeNonDegreeAsUG = 'Y' then 'UnderGrad' 
-			when student.studentLevel in ('Professional', 'Postgraduate') then 'Graduate' 
-			else student.studentLevel 
-		end studentLevel,
-		student.studentStatus studentStatus,
-		degree.awardLevel awardLevel,
---confirm if students should be excluded from the cohort based on IPEDS specs.
-		case 
+--jh 20200422 if cohort student type is not first time, check is summer is. If not, value is student type
+			case when student.studentType = 'First Time' then 'First Time'
+				when student.personId = studtyperet.personId then 'First Time'
+				else student.studentType
+			end studentType,
+			--confirm group and assign student levels based on IPEDS specs.
+			case when student.studentLevel = 'Continuing Ed' and clientconfig.includeNonDegreeAsUG = 'Y' then 'UnderGrad' 
+				when student.studentLevel in ('Professional', 'Postgraduate') then 'Graduate' 
+				else student.studentLevel 
+			end studentLevel,
+			student.studentStatus studentStatus,
+			--confirm if students should be excluded from the cohort based on IPEDS specs.
+			case 
 --jh 20200422 changed coursecnt.totalCredCourses to coursecnt.totalCourses
-			when coursecnt.totalRemCourses = coursecnt.totalCourses 
-				and student.isNonDegreeSeeking = 0 then 1 --include students taking remedial courses if degree-seeking
-			when coursecnt.totalCredCourses > 0 --exclude students not enrolled for credit
-			then (case when coursecnt.totalESLCourses = coursecnt.totalCredCourses then 0 --exclude students enrolled only in ESL courses/programs
-					when coursecnt.totalCECourses = coursecnt.totalCredCourses then 0 --exclude students enrolled only in continuing ed courses
-					when coursecnt.totalIntlCourses = coursecnt.totalCredCourses then 0 --exclude students exclusively enrolled in any foreign branch campuses
+				when coursecnt.totalRemCourses = coursecnt.totalCourses 
+					and student.isNonDegreeSeeking = 0 then 1 --include students taking remedial courses if degree-seeking				
+				when coursecnt.totalCredCourses > 0 --exclude students not enrolled for credit
+				then (case when coursecnt.totalESLCourses = coursecnt.totalCredCourses then 0 --exclude students enrolled only in ESL courses/programs
+						when coursecnt.totalCECourses = coursecnt.totalCredCourses then 0 --exclude students enrolled only in continuing ed courses
+						when coursecnt.totalIntlCourses = coursecnt.totalCredCourses then 0 --exclude students exclusively enrolled in any foreign branch campuses
 -- ak 20200330 added Registration.crnGradingMode (PF-1253)
-					when coursecnt.totalAuditCourses = coursecnt.totalCredCourses then 0 --exclude students exclusively auditing classes
-					-- when... then 0 --exclude PHD residents or interns
-					-- when... then 0 --students studying abroad if enrollment at home institution is an admin only record
-					-- when... then 0 --exclude students in experimental Pell programs
-					else 1
-				end)
-			else 0 
-		end ipedsInclude
-	from ClientConfigMCR clientconfig
-		inner join RegistrationMCR reg on reg.cohortInd = clientconfig.sectionRetFall
-		inner join PersonMCR person on reg.personId = person.personId
-			and person.cohortInd = reg.cohortInd
-		inner join StudentMCR student on reg.personId = student.personId
-			and student.cohortInd = reg.cohortInd
+						when coursecnt.totalAuditCourses = coursecnt.totalCredCourses then 0 --exclude students exclusively auditing classes
+						-- when... then 0 --exclude PHD residents or interns
+						-- when... then 0 --students studying abroad if enrollment at home institution is an admin only record
+						-- when... then 0 --exclude students in experimental Pell programs
+						else 1
+					end)
+				 else 0 
+			end ipedsInclude
+		from ClientConfigMCR clientconfig
+			inner join RegistrationMCR reg on reg.cohortInd = clientconfig.sectionRetFall
+			inner join PersonMCR person on reg.personId = person.personId
+				and person.cohortInd = reg.cohortInd
+			inner join StudentMCR student on reg.personId = student.personId
+				and student.cohortInd = reg.cohortInd
 -- ak 20200429 adding student status filter				
-			and student.studentStatus in ('Active', 'Study Abroad')
--- ak 20200427 adding Degree entity to filter retention cohort on Degree.awardLevel (PF-1434)
-		inner join DegreeMCR degree on degree.personId = student.personId
-			and student.cohortInd = degree.cohortInd
-		left join CourseTypeCountsSTU coursecnt on reg.personId = coursecnt.personId
-			and coursecnt.cohortInd = reg.cohortInd
-		inner join AcademicTermMCR acadterm on acadterm.termCode = reg.termCode
-		left join StudentTypeRefactor_RET studtyperet on studtyperet.personId = reg.personId 
-		left join CohortExclusion_RET exclusionret on exclusionret.personId = reg.personId
-		left join CohortRefactorSTU refactorstu on refactorstu.cohortInd = clientconfig.sectionFall
-		left join CohortInclusion_RET inclusionret on reg.personId = inclusionret.personId
-	) as CohView
+				and student.studentStatus in ('Active', 'Study Abroad')
+			inner join DegreeMCR degree on degree.personId = reg.personId
+				and degree.cohortInd = reg.cohortInd 
+				and degree.termCode = reg.termCode 
+				and degree.awardLevel = 'Bachelors Degree'
+			left join CourseTypeCountsSTU coursecnt on reg.personId = coursecnt.personId
+				and coursecnt.cohortInd = reg.cohortInd
+			inner join AcademicTermMCR acadterm on acadterm.termCode = reg.termCode
+			left join StudentTypeRefactor_RET studtyperet on studtyperet.personId = reg.personId 
+			left join CohortExclusion_RET exclusionret on exclusionret.personId = reg.personId
+			left join CohortRefactorSTU refactorstu on refactorstu.cohortInd = clientconfig.sectionFall
+			left join CohortInclusion_RET inclusionret on reg.personId = inclusionret.personId
+		) as CohView
 where CohView.ipedsInclude = 1
---Retention is first-time Bachelor's degree seeking ONLY 
-	and CohView.awardLevel = "Bachelor's Degree"
 	and CohView.studentLevel = 'Undergrad'
 	and CohView.studentType = 'First Time'
 -- ak 20200429 adding student status filter
 	and (CohView.studentStatus = 'Active'
-		or CohView.inclusionInd = 1)
+        or CohView.inclusionInd = 1)
 ),
 
 /*****
@@ -1393,14 +1529,16 @@ from (
 		) employeeRn
 	from ReportingPeriodMCR_HR repperiodhr
 		cross join Employee empENT
---jh 20200422 Including dummy date changes. (PF-1368)
-	where ((empENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-		and empENT.recordActivityDate <= repperiodhr.asOfDate)
-			or empENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-		and ((empENT.terminationDate IS NULL) 
-			or (empENT.terminationDate > repperiodhr.asOfDate
-				and empENT.hireDate <= repperiodhr.asOfDate))
+	where ((empENT.terminationDate IS NULL) 
+		or (empENT.terminationDate > repperiodhr.asOfDate
+			and empENT.hireDate <= repperiodhr.asOfDate))
 		and empENT.isIpedsReportable = 1 
+-- ak 20200707 Adding employee status filter (PF-1552)
+		and empENT.employeeStatus = 'Active'
+--jh 20200422 Including dummy date changes. (PF-1368)
+		and ((empENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+			and empENT.recordActivityDate <= repperiodhr.asOfDate)
+				or empENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
 	)
 where employeeRn = 1
 ),
@@ -1422,18 +1560,20 @@ from (
 		) jobRn
 	from EmployeeMCR emp
 		inner join EmployeeAssignment empassignENT on empassignENT.personId = emp.personId
---ak 20200406 Including dummy date changes. (PF-1368)
-		and ((empassignENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-			and empassignENT.recordActivityDate <= emp.asOfDate)
-				or empassignENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-		and empassignENT.assignmentStartDate <= emp.asOfDate
-		and (empassignENT.assignmentEndDate IS NULL 
-			or empassignENT.assignmentEndDate >= emp.asOfDate)
-		and empassignENT.isUndergradStudent = 0
-		and empassignENT.isWorkStudy = 0
-		and empassignENT.isTempOrSeasonal = 0
-		and empassignENT.isIpedsReportable = 1 
-		and empassignENT.assignmentType = 'Primary'
+			and empassignENT.assignmentStartDate <= emp.asOfDate
+			and (empassignENT.assignmentEndDate IS NULL 
+				or empassignENT.assignmentEndDate >= emp.asOfDate)
+			and empassignENT.isUndergradStudent = 0
+			and empassignENT.isWorkStudy = 0
+			and empassignENT.isTempOrSeasonal = 0
+			and empassignENT.isIpedsReportable = 1 
+			and empassignENT.assignmentType = 'Primary'
+	-- ak 20200707 Adding employee assignment status filter (PF-1552)
+			and empassignENT.assignmentStatus = 'Active'
+	--ak 20200406 Including dummy date changes. (PF-1368)
+			and ((empassignENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and empassignENT.recordActivityDate <= emp.asOfDate)
+					or empassignENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
 	)
 where jobRn = 1
 ),
@@ -1453,14 +1593,16 @@ from (
 		) positionRn
 	from EmployeeAssignmentMCR empassign
 		inner join EmployeePosition empposENT on empposENT.position = empassign.position
+			and empposENT.startDate <= empassign.asOfDate
+			and (empposENT.endDate IS NULL 
+				or empposENT.endDate >= empassign.asOfDate)
+			and empposENT.isIpedsReportable = 1 
+-- ak 20200707 Adding position status filter (PF-1552)
+			and empposENT.positionStatus != 'Cancelled'
 --ak 20200406 Including dummy date changes. (PF-1368)
 			and ((empposENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and empposENT.recordActivityDate <= empassign.asOfDate)
-					or empposENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-		and empposENT.startDate <= empassign.asOfDate
-		and (empposENT.endDate IS NULL 
-			or empposENT.endDate >= empassign.asOfDate)
-		and empposENT.isIpedsReportable = 1 
+					or empposENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 	
 	)
 where positionRn = 1
 ),
@@ -1486,12 +1628,12 @@ from (
 		) jobRn
 	from EmployeeMCR emp
 		inner join InstructionalAssignment instructassignENT on instructassignENT.personId = emp.personId
+			and instructassignENT.termCode = emp.termCodeFall
+			and instructassignENT.isIpedsReportable = 1 --true
 --ak 20200406 Including dummy date changes. (PF-1368)
 			and ((instructassignENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and instructassignENT.recordActivityDate <= emp.asOfDate)
 					or instructassignENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-			and instructassignENT.termCode = emp.termCodeFall
-			and instructassignENT.isIpedsReportable = 1 --true
 	)
 where jobRn = 1
 ),
@@ -1500,17 +1642,21 @@ where jobRn = 1
 
 CourseTypeCountsEMP as (
 --view used to break down course category type counts by type
+-- ak 20200707 Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views
 
 select instructassign.personId personId,
-	SUM(case when course.crn is not null then 1 else 0 end) totalCourses,
-	SUM(case when course.creditHrs = 0 then 1 else 0 end) totalNonCredCourses,
-	SUM(case when course.creditHrs > 0 then 1 else 0 end) totalCredCourses,
+	SUM(case when coursesectsched.crn is not null then 1 else 0 end) totalCourses,
+	SUM(case when coursesectsched.enrollmentHours = 0 then 1 else 0 end) totalNonCredCourses,
+	SUM(case when coursesectsched.enrollmentHours > 0 then 1 else 0 end) totalCredCourses,
 	SUM(case when course.courseLevel = 'Continuing Ed' then 1 else 0 end) totalCECourses
 from instructionalAssignmentMCR instructassign
-	left join CourseMCR course on course.crn = instructassign.crn
-		and course.section = instructassign.section
-		and course.termCode = instructassign.termCode
-		and course.partOfTermCode = instructassign.partOfTermCode
+	left join CourseSectionScheduleMCR coursesectsched on instructassign.termCode = coursesectsched.termCode
+		and instructassign.partOfTermCode = coursesectsched.partOfTermCode
+		and instructassign.crn = coursesectsched.crn 
+		and instructassign.section = coursesectsched.section
+	left join CourseMCR course on coursesectsched.subject = course.subject
+		and coursesectsched.courseNumber = course.courseNumber
+		and coursesectsched.crnLevel = course.courseLevel
 group by instructassign.personId
 ),
 
@@ -1543,21 +1689,21 @@ FTE_EMP as (
 --instructional full time equivalency calculation
 --**-add exclusions for teaching exclusively in stand-alone graduate or professional programs
 
-select round(FTInst + ((PTInst + PTNonInst) * 1/3), 2) FTE
+select ROUND(FTInst + ((PTInst + PTNonInst) * 1/3), 2) FTE
 from (
 	select SUM(case when cohortemp.fullOrPartTimeStatus = 'Full Time' 
-							and cohortemp.isInstructional = 1 --instructional staff
-							and ((cohortemp.totalNonCredCourses < cohortemp.totalCourses) --not exclusively non credit
-								or (cohortemp.totalCECourses < cohortemp.totalCourses) --not exclusively CE (non credit)
+						and cohortemp.isInstructional = 1 --instructional staff
+						and ((cohortemp.totalNonCredCourses < cohortemp.totalCourses) --not exclusively non credit
+							or (cohortemp.totalCECourses < cohortemp.totalCourses) --not exclusively CE (non credit)
 								or (cohortemp.totalCourses IS NULL)) then 1 
-						else 0 
+					else 0 
 		end) FTInst, --FT instructional staff not teaching exclusively non-credit courses
 		SUM(case when cohortemp.fullOrPartTimeStatus = 'Part Time' 
 					and cohortemp.isInstructional = 1 --instructional staff
 					and ((cohortemp.totalNonCredCourses < cohortemp.totalCourses) --not exclusively non credit
 						or (cohortemp.totalCECourses < cohortemp.totalCourses) --not exclusively CE (non credit)
 							or (cohortemp.totalCourses IS NULL)) then 1 
-				else 0 
+			else 0 
 		end) PTInst, --PT instructional staff not teaching exclusively non-credit courses
 		SUM(case when cohortemp.isInstructional = 0 
 					and NVL(cohortemp.totalCredCourses, 0) > 0 then 1 
@@ -1584,7 +1730,7 @@ BEGIN SECTION - Formatting Views
 The views below are used to ensure that records exist for all IPEDS expected values even if the query result set doesn't contain records that meet all value conditions.
 *****/
 --jh 20200423 Broke up ipedsLevel into PartG, PartB and PartA
-
+	
 --Part A	
 FormatPartAStudentLevel as (
 select *
@@ -1630,21 +1776,19 @@ from (
 		(2), --Non-Degree/Certificate seeking undergraduate Students
 		(3)  --Graduate students
 	) as StudentLevel(ipedsLevel)
-
 ),
 
 --Part B
--- ak 20200413 (PF-1371) Mod to move all formatting to the 'Formatting Views'
+-- ak 20200413 (PF-1371) Mod to move all formatting to the 'Formatting Views'					  
 --jh 20200422 modified ipedsLevel based on requirements for Part B
           
 FormatPartBStudentLevel as (
-select *
+select * 
 from (
 	VALUES 
 		(1), --Undergraduate students
 		(3)  --Graduate students
 	) as StudentLevel(ipedsLevel)
-
 ),
 
 --Part B
@@ -1697,25 +1841,25 @@ Field2 through Field20    - Fields2 through field 20 are used for numeric VALUES
 select 'A' part,
 	1 sortorder,
 	'99.0000' field1, --Classification of instructional program (CIP) code default (99.0000) for all institutions. 'field1' will be utilized for client CIPCodes every other reporting year
-	ipedsLevel field2, -- Student level, 1,2,3,7,11,15,16,17,21, and 25 (refer to student level table (Part A) in appendix) (6,8,14,20,22, 28, 29 and 99 are for export only.)
-	COALESCE(SUM(case when ipedsEthnicity = '1' and ipedsGender = 'M' then 1 else 0 end), 0) field3, -- Nonresident alien - Men (1), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '1' and ipedsGender = 'F' then 1 else 0 end), 0) field4, -- Nonresident alien - Women (2), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '2' and ipedsGender = 'M' then 1 else 0 end), 0) field5, -- Hispanic/Latino - Men (25), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '2' and ipedsGender = 'F' then 1 else 0 end), 0) field6, -- Hispanic/Latino - Women (26), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '3' and ipedsGender = 'M' then 1 else 0 end), 0) field7, -- American Indian or Alaska Native - Men (27), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '3' and ipedsGender = 'F' then 1 else 0 end), 0) field8, -- American Indian or Alaska Native - Women (28), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '4' and ipedsGender = 'M' then 1 else 0 end), 0) field9, -- Asian - Men (29), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '4' and ipedsGender = 'F' then 1 else 0 end), 0) field10, -- Asian - Women (30), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '5' and ipedsGender = 'M' then 1 else 0 end), 0) field11, -- Black or African American - Men (31), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '5' and ipedsGender = 'F' then 1 else 0 end), 0) field12, -- Black or African American - Women (32), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '6' and ipedsGender = 'M' then 1 else 0 end), 0) field13, -- Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '6' and ipedsGender = 'F' then 1 else 0 end), 0) field14, -- Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '7' and ipedsGender = 'M' then 1 else 0 end), 0) field15, -- White - Men (35), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '7' and ipedsGender = 'F' then 1 else 0 end), 0) field16, -- White - Women (36), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '8' and ipedsGender = 'M' then 1 else 0 end), 0) field17, -- Two or more races - Men (37), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '8' and ipedsGender = 'F' then 1 else 0 end), 0) field18, -- Two or more races - Women (38), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end), 0) field19, -- Race and ethnicity unknown - Men (13), 0 to 999999
-	COALESCE(SUM(case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end), 0) field20 -- Race and ethnicity unknown - Women (14), 0 to 999999
+	ipedsLevel field2, -- Student level, 1,2,3,7,11,15,16,17,21, and 25 (refer to student level table (Part A) in appendix)(6,8,14,20,22, 28, 29 and 99 are for export only.)
+	coalesce(SUM(case when ipedsEthnicity = '1' and ipedsGender = 'M' then 1 else 0 end), 0) field3, -- Nonresident alien - Men (1), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '1' and ipedsGender = 'F' then 1 else 0 end), 0) field4, -- Nonresident alien - Women (2), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '2' and ipedsGender = 'M' then 1 else 0 end), 0) field5, -- Hispanic/Latino - Men (25), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '2' and ipedsGender = 'F' then 1 else 0 end), 0) field6, -- Hispanic/Latino - Women (26), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '3' and ipedsGender = 'M' then 1 else 0 end), 0) field7, -- American Indian or Alaska Native - Men (27), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '3' and ipedsGender = 'F' then 1 else 0 end), 0) field8, -- American Indian or Alaska Native - Women (28), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '4' and ipedsGender = 'M' then 1 else 0 end), 0) field9, -- Asian - Men (29), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '4' and ipedsGender = 'F' then 1 else 0 end), 0) field10, -- Asian - Women (30), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '5' and ipedsGender = 'M' then 1 else 0 end), 0) field11, -- Black or African American - Men (31), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '5' and ipedsGender = 'F' then 1 else 0 end), 0) field12, -- Black or African American - Women (32), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '6' and ipedsGender = 'M' then 1 else 0 end), 0) field13, -- Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '6' and ipedsGender = 'F' then 1 else 0 end), 0) field14, -- Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '7' and ipedsGender = 'M' then 1 else 0 end), 0) field15, -- White - Men (35), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '7' and ipedsGender = 'F' then 1 else 0 end), 0) field16, -- White - Women (36), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '8' and ipedsGender = 'M' then 1 else 0 end), 0) field17, -- Two or more races - Men (37), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '8' and ipedsGender = 'F' then 1 else 0 end), 0) field18, -- Two or more races - Women (38), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end), 0) field19, -- Race and ethnicity unknown - Men (13), 0 to 999999
+	coalesce(SUM(case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end), 0) field20 -- Race and ethnicity unknown - Women (14), 0 to 999999
 from (
 	select refactorstu.personId personId,
 		refactorstu.ipedsPartAStudentLevel ipedsLevel,
@@ -1723,7 +1867,8 @@ from (
 		refactorstu.ipedsEthnicity ipedsEthnicity
 	from CohortRefactorSTU refactorstu
 	where refactorstu.ipedsPartAStudentLevel is not null
-
+--EF2 mod testing - no Graduate level
+--		and refactorstu.studentLevel = 'Undergrad' 
 	
 	union
 	
@@ -1732,6 +1877,9 @@ from (
 		NULL, -- ipedsGender,
 		NULL -- ipedsEthnicity
 	from FormatPartAStudentLevel StudentLevel
+--EF2 mod testing - no Graduate level values 11 and 25
+--	where StudentLevel.ipedsLevel != 11 
+--		and StudentLevel.ipedsLevel != 25
 	)
 group by ipedsLevel
 
@@ -1771,6 +1919,8 @@ from (
 		refactorstu.residentStatus residentStatus,
 		refactorstu.isInAmerica
 	from CohortRefactorSTU refactorstu
+--EF2 mod testing - no Graduate level
+	--where refactorstu.studentLevel = 'Undergrad' 
 	
 	union
 	
@@ -1781,12 +1931,14 @@ from (
 		NULL, -- residentStatus,
 		0 --isInAmerica
 	from FormatPartGStudentLevel StudentLevel
+--EF2 mod testing - no Graduate level value 3
+--	where StudentLevel.ipedsLevel != 3 
 	)
 group by ipedsLevel
 
 union
 
---Part B - Fall Enrollment by Age and Gender
+--Part B - Fall Enrollment by Age and Gender 
 --**(Part B is mandatory in this collection)**
 --undergraduate and graduate
 
@@ -1820,7 +1972,9 @@ from (
 		refactorstu.ipedsAgeGroup ipedsAgeGroup,
 		refactorstu.ipedsGender
 	from CohortRefactorSTU refactorstu
-	
+--EF2 mod testing - no Graduate level
+--	where refactorstu.studentLevel = 'Undergrad' 
+
 	union
 	
 	select NULL, -- personId,
@@ -1829,7 +1983,9 @@ from (
 		NULL -- ipedsGender
 	from FormatPartBStudentLevel StudentLevel
 		 cross join FormatPartBAgeGroup AgeGroup
-    )
+--EF2 mod testing - no Graduate level
+--	where StudentLevel.ipedsLevel != 3 
+	    )
 where ipedsAgeGroup is not null
 --use client config value to apply optional/required survey section logic.
 	and (select clientconfig.reportAge
@@ -1941,8 +2097,8 @@ from (
 	select NVL(SUM(case when cohortret.timeStatus = 'Full'
 							and cohortret.exclusionInd is null 
 							and cohortret.inclusionInd is null 
-	                   then 1 
-					   else 0 
+						then 1 
+						else 0 
 		end), 0) Ftft, --Full-time, first-time bachelor's cohort, 1 to 999999
 		NVL(SUM(case when cohortret.timeStatus = 'Full' and cohortret.exclusionInd = 1 then 1 end), 0) FtftEx, --Full-time, first-time bachelor's cohort exclusions, 1 to 999999
 		NVL(SUM(case when cohortret.timeStatus = 'Full' and cohortret.inclusionInd = 1 then 1 end), 0) FtftIn, --Full-time, first-time bachelor's cohort inclusions, 1 to 999999
@@ -1958,7 +2114,6 @@ from (
 		NVL(SUM(case when cohortret.timeStatus = 'Part' and cohortret.enrolledInd = 1 then 1 end), 0) PtftEn
 	from CohortSTU_RET cohortret
 )
-
 union
 
 --jh 20200422 Moved inline views to from section instead of in select field
