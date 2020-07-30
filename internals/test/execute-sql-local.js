@@ -102,6 +102,7 @@ async function main() {
   await ensureGlueLibs();
   const credentials = await getCredentials();
   await fs.chmod(GLUE_PY_SPARK, 0o777);
+
   execFileSync(GLUE_PY_SPARK, [], {
     stdio: 'inherit',
     env: {
@@ -112,6 +113,7 @@ async function main() {
       AWS_ACCESS_KEY_ID: credentials.accessKeyId,
       AWS_SECRET_ACCESS_KEY: credentials.secretAccessKey,
       AWS_SESSION_TOKEN: credentials.sessionToken,
+      PYSPARK_PYTHON: 'python3',
     },
   });
 }

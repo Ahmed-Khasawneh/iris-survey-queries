@@ -322,7 +322,7 @@ async function main() {
 
     await exec(
       conn,
-      `/usr/bin/gluepython3 /home/glue/job.py --tenant_id="${argv.tenantId}" --stage="${argv.stage}" --sql="${sqlUri}"`,
+      `/usr/bin/gluepython3 /home/glue/job.py --tenant_id="${argv.tenantId}" --stage="${argv.stage}" --sql="${sqlUri}" --survey_type="${surveyType}"`,
       {
         onStdout: async data => {
           const strData = data.toString('utf8');

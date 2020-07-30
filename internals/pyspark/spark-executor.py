@@ -20,7 +20,7 @@ glueContext = GlueContext(SparkContext.getOrCreate())
 def main():
     args = parse_args()
     sql = get_file_from_s3(args.sql)
-    spark_refresh_entity_views(args.tenant_id, args.stage)
+    spark_refresh_entity_views_v2(args.tenant_id, args.survey_type, args.stage)
     dataframe = spark.sql(sql)
     dataframe = spark_create_json_format(dataframe)
     s3_path = 's3://{}/tmp-for-testing/report-output/{}'.format(OUTPUT_BUCKET, str(uuid.uuid4()))
@@ -31,13 +31,36 @@ def main():
     print('##OUTPUT##: s3://{}/{}'.format(OUTPUT_BUCKET, output_file_key))
 
 
-def spark_read_s3_source(s3_path, format="parquet"):
+def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
     s3 path and format
     """
-    s3_data = glueContext.getSource(format, paths=[s3_path])
+    s3_data = glueContext.getSource(format, paths=s3_paths)
     return s3_data.getFrame()
 
+def spark_refresh_entity_views_v2(tenant_id, survey_type, stage):
+    lambda_client = boto3.client('lambda', 'us-east-1')
+    invoke_response = lambda_client.invoke(
+        FunctionName = "iris-connector-doris-2019-{}-getReportPayload".format(stage),
+        LogType = "None",
+        Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '' }).encode('utf-8')
+    )
+    view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
+    view_metadata_without_s3_paths["tenantId"] = tenant_id
+    invoke_response = lambda_client.invoke(
+        FunctionName = "doris-data-access-apis-{}-GetEntitySnapshotPaths".format(stage),
+        LogType = "None",
+        Payload = json.dumps(view_metadata_without_s3_paths)
+    )
+    view_metadata = json.loads(invoke_response['Payload'].read().decode("utf-8"))
+    for view in view_metadata.get('views', []):
+        s3_paths = view.get('s3Paths', [])
+        view_name = view.get('viewName')
+        if len(s3_paths) > 0:
+            print("{}: ({})".format(view_name, ','.join(s3_paths)))
+            spark_read_s3_source(s3_paths).toDF().createOrReplaceTempView(view_name)
+        else:
+            print("No snapshots found for {}".format(view_name))
 
 def spark_refresh_entity_views(tenant_id, stage):
     lambda_client = boto3.client('lambda', 'us-east-1')
@@ -84,7 +107,7 @@ def spark_refresh_entity_views(tenant_id, stage):
 
     for entity_name, s3_path in entity_map.items():
         print("{} = {}".format(entity_name, s3_path))
-        spark_read_s3_source(s3_path).toDF().createOrReplaceTempView(entity_name)
+        spark_read_s3_source([s3_path]).toDF().createOrReplaceTempView(entity_name)
 
 
 def spark_create_json_format(data_frame):
@@ -136,6 +159,8 @@ def parse_args():
                         help='tenant id to get data from')
     parser.add_argument('--stage', dest='stage', default='DEV',
                         help='stage to run data against')
+    parser.add_argument('--survey_type', dest='survey_type',
+                        help='survey type to prepare data for')
 
     return parser.parse_args()
 
