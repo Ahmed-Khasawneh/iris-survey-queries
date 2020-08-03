@@ -5,8 +5,10 @@ import re
 from pyspark.sql import SQLContext, SparkSession
 import pyspark.sql.functions as f
 from pyspark import SparkContext
+from pyspark.sql.utils import AnalysisException
 from awsglue.context import GlueContext
 import argparse
+from datetime import datetime
 
 OUTPUT_BUCKET = 'doris-survey-reports-dev'
 S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
@@ -53,14 +55,57 @@ def spark_refresh_entity_views_v2(tenant_id, survey_type, stage):
         Payload = json.dumps(view_metadata_without_s3_paths)
     )
     view_metadata = json.loads(invoke_response['Payload'].read().decode("utf-8"))
+    snapshot_metadata = view_metadata.get('snapshotMetadata', {})
     for view in view_metadata.get('views', []):
         s3_paths = view.get('s3Paths', [])
         view_name = view.get('viewName')
         if len(s3_paths) > 0:
             print("{}: ({})".format(view_name, ','.join(s3_paths)))
-            spark_read_s3_source(s3_paths).toDF().createOrReplaceTempView(view_name)
+            df = spark_read_s3_source(s3_paths).toDF()
+            df = add_snapshot_metadata_columns(df, snapshot_metadata)
+            df.createOrReplaceTempView(view_name)
         else:
             print("No snapshots found for {}".format(view_name))
+
+def add_snapshot_metadata_columns(entity_df, snapshot_metadata):
+    snapshot_date_col = f.lit(None)
+    snapshot_tags_col = f.lit(f.array([]))
+
+    if not has_column(entity_df, 'snapshotGuid'):
+        entity_df = entity_df.withColumn('snapshotGuid', f.lit(None))
+
+    if snapshot_metadata is not None:
+        iterator = 0
+        for guid, metadata in snapshot_metadata.items():
+            snapshot_date_value = fromisodate(metadata['snapshotDate']) if 'snapshotDate' in metadata else None
+            snapshot_tags_values = f.array(map(lambda v: f.lit(v), metadata['tags'] if 'tags' in metadata else []))
+            if iterator == 0:
+                iterator = 1
+                snapshot_date_col = f.when(f.col('snapshotGuid') == guid, snapshot_date_value)
+                snapshot_tags_col = f.when(f.col('snapshotGuid') == guid, snapshot_tags_values)
+            else:
+                snapshot_date_col = snapshot_date_col.when(f.col('snapshotGuid') == guid, snapshot_date_value)
+                snapshot_tags_col = snapshot_tags_col.when(f.col('snapshotGuid') == guid, snapshot_tags_values)
+
+    entity_df = entity_df.withColumn('snapshotDate', snapshot_date_col)
+    entity_df = entity_df.withColumn('tags', snapshot_tags_col)
+
+    return entity_df
+
+def has_column(df, col):
+    try:
+        df[col]
+        return True
+    except AnalysisException:
+        return False
+
+def fromisodate(iso_date_str):
+    # example format: 2020-07-27T18:18:54.123Z
+    try:
+        date_str_with_timezone = str(iso_date_str).replace('Z', '+00:00')
+        return datetime.strptime(date_str_with_timezone, "%Y-%m-%dT%H:%M:%S.%f%z")
+    except:
+        return datetime.strptime(iso_date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
 
 def spark_refresh_entity_views(tenant_id, stage):
     lambda_client = boto3.client('lambda', 'us-east-1')

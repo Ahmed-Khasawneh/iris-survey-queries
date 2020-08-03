@@ -2,5 +2,6 @@
   "task.autoDetect": "off",
   "npm.autoDetect": "off",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "debug.node.autoAttach": "disabled"
 }
