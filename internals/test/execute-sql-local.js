@@ -1,3 +1,4 @@
+// Based on the following documentation: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-libraries.html
 const AWS = require('aws-sdk');
 const stream = require('stream');
 const { promisify } = require('util');
