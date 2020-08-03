@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 const stream = require('stream');
 const { promisify } = require('util');
+const os = require('os');
 const fs = require('fs-extra');
 const Path = require('path');
 const got = require('got');
@@ -54,6 +55,25 @@ async function getS3Object({ uri, credentials }) {
   return '{}';
 }
 
+async function isExecOnPath(execName) {
+  const isWin =
+    os.platform().indexOf('darwin') < 0 && os.platform().indexOf('win') > -1;
+
+  const whereCommand = isWin ? 'where' : 'which';
+
+  const out = spawn(whereCommand, [execName], {
+    stdio: 'inherit',
+    encoding: 'utf8',
+    shell: true,
+  });
+
+  return new Promise((resolve, reject) => {
+    out.on('close', function (code) {
+      code === 0 ? resolve(true) : resolve(false);
+    });
+  });
+}
+
 async function ensureSparkHome() {
   if (!fs.existsSync(SPARK_HOME)) {
     const sparkTarball = Path.join(SPARK_HOME, 'spark.tgz');
@@ -78,6 +98,16 @@ async function ensureSparkHome() {
 }
 
 async function ensureGlueLibs() {
+  if (!(await isExecOnPath('mvn'))) {
+    console.error('you need to install maven before you can continue');
+    process.exit(1);
+  }
+
+  if (!(await isExecOnPath('python3'))) {
+    console.error('you need to install python before you can continue');
+    process.exit(1);
+  }
+
   if (!fs.existsSync(GLUE_LIBS)) {
     const glueZip = Path.join(GLUE_LIBS, 'glue-libs.zip');
 
@@ -147,18 +177,6 @@ async function getFileContent(srcRelativePath) {
   return fs.readFile(Path.normalize('./' + srcRelativePath), 'utf8');
 }
 
-async function getPrivateKey({ credentials }) {
-  const ssm = new AWS.SSM({ region: 'us-east-1', credentials });
-  const result = await ssm
-    .getParameter({
-      Name: '/doris/shared/glue/dev-endpoint-private-key',
-      WithDecryption: true,
-    })
-    .promise();
-
-  return result.Parameter.Value;
-}
-
 async function getCredentials() {
   const sts = new AWS.STS();
   const result = await sts
@@ -193,15 +211,6 @@ async function putS3File({ body, uri, credentials }) {
       Body: body,
     })
     .promise();
-}
-
-async function putFile(conn, localPath, remotePath) {
-  const sftp = await new Promise((resolve, reject) =>
-    conn.sftp((err, sftp) => (err ? reject(err) : resolve(sftp))),
-  );
-  await new Promise((resolve, reject) =>
-    sftp.fastPut(localPath, remotePath, err => (err ? reject(err) : resolve())),
-  );
 }
 
 async function main() {
