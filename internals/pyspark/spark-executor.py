@@ -78,7 +78,7 @@ def add_snapshot_metadata_columns(entity_df, snapshot_metadata):
         iterator = 0
         for guid, metadata in snapshot_metadata.items():
             snapshot_date_value = fromisodate(metadata['snapshotDate']) if 'snapshotDate' in metadata else None
-            snapshot_tags_values = f.array(map(lambda v: f.lit(v), metadata['tags'] if 'tags' in metadata else []))
+            snapshot_tags_values = f.array(list(map(lambda v: f.lit(v), metadata['tags'] if 'tags' in metadata else [])))
             if iterator == 0:
                 iterator = 1
                 snapshot_date_col = f.when(f.col('snapshotGuid') == guid, snapshot_date_value)
