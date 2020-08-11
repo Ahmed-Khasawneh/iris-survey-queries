@@ -13,11 +13,12 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
+20200810			akhasawneh				ak 20200810			Added support for multiple/historic ingestions (PF-1610) (Run time 1m 26s)
 20200630            akhasawneh                                  Modify IC report query with standardized view naming/aliasing convention (PF-1534) (Run time 58s)
 20200629            jhanicak                                    Added ClientConfigMCR to pull award level indicators from IPEDSClientConfig (Run time 58s)
                                                                 Changed InstitCharUndergradGrad.academicYear to surveyCollectionYear in UGGRLatestRecord
                                                                 Changed InstitCharDoctorate.academicYear to surveyCollectionYear in InstitCharDrMCR
-                                                                Changed InstitCharUndergradGrad.provideMealPlans value 'Yes - fixed meal plan' to 'Yes - number in max plan' PF-1536 (Run time 58s)
+                                                                Changed InstitCharUndergradGrad.provideMealPlans value 'YES - fixed meal plan' to 'YES - number in max plan' PF-1536 (Run time 58s)
 20200608            jhanicak          			    		    Initial version (Run time 53s)
 	
 ********************/
@@ -32,7 +33,7 @@ WITH DefaultValues as (
 select '1920' surveyYear,
 	false diffTuitionAmounts,
 	false institControlledHousing,
-	'No' provideMealPlans,
+	'NO' provideMealPlans,
 	false ftftDegreeLiveOnCampus,
 	'Y' icOfferUndergradAwardLevel,
 	'Y' icOfferGraduateAwardLevel,
@@ -63,11 +64,15 @@ from (
 			partition by
 				clientconfigENT.surveyCollectionYear
 			order by
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+				clientconfigENT.snapshotDate desc,
 				clientconfigENT.recordActivityDate desc
 			) configRn
 	from IPEDSClientConfig clientconfigENT
 		cross join DefaultValues defvalues
 	where clientconfigENT.surveyCollectionYear = defvalues.surveyYear 
+-- ak 20200810 Adding tag reference for IC specific snapshot (should be a redundant check since it is predefined in the entity snapshot YAML file)
+		and  array_contains(clientconfigENT.tags, 'IC Report Start')
 
     union
 
@@ -82,9 +87,16 @@ from (
 		defvalues.provideMealPlans provideMealPlans,
 		1 configRn
     from DefaultValues defvalues
-    where defvalues.surveyYear not in (select clientconfigENT.surveyCollectionYear
-                                       from IPEDSClientConfig clientconfigENT
-                                       where clientconfigENT.surveyCollectionYear = defvalues.surveyYear)
+    where defvalues.surveyYear not in (select clientconfigENT1.surveyCollectionYear
+                                       from IPEDSClientConfig clientconfigENT1
+                                       where clientconfigENT1.surveyCollectionYear = defvalues.surveyYear
+-- ak 20200810 Adding tag reference for IC specific snapshot (should be a redundant check since it is predefined in the entity snapshot YAML file)
+									   and array_contains(clientconfigENT1.tags, 'IC Report Start')
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+									   and clientconfigENT1.snapshotDate = (select max(clientconfigENT2.snapshotDate)
+																		    from IPEDSClientConfig clientconfigENT2
+																		    where clientconfigENT2.surveyCollectionYear = clientconfigENT1.surveyCollectionYear
+																		    and  array_contains(clientconfigENT2.tags, 'IC Report Start')))
     	)
 where configRn = 1	
 ),
@@ -93,13 +105,13 @@ InstitCharUndergradGradMCR as (
 
 select *
 from (
-    select clientconfig.icOfferUndergradAwardLevel offerUG,
-        clientconfig.icOfferGraduateAwardLevel offerGR,
+    select upper(clientconfig.icOfferUndergradAwardLevel) offerUG,
+        upper(clientconfig.icOfferGraduateAwardLevel) offerGR,
         COALESCE(instcharuggrENT.diffTuitionAmounts, clientconfig.diffTuitionAmounts) diffTuitionAmounts,
 	    COALESCE(instcharuggrENT.institControlledHousing, clientconfig.institControlledHousing) institControlledHousing,
 	    COALESCE(instcharuggrENT.ftftDegreeLiveOnCampus, clientconfig.ftftDegreeLiveOnCampus) ftftDegreeLiveOnCampus,
 	    instcharuggrENT.housingCapacity housingCapacity,
-	    COALESCE(instcharuggrENT.provideMealPlans, clientconfig.provideMealPlans) provideMealPlans,
+	    upper(COALESCE(instcharuggrENT.provideMealPlans, clientconfig.provideMealPlans)) provideMealPlans,
 	    instcharuggrENT.mealsPerWeek mealsPerWeek,
 	    instcharuggrENT.ugApplicationFee ugApplicationFee,
 	    instcharuggrENT.grApplicationFee grApplicationFee,
@@ -164,6 +176,8 @@ from (
 			partition by 
 				instcharuggrENT.surveyCollectionYear
 			order by  
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+				instcharuggrENT.snapshotDate desc,
 				instcharuggrENT.recordActivityDate desc
 		) instcharuggrRn
     from InstitCharUndergradGrad instcharuggrENT
@@ -172,8 +186,8 @@ from (
 	union
 
 	--create a record with required values if no data returned
-	select clientconfig.icOfferUndergradAwardLevel offerUG,
-		clientconfig.icOfferGraduateAwardLevel offerGR,
+	select upper(clientconfig.icOfferUndergradAwardLevel) offerUG,
+		upper(clientconfig.icOfferGraduateAwardLevel) offerGR,
 		clientconfig.diffTuitionAmounts diffTuitionAmounts,
 		clientconfig.institControlledHousing institControlledHousing,
 		clientconfig.ftftDegreeLiveOnCampus ftftDegreeLiveOnCampus,
@@ -241,9 +255,16 @@ from (
 		null ugExpensesOffCampusFamily,
 		1
 	from ClientConfigMCR clientconfig
-	where clientconfig.surveyYear not in (select instcharuggrENT.surveyCollectionYear
-										  from InstitCharUndergradGrad instcharuggrENT
-										  where instcharuggrENT.surveyCollectionYear = clientconfig.surveyYear)
+	where clientconfig.surveyYear not in (select instcharuggrENT1.surveyCollectionYear
+										  from InstitCharUndergradGrad instcharuggrENT1
+										  where instcharuggrENT1.surveyCollectionYear = clientconfig.surveyYear
+-- ak 20200810 Adding tag reference for IC specific snapshot (should be a redundant check since it is predefined in the entity snapshot YAML file)
+										  and  array_contains(instcharuggrENT1.tags, 'IC Report Start')
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+										  and instcharuggrENT1.snapshotDate = (select max(instcharuggrENT2.snapshotDate)
+																			  from InstitCharUndergradGrad instcharuggrENT2
+																			  where instcharuggrENT2.surveyCollectionYear = instcharuggrENT1.surveyCollectionYear
+																			  and  array_contains(instcharuggrENT2.tags, 'IC Report Start')))
     )
 where instcharuggrRn = 1
 	and (offerUG = 'Y'
@@ -254,7 +275,7 @@ InstitCharDrMCR as (
 
 select *
 from (
-    select clientconfig.icOfferDoctorAwardLevel offerDR,
+    select upper(clientconfig.icOfferDoctorAwardLevel) offerDR,
 		nvl((select instcharuggr.diffTuitionAmounts
 			 from InstitCharUndergradGradMCR instcharuggr), clientconfig.diffTuitionAmounts) diffTuitionAmounts,
 		instchardrENT.chiroAvgTuitionInSt chiroAvgTuitionInSt,
@@ -297,6 +318,8 @@ from (
 			partition by 
 				instchardrENT.surveyCollectionYear
 			order by  
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+				instchardrENT.snapshotDate desc,
 				instchardrENT.recordActivityDate desc
 		) instchardrRn
     from InstitCharDoctorate instchardrENT
@@ -345,9 +368,16 @@ from (
 		null lawReqFeesOutSt,
 		1
 	from ClientConfigMCR clientconfig
-	where clientconfig.surveyYear not in (select instchardrENT.surveyCollectionYear
-										   from InstitCharDoctorate instchardrENT
-										   where instchardrENT.surveyCollectionYear = clientconfig.surveyYear)
+	where clientconfig.surveyYear not in (select instchardrENT1.surveyCollectionYear
+										   from InstitCharDoctorate instchardrENT1
+										   where instchardrENT1.surveyCollectionYear = clientconfig.surveyYear
+-- ak 20200810 Adding tag reference for IC specific snapshot (should be a redundant check since it is predefined in the entity snapshot YAML file)
+										   and  array_contains(instchardrENT1.tags, 'IC Report Start')
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+										   and instchardrENT1.snapshotDate = (select max(instchardrENT2.snapshotDate)
+																			  from InstitCharDoctorate instchardrENT2
+																			  where instchardrENT2.surveyCollectionYear = instchardrENT1.surveyCollectionYear
+																			  and  array_contains(instchardrENT2.tags, 'IC Report Start')))
 )
 where instchardrRn = 1
 	and offerDR = 'Y'
@@ -369,27 +399,27 @@ select 'A' part,   																	--PART - "A"
 																					  -- application fee for admission required.
 	case when instcharuggr.diffTuitionAmounts = 1 then '01' 
 		else '02' 
-	end field3, 																	--DA07 01 = Yes, 02 = No
+	end field3, 																	--DA07 01 = YES, 02 = NO
 	case when instcharuggr.institControlledHousing = 1 then '01' 
 		else '02' 
-	end field4, 																	--DA08 01 = Yes, 02 = No
+	end field4, 																	--DA08 01 = YES, 02 = NO
 	case when instcharuggr.institControlledHousing = 1 then instcharuggr.housingCapacity 
 		else null 
-	end field5, 																	--DA09 If DA08=01 (Yes), then 1 to 999999. If DA08=02 (No), then -2 or blank (not applicable).
+	end field5, 																	--DA09 If DA08=01 (YES), then 1 to 999999. If DA08=02 (NO), then -2 or blank (not applicable).
 	case instcharuggr.provideMealPlans
-		when 'Yes - number in max plan' then '01'
-		when 'Yes - number varies' then '02'
+		when 'YES - NUMBER IN MAX PLAN' then '01'
+		when 'YES - NUMBER VARIES' then '02'
 		else '03'
-	end field6, 																	--DA10 01 = Yes, Number of meals per week in the maximum meal plan offered. 02 = Yes, Number of meals per 
-																					  -- week can vary 03 = No
+	end field6, 																	--DA10 01 = YES, Number of meals per week in the maximum meal plan offered. 02 = YES, Number of meals per 
+																					  -- week can vary 03 = NO
 	case
-	   when instcharuggr.provideMealPlans = 'Yes - number in max plan' then instcharuggr.mealsPerWeek
+	   when instcharuggr.provideMealPlans = 'YES - NUMBER IN MAX PLAN' then instcharuggr.mealsPerWeek
 	   else null 
-	   end field7, 																	--DA11 If DA10=01 (Yes), then 2 to 99. If unlimited, then 99. If DA10=02 (meals vary) or 03 (No), then -2 or
+	   end field7, 																	--DA11 If DA10=01 (YES), then 2 to 99. If unlimited, then 99. If DA10=02 (meals vary) or 03 (NO), then -2 or
 																					  -- blank (not applicable).
 	COALESCE(case when instcharuggr.ftftDegreeLiveOnCampus = 1 then '01' 
 				else '02' 
-				end, '02') field8, --DA06 01 = Yes and we do not allow any exceptions, 02 = No
+				end, '02') field8, --DA06 01 = YES and we do not allow any exceptions, 02 = NO
 	null field9,
 	null field10,
 	null field11,
@@ -550,10 +580,10 @@ This section is not required from non-degree-granting institutions.
 select 'D',																	--PART - "D"
 	case when instcharuggr.institControlledHousing = 0 then null 
 		else instcharuggr.typicalRoomChg end,								--field1 DD01 Room Charge 0 to 999999, -2 or blank = not applicable
-	case when instcharuggr.provideMealPlans = 'No' then null 
+	case when instcharuggr.provideMealPlans = 'NO' then null 
 		else instcharuggr.typicalBoardChg end,								--field2 DD02 Board Charge 0 to 999999, -2 or blank = not applicable
 	case
-	   when instcharuggr.provideMealPlans = 'No' 
+	   when instcharuggr.provideMealPlans = 'NO' 
 			or instcharuggr.institControlledHousing = 0 then null
 	   else instcharuggr.typicalCombRoomBoardChg end,						--field3 DD03 Combined Room and Board Charge 0 to 999999, -2 or blank = not applicable
 	null, -- field4,
@@ -587,7 +617,7 @@ select 'D',																	--PART - "D"
 	null, -- field32,
 	null  -- field33
 from InstitCharUndergradGradMCR instcharuggr
-where instcharuggr.provideMealPlans != 'No'
+where instcharuggr.provideMealPlans != 'NO'
    or instcharuggr.institControlledHousing = 1
 
 union
@@ -609,25 +639,25 @@ If you would like to enter a caveat for these data, you must also enter the cave
 select 'E',																						--PART - "E"
 	instcharuggr.ugTuitionDist,																	--field1 DE011 Published tuition In-district 0 to 999999, -2 or blank = not applicable
 	COALESCE(case when instcharuggr.ugTuitionGuarDist = 1 then '1' 
-		else '0' end, '0'),                             										--field2 TUITGQ01 Do you have tuition guarantee In-district 0 = No, 1 = Yes
+		else '0' end, '0'),                             										--field2 TUITGQ01 Do you have tuition guarantee In-district 0 = NO, 1 = YES
 	COALESCE(instcharuggr.ugTuitionGuarIncrPercDist, '0'),										--field3 TUITGP01 Guaranteed tuition increase In-district 0 to 100
 	ugFeeDist,																					--field4 DE012 Published fees In-district 0 to 999999, -2 or blank = not applicable
 	COALESCE(case when instcharuggr.ugFeeGuarDist = 1 then '1' 
-		else '0' end, '0'),																		--field5 FEEGQ01 Do you have fee guarantee In-district 0 = No, 1 = Yes
+		else '0' end, '0'),																		--field5 FEEGQ01 Do you have fee guarantee In-district 0 = NO, 1 = YES
 	COALESCE(instcharuggr.ugFeeGuarIncrPercDist, '0'),											--field6 FEEGP01 Guaranteed fee increase In-district 0 to 100
 
 	case when instcharuggr.diffTuitionAmounts = 0 then null 
 		else instcharuggr.ugTuitionInSt end,													--field7 DE021 Published tuition In-state 0 to 999999, -2 or blank = not applicable
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 1 
 				and instcharuggr.ugTuitionGuarInSt = 1 then '1' 
-			else '0' end, '0'),																	--field8 TUITGQ02 Do you have tuition guarantee In-state 0 = No, 1 = Yes
+			else '0' end, '0'),																	--field8 TUITGQ02 Do you have tuition guarantee In-state 0 = NO, 1 = YES
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 0 then '0' 
 		else instcharuggr.ugTuitionGuarIncrPercInSt end, '0'),									--field9 TUITGP02 Guaranteed tuition increase In-state 0 to 100
 	case when instcharuggr.diffTuitionAmounts = 0 then null 
 		else instcharuggr.ugFeeInSt end,														--field10 DE022 Published fees In-state 0 to 999999, -2 or blank = not applicable
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 1 
 				and instcharuggr.ugFeeGuarInSt = 1 then '1' 
-			else '0' end, '0'),																	--field11 FEEGQ02 Do you have fee guarantee In-state 0 = No, 1 = Yes
+			else '0' end, '0'),																	--field11 FEEGQ02 Do you have fee guarantee In-state 0 = NO, 1 = YES
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 0 then '0' 
 		else instcharuggr.ugFeeGuarIncrPercInSt end, '0'),										--field12 FEEGP02 Guaranteed fee increase In-state 0 to 100
 
@@ -635,20 +665,20 @@ select 'E',																						--PART - "E"
 		else instcharuggr.ugTuitionOutSt end,													--field13 DE031 Published tuition Out-of-state 0 to 999999, -2 or blank = not applicable
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 1 
 				and instcharuggr.ugTuitionGuarOutSt = 1 then '1' 
-			else '0' end, '0'),																	--field14 TUITGQ03 Do you have tuition guarantee Out-of-state 0 = No, 1 = Yes
+			else '0' end, '0'),																	--field14 TUITGQ03 Do you have tuition guarantee Out-of-state 0 = NO, 1 = YES
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 0 then '0' 
 		else instcharuggr.ugTuitionGuarIncrPercOutSt end, '0'),									--field15 TUITGP03 Guaranteed tuition increase Out-of-state 0 to 100
 	case when instcharuggr.diffTuitionAmounts = 0 then null 
 		else instcharuggr.ugFeeOutSt end,														--field16 DE032 Published fees Out-of-state 0 to 999999, -2 or blank = not applicable
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 1 
 				and instcharuggr.ugFeeGuarOutSt = 1 then '1' 
-			else '0' end, '0'),																	--field17 FEEGQ03 Do you have fee guarantee Out-of-state 0 = No, 1 = Yes
+			else '0' end, '0'),																	--field17 FEEGQ03 Do you have fee guarantee Out-of-state 0 = NO, 1 = YES
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 0 then '0' 
 		else instcharuggr.ugFeeGuarIncrPercOutSt end, '0'),										--field18 FEEGP03 Guaranteed fee increase Out-of-state 0 to 100
 
 	ugCompFeeDist,																				--field19 DE04 Comprehensive fee In-district 0 to 999999, -2 or blank = not applicable
 	COALESCE(case when instcharuggr.ugCompFeeGuarDist = 1 then '1' 
-		else '0' end, '0'),																		--field20 COMPFGQ04 Do you have fee guarantee In-district 0 = No, 1 = Yes
+		else '0' end, '0'),																		--field20 COMPFGQ04 Do you have fee guarantee In-district 0 = NO, 1 = YES
 	COALESCE(instcharuggr.ugCompFeeGuarIncrPercDist, '0'),										--field21 COMPFGP04 Guaranteed fee increase In-district 0 to 100
 
 	case when instcharuggr.diffTuitionAmounts = 0 then null 
@@ -656,7 +686,7 @@ select 'E',																						--PART - "E"
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 1 
 				and instcharuggr.ugCompFeeGuarInSt = 1 then '1' 
 			else '0' end,
-			'0'),																				--field23 COMPFGQ05 Do you have fee guarantee In-state 0 = No, 1 = Yes
+			'0'),																				--field23 COMPFGQ05 Do you have fee guarantee In-state 0 = NO, 1 = YES
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 0 then '0' 
 		else instcharuggr.ugCompFeeGuarIncrPercInSt end, '0'),									--field24 COMPFGP05 Guaranteed fee increase In-state 0 to 100
 
@@ -664,12 +694,12 @@ select 'E',																						--PART - "E"
 		else instcharuggr.ugCompFeeOutSt end,													--field25 DE06 Comprehensive fee Out-of-state 0 to 999999, -2 or blank = not applicable
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 1 
 				and instcharuggr.ugCompFeeGuarOutSt = 1 then '1' 
-			else '0' end, '0'),																	--field26 COMPFGQ06 Do you have fee guarantee Out-of-state 0 = No, 1 = Yes
+			else '0' end, '0'),																	--field26 COMPFGQ06 Do you have fee guarantee Out-of-state 0 = NO, 1 = YES
 	COALESCE(case when instcharuggr.diffTuitionAmounts = 0 then '0' 
 			else instcharuggr.ugCompFeeGuarIncrPercOutSt end, '0'),								--field27 COMPFGP06 Guaranteed fee increase Out-of-state 0 to 100
 
 	instcharuggr.ugBooksAndSupplies,															--field28 DE07 Books and supplies 0 to 999999, -2 or blank = not applicable
-	case when instcharuggr.provideMealPlans != 'No' 
+	case when instcharuggr.provideMealPlans != 'NO' 
 			and instcharuggr.institControlledHousing = 1 then instcharuggr.ugRoomBoardOnCampus
 		else null end,																			--field29 DE08 On campus room and board 0 to 999999, -2 or blank = not applicable
 	instcharuggr.ugExpensesOnCampus,															--field30 DE09 On campus other expenses 0 to 999999, -2 or blank = not applicable
