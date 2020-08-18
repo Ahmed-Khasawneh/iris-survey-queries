@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20200813  akhasawneh                                Adding new tags
 # 20200810  akhasawneh                                Updated for IPEDS 2020-21
 # 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2020-20
 # 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
@@ -122,7 +123,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -134,7 +136,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -146,7 +149,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -158,7 +162,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -170,7 +175,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -182,7 +188,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -194,7 +201,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -206,7 +214,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -218,7 +227,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -381,7 +391,7 @@ FALL_ENROLLMENT_1:
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -389,7 +399,7 @@ FALL_ENROLLMENT_1:
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -397,7 +407,7 @@ FALL_ENROLLMENT_1:
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -405,7 +415,7 @@ FALL_ENROLLMENT_1:
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -688,7 +698,7 @@ FALL_ENROLLMENT_2:
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -696,7 +706,7 @@ FALL_ENROLLMENT_2:
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -704,7 +714,7 @@ FALL_ENROLLMENT_2:
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -712,7 +722,7 @@ FALL_ENROLLMENT_2:
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -995,7 +1005,7 @@ FALL_ENROLLMENT_3:
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1003,7 +1013,7 @@ FALL_ENROLLMENT_3:
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1011,7 +1021,7 @@ FALL_ENROLLMENT_3:
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1019,7 +1029,7 @@ FALL_ENROLLMENT_3:
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1302,7 +1312,7 @@ FALL_ENROLLMENT_4:
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1310,7 +1320,7 @@ FALL_ENROLLMENT_4:
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1318,7 +1328,7 @@ FALL_ENROLLMENT_4:
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1326,7 +1336,7 @@ FALL_ENROLLMENT_4:
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1763,7 +1773,7 @@ HUMAN_RESOURCES_1:
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1771,7 +1781,7 @@ HUMAN_RESOURCES_1:
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1779,7 +1789,7 @@ HUMAN_RESOURCES_1:
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1787,7 +1797,7 @@ HUMAN_RESOURCES_1:
   - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1795,7 +1805,7 @@ HUMAN_RESOURCES_1:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1803,7 +1813,7 @@ HUMAN_RESOURCES_1:
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1811,7 +1821,7 @@ HUMAN_RESOURCES_1:
   - viewName: Person
     entityName: Person
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1822,7 +1832,7 @@ HUMAN_RESOURCES_2:
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1830,7 +1840,7 @@ HUMAN_RESOURCES_2:
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1838,7 +1848,7 @@ HUMAN_RESOURCES_2:
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1846,7 +1856,7 @@ HUMAN_RESOURCES_2:
   - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1854,7 +1864,7 @@ HUMAN_RESOURCES_2:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1862,7 +1872,7 @@ HUMAN_RESOURCES_2:
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1870,7 +1880,7 @@ HUMAN_RESOURCES_2:
   - viewName: Person
     entityName: Person
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1881,7 +1891,7 @@ HUMAN_RESOURCES_3:
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1889,7 +1899,7 @@ HUMAN_RESOURCES_3:
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1897,7 +1907,7 @@ HUMAN_RESOURCES_3:
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1905,7 +1915,7 @@ HUMAN_RESOURCES_3:
   - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1913,7 +1923,7 @@ HUMAN_RESOURCES_3:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1921,7 +1931,7 @@ HUMAN_RESOURCES_3:
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1929,7 +1939,7 @@ HUMAN_RESOURCES_3:
   - viewName: Person
     entityName: Person
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1940,7 +1950,7 @@ HUMAN_RESOURCES_4:
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1948,7 +1958,7 @@ HUMAN_RESOURCES_4:
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1956,7 +1966,7 @@ HUMAN_RESOURCES_4:
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1964,7 +1974,7 @@ HUMAN_RESOURCES_4:
   - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1972,7 +1982,7 @@ HUMAN_RESOURCES_4:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1980,7 +1990,7 @@ HUMAN_RESOURCES_4:
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1988,7 +1998,7 @@ HUMAN_RESOURCES_4:
   - viewName: Person
     entityName: Person
     tagNames:
-      - HR Period End
+      - HR Reporting End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -1999,7 +2009,7 @@ INSTITUTIONAL_CHARACTERISTICS_1:
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2007,7 +2017,7 @@ INSTITUTIONAL_CHARACTERISTICS_1:
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2015,7 +2025,7 @@ INSTITUTIONAL_CHARACTERISTICS_1:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2026,7 +2036,7 @@ INSTITUTIONAL_CHARACTERISTICS_3:
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2034,7 +2044,7 @@ INSTITUTIONAL_CHARACTERISTICS_3:
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2042,7 +2052,7 @@ INSTITUTIONAL_CHARACTERISTICS_3:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2053,7 +2063,7 @@ INSTITUTIONAL_CHARACTERISTICS_5:
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2061,7 +2071,7 @@ INSTITUTIONAL_CHARACTERISTICS_5:
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2069,7 +2079,7 @@ INSTITUTIONAL_CHARACTERISTICS_5:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2080,7 +2090,7 @@ INSTITUTIONAL_CHARACTERISTICS_7:
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2088,7 +2098,7 @@ INSTITUTIONAL_CHARACTERISTICS_7:
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2096,7 +2106,7 @@ INSTITUTIONAL_CHARACTERISTICS_7:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - IC Report Start
+      - IC Reporting Start
     snapshotDateRange:
       start: 2020-08-01
       end: 2020-10-15
@@ -2111,7 +2121,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2123,7 +2134,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2135,7 +2147,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2147,7 +2160,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2159,7 +2173,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2171,7 +2186,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2183,7 +2199,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2195,7 +2212,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2207,7 +2225,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2219,7 +2238,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2231,7 +2251,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2246,7 +2267,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2258,7 +2280,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2270,7 +2293,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2282,7 +2306,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2294,7 +2319,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2306,7 +2332,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2318,7 +2345,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2330,7 +2358,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2342,7 +2371,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2354,7 +2384,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2366,7 +2397,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
+      - Full Year Term End
+      - Full Year June End  
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
