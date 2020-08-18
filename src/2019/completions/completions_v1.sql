@@ -208,7 +208,8 @@ from (
 	from IPEDSClientConfig clientConfigENT
 		cross join DefaultValues defvalues
 	where clientConfigENT.surveyCollectionYear = defvalues.surveyYear
-	    and array_contains(clientConfigENT.tags, 'June End')
+	    and (array_contains(clientConfigENT.tags, 'June End')
+		or array_contains(clientConfigENT.tags, 'Full Year June End'))
 		
 	union
 
@@ -280,7 +281,8 @@ from (
             and upper(repperiodENT.surveyId) = clientconfig.surveyId
             and repperiodENT.termCode is not null
             and repperiodENT.partOfTermCode is not null
-            and array_contains(repperiodENT.tags, 'June End')
+            and (array_contains(clientConfigENT.tags, 'June End')
+		or array_contains(clientConfigENT.tags, 'Full Year June End'))
 
 	union
 	
