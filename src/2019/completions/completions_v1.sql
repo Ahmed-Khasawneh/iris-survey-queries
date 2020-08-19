@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
+20200819            jhanicak                                    Removed reference to 'June End' and changed to new tags of 'Full Year June End' or 'Full Year Term End' based on client config
 20200728			akhasawneh				ak 20200728			Added support for multiple/historic ingestions (PF-1579) -Run time 19m 27s, test data 24m, 23s
 20200727            jhanicak                jh 20200727         Added upper() to strings for comparison
                                                                 Added to_date functions to strip time
@@ -208,8 +209,10 @@ from (
 	from IPEDSClientConfig clientConfigENT
 		cross join DefaultValues defvalues
 	where clientConfigENT.surveyCollectionYear = defvalues.surveyYear
-	    and (array_contains(clientConfigENT.tags, 'June End')
-		or array_contains(clientConfigENT.tags, 'Full Year June End'))
+	    and ((clientConfigENT.compGradDateOrTerm = 'D' 
+                    and array_contains(clientConfigENT.tags, 'Full Year June End'))
+                  or (clientConfigENT.compGradDateOrTerm = 'T' 
+                    and array_contains(clientConfigENT.tags, 'Full Year Term End')))
 		
 	union
 
@@ -281,8 +284,10 @@ from (
             and upper(repperiodENT.surveyId) = clientconfig.surveyId
             and repperiodENT.termCode is not null
             and repperiodENT.partOfTermCode is not null
-            and (array_contains(clientConfigENT.tags, 'June End')
-		or array_contains(clientConfigENT.tags, 'Full Year June End'))
+            and ((clientconfig.compGradDateOrTerm = 'D' 
+                    and array_contains(repperiodENT.tags, 'Full Year June End'))
+                  or (clientconfig.compGradDateOrTerm = 'T' 
+                    and array_contains(repperiodENT.tags, 'Full Year Term End')))
 
 	union
 	
@@ -492,7 +497,10 @@ from (
 		    and awardENT.awardStatus = 'Awarded'
 		    and awardENT.degreeLevel is not null
 		    and awardENT.degreeLevel != 'Continuing Ed'
-		    and array_contains(awardENT.tags, 'June End')
+		    and ((repperiod.compGradDateOrTerm = 'D' 
+                    and array_contains(awardENT.tags, 'Full Year June End'))
+                  or (repperiod.compGradDateOrTerm = 'T' 
+                    and array_contains(awardENT.tags, 'Full Year Term End')))
 -- Remove for testing...
 		and ((to_date(awardENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
 		and to_date(awardENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.reportingDateEnd)
