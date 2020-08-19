@@ -72,7 +72,7 @@ from (
 		cross join DefaultValues defvalues
 	where clientconfigENT.surveyCollectionYear = defvalues.surveyYear 
 -- ak 20200810 Adding tag reference for IC specific snapshot (should be a redundant check since it is predefined in the entity snapshot YAML file)
-		and  array_contains(clientconfigENT.tags, 'IC Report Start')
+		and  array_contains(clientconfigENT.tags, 'IC Reporting Start')
 
     union
 
@@ -91,12 +91,12 @@ from (
                                        from IPEDSClientConfig clientconfigENT1
                                        where clientconfigENT1.surveyCollectionYear = defvalues.surveyYear
 -- ak 20200810 Adding tag reference for IC specific snapshot (should be a redundant check since it is predefined in the entity snapshot YAML file)
-									   and array_contains(clientconfigENT1.tags, 'IC Report Start')
--- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+									   and array_contains(clientconfigENT1.tags, 'IC Reporting Start')
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Reporting Start' tag)
 									   and clientconfigENT1.snapshotDate = (select max(clientconfigENT2.snapshotDate)
 																		    from IPEDSClientConfig clientconfigENT2
 																		    where clientconfigENT2.surveyCollectionYear = clientconfigENT1.surveyCollectionYear
-																		    and  array_contains(clientconfigENT2.tags, 'IC Report Start')))
+																		    and  array_contains(clientconfigENT2.tags, 'IC Reporting Start')))
     	)
 where configRn = 1	
 ),
@@ -176,7 +176,7 @@ from (
 			partition by 
 				instcharuggrENT.surveyCollectionYear
 			order by  
--- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Reporting Start' tag)
 				instcharuggrENT.snapshotDate desc,
 				instcharuggrENT.recordActivityDate desc
 		) instcharuggrRn
@@ -259,12 +259,12 @@ from (
 										  from InstitCharUndergradGrad instcharuggrENT1
 										  where instcharuggrENT1.surveyCollectionYear = clientconfig.surveyYear
 -- ak 20200810 Adding tag reference for IC specific snapshot (should be a redundant check since it is predefined in the entity snapshot YAML file)
-										  and  array_contains(instcharuggrENT1.tags, 'IC Report Start')
--- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+										  and  array_contains(instcharuggrENT1.tags, 'IC Reporting Start')
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Reporting Start' tag)
 										  and instcharuggrENT1.snapshotDate = (select max(instcharuggrENT2.snapshotDate)
 																			  from InstitCharUndergradGrad instcharuggrENT2
 																			  where instcharuggrENT2.surveyCollectionYear = instcharuggrENT1.surveyCollectionYear
-																			  and  array_contains(instcharuggrENT2.tags, 'IC Report Start')))
+																			  and  array_contains(instcharuggrENT2.tags, 'IC Reporting Start')))
     )
 where instcharuggrRn = 1
 	and (offerUG = 'Y'
@@ -318,7 +318,7 @@ from (
 			partition by 
 				instchardrENT.surveyCollectionYear
 			order by  
--- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Reporting Start' tag)
 				instchardrENT.snapshotDate desc,
 				instchardrENT.recordActivityDate desc
 		) instchardrRn
@@ -372,12 +372,12 @@ from (
 										   from InstitCharDoctorate instchardrENT1
 										   where instchardrENT1.surveyCollectionYear = clientconfig.surveyYear
 -- ak 20200810 Adding tag reference for IC specific snapshot (should be a redundant check since it is predefined in the entity snapshot YAML file)
-										   and  array_contains(instchardrENT1.tags, 'IC Report Start')
--- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Report Start' tag)
+										   and  array_contains(instchardrENT1.tags, 'IC Reporting Start')
+-- ak 20200810 Adding snapshotDate reference (configured to return latest if more than 1 snapshot is returned with a 'IC Reporting Start' tag)
 										   and instchardrENT1.snapshotDate = (select max(instchardrENT2.snapshotDate)
 																			  from InstitCharDoctorate instchardrENT2
 																			  where instchardrENT2.surveyCollectionYear = instchardrENT1.surveyCollectionYear
-																			  and  array_contains(instchardrENT2.tags, 'IC Report Start')))
+																			  and  array_contains(instchardrENT2.tags, 'IC Reporting Start')))
 )
 where instchardrRn = 1
 	and offerDR = 'Y'
