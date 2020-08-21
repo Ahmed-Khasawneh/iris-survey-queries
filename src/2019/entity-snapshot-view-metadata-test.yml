@@ -1,6 +1,6 @@
 ---
-# ----------------------------------------------------------------------------------------------------------------------
-# DORIS Entity Snapshot View Properties IPEDS Survey Year 2019-20
+# ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
+# DORIS Entity Snapshot View Properties IPEDS Survey TEST FILE
 #
 # This file defines the set of DORIS entities to be included in an IPEDS report for a specific survey type.  For each
 # IPEDS survey type, a collection of one or more DORIS entity snapshot view configurations is defined.  Each entity
@@ -27,10 +27,10 @@
 # 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2019-20
 # 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
 #
-# ----------------------------------------------------------------------------------------------------------------------
+# ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
 
 ACADEMIC_LIBRARIES_1:
-  # reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2014-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
