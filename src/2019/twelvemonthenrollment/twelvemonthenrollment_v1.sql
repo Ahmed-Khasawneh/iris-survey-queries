@@ -17,6 +17,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
+20200825            akhasawneh              ak 20200825         Mods to default to dummy output where data is lacking (PF-1654) Run time 11m 26s
 20200814            jhanicak                jh 20200814         Additional mods to support multi snapshot (PF-1449) Run time 6m 46s
 20200729			akhasawneh				ak 20200729			Added support for multiple/historic ingestions (PF-1449) -Run time 6m 04s
 20200715            jhanicak                                    Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views (PF-1533) Run time 3m 53s
@@ -1143,30 +1144,36 @@ select 'A'                                                                      
        coalesce(sum(case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end), 0) field18, -- FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
        coalesce(sum(case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end), 0) field19  -- FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
 from (
-         select cohortstu.personId               personId,
-                cohortstu.ipedsPartAStudentLevel ipedsLevel,
-                cohortstu.ipedsGender            ipedsGender,
-                cohortstu.ipedsEthnicity         ipedsEthnicity
-         from CohortSTU cohortstu
-         where cohortstu.ipedsPartAStudentLevel = 1
-            or cohortstu.ipedsPartAStudentLevel = 3
+		select cohortstu.personId               personId,
+			cohortstu.ipedsPartAStudentLevel ipedsLevel,
+			cohortstu.ipedsGender            ipedsGender,
+			cohortstu.ipedsEthnicity         ipedsEthnicity
+		from CohortSTU cohortstu
+		where cohortstu.ipedsPartAStudentLevel = 1
+			or cohortstu.ipedsPartAStudentLevel = 3
 
-         union
+		union
 	
-	select null, --personId,
-		stulevela.ipedsLevel,
-		null, -- ipedsGender,
-		null -- ipedsEthnicity
-	from StudentLevelFMT_A stulevela
+		select null, --personId,
+			stulevela.ipedsLevel,
+			null, -- ipedsGender,
+			null -- ipedsEthnicity
+		from StudentLevelFMT_A stulevela
+	
+		union 
+	
+-- ak 20200825 Dummy set to return default formatting if no cohortSTU records exist.
+		select *
+		from (
+			VALUES
+				(null, 1, null, null),
+				(null, 3, null, null)
+			) as dummySet(personId, ipedsLevel, ipedsGender, ipedsEthnicity)
+		where not exists (select a.personId from CohortSTU a) 	    
 	)
 group by ipedsLevel
 
 union
-
-/* Part B: Instructional Activity and Full-Time Equivalent Enrollment
-Report the total clock hour and/or credit hour activity attempted during the 12-month period of July 1, 2018 - June 30, 2019. 
-The instructional activity data reported will be used to calculate full-time equivalent (FTE) student enrollment at the institution.
-*/
 
 select 'B' part,
        null field1,
@@ -1202,15 +1209,15 @@ from  (
 --jh 20200707 Part B was not in the output if no records existed in CohortSTU. Added an inline view to pull config values from ClientConfigMCR
 --   to ensure that there are always values for the indicators. They were previously pulled in from CohortSTU.
 
-    select distinct hourTotals.totalCreditUGHrs,
-                   hourTotals.totalClockUGHrs,
-                   hourTotals.totalCreditGRHrs,
-                   hourTotals.totalCreditPostGRHrs,
-                   configValues.tmAnnualDPPCreditHoursFTE,
-                   configValues.instructionalActivityType,
-                   configValues.icOfferUndergradAwardLevel,
-                   configValues.icOfferGraduateAwardLevel,
-                   configValues.icOfferDoctorAwardLevel
+    select distinct hourTotals.totalCreditUGHrs totalCreditUGHrs,
+                   hourTotals.totalClockUGHrs totalClockUGHrs,
+                   hourTotals.totalCreditGRHrs totalCreditGRHrs,
+                   hourTotals.totalCreditPostGRHrs totalCreditPostGRHrs,
+                   configValues.tmAnnualDPPCreditHoursFTE tmAnnualDPPCreditHoursFTE,
+                   configValues.instructionalActivityType instructionalActivityType,
+                   configValues.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+                   configValues.icOfferGraduateAwardLevel icOfferGraduateAwardLevel,
+                   configValues.icOfferDoctorAwardLevel icOfferDoctorAwardLevel
     from (select sum(cohortstu.totalCreditUGHrs) totalCreditUGHrs,
                    sum(cohortstu.totalClockUGHrs) totalClockUGHrs,
                    sum(cohortstu.totalCreditGRHrs) totalCreditGRHrs,
@@ -1222,4 +1229,15 @@ from  (
                                 config.icOfferGraduateAwardLevel icOfferGraduateAwardLevel,
                                 config.icOfferDoctorAwardLevel icOfferDoctorAwardLevel
                             from ClientConfigMCR config) configValues
-) 
+
+	union 
+	
+-- ak 20200825 Dummy set to return default formatting if no cohortSTU records exist.
+	select *
+	from (
+		VALUES
+			(0, 0, 0, 0, 0, 'DUMMY', 'Y', 'Y', 'Y')
+		) as dummySet(totalCreditUGHrs, totalClockUGHrs, totalCreditGRHrs, totalCreditPostGRHrs, tmAnnualDPPCreditHoursFTE, 
+						instructionalActivityType, icOfferUndergradAwardLevel, icOfferGraduateAwardLevel, icOfferDoctorAwardLevel)
+	where not exists (select a.personId from CohortSTU a) 
+)

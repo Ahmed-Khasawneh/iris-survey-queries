@@ -17,6 +17,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)      Author             	    Tag             	Comments
 -----------         --------------------	-------------   	-------------------------------------------------
+20200825            akhasawneh              ak 20200825         Mods to default to dummy output where data is lacking (PF-1654) Run time 13m 42s
 20200729			akhasawneh				ak 20200729			Added support for multiple/historic ingestions (PF-1450) -Run time 7m 37s
 20200715            jhanicak                                    Bug fixes in CourseMCR, CourseTypeCountsSTU, PersonMCR and mods to support changes to these views (PF-1533) Run time 3m 53s
 20200713			akhasawneh				ak 20200713 		Modification to course/hour counts (PF-1553) -Run time 2m 23s
@@ -1104,7 +1105,22 @@ select 'A'                                                                      
        coalesce(sum(case when ipedsEthnicity = '8' and ipedsGender = 'F' then 1 else 0 end), 0) field17, -- FYRACE38 - Two or more races - Women (38), 0 to 999999
        coalesce(sum(case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end), 0) field18, -- FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
        coalesce(sum(case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end), 0) field19  -- FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
-from CohortSTU
+from (
+		select cohortstu.personId          personId,
+			cohortstu.ipedsGender            ipedsGender,
+			cohortstu.ipedsEthnicity         ipedsEthnicity
+		from CohortSTU cohortstu
+
+		union 
+
+-- ak 20200825 Dummy set to return default formatting if no cohortSTU records exist.
+		select *
+		from (
+			VALUES
+				(null, null, null)
+			) as dummySet(personId, ipedsGender, ipedsEthnicity)
+		where not exists (select a.personId from CohortSTU a) 	    
+	)
 
 union
 
@@ -1142,11 +1158,11 @@ from  (
 --jh 20200707 Part B was not in the output if no records existed in CohortSTU. Added an inline view to pull config values from ClientConfigMCR
 --   to ensure that there are always values for the indicators. They were previously pulled in from CohortSTU.
 
-    select distinct hourTotals.totalCreditUGHrs,
-                   hourTotals.totalClockUGHrs,
-                   configValues.tmAnnualDPPCreditHoursFTE,
-                   configValues.instructionalActivityType,
-                   configValues.icOfferUndergradAwardLevel
+    select distinct hourTotals.totalCreditUGHrs totalCreditUGHrs,
+                   hourTotals.totalClockUGHrs totalClockUGHrs,
+                   configValues.tmAnnualDPPCreditHoursFTE tmAnnualDPPCreditHoursFTE,
+                   configValues.instructionalActivityType instructionalActivityType,
+                   configValues.icOfferUndergradAwardLevel icOfferUndergradAwardLevel
     from (select sum(cohortstu.totalCreditUGHrs) totalCreditUGHrs,
                    sum(cohortstu.totalClockUGHrs) totalClockUGHrs
           from CohortSTU cohortstu) hourTotals
@@ -1154,4 +1170,14 @@ from  (
                                 config.instructionalActivityType instructionalActivityType,
                                 config.icOfferUndergradAwardLevel icOfferUndergradAwardLevel
                             from ClientConfigMCR config) configValues
+		union
+
+-- ak 20200825 Dummy set to return default formatting if no cohortSTU records exist.
+		select *
+		from (
+			VALUES
+				(0, 0, 0, 'DUMMY', 'Y')
+			) as dummySet(totalCreditUGHrs, totalClockUGHrs, tmAnnualDPPCreditHoursFTE, 
+							instructionalActivityType, icOfferUndergradAwardLevel)
+		where not exists (select a.personId from CohortSTU a) 
 ) 
