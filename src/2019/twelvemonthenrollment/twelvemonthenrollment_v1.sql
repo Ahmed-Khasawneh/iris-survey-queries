@@ -556,7 +556,7 @@ select campus,
 from ( 
     select campusENT.campus,
 		campusENT.campusDescription,
-		campusENT.isInternational,
+		boolean(campusENT.isInternational),
 		campusENT.snapshotDate,
 		row_number() over (
 			partition by
@@ -1229,15 +1229,16 @@ from  (
                                 config.icOfferGraduateAwardLevel icOfferGraduateAwardLevel,
                                 config.icOfferDoctorAwardLevel icOfferDoctorAwardLevel
                             from ClientConfigMCR config) configValues
+)
+where exists (select a.personId from CohortSTU a) 
 
-	union 
+union 
 	
 -- ak 20200825 Dummy set to return default formatting if no cohortSTU records exist.
 	select *
 	from (
 		VALUES
-			(0, 0, 0, 0, 0, 'DUMMY', 'Y', 'Y', 'Y')
-		) as dummySet(totalCreditUGHrs, totalClockUGHrs, totalCreditGRHrs, totalCreditPostGRHrs, tmAnnualDPPCreditHoursFTE, 
-						instructionalActivityType, icOfferUndergradAwardLevel, icOfferGraduateAwardLevel, icOfferDoctorAwardLevel)
+			('B', null, 0, 0, 0, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+		) as dummySet(part, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11,
+									field12, field13, field14, field15, field16, field17, field18, field19)
 	where not exists (select a.personId from CohortSTU a) 
-)
