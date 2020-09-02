@@ -124,7 +124,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -137,7 +137,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -150,7 +150,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -163,7 +163,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -176,7 +176,20 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -189,7 +202,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -202,7 +215,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -215,7 +228,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -228,7 +241,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2122,7 +2135,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2135,7 +2148,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2148,7 +2161,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2161,7 +2174,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2174,7 +2187,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2187,7 +2200,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2200,7 +2213,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2213,7 +2226,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2226,7 +2239,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2239,7 +2252,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2252,7 +2265,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2268,7 +2281,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2281,7 +2294,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2294,7 +2307,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2307,7 +2320,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2320,7 +2333,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2333,7 +2346,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2346,7 +2359,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2359,7 +2372,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2372,7 +2385,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2385,7 +2398,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2398,7 +2411,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
