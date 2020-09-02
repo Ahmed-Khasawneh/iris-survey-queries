@@ -2122,6 +2122,20 @@ INSTITUTIONAL_CHARACTERISTICS_7:
 TWELVE_MONTH_ENROLLMENT_1:
   # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+      
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
