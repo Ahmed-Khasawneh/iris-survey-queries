@@ -1,6 +1,6 @@
 ---
-# ----------------------------------------------------------------------------------------------------------------------
-# DORIS Entity Snapshot View Properties IPEDS Survey Year 2019-20
+# ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
+# DORIS Entity Snapshot View Properties IPEDS Survey TEST FILE
 #
 # This file defines the set of DORIS entities to be included in an IPEDS report for a specific survey type.  For each
 # IPEDS survey type, a collection of one or more DORIS entity snapshot view configurations is defined.  Each entity
@@ -27,93 +27,832 @@
 # 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2019-20
 # 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
 #
-# ----------------------------------------------------------------------------------------------------------------------
+# ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
 
+#modified to use academic libraries as an entity snapshot dump for testing.
 ACADEMIC_LIBRARIES_1:
-  # reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2014-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdownn
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfigRetention
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
-
+      start: 2013-01-01
+      end: 2014-12-31
+      
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
+  - viewName: IPEDSReportingPeriodRetention
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
   - viewName: InterlibraryLoanStatistic
     entityName: InterlibraryLoanStatistic
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryBranch
     entityName: LibraryBranch
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryCirculationStatistic
     entityName: LibraryCirculationStatistic
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryCollectionStatistic
     entityName: LibraryCollectionStatistic
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryExpenses
     entityName: LibraryExpenses
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryInventory
     entityName: LibraryInventory
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryItemTransaction
     entityName: LibraryItemTransaction
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2013-01-01
+      end: 2014-12-31
+
+# Adding all views for testing purposes
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: AcademicTermRetention
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: AcademicTrackRetention
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CampusRetention
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+ 
+   - viewName: DegreeRetention
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+   - viewName: Major
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: MajorRetention
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: PersonRetention
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseRetention
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionRetention
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionScheduleRetention
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: InstructionalAssignment
+    entityName: InstructionalAssignment
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: Faculty
+    entityName: Faculty
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: RegistrationRetention
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: StudentRetention
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+   - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: GeneralLedgerReporting
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: OperatingLedgerReporting
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: InstitCharDoctorate
+    entityName: InstitCharDoctorate
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: InstitCharUndergradGrad
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
 
 COMPLETIONS_1:
-  # reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+  # reporting period: terms within 2018-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -126,8 +865,8 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -140,8 +879,8 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Award
     entityName: Award
@@ -154,8 +893,8 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
@@ -168,8 +907,8 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Degree
     entityName: Degree
@@ -182,8 +921,8 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -196,8 +935,8 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -210,8 +949,8 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Major
     entityName: Major
@@ -224,8 +963,8 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Person
     entityName: Person
@@ -238,12 +977,12 @@ COMPLETIONS_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
 FALL_ENROLLMENT_1:
-  # reporting period for Cohort: Fall Census 2019 and prior summer
-  # reporting period for Retention: Fall Census 2018 and prior summer
+  # reporting period for Cohort: Fall Census 2014 and prior summer
+  # reporting period for Retention: Fall Census 2013 and prior summer
   # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
@@ -253,8 +992,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: AcademicTermRetention
     entityName: AcademicTerm
@@ -263,8 +1002,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -273,8 +1012,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: AcademicTrackRetention
     entityName: AcademicTrack
@@ -283,8 +1022,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -293,8 +1032,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CampusRetention
     entityName: Campus
@@ -303,8 +1042,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
@@ -313,8 +1052,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Course
     entityName: Course
@@ -323,8 +1062,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseRetention
     entityName: Course
@@ -333,8 +1072,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -343,8 +1082,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseSectionRetention
     entityName: CourseSection
@@ -353,8 +1092,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -363,8 +1102,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseSectionScheduleRetention
     entityName: CourseSectionSchedule
@@ -373,8 +1112,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Degree
     entityName: Degree
@@ -383,8 +1122,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: DegreeRetention
     entityName: Degree
@@ -393,40 +1132,40 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -435,8 +1174,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: IPEDSClientConfigRetention
     entityName: IPEDSClientConfig
@@ -445,8 +1184,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -455,8 +1194,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: IPEDSReportingPeriodRetention
     entityName: IPEDSReportingPeriod
@@ -465,8 +1204,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Major
     entityName: Major
@@ -475,8 +1214,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: MajorRetention
     entityName: Major
@@ -485,8 +1224,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Person
     entityName: Person
@@ -495,8 +1234,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: PersonRetention
     entityName: Person
@@ -505,8 +1244,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Registration
     entityName: Registration
@@ -515,8 +1254,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: RegistrationRetention
     entityName: Registration
@@ -525,8 +1264,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Student
     entityName: Student
@@ -535,8 +1274,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: StudentRetention
     entityName: Student
@@ -545,12 +1284,12 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
 FALL_ENROLLMENT_2:
-  # reporting period for Cohort: Fall Census 2019 and prior summer
-  # reporting period for Retention: Fall Census 2018 and prior summer
+  # reporting period for Cohort: Fall Census 2014 and prior summer
+  # reporting period for Retention: Fall Census 2013 and prior summer
   # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
@@ -560,8 +1299,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: AcademicTermRetention
     entityName: AcademicTerm
@@ -570,8 +1309,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -580,8 +1319,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: AcademicTrackRetention
     entityName: AcademicTrack
@@ -590,8 +1329,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -600,8 +1339,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CampusRetention
     entityName: Campus
@@ -610,8 +1349,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
@@ -620,8 +1359,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Course
     entityName: Course
@@ -630,8 +1369,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseRetention
     entityName: Course
@@ -640,8 +1379,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -650,8 +1389,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseSectionRetention
     entityName: CourseSection
@@ -660,8 +1399,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -670,8 +1409,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseSectionScheduleRetention
     entityName: CourseSectionSchedule
@@ -680,8 +1419,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Degree
     entityName: Degree
@@ -690,8 +1429,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: DegreeRetention
     entityName: Degree
@@ -700,40 +1439,40 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -742,8 +1481,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: IPEDSClientConfigRetention
     entityName: IPEDSClientConfig
@@ -752,8 +1491,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -762,8 +1501,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: IPEDSReportingPeriodRetention
     entityName: IPEDSReportingPeriod
@@ -772,8 +1511,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Major
     entityName: Major
@@ -782,8 +1521,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: MajorRetention
     entityName: Major
@@ -792,8 +1531,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Person
     entityName: Person
@@ -802,8 +1541,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: PersonRetention
     entityName: Person
@@ -812,8 +1551,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Registration
     entityName: Registration
@@ -822,8 +1561,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: RegistrationRetention
     entityName: Registration
@@ -832,8 +1571,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Student
     entityName: Student
@@ -842,8 +1581,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: StudentRetention
     entityName: Student
@@ -852,12 +1591,12 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
 FALL_ENROLLMENT_3:
-  # reporting period for Cohort: Fall Census 2019 and prior summer
-  # reporting period for Retention: Fall Census 2018 and prior summer
+  # reporting period for Cohort: Fall Census 2014 and prior summer
+  # reporting period for Retention: Fall Census 2013 and prior summer
   # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
@@ -867,8 +1606,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: AcademicTermRetention
     entityName: AcademicTerm
@@ -877,8 +1616,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -887,8 +1626,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: AcademicTrackRetention
     entityName: AcademicTrack
@@ -897,8 +1636,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -907,8 +1646,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CampusRetention
     entityName: Campus
@@ -917,8 +1656,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
@@ -927,8 +1666,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Course
     entityName: Course
@@ -937,8 +1676,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseRetention
     entityName: Course
@@ -947,8 +1686,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -957,8 +1696,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseSectionRetention
     entityName: CourseSection
@@ -967,8 +1706,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -977,8 +1716,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseSectionScheduleRetention
     entityName: CourseSectionSchedule
@@ -987,8 +1726,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Degree
     entityName: Degree
@@ -997,8 +1736,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: DegreeRetention
     entityName: Degree
@@ -1007,40 +1746,40 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -1049,8 +1788,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: IPEDSClientConfigRetention
     entityName: IPEDSClientConfig
@@ -1059,8 +1798,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -1069,8 +1808,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: IPEDSReportingPeriodRetention
     entityName: IPEDSReportingPeriod
@@ -1079,8 +1818,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Major
     entityName: Major
@@ -1089,8 +1828,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: MajorRetention
     entityName: Major
@@ -1099,8 +1838,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Person
     entityName: Person
@@ -1109,8 +1848,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: PersonRetention
     entityName: Person
@@ -1119,8 +1858,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Registration
     entityName: Registration
@@ -1129,8 +1868,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: RegistrationRetention
     entityName: Registration
@@ -1139,8 +1878,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Student
     entityName: Student
@@ -1149,8 +1888,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: StudentRetention
     entityName: Student
@@ -1159,12 +1898,12 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
 FALL_ENROLLMENT_4:
-  # reporting period for Cohort: Fall Census 2019 and prior summer
-  # reporting period for Retention: Fall Census 2018 and prior summer
+  # reporting period for Cohort: Fall Census 2014 and prior summer
+  # reporting period for Retention: Fall Census 2013 and prior summer
   # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
@@ -1174,8 +1913,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: AcademicTermRetention
     entityName: AcademicTerm
@@ -1184,8 +1923,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -1194,8 +1933,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: AcademicTrackRetention
     entityName: AcademicTrack
@@ -1204,8 +1943,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -1214,8 +1953,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CampusRetention
     entityName: Campus
@@ -1224,8 +1963,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
@@ -1234,8 +1973,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Course
     entityName: Course
@@ -1244,8 +1983,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseRetention
     entityName: Course
@@ -1254,8 +1993,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -1264,8 +2003,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseSectionRetention
     entityName: CourseSection
@@ -1274,8 +2013,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -1284,8 +2023,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: CourseSectionScheduleRetention
     entityName: CourseSectionSchedule
@@ -1294,8 +2033,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Degree
     entityName: Degree
@@ -1304,8 +2043,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: DegreeRetention
     entityName: Degree
@@ -1314,40 +2053,40 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -1356,8 +2095,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: IPEDSClientConfigRetention
     entityName: IPEDSClientConfig
@@ -1366,8 +2105,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -1376,8 +2115,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: IPEDSReportingPeriodRetention
     entityName: IPEDSReportingPeriod
@@ -1386,8 +2125,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Major
     entityName: Major
@@ -1396,8 +2135,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: MajorRetention
     entityName: Major
@@ -1406,8 +2145,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Person
     entityName: Person
@@ -1416,8 +2155,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: PersonRetention
     entityName: Person
@@ -1426,8 +2165,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Registration
     entityName: Registration
@@ -1436,8 +2175,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: RegistrationRetention
     entityName: Registration
@@ -1446,8 +2185,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: Student
     entityName: Student
@@ -1456,8 +2195,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2019-05-01
-      end: 2019-12-31
+      start: 2014-05-01
+      end: 2014-12-31
 
   - viewName: StudentRetention
     entityName: Student
@@ -1466,314 +2205,314 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2018-12-31
+      start: 2013-05-01
+      end: 2013-12-31
 
 FINANCE_1:
-  # reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2014-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
 FINANCE_2:
-  # reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2014-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
 FINANCE_3:
-  # reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2014-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
 FINANCE_4:
-  # reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2014-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
 FINANCE_5:
-  # reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2014-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
 FINANCE_6:
-  # reporting period: fiscal year ending prior to 2019-10-01
+  # reporting period: fiscal year ending prior to 2014-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
   - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2019-01-01
-      end: 2019-10-01
+      start: 2014-01-01
+      end: 2014-10-01
 
 HUMAN_RESOURCES_1:
   # reporting period: as of 10/31/19
@@ -1783,56 +2522,56 @@ HUMAN_RESOURCES_1:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: Faculty
     entityName: Faculty
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: Person
     entityName: Person
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
 HUMAN_RESOURCES_2:
   # reporting period: as of 10/31/19
@@ -1842,56 +2581,56 @@ HUMAN_RESOURCES_2:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: Faculty
     entityName: Faculty
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: Person
     entityName: Person
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
 HUMAN_RESOURCES_3:
   # reporting period: as of 10/31/19
@@ -1901,56 +2640,56 @@ HUMAN_RESOURCES_3:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: Faculty
     entityName: Faculty
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: Person
     entityName: Person
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
 HUMAN_RESOURCES_4:
   # reporting period: as of 10/31/19
@@ -1960,56 +2699,56 @@ HUMAN_RESOURCES_4:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: Faculty
     entityName: Faculty
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
   - viewName: Person
     entityName: Person
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
+      start: 2014-10-15
+      end: 2014-11-15
 
 INSTITUTIONAL_CHARACTERISTICS_1:
   # reporting period: survey reporting date
@@ -2019,24 +2758,24 @@ INSTITUTIONAL_CHARACTERISTICS_1:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_3:
   # reporting period: survey reporting date
@@ -2046,24 +2785,24 @@ INSTITUTIONAL_CHARACTERISTICS_3:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_5:
   # reporting period: survey reporting date
@@ -2073,24 +2812,24 @@ INSTITUTIONAL_CHARACTERISTICS_5:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_7:
   # reporting period: survey reporting date
@@ -2100,28 +2839,42 @@ INSTITUTIONAL_CHARACTERISTICS_7:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2019-08-01
-      end: 2019-10-15
+      start: 2014-08-01
+      end: 2014-10-15
 
 TWELVE_MONTH_ENROLLMENT_1:
-  # reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+      
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
@@ -2133,8 +2886,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
@@ -2147,8 +2900,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Course
     entityName: Course
@@ -2161,8 +2914,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -2175,8 +2928,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -2189,8 +2942,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Degree
     entityName: Degree
@@ -2203,8 +2956,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -2217,8 +2970,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -2231,8 +2984,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Person
     entityName: Person
@@ -2245,8 +2998,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Registration
     entityName: Registration
@@ -2259,8 +3012,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Student
     entityName: Student
@@ -2273,11 +3026,11 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
 TWELVE_MONTH_ENROLLMENT_2:
-  # reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -2290,8 +3043,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
@@ -2304,8 +3057,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End      
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Course
     entityName: Course
@@ -2318,8 +3071,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -2332,8 +3085,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -2346,8 +3099,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Degree
     entityName: Degree
@@ -2360,8 +3113,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -2374,8 +3127,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -2388,8 +3141,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Person
     entityName: Person
@@ -2402,8 +3155,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Registration
     entityName: Registration
@@ -2416,8 +3169,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Student
     entityName: Student
@@ -2430,5 +3183,5 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Full Year Term End
       - Full Year June End  
     snapshotDateRange:
-      start: 2018-05-01
-      end: 2019-08-01
+      start: 2013-05-01
+      end: 2014-08-01
