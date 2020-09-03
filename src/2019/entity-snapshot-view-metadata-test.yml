@@ -35,82 +35,820 @@ ACADEMIC_LIBRARIES_1:
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdownn
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfigRetention
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
-
+      start: 2013-01-01
+      end: 2014-12-31
+      
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
+  - viewName: IPEDSReportingPeriodRetention
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
   - viewName: InterlibraryLoanStatistic
     entityName: InterlibraryLoanStatistic
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryBranch
     entityName: LibraryBranch
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryCirculationStatistic
     entityName: LibraryCirculationStatistic
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryCollectionStatistic
     entityName: LibraryCollectionStatistic
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryExpenses
     entityName: LibraryExpenses
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryInventory
     entityName: LibraryInventory
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
 
   - viewName: LibraryItemTransaction
     entityName: LibraryItemTransaction
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2014-01-01
-      end: 2014-10-01
+      start: 2013-01-01
+      end: 2014-12-31
+
+# Adding all views for testing purposes
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: AcademicTermRetention
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: AcademicTrackRetention
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CampusRetention
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+ 
+   - viewName: DegreeRetention
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+   - viewName: Major
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: MajorRetention
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: PersonRetention
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseRetention
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionRetention
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionScheduleRetention
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: InstructionalAssignment
+    entityName: InstructionalAssignment
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: Faculty
+    entityName: Faculty
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: RegistrationRetention
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: StudentRetention
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+   - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: GeneralLedgerReporting
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: OperatingLedgerReporting
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: InstitCharDoctorate
+    entityName: InstitCharDoctorate
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: InstitCharUndergradGrad
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
 
 COMPLETIONS_1:
   # reporting period: terms within 2018-07-01 to 2014-06-30; as-of date 2014-06-30
