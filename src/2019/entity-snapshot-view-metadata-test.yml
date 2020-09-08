@@ -374,7 +374,7 @@ ACADEMIC_LIBRARIES_1:
       start: 2013-01-01
       end: 2014-12-31
  
-   - viewName: DegreeRetention
+  - viewName: DegreeRetention
     entityName: Degree
     tagNames:
       - Pre-Fall Summer Census
@@ -391,7 +391,7 @@ ACADEMIC_LIBRARIES_1:
       start: 2013-01-01
       end: 2014-12-31
       
-   - viewName: Major
+  - viewName: Major
     entityName: Major
     tagNames:
       - Pre-Fall Summer Census
@@ -731,7 +731,7 @@ ACADEMIC_LIBRARIES_1:
       start: 2013-01-01
       end: 2014-12-31
       
-   - viewName: ChartOfAccounts
+  - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
       - Pre-Fall Summer Census
