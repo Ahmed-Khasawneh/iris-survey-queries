@@ -72,6 +72,14 @@ function getSurveyTypeFromFileName(fileName) {
   });
 }
 
+function getSurveyYearFromFileName(fileName) {
+  const match = fileName.match(/.*src\/(\d+)\/.*/);
+  if (!match) {
+    throw new Error('Survey year could not be determined from path');
+  }
+  return Number(match[1]);
+}
+
 function parseS3Uri(s3Uri) {
   const groups = s3Uri.match(S3_REGEX_PARSER);
 
@@ -269,6 +277,7 @@ async function main() {
 
   try {
     const surveyType = getSurveyTypeFromFileName(argv.sql);
+    const surveyYear = getSurveyYearFromFileName(argv.sql);
     if (!surveyType) {
       throw new Error(`Unkonwn survey type for ${argv.sql}`);
     }
@@ -322,7 +331,7 @@ async function main() {
 
     await exec(
       conn,
-      `/usr/bin/gluepython3 /home/glue/job.py --tenant_id="${argv.tenantId}" --stage="${argv.stage}" --sql="${sqlUri}" --survey_type="${surveyType}"`,
+      `/usr/bin/gluepython3 /home/glue/job.py --tenant_id="${argv.tenantId}" --stage="${argv.stage}" --sql="${sqlUri}" --survey_type="${surveyType}" --year="${surveyYear}" --user_id="${argv.userId}" --email="${argv.email}"`,
       {
         onStdout: async data => {
           const strData = data.toString('utf8');
