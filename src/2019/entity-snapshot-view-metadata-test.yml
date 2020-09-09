@@ -238,6 +238,23 @@ ACADEMIC_LIBRARIES_1:
 
 # Adding all views for testing purposes
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
@@ -410,6 +427,40 @@ ACADEMIC_LIBRARIES_1:
 
   - viewName: MajorRetention
     entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+      
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End  
+      - IC Reporting Start
+      - HR Reporting End
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2013-01-01
+      end: 2014-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
