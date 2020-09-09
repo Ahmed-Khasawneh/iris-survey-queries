@@ -24,7 +24,7 @@
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
 # 20200813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
-# 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2019-20
+# 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2014-20
 # 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
 #
 # ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
@@ -851,7 +851,7 @@ ACADEMIC_LIBRARIES_1:
       end: 2014-12-31
 
 COMPLETIONS_1:
-  # reporting period: terms within 2018-07-01 to 2014-06-30; as-of date 2014-06-30
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -911,6 +911,34 @@ COMPLETIONS_1:
 
   - viewName: Degree
     entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -1134,6 +1162,26 @@ FALL_ENROLLMENT_1:
       start: 2013-05-01
       end: 2013-12-31
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: DegreeProgramRetention
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-12-31
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -1157,6 +1205,26 @@ FALL_ENROLLMENT_1:
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -1441,6 +1509,26 @@ FALL_ENROLLMENT_2:
       start: 2013-05-01
       end: 2013-12-31
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: DegreeProgramRetention
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-12-31
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -1464,6 +1552,26 @@ FALL_ENROLLMENT_2:
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -1748,6 +1856,26 @@ FALL_ENROLLMENT_3:
       start: 2013-05-01
       end: 2013-12-31
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: DegreeProgramRetention
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-12-31
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -1771,6 +1899,26 @@ FALL_ENROLLMENT_3:
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -2055,6 +2203,26 @@ FALL_ENROLLMENT_4:
       start: 2013-05-01
       end: 2013-12-31
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: DegreeProgramRetention
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-12-31
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -2078,6 +2246,26 @@ FALL_ENROLLMENT_4:
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -2944,20 +3132,6 @@ TWELVE_MONTH_ENROLLMENT_1:
       start: 2013-05-01
       end: 2014-08-01
 
-  - viewName: Degree
-    entityName: Degree
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End      
-    snapshotDateRange:
-      start: 2013-05-01
-      end: 2014-08-01
-
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -3089,20 +3263,6 @@ TWELVE_MONTH_ENROLLMENT_2:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End  
-    snapshotDateRange:
-      start: 2013-05-01
-      end: 2014-08-01
-
-  - viewName: Degree
-    entityName: Degree
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census

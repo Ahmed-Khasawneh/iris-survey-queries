@@ -194,6 +194,19 @@ COMPLETIONS_1:
       start: 2019-05-01
       end: 2020-08-01
 
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Full Year Term End
+      - Full Year June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -401,6 +414,26 @@ FALL_ENROLLMENT_1:
       start: 2019-05-01
       end: 2019-12-31
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgramRetention
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -424,6 +457,26 @@ FALL_ENROLLMENT_1:
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -708,6 +761,26 @@ FALL_ENROLLMENT_2:
       start: 2019-05-01
       end: 2019-12-31
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgramRetention
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -731,6 +804,26 @@ FALL_ENROLLMENT_2:
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -1015,6 +1108,26 @@ FALL_ENROLLMENT_3:
       start: 2019-05-01
       end: 2019-12-31
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgramRetention
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -1038,6 +1151,26 @@ FALL_ENROLLMENT_3:
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -1322,6 +1455,26 @@ FALL_ENROLLMENT_4:
       start: 2019-05-01
       end: 2019-12-31
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgramRetention
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -1345,6 +1498,26 @@ FALL_ENROLLMENT_4:
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+  - viewName: FieldOfStudyRetention
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -2192,19 +2365,6 @@ TWELVE_MONTH_ENROLLMENT_1:
       start: 2019-05-01
       end: 2020-08-01
 
-  - viewName: Degree
-    entityName: Degree
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
-    snapshotDateRange:
-      start: 2019-05-01
-      end: 2020-08-01
-
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -2327,19 +2487,6 @@ TWELVE_MONTH_ENROLLMENT_2:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
-    snapshotDateRange:
-      start: 2019-05-01
-      end: 2020-08-01
-
-  - viewName: Degree
-    entityName: Degree
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
