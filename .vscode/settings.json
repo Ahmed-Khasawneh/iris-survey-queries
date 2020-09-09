@@ -1,7 +1,15 @@
 {
   "task.autoDetect": "off",
   "npm.autoDetect": "off",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "debug.node.autoAttach": "disabled"
+  "debug.node.autoAttach": "disabled",
+  "[python]": {
+    "editor.defaultFormatter": "vscode.python"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
