@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
+20200911			akhasawneh									Modified tag array() default value & modified case statement syntax
 20200819            jhanicak                                    Removed reference to 'June End' and changed to new tags of 'Full Year June End' or 'Full Year Term End' based on client config
 20200728			akhasawneh				ak 20200728			Added support for multiple/historic ingestions (PF-1579) -Run time 19m 27s, test data 24m, 23s
 20200727            jhanicak                jh 20200727         Added upper() to strings for comparison
@@ -76,7 +77,7 @@ select '1920' surveyYear,
     'M' genderForUnknown, --M = Male, F = Female
     'F' genderForNonBinary,  --M = Male, F = Female
     'T' compGradDateOrTerm --D = Date, T = Term
-/*    
+/*   
 union
 
 select '1920' surveyYear,
@@ -90,6 +91,7 @@ select '1920' surveyYear,
     'F' genderForNonBinary,  --M = Male, F = Female
     'T' compGradDateOrTerm --D = Date, T = Term
 
+union
 
 select '1415' surveyYear,
 	'COM' surveyId,
@@ -172,7 +174,14 @@ select '1415' surveyYear,
 ClientConfigMCR as (
 -- Pulls client reporting preferences from the IPEDSClientConfig entity. 
 
-select DISTINCT 
+-- jh 20200826 Removed filter in first union for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
+--          1st union 1st order - pull snapshot for 'Full Year Term End' where compGradDateOrTerm = 'T' or 'Full Year June End' where compGradDateOrTerm = 'D' 
+--          1st union 2nd order - pull snapshot for 'Full Year Term End' or 'Full Year June End'
+--          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
+--          3rd union - pull default values if no record in IPEDSClientConfig
+-- ak 20200728 Adding snapshotDate reference
+
+select DISTINCT
     ConfigLatest.surveyYear surveyYear,
     upper(ConfigLatest.surveyId) surveyId,
     ConfigLatest.termCode termCode,
@@ -183,12 +192,11 @@ select DISTINCT
     upper(ConfigLatest.genderForUnknown) genderForUnknown,
 	upper(ConfigLatest.genderForNonBinary) genderForNonBinary,
     upper(ConfigLatest.compGradDateOrTerm) compGradDateOrTerm,
--- ak 20200728 Adding snapshotDate reference
+
     ConfigLatest.snapshotDate snapshotDate,
     ConfigLatest.tags
 from (
 	select clientConfigENT.surveyCollectionYear surveyYear,
--- ak 20200728 Adding snapshotDate reference
 		clientConfigENT.snapshotDate snapshotDate, 
 		clientConfigENT.tags tags,
 		defvalues.surveyId surveyId,
@@ -204,23 +212,24 @@ from (
 			partition by
 				clientConfigENT.surveyCollectionYear
 			order by
+			    (case when clientConfigENT.compGradDateOrTerm = 'T' and array_contains(clientConfigENT.tags, 'Full Year Term End') then 1
+			         when clientConfigENT.compGradDateOrTerm = 'D' and array_contains(clientConfigENT.tags, 'Full Year June End') then 1
+			         when array_contains(clientConfigENT.tags, 'Full Year June End') or array_contains(clientConfigENT.tags, 'Full Year Term End') then 2
+			         else 3 end) asc,
+			    clientConfigENT.snapshotDate desc,
 				clientConfigENT.recordActivityDate desc
 		) configRn
 	from IPEDSClientConfig clientConfigENT
 		cross join DefaultValues defvalues
 	where clientConfigENT.surveyCollectionYear = defvalues.surveyYear
-	    and ((clientConfigENT.compGradDateOrTerm = 'D' 
-                    and array_contains(clientConfigENT.tags, 'Full Year June End'))
-                  or (clientConfigENT.compGradDateOrTerm = 'T' 
-                    and array_contains(clientConfigENT.tags, 'Full Year Term End')))
-		
+
 	union
 
 -- Defaults config information to avoid IRIS validator errors if an applicable 'IPEDSClientConfig' record is not present. 
 	select defvalues.surveyYear surveyYear,
--- ak 20200728 Adding snapshotDate reference
 	    CAST('9999-09-09' as DATE) snapshotDate,
-	    null tags,
+	    array() tags,
+		--null tags,
 		defvalues.surveyId surveyId,
 		defvalues.termCode termCode,
 		defvalues.partOfTermCode partOfTermCode,
@@ -242,9 +251,15 @@ where ConfigLatest.configRn = 1
 ReportingPeriodMCR as (
 --Returns applicable term/part of term codes for this survey submission year. 
 
+-- jh 20200826 Removed filter in first union for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
+--          1st union 1st order - pull snapshot for 'Full Year Term End' where compGradDateOrTerm = 'T' or 'Full Year June End' where compGradDateOrTerm = 'D' 
+--          1st union 2nd order - pull snapshot for 'Full Year Term End' or 'Full Year June End'
+--          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
+--          3rd union - pull default values if no record in IPEDSReportingPeriod
+-- ak 20200728 Adding snapshotDate reference
+
 select DISTINCT
     RepDates.surveyYear surveyYear,
--- ak 20200728 Adding snapshotDate reference
     to_date(RepDates.snapshotDate,'YYYY-MM-DD') snapshotDate,
     RepDates.tags tags,
     RepDates.termCode termCode,	
@@ -256,8 +271,7 @@ select DISTINCT
     to_date(RepDates.reportingDateEnd,'YYYY-MM-DD') reportingDateEnd
 from (
     select repPeriodENT.surveyCollectionYear surveyYear,
-        'repperiod' source, 
--- ak 20200728 Adding snapshotDate reference
+        'repperiod' source,
 		repPeriodENT.snapshotDate snapshotDate,
 		repPeriodENT.tags tags,
         clientconfig.surveyId surveyId,
@@ -277,6 +291,11 @@ from (
                 repPeriodENT.termCode,
                 repPeriodENT.partOfTermCode	
             order by
+                (case when clientconfig.compGradDateOrTerm = 'T' and array_contains(repPeriodENT.tags, 'Full Year Term End') then 1
+			         when clientconfig.compGradDateOrTerm = 'D' and array_contains(repPeriodENT.tags, 'Full Year June End') then 1
+			         when array_contains(repPeriodENT.tags, 'Full Year June End') or array_contains(repPeriodENT.tags, 'Full Year Term End') then 2
+			         else 3 end) asc,
+			    repPeriodENT.snapshotDate desc,
 				repPeriodENT.recordActivityDate desc
         ) reportPeriodRn	
     from IPEDSReportingPeriod repPeriodENT
@@ -284,17 +303,12 @@ from (
             and upper(repperiodENT.surveyId) = clientconfig.surveyId
             and repperiodENT.termCode is not null
             and repperiodENT.partOfTermCode is not null
-            and ((clientconfig.compGradDateOrTerm = 'D' 
-                    and array_contains(repperiodENT.tags, 'Full Year June End'))
-                  or (clientconfig.compGradDateOrTerm = 'T' 
-                    and array_contains(repperiodENT.tags, 'Full Year Term End')))
 
 	union
 	
 --Pulls default values when IPEDSReportingPeriod record doesn't exist
 	select clientconfig.surveyYear surveyYear,
 		'default' source, 
--- ak 20200728 Adding snapshotDate reference
 		clientconfig.snapshotDate snapshotDate,
 		clientconfig.tags tags,
         clientconfig.surveyId surveyId,
@@ -338,27 +352,27 @@ select termCode,
 from (
     select distinct acadtermENT.termCode, 
 -- ak 20200728 Adding snapshotDate reference and determining termCode tied to the snapshotDate
-        case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
+        (case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
                 and to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadTermENT.censusDate, 1), 'YYYY-MM-DD') 
             then acadTermENT.termCode 
-            else null end snapshotTermCode,
-        case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
+            else null end) snapshotTermCode,
+        (case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
                 and to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadTermENT.censusDate, 1), 'YYYY-MM-DD') 
             then acadTermENT.partOfTermCode 
-            else null end snapshotPartTermCode,
+            else null end) snapshotPartTermCode,
         row_number() over (
             partition by 
                 acadTermENT.termCode,
                 acadTermENT.partOfTermCode
             order by
-                case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
+                (case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
                             and to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadTermENT.censusDate, 1), 'YYYY-MM-DD') 
                     then acadTermENT.termCode 
-                else acadTermENT.snapshotDate end desc,
-                case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
+                else acadTermENT.snapshotDate end) desc,
+                (case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
                             and to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadTermENT.censusDate, 1), 'YYYY-MM-DD') 
                     then acadTermENT.partOfTermCode 
-                else acadTermENT.snapshotDate end desc,
+                else acadTermENT.snapshotDate end) desc,
                 acadTermENT.recordActivityDate desc
         ) acadTermRn,
         acadTermENT.snapshotDate,
@@ -400,22 +414,25 @@ AcademicTermReporting as (
 -- Combines ReportingPeriodMCR and AcademicTermMCR to get termCode info only for terms in reporting period
 -- ak 20200728 Added AcademicTermReporting view
 
+-- ak 20200728 Added AcademicTermReporting view
+-- ak 20200728 Adding snapshotTermCode reference
+ --ak 20200616 Adding term order indicator (PF-1494)					
 select *,
-    to_date(case when compGradDateOrTerm = 'D' 
+    to_date((case when compGradDateOrTerm = 'D' 
         then surveyDateStart
         else termMinStartDate
-	end, 'YYYY-MM-DD') reportingDateStart,  --minimum start date of reporting for either date or term option for client
-    to_date(case when compGradDateOrTerm = 'D' 
+	end), 'YYYY-MM-DD') reportingDateStart,  --minimum start date of reporting for either date or term option for client
+    to_date((case when compGradDateOrTerm = 'D' 
         then surveyDateEnd
-        else termMaxEndDate
-	end, 'YYYY-MM-DD') reportingDateEnd --maximum end date of reporting for either date or term option for client
+        else termMaxEndDate --termMaxEndDate
+	end), 'YYYY-MM-DD') reportingDateEnd --maximum end date of reporting for either date or term option for client
 from (
     select acadterm.termCode termCode,
         acadterm.partOfTermCode partOfTermCode,
         termorder.termOrder termOrder,
 -- ak 20200728 Adding snapshotTermCode reference
         acadterm.snapshotTermCode snapshotTermCode,
-        acadterm.snapshotDate snapshotDate,
+        to_date(acadterm.snapshotDate, 'YYYY-MM-DD') snapshotDate,
         acadterm.startDate startDate,
         acadterm.endDate endDate,
         minTermStart.startDateMin termMinStartDate,
@@ -426,11 +443,11 @@ from (
         repperiod.genderForUnknown genderForUnknown,
         repperiod.genderForNonBinary genderForNonBinary
     from ReportingPeriodMCR repperiod  
-        left join AcademicTermMCR acadterm on repperiod.termCode = acadterm.termCode
-	            and repperiod.partOfTermCode = acadterm.partOfTermCode
  --ak 20200616 Adding term order indicator (PF-1494)
 		inner join AcadTermOrder termorder
 			on termOrder.termCode = repperiod.termCode
+        left join AcademicTermMCR acadterm on repperiod.termCode = acadterm.termCode
+	            and repperiod.partOfTermCode = acadterm.partOfTermCode
 		left join (select min(acadterm1.startDate) startDateMin,
 		            acadterm1.termCode termCode
                     from ReportingPeriodMCR repperiod1
@@ -456,6 +473,13 @@ The views below pull the most recent records based on activity date and other fi
 AwardMCR as (
 --Pulls all distinct student awards obtained withing the reporting terms/dates.
 
+-- jh 20200826 Removed filter for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
+--          1st order - pull snapshot for 'Full Year Term End' where compGradDateOrTerm = 'T' or 'Full Year June End' where compGradDateOrTerm = 'D' 
+--          2nd order - pull snapshot for 'Full Year Term End' or 'Full Year June End'
+--          3rd order - pull other snapshot, ordered by snapshotDate desc
+-- ak 20200728 Adding snapshotDate/snapshotTerm reference
+--ak 20200611 Adding term order indicator (PF-1494)
+
 select DISTINCT *
 from (
     select awardENT.personId personId, 
@@ -466,29 +490,32 @@ from (
         awardENT.awardStatus awardStatus, 
         upper(awardENT.college) college, 
         upper(awardENT.campus) campus, 
---ak 20200611 Adding term order indicator (PF-1494)
         repperiod.termOrder termOrder, 
         repperiod.genderForUnknown genderForUnknown,
         repperiod.genderForNonBinary genderForNonBinary,
--- ak 20200728 Adding snapshotDate/snapshotTerm reference
         to_date(awardENT.snapshotDate,'YYYY-MM-DD') snapshotDate,
         awardENT.tags tags,
         repperiod.compGradDateOrTerm compGradDateOrTerm,
         row_number() over (
             partition by     
                 awardENT.personId,
-                case when repperiod.compGradDateOrTerm = 'D' 
+                (case when repperiod.compGradDateOrTerm = 'D' 
                     then awardENT.awardedDate
                     else awardENT.awardedTermCode
-                end,
+                end),
                 awardENT.degreeLevel,
                 awardENT.degree
             order by
+                (case when repperiod.compGradDateOrTerm = 'T' and array_contains(awardENT.tags, 'Full Year Term End') then 1
+			         when repperiod.compGradDateOrTerm = 'D' and array_contains(awardENT.tags, 'Full Year June End') then 1
+			         when array_contains(awardENT.tags, 'Full Year June End') or array_contains(awardENT.tags, 'Full Year Term End') then 2
+			         else 3 end) asc,
+			    awardENT.snapshotDate desc,
                 repperiod.termOrder desc,
                 awardENT.recordActivityDate desc
         ) as AwardRn 
 	from AcademicTermReporting repperiod
-	    inner join Award awardENT on ((repperiod.compGradDateOrTerm = 'D'
+	    cross join Award awardENT on ((repperiod.compGradDateOrTerm = 'D'
 			and (awardENT.awardedDate >= repperiod.reportingDateStart 
 				and awardENT.awardedDate <= repperiod.reportingDateEnd)) 
 			or (repperiod.compGradDateOrTerm = 'T'
@@ -497,14 +524,10 @@ from (
 		    and awardENT.awardStatus = 'Awarded'
 		    and awardENT.degreeLevel is not null
 		    and awardENT.degreeLevel != 'Continuing Ed'
-		    and ((repperiod.compGradDateOrTerm = 'D' 
-                    and array_contains(awardENT.tags, 'Full Year June End'))
-                  or (repperiod.compGradDateOrTerm = 'T' 
-                    and array_contains(awardENT.tags, 'Full Year Term End')))
 -- Remove for testing...
-		and ((to_date(awardENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
+		and ((to_date(awardENT.recordActivityDate,'YYYY-MM-DD') != to_date('9999-09-09','YYYY-MM-DD')
 		and to_date(awardENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.reportingDateEnd)
-				or to_date(awardENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
+				or to_date(awardENT.recordActivityDate,'YYYY-MM-DD') = to_date('9999-09-09','YYYY-MM-DD'))
 -- ...Remove for testing
     )
 where AwardRn = 1
@@ -512,10 +535,11 @@ where AwardRn = 1
 
 AwardRefactor as (
 --Returns all award data with the most current snapshotDate
+
 -- ak 20200728 Added AwardRefactor view
 
 select award.personId personId,
-    award.awardedDate awardedDate,
+    to_date(award.awardedDate, 'YYYY-MM-DD') awardedDate,
     award.awardedTermCode awardedTermCode,
     award.degreeLevel degreeLevel,
     award.degree degree,
@@ -556,7 +580,7 @@ from (
         award2.degree degree,
         award2.campus campus,
 		campusRec.isInternational isInternational,
-		campusRec.snapshotDate snapshotDate,
+		award2.snapshotDate snapshotdate,
         row_number() over (
             partition by
                 award2.personId,
@@ -568,7 +592,7 @@ from (
                 campusRec.recordActivityDate desc
         ) campusRn
     from AwardRefactor award2
-		left join (select award.awardedDate awardedDate,
+		left join (select to_date(award.awardedDate,'YYYY-MM-DD') awardedDate,
 		                upper(campusENT.campus) campus,
                         campusENT.isInternational isInternational,
                         to_date(campusENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
@@ -577,16 +601,16 @@ from (
                     from AwardRefactor award
                         inner join Campus campusENT on upper(campusENT.campus) = award.campus
 -- ak 20200728 Adding snapshotDate reference to return Campus information from the award record's snapshot
-                            and to_date(campusENT.snapshotDate,'YYYY-MM-DD') = award.snapshotDate
+                            and campusENT.snapshotDate = award.snapshotDate
                             and campusENT.isIpedsReportable = 1
         ) CampusRec on award2.campus = CampusRec.campus 
-            and award2.awardedDate = CampusRec.awardedDate
+            and to_date(award2.awardedDate,'YYYY-MM-DD') = to_date(CampusRec.awardedDate,'YYYY-MM-DD')
 -- ak 20200728 Adding snapshotDate reference to return Campus information from the award record's snapshot
             and award2.snapshotDate = CampusRec.snapshotDate
 -- Remove for testing... 
-		and ((CampusRec.recordActivityDate != CAST('9999-09-09' as DATE)
-			and CampusRec.recordActivityDate <= award2.awardedDate)
-				or CampusRec.recordActivityDate = CAST('9999-09-09' as DATE))
+		    and ((CampusRec.recordActivityDate != CAST('9999-09-09' as DATE)
+			    and CampusRec.recordActivityDate <= award2.awardedDate)
+				    or CampusRec.recordActivityDate = CAST('9999-09-09' as DATE))
 -- ...Remove for testing
 	)
 where campusRn = 1
@@ -663,7 +687,7 @@ select personId personId,
 		awardedTermCode awardedTermCode,
         degree degree,
 		degreeLevel degreeLevel,
-		curriculumCode curriculumCode,		
+		upper(curriculumCode) curriculumCode,		
 		college college,
         fieldOfStudyPriority fieldOfStudyPriority,
 -- ak 20200728 Adding snapshotDate reference.
@@ -845,7 +869,7 @@ from (
 			        and majorENT.isIpedsReportable = 1
 			  ) MajorRec on MajorRec.major = acadtrack2.curriculumCode
 -- ak 20200728 Adding snapshotDate reference to return Major information from the award record's snapshot
-                    and MajorRec.snapshotDate = acadtrack2.snapshotDate
+			and MajorRec.snapshotDate = acadtrack2.snapshotDate
 -- ak 20200406 Including dummy date changes. (PF-1368)
 			and ((MajorRec.recordActivityDate != CAST('9999-09-09' AS DATE)
 				and MajorRec.recordActivityDate <= acadtrack2.awardedDate)
@@ -878,7 +902,7 @@ select DISTINCT
     award.awardedTermCode awardedTermCode,
     award.genderForUnknown genderForUnknown,
     award.genderForNonBinary genderForNonBinary,
-    campus.isInternational,
+    coalesce(campus.isInternational, false) isInternational,
     acadtrack.fieldOfStudyPriority FOSPriority,
     coalesce(acadtrack.fosRn, 1) fosRn,
     degree.awardLevel awardLevel,
@@ -909,7 +933,7 @@ from AwardRefactor award
 	    and acadtrack.degree = major.degree
 	    and acadtrack.curriculumCode = major.major
 	    and major.cipCode is not null
-    inner join CampusMCR campus on campus.personId = award.personId
+    left join CampusMCR campus on campus.personId = award.personId
         and campus.campus = award.campus
         and campus.awardedDate = award.awardedDate
 	    and campus.degreeLevel = award.degreeLevel
@@ -1153,7 +1177,7 @@ from DegreeMajor degmajor
             ) stuCIP on degmajor.cipCode = stuCIP.cipCode
                 and degmajor.ACAT = stuCIP.ACAT
 )
-
+ 
 /*****
 BEGIN SECTION - Survey Formatting
 The select query below contains union statements to match each part of the survey specs
