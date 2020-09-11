@@ -73,7 +73,7 @@ function getSurveyTypeFromFileName(fileName) {
 }
 
 function getSurveyYearFromFileName(fileName) {
-  const match = fileName.match(/.*src\/(\d+)\/.*/);
+  const match = fileName.match(/.*src[\/\\](\d+)[\/\\].*/);
   if (!match) {
     throw new Error('Survey year could not be determined from path');
   }
