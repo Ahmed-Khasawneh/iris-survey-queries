@@ -63,8 +63,6 @@ WITH DefaultValues as (
  it may be by listing specific terms. 
  *******************************************************************/ 
 
---mod from v1 - remove Graduate and higher levels
-/*
 select '2021' surveyYear, 
 	'E1E' surveyId,  
 	CAST('2019-07-01' AS DATE) reportingDateStart,
@@ -80,9 +78,9 @@ select '2021' surveyYear,
     --'Y' icOfferGraduateAwardLevel, --Y = Yes, N = No
     --'Y' icOfferDoctorAwardLevel --Y = Yes, N = No
 
-
+/*
 union 
-*/
+
 select '1415' surveyYear,  
 	'E1E' surveyId,   
 	CAST('2013-07-01' AS DATE) reportingDateStart,
@@ -216,7 +214,7 @@ select '1415' surveyYear,
     --'Y' icOfferUndergradAwardLevel, --Y = Yes, N = No
     --'Y' icOfferGraduateAwardLevel, --Y = Yes, N = No
     --'Y' icOfferDoctorAwardLevel --Y = Yes, N = No
-
+*/
 ),
 
 ClientConfigMCR as (
