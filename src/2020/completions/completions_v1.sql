@@ -1109,7 +1109,7 @@ from (
         and to_date(fosENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.reportingDateEnd)
             or to_date(fosENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
 -- ...Remove for testing
-
+		and SUBSTR(CAST(fosENT.cipCodeVersion as STRING), 3, 2) >= 20 -- Current CIPCode standard was released 2020. new specs introduced per decade. 
     )
     where fosRn = 1
 ),
@@ -1173,11 +1173,15 @@ select cipCode cipCode,
 		when totalPrograms > DEisDistanceEd
 			and DEisDistanceEd > 0 then 3 -- Some programs in this CIP code in this award level can be completed entirely via distance education.
 	end DEAvailability,
-	case when DEMandatoryOnsite > 0 then 1
-		else 0
+	case when totalPrograms > DEisDistanceEd
+			and DEisDistanceEd > 0   
+            then (case when DEMandatoryOnsite > 0 then 1 else 0 end)
+		else null
 	end DESomeRequiredOnsite,
-	case when DEMOptionalOnsite > 0 then 1
-		else 0
+    case when totalPrograms > DEisDistanceEd
+			and DEisDistanceEd > 0   
+            then (case when DEMOptionalOnsite > 0 then 1 else 0 end)
+        else null
 	end DESomeOptionalOnsite
 from (
     select cipCode cipCode,
