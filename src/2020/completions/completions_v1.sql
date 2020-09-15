@@ -831,7 +831,6 @@ from (
 			and ((FOSRec.recordActivityDate != CAST('9999-09-09' AS DATE)
 				and FOSRec.recordActivityDate <= acadtrack2.awardedDate)
 					or FOSRec.recordActivityDate = CAST('9999-09-09' AS DATE)) 
-            and 
 	)
 where fosRn = 1
 ),
@@ -1110,7 +1109,7 @@ from (
         and to_date(fosENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.reportingDateEnd)
             or to_date(fosENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
 -- ...Remove for testing
-		and SUBSTR(CAST(fosENT.cipCodeVersion as STRING), 3, 2) >= 20 -- Current CIPCode standaard was released 2020. new specs introduced per decade. 
+		and SUBSTR(CAST(fosENT.cipCodeVersion as STRING), 3, 2) >= 20 -- Current CIPCode standard was released 2020. new specs introduced per decade. 
     )
     where fosRn = 1
 ),
