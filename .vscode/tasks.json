@@ -6,7 +6,7 @@
     {
       "label": "Test SQL DEV",
       "type": "shell",
-      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId 11702b15-8db2-4a35-8087-b560bb233420 --stage DEV --userId 2a83da83-ad84-4769-9075-44769e3b14d8 --email trevor.harwell@evisions.com",
+      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId 11702b15-8db2-4a35-8087-b560bb233420 --stage DEV --userId 2a83da83-ad84-4769-9075-44769e3b14d8",
       "problemMatcher": []
     },
     {
@@ -18,13 +18,13 @@
     {
       "label": "Test SQL TST",
       "type": "shell",
-      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId bbce3932-0456-4513-9a9d-8d71f433b2af --stage TST",
+      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId bbce3932-0456-4513-9a9d-8d71f433b2af --stage TST --userId 29c744d4-73a1-459f-b057-258e3d009250",
       "problemMatcher": []
     },
     {
       "label": "Test SQL UAT",
       "type": "shell",
-      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId bbce3932-0456-4513-9a9d-8d71f433b2af --stage UAT",
+      "command": "node internals/test/execute-sql.js --sql ${relativeFile} --tenantId dfd4cecd-b7ec-4faa-bdf6-c48808802cd6 --stage UAT --userId 1f2096e0-7892-498e-a2e5-f8d7cc1dcb40",
       "problemMatcher": []
     }
   ]
