@@ -22,7 +22,7 @@ glueContext = GlueContext(SparkContext.getOrCreate())
 def main():
     args = parse_args()
     sql = get_file_from_s3(args.sql)
-    spark_refresh_entity_views_v2(args.tenant_id, args.survey_type, args.stage, year=args.year, user_id=args.user_id, email=args.email)
+    spark_refresh_entity_views_v2(args.tenant_id, args.survey_type, args.stage, year=args.year, user_id=args.user_id)
     dataframe = spark.sql(sql)
     dataframe = spark_create_json_format(dataframe)
     s3_path = 's3://{}/tmp-for-testing/report-output/{}'.format(OUTPUT_BUCKET, str(uuid.uuid4()))
@@ -40,12 +40,12 @@ def spark_read_s3_source(s3_paths, format="parquet"):
     s3_data = glueContext.getSource(format, paths=s3_paths)
     return s3_data.getFrame()
 
-def spark_refresh_entity_views_v2(tenant_id, survey_type, stage, year=2019, user_id=None, email=None):
+def spark_refresh_entity_views_v2(tenant_id, survey_type, stage, year=2019, user_id=None):
     lambda_client = boto3.client('lambda', 'us-east-1')
     invoke_response = lambda_client.invoke(
         FunctionName = "iris-connector-doris-2019-{}-getReportPayload".format(stage) if year == 2019 else "iris-connector-doris-{}-getReportPayload".format(stage),
         LogType = "None",
-        Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '' }).encode('utf-8') if year == 2019 else json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id, 'email': email }).encode('utf-8')
+        Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '' }).encode('utf-8') if year == 2019 else json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id }).encode('utf-8')
     )
     view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
     view_metadata_without_s3_paths["tenantId"] = tenant_id
@@ -209,7 +209,6 @@ def parse_args():
     parser.add_argument('--year', dest='year', type=int, default=2019,
                         help='survey type to prepare data for')
     parser.add_argument('--user_id', dest='user_id', help="user id to run as")
-    parser.add_argument('--email', dest='email', help="user email to run as")
 
     return parser.parse_args()
 
