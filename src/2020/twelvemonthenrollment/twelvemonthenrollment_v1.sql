@@ -16,7 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
-20200917            jhanicak                jh 20200917         Commented out all references to tags field, fixed row_number() in AcademicTermReporting,
+20200922            jhanicak                jh 20200917         Commented out all references to tags field, fixed row_number() in AcademicTermReporting,
                                                                 fixed enum strings in StudentRefactor, changed AcadTermOrder to AcademicTermOrder PF-1681
 20200911            jhanicak                jh 20200911         New 20-21 version Run time 14m 6s, Test data 20m, 23s
 20200825            akhasawneh              ak 20200825         Mods to default to dummy output where data is lacking (PF-1654) Run time 11m 26s
