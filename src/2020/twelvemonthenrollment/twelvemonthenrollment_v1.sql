@@ -17,7 +17,7 @@ SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
 20200917            jhanicak                jh 20200917         Commented out all references to tags field, fixed row_number() in AcademicTermReporting,
-                                                                fixed enum strings in StudentRefactor, changed AcadTermOrder to AcademicTermOrder PF-1690
+                                                                fixed enum strings in StudentRefactor, changed AcadTermOrder to AcademicTermOrder PF-1681
 20200911            jhanicak                jh 20200911         New 20-21 version Run time 14m 6s, Test data 20m, 23s
 20200825            akhasawneh              ak 20200825         Mods to default to dummy output where data is lacking (PF-1654) Run time 11m 26s
 20200814            jhanicak                jh 20200814         Additional mods to support multi snapshot (PF-1449) Run time 6m 46s
@@ -1135,23 +1135,23 @@ CourseTypeCountsSTU as (
 --jh 20200707 Removed termCode and partOfTermCode from grouping, since not in select fields
 
 select reg.personId personId,
-	sum(case when course.enrollmentHours >= 0 then 1 else 0 end) totalCourses,
-	sum(case when course.isClockHours = 0 and course.enrollmentHours > 0 then course.enrollmentHours else 0 end) totalCreditHrs,
-	sum(case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Undergrad' then nvl(course.enrollmentHours, 0) else 0 end) totalCreditUGHrs,
-	sum(case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel in ('Graduate', 'Professional') then nvl(course.enrollmentHours, 0) else 0 end) totalCreditGRHrs,
-	sum(case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Postgraduate' then nvl(course.enrollmentHours, 0) else 0 end) totalCreditPostGRHrs,
-	sum(case when course.isClockHours = 1 and course.enrollmentHours > 0 and course.courseLevel = 'Undergrad' then course.enrollmentHours else 0 end) totalClockHrs,
-	sum(case when course.enrollmentHours = 0 then 1 else 0 end) totalNonCredCourses,
-	sum(case when course.enrollmentHours > 0 then 1 else 0 end) totalCredCourses,
-	sum(case when course.meetingType = 'Online/Distance Learning' then 1 else 0 end) totalDECourses,
-	sum(case when course.courseLevel = 'Undergrad' then 1 else 0 end) totalUGCourses,
-	sum(case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end) totalGRCourses,
-	sum(case when course.courseLevel = 'Postgraduate' then 1 else 0 end) totalPostGRCourses,
-	sum(case when course.courseLevel = 'Continuing Ed' then 1 else 0 end) totalCECourses,
-	sum(case when course.isESL = 'Y' then 1 else 0 end) totalESLCourses,
-	sum(case when course.isRemedial = 'Y' then 1 else 0 end) totalRemCourses,
-	sum(case when reg.isInternational = 1 then 1 else 0 end) totalIntlCourses, 
-	sum(case when reg.crnGradingMode = 'Audit' then 1 else 0 end) totalAuditCourses
+	sum((case when course.enrollmentHours >= 0 then 1 else 0 end)) totalCourses,
+	sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 then course.enrollmentHours else 0 end)) totalCreditHrs,
+	sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Undergrad' then nvl(course.enrollmentHours, 0) else 0 end)) totalCreditUGHrs,
+	sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel in ('Graduate', 'Professional') then nvl(course.enrollmentHours, 0) else 0 end)) totalCreditGRHrs,
+	sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Postgraduate' then nvl(course.enrollmentHours, 0) else 0 end)) totalCreditPostGRHrs,
+	sum((case when course.isClockHours = 1 and course.enrollmentHours > 0 and course.courseLevel = 'Undergrad' then course.enrollmentHours else 0 end)) totalClockHrs,
+	sum((case when course.enrollmentHours = 0 then 1 else 0 end)) totalNonCredCourses,
+	sum((case when course.enrollmentHours > 0 then 1 else 0 end)) totalCredCourses,
+	sum((case when course.meetingType = 'Online/Distance Learning' then 1 else 0 end)) totalDECourses,
+	sum((case when course.courseLevel = 'Undergrad' then 1 else 0 end)) totalUGCourses,
+	sum((case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end)) totalGRCourses,
+	sum((case when course.courseLevel = 'Postgraduate' then 1 else 0 end)) totalPostGRCourses,
+	sum((case when course.courseLevel = 'Continuing Ed' then 1 else 0 end)) totalCECourses,
+	sum((case when course.isESL = 'Y' then 1 else 0 end)) totalESLCourses,
+	sum((case when course.isRemedial = 'Y' then 1 else 0 end)) totalRemCourses,
+	sum((case when reg.isInternational = 1 then 1 else 0 end)) totalIntlCourses, 
+	sum((case when reg.crnGradingMode = 'Audit' then 1 else 0 end)) totalAuditCourses
 from RegistrationMCR reg
 	left join CourseMCR course on reg.termCode = course.termCode
         and reg.partOfTermCode = course.partOfTermCode
@@ -1268,12 +1268,12 @@ select distinct reg.personID personID,
 	reg.icOfferDoctorAwardLevel icOfferDoctorAwardLevel,
 	stu.studentLevelPartA ipedsPartAStudentLevel, --null for students not counted in headcount
 	stu.studentLevelPartC ipedsPartCStudentLevel, --null for students not counted in headcount
-	case when person.gender = 'Male' then 'M'
+	(case when person.gender = 'Male' then 'M'
 			when person.gender = 'Female' then 'F' 
 			when person.gender = 'Non-Binary' then reg.genderForNonBinary
 		else reg.genderForUnknown
-	end ipedsGender,
-	case when person.isUSCitizen = 1 then 
+	end) ipedsGender,
+	(case when person.isUSCitizen = 1 then 
 			(case when person.isHispanic = true then '2' 
 				when person.isMultipleRaces = true then '8' 
 				when person.ethnicity != 'Unknown' and person.ethnicity is not null then
@@ -1288,16 +1288,16 @@ select distinct reg.personID personID,
 					else '9' end) -- 'race and ethnicity unknown'
 			when person.isInUSOnVisa = 1 and person.censusDate between person.visaStartDate and person.visaEndDate then '1' -- 'nonresident alien'
 			else '9' -- 'race and ethnicity unknown'
-	end ipedsEthnicity,  
+	end) ipedsEthnicity,  
 	coalesce(coursecnt.totalCreditHrs, 0) totalCreditHrs,
 	coalesce(coursecnt.totalClockHrs, 0) totalClockUGHrs,
 	coalesce(coursecnt.totalCreditUGHrs, 0) totalCreditUGHrs,
 	coalesce(coursecnt.totalCreditGRHrs, 0) totalCreditGRHrs,
 	coalesce(coursecnt.totalCreditPostGRHrs, 0) totalCreditPostGRHrs,
-	case when coursecnt.totalCourses = courseCnt.totalDECourses then 'DE Exclusively'
+	(case when coursecnt.totalCourses = courseCnt.totalDECourses then 'DE Exclusively'
 		when courseCnt.totalDECourses > 0 then 'DE Some'
 		else 'DE None'
-	end DEStatus
+	end) DEStatus
 from RegistrationMCR reg  
 	left join PersonMCR person on reg.personId = person.personId 
 	left join CourseTypeCountsSTU coursecnt on reg.personId = coursecnt.personId  
