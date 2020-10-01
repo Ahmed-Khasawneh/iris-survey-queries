@@ -1399,10 +1399,10 @@ union
 select *
 from (
     VALUES
-        ('A', 1, '01.0101', 1, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        ('B', 1, '01.0101', 1, 1, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
+        ('A', 1, '01.0101', '1a', null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        ('B', 1, '01.0101', '1a', 1, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
         --('C', null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        ('D', null, null, 1, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null, null)
+        ('D', null, null, 2, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null, null)
     ) as dummySet(PART, MAJORNUM, CIPC_LEVL, AWLEVEL, isDistanceED, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, FIELD6, FIELD7, FIELD8, FIELD9, 
                   FIELD10, FIELD11, FIELD12, FIELD13, FIELD14, FIELD15, FIELD16, FIELD17, FIELD18)
 where not exists (select a.personId from CohortSTU a) 
