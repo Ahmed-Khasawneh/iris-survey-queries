@@ -23,7 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
-# 20201005  akhasawneh		                            Updated tag list to include 'Department of Defense' and 'GI Bill'. Added 'FINANCIAL_AID' V1-5
+# 20201005  akhasawneh		                      Updated tag list to include 'Department of Defense' and 'GI Bill'. Added 'FINANCIAL_AID' V1-5
 # 20200813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
 # 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2014-20
 # 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
@@ -3523,8 +3523,8 @@ FINANCIAL_AID_5:
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
-	  - Department of Defense
-	  - GI Bill
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2019-05-01
       end: 2019-12-31
