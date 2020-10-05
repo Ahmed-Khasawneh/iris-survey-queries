@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20201005  akhasawneh                                Added 'FINANCIAL_AID' V1-5 and added 'Department of Defense' and 'GI Bill' tags
 # 20200914  jhanicak                                  Added twelvemonthenrollment_v3 and _v4
 # 20200813  akhasawneh                                Adding new tags
 # 20200810  akhasawneh                                Updated for IPEDS 2020-21
@@ -1954,6 +1955,706 @@ FINANCE_6:
       start: 2020-01-01
       end: 2020-10-01
 
+FINANCIAL_AID_1:
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+FINANCIAL_AID_2:
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+FINANCIAL_AID_3:
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+FINANCIAL_AID_4:
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+FINANCIAL_AID_5:
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+      
 HUMAN_RESOURCES_1:
   # reporting period: as of 10/31/19
 

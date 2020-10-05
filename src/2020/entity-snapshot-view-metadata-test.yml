@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20201005  akhasawneh		                            Updated tag list to include 'Department of Defense' and 'GI Bill'. Added 'FINANCIAL_AID' V1-5
 # 20200813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
 # 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2014-20
 # 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
@@ -45,6 +46,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -61,7 +64,9 @@ ACADEMIC_LIBRARIES_1:
       - Full Year June End  
       - IC Reporting Start
       - HR Reporting End
-      - Fiscal Year Lockdownn
+      - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -79,6 +84,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -96,6 +103,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -113,6 +122,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -130,6 +141,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -147,6 +160,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -164,6 +179,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -181,6 +198,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -198,6 +217,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -215,6 +236,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -232,6 +255,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -251,6 +276,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -268,6 +295,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -285,6 +314,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -302,6 +333,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -319,6 +352,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -336,6 +371,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -353,6 +390,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -370,6 +409,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -387,6 +428,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -404,6 +447,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -421,6 +466,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -438,6 +485,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -455,6 +504,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -472,6 +523,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -489,6 +542,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -506,6 +561,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -523,6 +580,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -540,6 +599,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -557,6 +618,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -574,6 +637,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -591,6 +656,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -608,6 +675,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -625,6 +694,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -642,6 +713,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -659,6 +732,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -676,6 +751,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -693,6 +770,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -710,6 +789,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -727,6 +808,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -744,6 +827,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -761,6 +846,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -778,6 +865,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -795,6 +884,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -812,6 +903,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -829,6 +922,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -846,6 +941,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -863,6 +960,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -880,6 +979,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2013-01-01
       end: 2014-12-31
@@ -897,6 +998,8 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2012-01-01
       end: 2013-12-31
@@ -2751,6 +2854,710 @@ FINANCE_6:
     snapshotDateRange:
       start: 2014-01-01
       end: 2014-10-01
+FINANCIAL_AID_1:
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+FINANCIAL_AID_2:
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+FINANCIAL_AID_3:
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+FINANCIAL_AID_4:
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+FINANCIAL_AID_5:
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
 
 HUMAN_RESOURCES_1:
   # reporting period: as of 10/31/19
