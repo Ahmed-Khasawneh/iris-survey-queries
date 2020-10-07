@@ -1,5 +1,3 @@
-%sql
-
 /********************
 
 EVI PRODUCT:	DORIS 2020-21 IPEDS Survey  
