@@ -1,3 +1,5 @@
+%sql
+
 /********************
 
 EVI PRODUCT:	DORIS 2020-21 IPEDS Survey  
@@ -366,20 +368,21 @@ select max(config.termCode) maxTerm,
         max(config.partOfTermCode) partOfTermCode,
         config.genderForUnknown genderForUnknown,
 		config.genderForNonBinary genderForNonBinary,
-        config.tmAnnualDPPCreditHoursFTE tmAnnualDPPCreditHoursFTE,
-        config.instructionalActivityType instructionalActivityType,
-        config.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
-		config.icOfferGraduateAwardLevel icOfferGraduateAwardLevel,
-        config.icOfferDoctorAwardLevel icOfferDoctorAwardLevel
+        --config.tmAnnualDPPCreditHoursFTE tmAnnualDPPCreditHoursFTE,
+        config.instructionalActivityType instructionalActivityType--,
+        --config.icOfferUndergradAwardLevel icOfferUndergradAwardLevel,
+		--config.icOfferGraduateAwardLevel icOfferGraduateAwardLevel,
+        --config.icOfferDoctorAwardLevel icOfferDoctorAwardLevel
 from ClientConfigMCR config
 group by config.genderForUnknown,
 		config.genderForNonBinary,
-        config.tmAnnualDPPCreditHoursFTE,
-        config.instructionalActivityType,
-        config.icOfferUndergradAwardLevel,
-		config.icOfferGraduateAwardLevel,
-        config.icOfferDoctorAwardLevel
+        --config.tmAnnualDPPCreditHoursFTE,
+        config.instructionalActivityType--,
+        --config.icOfferUndergradAwardLevel,
+		--config.icOfferGraduateAwardLevel,
+        --config.icOfferDoctorAwardLevel
 ),										 
+
 ReportingPeriodMCR as (
 --Returns applicable term/part of term codes for this survey submission year. 
 
@@ -484,7 +487,6 @@ from (
                 acadTermENT.termCode,
                 acadTermENT.partOfTermCode
             order by
-
                 acadTermENT.recordActivityDate desc
         ) acadTermRn,
         acadTermENT.snapshotDate,
@@ -542,6 +544,7 @@ AcademicTermReporting as (
 -- ak 20200728 Added view to pull all academic term data for the terms associated with the reporting period
 
 --mod from v1 - remove Graduate and higher levels
+
 select repPerTerms.termCode termCode,
         repPerTerms.partOfTermCode partOfTermCode,
         repPerTerms.termOrder termOrder,
@@ -568,8 +571,7 @@ select distinct repperiod.termCode termCode,
         (case when to_date(acadterm.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadterm.censusdate, 3), 'YYYY-MM-DD') 
                             and to_date(acadterm.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadterm.censusDate, 1), 'YYYY-MM-DD') 
                     then acadterm.snapshotDate else repperiod.snapshotDate end) caseSnapshotDate,
-						   
-        acadterm.termClassification termClassification,
+		acadterm.termClassification termClassification,
         acadterm.termType termType,
         acadterm.startDate startDate,
         acadterm.endDate endDate,
@@ -671,7 +673,9 @@ where campusRn = 1
 RegistrationMCR as ( 
 --Returns all student enrollment records as of the term within period and where course is viable
 --It also is pulling back the most recent version of registration data prior to the census date of that term. 
+
 -- jh 20201007 Removed config indicators; pulled termTypeNew from AcademicTermReportingRefactor
+
 --mod from v1 - remove Graduate and higher levels
 
 select personId,
@@ -1214,7 +1218,7 @@ select reg.personId personId,
 	sum((case when course.isESL = 'Y' then 1 else 0 end)) totalESLCourses,
 	sum((case when course.isRemedial = 'Y' then 1 else 0 end)) totalRemCourses,
 	sum((case when reg.isInternational = 1 then 1 else 0 end)) totalIntlCourses, 
-	sum((case when reg.crnGradingMode = 'Audit' then 1 else 0 end)) totalAuditCourses
+	sum((case when reg.crnGradingMode = 'Audit' then 1 else 0 end)) totalAuditCourses,
 	sum((case when course.courseLevel = 'Undergrad' then
 	        (case when config.instructionalActivityType in ('CR', 'B') and course.isClockHours = 0 then course.enrollmentHours 
                   when config.instructionalActivityType = 'B' and course.isClockHours = 1 then course.equivCRHRFactor * course.enrollmentHours
@@ -1237,22 +1241,22 @@ CourseTypeCountsCRN as (
 --jh 20201007 Created view to simplify course level credit counts
 
     select sum(UGCreditHours) UGCreditHours,
-            sum(UGClockHours) UGClockHours,
+            sum(UGClockHours) UGClockHours--,
             --sum(GRCreditHours) GRCreditHours,
-            sum(PGRCreditHours) PGRCreditHours
+            --sum(PGRCreditHours) PGRCreditHours
     from (
     select crn crn,
             UGCreditHours * studentCount UGCreditHours,
-            UGClockHours * studentCount UGClockHours,
+            UGClockHours * studentCount UGClockHours--,
             --GRCreditHours * studentCount GRCreditHours,
-            PGRCreditHours * studentCount PGRCreditHours
+            --PGRCreditHours * studentCount PGRCreditHours
     from (
         select distinct course.crn crn,
                 course.courseLevel courseLevel,
                 (case when course.isClockHours = 0 and course.courseLevel in ('Undergrad', 'Continuing Ed') then coalesce(course.enrollmentHours, 0) else 0 end) UGCreditHours,
                 (case when course.isClockHours = 1 and course.courseLevel in ('Undergrad', 'Continuing Ed') then coalesce(course.enrollmentHours, 0) else 0 end) UGClockHours,
                 --(case when course.isClockHours = 0 and course.courseLevel in ('Graduate', 'Professional') then coalesce(course.enrollmentHours, 0) else 0 end) GRCreditHours,
-                (case when course.isClockHours = 0 and course.courseLevel = 'Postgraduate' then coalesce(course.enrollmentHours, 0) else 0 end) PGRCreditHours,
+                --(case when course.isClockHours = 0 and course.courseLevel = 'Postgraduate' then coalesce(course.enrollmentHours, 0) else 0 end) PGRCreditHours,
                 count(reg.personId) studentCount
         from CourseMCR course 
          inner join Registration reg on course.crn = reg.crn
@@ -1271,7 +1275,7 @@ StuLevel as (
 -- View used to break down course category type counts by type for students enrolled for at least one credit/clock hour
 
 -- jh 20201007 Added student levels to Undergrad and Graduate values; added isNonDegreeSeeking students to timeStatus calculation
---jh 20200910 Created StuLevel view to determine new 12Mo requirements for Part A and Part C
+-- jh 20200910 Created StuLevel view to determine new 12Mo requirements for Part A and Part C
 
 --mod from v1 - Part A doesn't contain graduate student level value 99
 
@@ -1316,10 +1320,11 @@ select personId,
                     when studentType = 'Returning' and timeStatus = 'FT' then '3'
                     when studentType = 'First Time' and timeStatus = 'PT' then '15' 
                     when studentType = 'Transfer' and timeStatus = 'PT' then '16'
-                    when studentType = 'Returning' and timeStatus = 'PT' then '17' else '1' end)
+                    when studentType = 'Returning' and timeStatus = 'PT' then '17' else '1' 
+			 end)
         else null
     end) studentLevelPartA, --only Undergrad (and Continuing Ed, who go in Undergrad) students are counted in headcount
-    (case --when studentLevel = 'Graduate' then '3'
+    (case --when studentLevel = 'GR' then '3'
          when isNonDegreeSeeking = true then '2'
          when studentLevel = 'UG' then '1'
          else null
@@ -1395,6 +1400,8 @@ CohortSTU as (
 --Need all instructional activity for Undergrad, Graduate, Postgraduate/Professional levels
 --Student headcount only for Undergrad and Graduate
 
+-- jh 20201007 Simplified to pull records from StuLevel and PersonMCR only with indicators pulled from ClientConfigMCR
+
 --mod from v1 - remove Graduate and higher levels
 
 select distinct stu.personID personID,  
@@ -1403,7 +1410,7 @@ select distinct stu.personID personID,
 	(case when person.gender = 'Male' then 'M'
 			when person.gender = 'Female' then 'F' 
 			when person.gender = 'Non-Binary' then config.genderForNonBinary
-		else stu.genderForUnknown
+		else config.genderForUnknown
 	end) ipedsGender,
 	(case when person.isUSCitizen = 1 then 
 			(case when person.isHispanic = true then '2' 
@@ -1418,7 +1425,7 @@ select distinct stu.personID personID,
 							else '9' 
 						end) 
 					else '9' end) -- 'race and ethnicity unknown'
-			when person.isInUSOnVisa = 1 and person.censusDate between person.visaStartDate and person.visaEndDate then '1' -- 'nonresident alien'
+			when person.isInUSOnVisa = 1 or person.censusDate between person.visaStartDate and person.visaEndDate then '1' -- 'nonresident alien'
 			else '9' -- 'race and ethnicity unknown'
 	end) ipedsEthnicity,  
 	stu.DEStatus DEStatus
@@ -1432,6 +1439,7 @@ from StuLevel stu
 InstructionHours as (
 --Sums instructional hours and filters for aggregation
 
+-- jh 20201007 Changed to pull from CourseTypeCountsCRN instead of CohortSTU
 --jh 20200910 Created InstructionHours view for Part B
 
 --mod from v1 - remove Graduate and higher levels
@@ -1458,11 +1466,11 @@ from (
            UGClockHours UGClock,
            --GRCreditHours GRCredit,
            --PGRCreditHours PostGRCredit,
-           icOfferUndergradAwardLevel,
+           --icOfferUndergradAwardLevel,
            --icOfferGraduateAwardLevel,
            --icOfferDoctorAwardLevel,
-           instructionalActivityType,
-           tmAnnualDPPCreditHoursFTE
+           instructionalActivityType--,
+           --tmAnnualDPPCreditHoursFTE
     from CourseTypeCountsCRN
         cross join ConfigIndicators
     )
@@ -1519,8 +1527,8 @@ union
 
 select 'C' part,
        ipedsPartCStudentLevel field1,
-       sum(coalesce((case when DEStatus = 'DE Exclusively' then 1 else 0 end), 0)) field2,  --Enrolled exclusively in distance education courses
-       sum(coalesce((case when DEStatus = 'DE Some' then 1 else 0 end), 0)) field3,  --Enrolled in at least one but not all distance education courses
+       sum(coalesce(case when DEStatus = 'DE Exclusively' then 1 else 0 end, 0)) field2,  --Enrolled exclusively in distance education courses
+       sum(coalesce(case when DEStatus = 'DE Some' then 1 else 0 end, 0)) field3,  --Enrolled in at least one but not all distance education courses
        null field4,
        null field5,
        null field6,
@@ -1566,8 +1574,7 @@ select 'B' part,
        null field17,
        null field18,
        null field19
-from InstructionHours 
---where exists (select a.personId from CohortSTU a) 
+from InstructionHours
 
 union 
 
@@ -1575,13 +1582,13 @@ union
 -- jh 20200911 Added lines for Parts A and C	
 -- ak 20200825 Dummy set to return default formatting if no cohortSTU records exist.
 
-	select *
-	from (
+select *
+from (
 		VALUES
 			('A', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 			('C', 1, 0, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
 --mod from v1 - remove Graduate and higher levels
-			('B', null, 0, null, 0, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+			('B', null, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
 		) as dummySet(part, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11,
 									field12, field13, field14, field15, field16, field17, field18, field19)
-	where not exists (select a.personId from CohortSTU a) 
+where not exists (select a.personId from CohortSTU a) 
