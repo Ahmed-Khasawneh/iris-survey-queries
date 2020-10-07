@@ -1595,7 +1595,7 @@ union
 			('A', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 			('C', 1, 0, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
 --mod from v1 - remove Graduate and higher levels
-			('B', null, 0, null, 0, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+            ('B', null, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
 		) as dummySet(part, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11,
 									field12, field13, field14, field15, field16, field17, field18, field19)
 	where not exists (select a.personId from CohortSTU a) 
