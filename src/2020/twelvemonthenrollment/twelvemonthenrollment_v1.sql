@@ -16,6 +16,8 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	------------------------------------------------- 
+20201008			jhanicak									Modified field4 & field5 in InstructionHours to be null if indicators 
+																	are 'N' PF-1706 Run time prod 13m 26s
 20201007            jhanicak                jh 20201007         Multiple fixes PF-1698
                                                                 Updated enrollment requirements PF-1681 Run time 11m 4s, Test data 16m 7s
 20200917            jhanicak                jh 20200917         Commented out all references to tags field, fixed row_number() in AcademicTermReporting,
@@ -1428,15 +1430,17 @@ InstructionHours as (
 select (case when icOfferUndergradAwardLevel = 'Y' and instructionalActivityType != 'CL' then coalesce(UGCredit, 0) 
             else null 
         end) field2, -- CREDHRSU - credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.
-       (case when icOfferUndergradAwardLevel = 'Y' and instructionalActivityType != 'CR' then coalesce(UGClock, 0) 
+        (case when icOfferUndergradAwardLevel = 'Y' and instructionalActivityType != 'CR' then coalesce(UGClock, 0) 
             else null 
         end) field3, -- CONTHRS  - clock hour instructional activity at the undergraduate level, 0 to 9999999, blank = not applicable, if no undergraduate programs are measured in clock hours.
-       (case when icOfferGraduateAwardLevel = 'N' then null
-            else coalesce(GRCredit, 0)
-       end) field4, -- CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
-       (case when icOfferDoctorAwardLevel = 'N' then null
-            when coalesce(PostGRCredit, 0) > 0 then cast(round(PostGRCredit / tmAnnualDPPCreditHoursFTE, 0) as string)
-         else '0' 
+        (case when icOfferGraduateAwardLevel = 'Y' then coalesce(GRCredit, 0)
+            else null
+        end) field4, -- CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
+        (case when icOfferDoctorAwardLevel = 'Y' then
+                (case when coalesce(PostGRCredit, 0) > 0 then coalesce(cast(round(PostGRCredit / tmAnnualDPPCreditHoursFTE, 0) as string), '0')
+                      else '0'
+                 end)
+             else null
        end) field5
 from ( 
     select UGCreditHours UGCredit,
