@@ -1,3 +1,5 @@
+%sql
+
 /********************
 
 EVI PRODUCT:	DORIS 2020-21 IPEDS Survey  
@@ -1428,15 +1430,17 @@ InstructionHours as (
 select (case when icOfferUndergradAwardLevel = 'Y' and instructionalActivityType != 'CL' then coalesce(UGCredit, 0) 
             else null 
         end) field2, -- CREDHRSU - credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.
-       (case when icOfferUndergradAwardLevel = 'Y' and instructionalActivityType != 'CR' then coalesce(UGClock, 0) 
+        (case when icOfferUndergradAwardLevel = 'Y' and instructionalActivityType != 'CR' then coalesce(UGClock, 0) 
             else null 
         end) field3, -- CONTHRS  - clock hour instructional activity at the undergraduate level, 0 to 9999999, blank = not applicable, if no undergraduate programs are measured in clock hours.
-       (case when icOfferGraduateAwardLevel = 'N' then null
-            else coalesce(GRCredit, 0)
-       end) field4, -- CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
-       (case when icOfferDoctorAwardLevel = 'N' then null
-            when coalesce(PostGRCredit, 0) > 0 then cast(round(PostGRCredit / tmAnnualDPPCreditHoursFTE, 0) as string)
-         else '0' 
+        (case when icOfferGraduateAwardLevel = 'Y' then coalesce(GRCredit, 0)
+            else null
+        end) field4, -- CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
+        (case when icOfferDoctorAwardLevel = 'Y' then
+                (case when coalesce(PostGRCredit, 0) > 0 then coalesce(cast(round(PostGRCredit / tmAnnualDPPCreditHoursFTE, 0) as string), '0')
+                      else '0'
+                 end)
+             else null
        end) field5
 from ( 
     select UGCreditHours UGCredit,
