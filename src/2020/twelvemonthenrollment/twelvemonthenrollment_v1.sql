@@ -1,5 +1,3 @@
-%sql
-
 /********************
 
 EVI PRODUCT:	DORIS 2020-21 IPEDS Survey  
@@ -18,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	------------------------------------------------- 
+20201008			jhanicak									Modified field4 & field5 in InstructionHours to be null is indicators are 'N' PF-1706 Run time prod 13m 26s
 20201007            jhanicak                jh 20201007         Multiple fixes PF-1698
                                                                 Updated enrollment requirements PF-1681 Run time 11m 4s, Test data 16m 7s
 20200917            jhanicak                jh 20200917         Commented out all references to tags field, fixed row_number() in AcademicTermReporting,
