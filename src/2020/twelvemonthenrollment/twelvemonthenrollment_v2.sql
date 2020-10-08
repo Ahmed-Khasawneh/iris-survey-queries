@@ -16,6 +16,8 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
+20201008			jhanicak									Uncommented the graduate level lines except in StuLevel
+																and survey formatting section PF-1706 Run time prod 13m 26s
 20201007            jhanicak                jh 20201007         Multiple fixes PF-1698
                                                                 Updated enrollment requirements PF-1681 Run time 10m 12s, Test data 16m 7s			   
 20200922            jhanicak                jh 20200917         Commented out all references to tags field, fixed row_number() in AcademicTermReporting,
@@ -71,7 +73,7 @@ select '2021' surveyYear,
 	'E12' surveyId,  
 	CAST('2019-07-01' AS DATE) reportingDateStart,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
-	'202010' termCode, --Fall 2018
+	'202010' termCode, --Fall 2019
 	'1' partOfTermCode, 
 	CAST('2020-10-15' AS DATE) censusDate,
 	'M' genderForUnknown,       --M = Male, F = Female
@@ -1440,9 +1442,12 @@ select (case when icOfferUndergradAwardLevel = 'Y' and instructionalActivityType
         (case when icOfferGraduateAwardLevel = 'Y' then coalesce(GRCredit, 0)
             else null
         end) field4, -- CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
-        (case when icOfferDoctorAwardLevel = 'Y' and coalesce(PostGRCredit, 0) > 0 then coalesce(cast(round(PostGRCredit / tmAnnualDPPCreditHoursFTE, 0) as string), '0')
+        (case when icOfferDoctorAwardLevel = 'Y' then
+                (case when coalesce(PostGRCredit, 0) > 0 then coalesce(cast(round(PostGRCredit / tmAnnualDPPCreditHoursFTE, 0) as string), '0')
+                      else '0'
+                 end)
              else null
-        end) field5
+       end) field5
 from ( 
     select UGCreditHours UGCredit,
            UGClockHours UGClock,
@@ -1509,8 +1514,8 @@ union
 
 select 'C' part,
        ipedsPartCStudentLevel field1,
-       sum(coalesce(case when DEStatus = 'DE Exclusively' then 1 else 0 end, 0)) field2,  --Enrolled exclusively in distance education courses
-       sum(coalesce(case when DEStatus = 'DE Some' then 1 else 0 end, 0)) field3,  --Enrolled in at least one but not all distance education courses
+         sum(coalesce((case when DEStatus = 'DE Exclusively' then 1 else 0 end), 0)) field2,  --Enrolled exclusively in distance education courses
+       sum(coalesce((case when DEStatus = 'DE Some' then 1 else 0 end), 0)) field3,  --Enrolled in at least one but not all distance education courses
        null field4,
        null field5,
        null field6,
