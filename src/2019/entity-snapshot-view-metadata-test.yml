@@ -46,7 +46,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: IPEDSClientConfig
@@ -63,7 +63,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdownn
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: IPEDSClientConfigRetention
@@ -80,7 +80,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
       
   - viewName: IPEDSReportingPeriod
@@ -97,7 +97,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: IPEDSReportingPeriodRetention
@@ -114,7 +114,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
       
   - viewName: InterlibraryLoanStatistic
@@ -131,7 +131,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: LibraryBranch
@@ -148,7 +148,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: LibraryCirculationStatistic
@@ -165,7 +165,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: LibraryCollectionStatistic
@@ -182,7 +182,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: LibraryExpenses
@@ -199,7 +199,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: LibraryInventory
@@ -216,7 +216,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: LibraryItemTransaction
@@ -233,7 +233,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
 # Adding all views for testing purposes
@@ -252,7 +252,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: AcademicTermRetention
@@ -269,7 +269,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
       
   - viewName: AcademicTrack
@@ -286,7 +286,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: AcademicTrackRetention
@@ -303,7 +303,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
       
   - viewName: Award
@@ -320,7 +320,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: Campus
@@ -337,7 +337,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: CampusRetention
@@ -354,7 +354,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
       
   - viewName: ChartOfAccounts
@@ -371,7 +371,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
       
   - viewName: CohortExclusion
@@ -388,7 +388,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: Course
@@ -405,7 +405,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: CourseRetention
@@ -422,7 +422,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
 
   - viewName: CourseSection
@@ -439,7 +439,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: CourseSectionRetention
@@ -456,7 +456,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
 
   - viewName: CourseSectionSchedule
@@ -473,7 +473,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: CourseSectionScheduleRetention
@@ -490,7 +490,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
       
   - viewName: Degree
@@ -507,7 +507,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
  
   - viewName: DegreeRetention
@@ -524,7 +524,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
 
   - viewName: DegreeProgram
@@ -541,7 +541,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: DegreeProgramRetention
@@ -558,7 +558,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
       
   - viewName: Employee
@@ -575,7 +575,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: EmployeeAssignment
@@ -592,7 +592,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: EmployeePosition
@@ -609,7 +609,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
       
   - viewName: Faculty
@@ -626,7 +626,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
      
   - viewName: FieldOfStudy
@@ -643,7 +643,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: FieldOfStudyRetention
@@ -660,7 +660,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
 
   - viewName: FinancialAid
@@ -677,7 +677,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
       
   - viewName: GeneralLedgerReporting
@@ -694,7 +694,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: InstitCharDoctorate
@@ -711,7 +711,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: InstitCharUndergradGrad
@@ -728,7 +728,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: InstructionalAssignment
@@ -745,7 +745,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
       
   - viewName: Major
@@ -762,7 +762,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: MajorRetention
@@ -779,7 +779,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
 
   - viewName: MilitaryBenefit
@@ -798,9 +798,9 @@ ACADEMIC_LIBRARIES_1:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
-      
+
   - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
@@ -815,7 +815,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: Person
@@ -832,7 +832,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: PersonRetention
@@ -849,7 +849,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
 
   - viewName: Registration
@@ -866,7 +866,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: RegistrationRetention
@@ -883,7 +883,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
 
   - viewName: Student
@@ -900,7 +900,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2011-01-01
       end: 2014-12-31
 
   - viewName: StudentRetention
@@ -917,7 +917,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2012-01-01
+      start: 2011-01-01
       end: 2013-12-31
 
 COMPLETIONS_1:
