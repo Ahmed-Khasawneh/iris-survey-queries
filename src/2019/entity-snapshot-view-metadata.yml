@@ -2026,7 +2026,7 @@ FINANCIAL_AID_1:
       start: 2016-05-01
       end: 2018-12-31
       
-   - viewName: IPEDSClientConfig
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Pre-Fall Summer Census
@@ -2052,8 +2052,8 @@ FINANCIAL_AID_1:
     snapshotDateRange:
       start: 2019-05-01
       end: 2019-12-31
-	  
-   - viewName: Person
+ 
+  - viewName: Person
     entityName: Person
     tagNames:
       - Pre-Fall Summer Census
