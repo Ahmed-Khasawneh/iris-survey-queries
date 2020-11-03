@@ -41,7 +41,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -58,7 +58,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdownn
@@ -75,14 +75,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2013-12-31
-      
+
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
@@ -92,7 +92,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -109,14 +109,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2013-12-31
-      
+
   - viewName: InterlibraryLoanStatistic
     entityName: InterlibraryLoanStatistic
     tagNames:
@@ -126,7 +126,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -143,7 +143,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -160,7 +160,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -177,7 +177,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -194,7 +194,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -211,7 +211,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -228,7 +228,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -236,7 +236,7 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-# Adding all views for testing purposes
+  # Adding all views for testing purposes
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -247,7 +247,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -264,14 +264,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2013-12-31
-      
+
   - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
@@ -281,7 +281,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -298,14 +298,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2013-12-31
-      
+
   - viewName: Award
     entityName: Award
     tagNames:
@@ -315,7 +315,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -332,7 +332,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -349,14 +349,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2013-12-31
-      
+
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
@@ -366,14 +366,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-      
+
   - viewName: CohortExclusion
     entityName: CohortExclusion
     tagNames:
@@ -383,7 +383,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -400,7 +400,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -417,7 +417,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -434,7 +434,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -451,7 +451,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -468,7 +468,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -485,14 +485,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2013-12-31
-      
+
   - viewName: Degree
     entityName: Degree
     tagNames:
@@ -502,14 +502,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
- 
+
   - viewName: DegreeRetention
     entityName: Degree
     tagNames:
@@ -519,7 +519,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -536,7 +536,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -553,14 +553,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2013-12-31
-      
+
   - viewName: Employee
     entityName: Employee
     tagNames:
@@ -570,7 +570,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -587,7 +587,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -604,14 +604,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-      
+
   - viewName: Faculty
     entityName: Faculty
     tagNames:
@@ -621,14 +621,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-     
+
   - viewName: FieldOfStudy
     entityName: FieldOfStudy
     tagNames:
@@ -638,7 +638,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -655,7 +655,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -672,14 +672,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-      
+
   - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
@@ -689,7 +689,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -706,7 +706,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -723,7 +723,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -740,14 +740,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-      
+
   - viewName: Major
     entityName: Major
     tagNames:
@@ -757,7 +757,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -774,7 +774,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -791,7 +791,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -810,7 +810,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -827,7 +827,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -844,7 +844,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -861,7 +861,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -878,7 +878,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -895,7 +895,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -912,7 +912,7 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
@@ -929,14 +929,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-      
+
   - viewName: Admission
     entityName: Admission
     tagNames:
@@ -946,14 +946,14 @@ ACADEMIC_LIBRARIES_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-      
+
 COMPLETIONS_1:
   # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
@@ -3165,7 +3165,7 @@ TWELVE_MONTH_ENROLLMENT_1:
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
-      
+
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
@@ -3189,7 +3189,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3203,7 +3203,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3217,7 +3217,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3231,7 +3231,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3245,7 +3245,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3259,7 +3259,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3273,7 +3273,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3287,7 +3287,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3301,7 +3301,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3318,7 +3318,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3332,7 +3332,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3346,7 +3346,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3360,7 +3360,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3374,7 +3374,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3388,7 +3388,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3402,7 +3402,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3416,7 +3416,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3430,7 +3430,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3444,7 +3444,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3453,23 +3453,23 @@ FINANCIAL_AID_1:
   # reporting period for Cohort: Fall Census 2014 and prior summer
   # reporting period for Prior Year 1: Fall Census 2013 and prior summer
   # reporting period for Prior Year 2: Fall Census 2012 and prior summer
-  # reporting period for GI Bill: July 1, 2013 - June 30, 2014 
+  # reporting period for GI Bill: July 1, 2013 - June 30, 2014
   # reporting period for Dept Of Defense: October 1, 2013 - September 30, 2014
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-   
+
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3487,7 +3487,7 @@ FINANCIAL_AID_1:
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census 
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3500,7 +3500,7 @@ FINANCIAL_AID_1:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-  
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -3509,8 +3509,8 @@ FINANCIAL_AID_1:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-      
-   - viewName: IPEDSClientConfig
+
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Pre-Fall Summer Census
@@ -3554,16 +3554,16 @@ FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - Department of Defense
-      - GI Bill 
+      - GI Bill
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
- 
-   - viewName: Person
+
+  - viewName: Person
     entityName: Person
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census    
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
