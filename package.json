@@ -16,7 +16,8 @@
     "url": "https://github.com/evisions/iris-report-queries/issues"
   },
   "homepage": "https://github.com/evisions/iris-report-queries#readme",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@types/ssh2": "^0.5.43",
     "adm-zip": "^0.4.16",
     "aws-sdk": "^2.692.0",
@@ -27,9 +28,7 @@
     "ssh2": "^0.8.9",
     "stream": "0.0.2",
     "tar": "^6.0.2",
-    "uuid": "^8.1.0"
-  },
-  "devDependencies": {
+    "uuid": "^8.1.0",
     "moment": "^2.26.0",
     "yaml-lint": "^1.2.4",
     "yargs": "^15.3.1"
