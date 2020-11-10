@@ -1965,7 +1965,7 @@ FINANCE_6:
       start: 2019-01-01
       end: 2019-10-01
 
-FINANCIAL_AID_1:
+STUDENT_FINANCIAL_AID_1:
   # reporting period for Cohort: Fall Census 2018 and prior summer (October 15)
   # reporting period for Prior Year 1: Fall Census 2017 and prior summer
   # reporting period for Prior Year 2: Fall Census 2016 and prior summer
