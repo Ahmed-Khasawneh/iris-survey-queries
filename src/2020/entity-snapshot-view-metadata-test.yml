@@ -3449,7 +3449,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       start: 2013-05-01
       end: 2014-08-01
 
-FINANCIAL_AID_1:
+STUDENT_FINANCIAL_AID_1:
   # reporting period for Cohort: Fall Census 2014 and prior summer
   # reporting period for Prior Year 1: Fall Census 2013 and prior summer
   # reporting period for Prior Year 2: Fall Census 2012 and prior summer
