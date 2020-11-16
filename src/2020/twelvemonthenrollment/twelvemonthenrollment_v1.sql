@@ -1,5 +1,3 @@
-%sql
-
 /********************
 
 EVI PRODUCT:	DORIS 2020-21 IPEDS Survey  
@@ -19,7 +17,7 @@ SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	------------------------------------------------- 
 20201116			jhanicak									Updated to latest views; 
-                                                                Added Doctor Prof Practice coursework check PF-1714 Run time prod 5m 44s test 7m 57s
+                                                                Added Doctor Prof Practice coursework check PF-1714 Run time prod 5m 44s test 8m 19s
 20201008			jhanicak									Modified field4 & field5 in InstructionHours to be null if indicators 
 																	are 'N' PF-1706 Run time prod 13m 26s
 20201007            jhanicak                jh 20201007         Multiple fixes PF-1698
