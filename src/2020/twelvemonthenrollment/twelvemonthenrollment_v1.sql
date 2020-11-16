@@ -1,3 +1,5 @@
+%sql
+
 /********************
 
 EVI PRODUCT:	DORIS 2020-21 IPEDS Survey  
@@ -375,11 +377,8 @@ select ConfigLatest.surveyYear surveyYear,
     upper(ConfigLatest.instructionalActivityType) instructionalActivityType,
     upper(ConfigLatest.acadOrProgReporter) acadOrProgReporter,
     upper(ConfigLatest.publicOrPrivateInstitution) publicOrPrivateInstitution,
-    --'N' icOfferUndergradAwardLevel, --
     upper(ConfigLatest.icOfferUndergradAwardLevel) icOfferUndergradAwardLevel,
-    --'N' icOfferGraduateAwardLevel,
     upper(ConfigLatest.icOfferGraduateAwardLevel) icOfferGraduateAwardLevel,
-    --'N' icOfferDoctorAwardLevel, -- 
     upper(ConfigLatest.icOfferDoctorAwardLevel) icOfferDoctorAwardLevel,
     upper(ConfigLatest.tmAnnualDPPCreditHoursFTE) tmAnnualDPPCreditHoursFTE
 from (
@@ -1035,6 +1034,7 @@ from (
             personENT.isInUSOnVisa isInUSOnVisa,
             to_date(personENT.visaStartDate,'YYYY-MM-DD') visaStartDate,
             to_date(personENT.visaEndDate,'YYYY-MM-DD') visaEndDate,
+            personENT.visaType visaType,
             personENT.isUSCitizen isUSCitizen,
             personENT.gender gender,
             upper(personENT.nation) nation,
@@ -1549,24 +1549,24 @@ The select query below contains union statements to match each part of the surve
 
 select 'A' part,
        ipedsPartAStudentLevel field1,  --1,2,3,7,15,16,17,21, and 99 
-       coalesce(round(sum((case when ipedsEthnicity = '1' and ipedsGender = 'M' then 1 else 0 end))), 0) field2,  -- FYRACE01 - Nonresident alien - Men (1), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '1' and ipedsGender = 'F' then 1 else 0 end))), 0) field3,  -- FYRACE02 - Nonresident alien - Women (2), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '2' and ipedsGender = 'M' then 1 else 0 end))), 0) field4,  -- FYRACE25 - Hispanic/Latino - Men (25), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '2' and ipedsGender = 'F' then 1 else 0 end))), 0) field5,  -- FYRACE26 - Hispanic/Latino - Women (26), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '3' and ipedsGender = 'M' then 1 else 0 end))), 0) field6,  -- FYRACE27 - American Indian or Alaska Native - Men (27), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '3' and ipedsGender = 'F' then 1 else 0 end))), 0) field7,  -- FYRACE28 - American Indian or Alaska Native - Women (28), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '4' and ipedsGender = 'M' then 1 else 0 end))), 0) field8,  -- FYRACE29 - Asian - Men (29), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '4' and ipedsGender = 'F' then 1 else 0 end))), 0) field9,  -- FYRACE30 - Asian - Women (30), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '5' and ipedsGender = 'M' then 1 else 0 end))), 0) field10, -- FYRACE31 - Black or African American - Men (31), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '5' and ipedsGender = 'F' then 1 else 0 end))), 0) field11, -- FYRACE32 - Black or African American - Women (32), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '6' and ipedsGender = 'M' then 1 else 0 end))), 0) field12, -- FYRACE33 - Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '6' and ipedsGender = 'F' then 1 else 0 end))), 0) field13, -- FYRACE34 - Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '7' and ipedsGender = 'M' then 1 else 0 end))), 0) field14, -- FYRACE35 - White - Men (35), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '7' and ipedsGender = 'F' then 1 else 0 end))), 0) field15, -- FYRACE36 - White - Women (36), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '8' and ipedsGender = 'M' then 1 else 0 end))), 0) field16, -- FYRACE37 - Two or more races - Men (37), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '8' and ipedsGender = 'F' then 1 else 0 end))), 0) field17, -- FYRACE38 - Two or more races - Women (38), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end))), 0) field18, -- FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
-       coalesce(round(sum((case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end))), 0) field19  -- FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '1' and ipedsGender = 'M' then 1 else 0 end))), 0) field2,  -- FYRACE01 - Nonresident alien - Men (1), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '1' and ipedsGender = 'F' then 1 else 0 end))), 0) field3,  -- FYRACE02 - Nonresident alien - Women (2), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '2' and ipedsGender = 'M' then 1 else 0 end))), 0) field4,  -- FYRACE25 - Hispanic/Latino - Men (25), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '2' and ipedsGender = 'F' then 1 else 0 end))), 0) field5,  -- FYRACE26 - Hispanic/Latino - Women (26), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '3' and ipedsGender = 'M' then 1 else 0 end))), 0) field6,  -- FYRACE27 - American Indian or Alaska Native - Men (27), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '3' and ipedsGender = 'F' then 1 else 0 end))), 0) field7,  -- FYRACE28 - American Indian or Alaska Native - Women (28), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '4' and ipedsGender = 'M' then 1 else 0 end))), 0) field8,  -- FYRACE29 - Asian - Men (29), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '4' and ipedsGender = 'F' then 1 else 0 end))), 0) field9,  -- FYRACE30 - Asian - Women (30), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '5' and ipedsGender = 'M' then 1 else 0 end))), 0) field10, -- FYRACE31 - Black or African American - Men (31), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '5' and ipedsGender = 'F' then 1 else 0 end))), 0) field11, -- FYRACE32 - Black or African American - Women (32), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '6' and ipedsGender = 'M' then 1 else 0 end))), 0) field12, -- FYRACE33 - Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '6' and ipedsGender = 'F' then 1 else 0 end))), 0) field13, -- FYRACE34 - Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '7' and ipedsGender = 'M' then 1 else 0 end))), 0) field14, -- FYRACE35 - White - Men (35), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '7' and ipedsGender = 'F' then 1 else 0 end))), 0) field15, -- FYRACE36 - White - Women (36), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '8' and ipedsGender = 'M' then 1 else 0 end))), 0) field16, -- FYRACE37 - Two or more races - Men (37), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '8' and ipedsGender = 'F' then 1 else 0 end))), 0) field17, -- FYRACE38 - Two or more races - Women (38), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end))), 0) field18, -- FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
+       round(coalesce(sum((case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end))), 0) field19  -- FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
 from (
     select personId personId,
             ipedsPartAStudentLevel ipedsPartAStudentLevel,
@@ -1605,8 +1605,8 @@ union
 
 select 'C' part,
        ipedsPartCStudentLevel field1,
-       coalesce(round(sum((case when DEStatus = 'DE Exclusively' then 1 else 0 end))), 0) field2,  --Enrolled exclusively in distance education courses
-       coalesce(round(sum((case when DEStatus = 'DE Some' then 1 else 0 end))), 0) field3,  --Enrolled in at least one but not all distance education courses
+       round(coalesce(sum((case when DEStatus = 'DE Exclusively' then 1 else 0 end))), 0) field2,  --Enrolled exclusively in distance education courses
+       round(coalesce(sum((case when DEStatus = 'DE Some' then 1 else 0 end))), 0) field3,  --Enrolled in at least one but not all distance education courses
        null field4,
        null field5,
        null field6,
@@ -1693,6 +1693,7 @@ from CourseTypeCountsCRN
 					  
 union 
 
+-- jh 20201116 Adding the PartA and PartC formatting section assured printing of A & C in all scenarios, so commented out the first dummy select			
 -- jh 20201007 Changed part B, field 3 to null instead of 0
 -- jh 20200911 Added lines for Parts A and C	
 -- ak 20200825 Dummy set to return default formatting if no cohortSTU records exist. 
