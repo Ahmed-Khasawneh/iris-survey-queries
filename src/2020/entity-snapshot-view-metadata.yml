@@ -2921,6 +2921,19 @@
           start: 2019-05-01
           end: 2020-08-01
     
+      - viewName: Degree
+        entityName: Degree
+        tagNames:
+          - Pre-Fall Summer Census
+          - Fall Census
+          - Spring Census
+          - Post-Spring Summer Census
+          - Full Year Term End
+          - Full Year June End
+        snapshotDateRange:
+          start: 2019-05-01
+          end: 2020-08-01
+    
       - viewName: IPEDSClientConfig
         entityName: IPEDSClientConfig
         tagNames:
@@ -3056,6 +3069,19 @@
     
       - viewName: CourseSectionSchedule
         entityName: CourseSectionSchedule
+        tagNames:
+          - Pre-Fall Summer Census
+          - Fall Census
+          - Spring Census
+          - Post-Spring Summer Census
+          - Full Year Term End
+          - Full Year June End
+        snapshotDateRange:
+          start: 2019-05-01
+          end: 2020-08-01
+    
+      - viewName: Degree
+        entityName: Degree
         tagNames:
           - Pre-Fall Summer Census
           - Fall Census
@@ -3213,6 +3239,19 @@
           start: 2019-05-01
           end: 2020-08-01
     
+      - viewName: Degree
+        entityName: Degree
+        tagNames:
+          - Pre-Fall Summer Census
+          - Fall Census
+          - Spring Census
+          - Post-Spring Summer Census
+          - Full Year Term End
+          - Full Year June End
+        snapshotDateRange:
+          start: 2019-05-01
+          end: 2020-08-01
+    
       - viewName: IPEDSClientConfig
         entityName: IPEDSClientConfig
         tagNames:
@@ -3348,6 +3387,19 @@
     
       - viewName: CourseSectionSchedule
         entityName: CourseSectionSchedule
+        tagNames:
+          - Pre-Fall Summer Census
+          - Fall Census
+          - Spring Census
+          - Post-Spring Summer Census
+          - Full Year Term End
+          - Full Year June End
+        snapshotDateRange:
+          start: 2019-05-01
+          end: 2020-08-01
+    
+      - viewName: Degree
+        entityName: Degree
         tagNames:
           - Pre-Fall Summer Census
           - Fall Census
