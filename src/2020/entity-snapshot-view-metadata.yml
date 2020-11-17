@@ -2856,6 +2856,19 @@
           start: 2019-05-01
           end: 2020-08-01
     
+      - viewName: AcademicTrack
+        entityName: AcademicTrack
+        tagNames:
+          - Pre-Fall Summer Census
+          - Fall Census
+          - Spring Census
+          - Post-Spring Summer Census
+          - Full Year Term End
+          - Full Year June End
+        snapshotDateRange:
+          start: 2019-05-01
+          end: 2020-08-01
+    
       - viewName: Campus
         entityName: Campus
         tagNames:
@@ -2978,6 +2991,19 @@
     
       - viewName: AcademicTerm
         entityName: AcademicTerm
+        tagNames:
+          - Pre-Fall Summer Census
+          - Fall Census
+          - Spring Census
+          - Post-Spring Summer Census
+          - Full Year Term End
+          - Full Year June End
+        snapshotDateRange:
+          start: 2019-05-01
+          end: 2020-08-01
+    
+      - viewName: AcademicTrack
+        entityName: AcademicTrack
         tagNames:
           - Pre-Fall Summer Census
           - Fall Census
@@ -3122,6 +3148,19 @@
           start: 2019-05-01
           end: 2020-08-01
     
+      - viewName: AcademicTrack
+        entityName: AcademicTrack
+        tagNames:
+          - Pre-Fall Summer Census
+          - Fall Census
+          - Spring Census
+          - Post-Spring Summer Census
+          - Full Year Term End
+          - Full Year June End
+        snapshotDateRange:
+          start: 2019-05-01
+          end: 2020-08-01
+    
       - viewName: Campus
         entityName: Campus
         tagNames:
@@ -3244,6 +3283,19 @@
     
       - viewName: AcademicTerm
         entityName: AcademicTerm
+        tagNames:
+          - Pre-Fall Summer Census
+          - Fall Census
+          - Spring Census
+          - Post-Spring Summer Census
+          - Full Year Term End
+          - Full Year June End
+        snapshotDateRange:
+          start: 2019-05-01
+          end: 2020-08-01
+    
+      - viewName: AcademicTrack
+        entityName: AcademicTrack
         tagNames:
           - Pre-Fall Summer Census
           - Fall Census
