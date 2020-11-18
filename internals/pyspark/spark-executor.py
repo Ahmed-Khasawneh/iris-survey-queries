@@ -56,6 +56,9 @@ def spark_refresh_entity_views_v2(tenant_id, survey_type, stage, year=2019, user
     )
     view_metadata = json.loads(invoke_response['Payload'].read().decode("utf-8"))
     snapshot_metadata = view_metadata.get('snapshotMetadata', {})
+
+    print(json.dumps(view_metadata.get('views', []), indent=2))
+
     for view in view_metadata.get('views', []):
         s3_paths = view.get('s3Paths', [])
         view_name = view.get('viewName')
