@@ -18,67 +18,6 @@ Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
 20201110    	akhasawneh 									Initial version prod run 21m 34s test run 18m 48s
 	
-	
-DELETE AFTER INITIAL DEV 
-IMPLEMENTATION NOTES:
-     Cohort - prior Fall (academic reporters) or full prior academic year (program reporters)
-     Aid period - Any time during the prior academic year (academic reporters) or aid year period from July 1 through June 30 (program reporters)
-
-Do not report student counts or aid amounts for the following:
-▪ Students who were only graduate students at the institution during the reporting period
-▪ Students who were enrolled exclusively in courses not creditable toward a certificate/degree
-▪ Students who were enrolled exclusively in Continuing Education Units (CEUs)
-▪ Students who were exclusively auditing classes
-▪ Students in Experimental Pell programs
-
-Do not report:
-▪ Federal Work Study amounts into any total aid amounts
-▪ ROTC aid, which are excluded from EFA calculations, in any total aid amounts
-▪ Loans that are made to someone other than the student
-▪ Military/veterans aid in Section 1 because such aid is ONLY reported in Section 2
-▪ Do not include veterans education benefits, as defined in section 480(c) of the HEA, as they are no longer treated as Estimated Financial Assistance (EFA)
-▪ Experimental Pell grant amounts
-
-Group 1 - Brought forward from Fall enrollment from prior year;
-	⁃ All Fall Enrollment requirements are needed to get cohort
-	FE Requirements:
-		Exclude 
-			-Students who are not enrolled for credit. 
-			-Students enrolled only in ESL programs (programs comprised exclusively of ESL courses)
-			-Students enrolled exclusively in Continuing Education Units (CEUs)
-			-Students exclusively auditing classes
-			-Residents or interns in doctor's - professional practice programs
-			-Any student studying abroad 
-			-Students enrolled in any branch campus located in a foreign country
-			=Students in Experimental Pell Programs
-Group 2 - Group1 that are full-time, first-time, degree seeking 
-	⁃ From Fall Enrollment as well
-	FE Requirements:
-		First-time 
-			-Enrolled in the fall term but was first time student in the prior summer
-			-High school students who entered with college credits
-		Degree/Certificate-Seeking
-			-Enrolled in courses for credit
-			-Recognized by the institution as seeking a degree or postsecondary credential. N
-			-All students eligible to receive federal student financial aid are to be considered 
-				degree/certificate-seeking. 
-			-Dual enrolled high school students are not degree/certificate-seeking students. 
-Group 2A = Group 2 Awarded the aid below
-	⁃ Federal aid from... Work Study/Loan(Not to parents)/Grants/Scholarship
-	⁃ State/local gov aid from... Work Study/Loan(Not to parents)/Grants/Scholarship
-	⁃ Institutional aid from... Work Study/Loan(Not to parents)/Grants/Scholarship 
-	⁃ Other sources of aid from... Work Study/Loan(Not to parents)/Grants/Scholarship 
-Group 3 - Group 2 paying the in-state/in-district tuition rate and awarded the aid below
-	***If different tuition rates not offered, report all students as paying in-state tuition rates***
-		**For public - only paid in-state or in-district**
-		**For program - only in largest program**
-	⁃ Grant/Scholarship aid from... federal government, state/local government, or the institution
-Group 4 - Group 2 paying the in-state/in-district tuition rate and awarded the aid below
-	⁃ Title IV federal student aid including:
-		⁃ Federal Pell Grant, Federal Supplemental Educational Opportunity Grant (FSEOG), Academic Competitiveness Grant (ACG), National Science and Mathematics Access to Retain Talent Grant (National SMART Grant), Teacher Education Assistance for College and Higher Education (TEACH) Grant
-	⁃ Federal Work Study
-	⁃ Federal Perkins Loan, Subsidized Direct or FFEL Stafford Loan, and Unsubsidized Direct or FFEL Stafford Loan
-
 ********************/
 
 /*****
@@ -762,8 +701,9 @@ select stuData.personId,
             stuData.fullTermOrder,
             stuData.startDate,
             coalesce((case when stuData.studentType = 'High School' then true
-                        when stuData.studentLevel = 'Continuing Ed' then true
-                      else stuData.isNonDegreeSeeking end), false) isNonDegreeSeeking,
+                    when stuData.studentLevel = 'Continuing Ed' then true
+                    when stuData.studentLevel = 'Occupational/Professional' then true
+                  else stuData.isNonDegreeSeeking end), false) isNonDegreeSeeking,
             stuData.studentLevel,
             stuData.studentType,
             stuData.residency,
@@ -856,11 +796,13 @@ select stu.personId,
                   else stu.studentType end)
         else stu.studentType end) studentType,
         stu.studentLevel studentLevelORIG,
-        (case when stu.studentLevel in ('Undergrad', 'Continuing Ed')  then 'UG'
-              else null 
-        end) studentLevel,
+        (case when stu.studentLevel in ('Undergrad', 'Continuing Ed', 'Occupational/Professional')  then 'UG'
+                          when stu.studentLevel in ('Graduate') then 'GR'
+                          else null 
+                    end) studentLevel,
         coalesce(stu.residency, 'In District') residency,
         stu.campus,
+        coalesce(campus.isInternational, false) isInternational,
         acadTermCode.snapshotDate,
         acadTermCode.surveySection surveySection,
         acadTermCode.censusDate censusDate,
@@ -963,6 +905,7 @@ select stu.personId,
     )
 where regCampRn = 1
 and studentLevel = 'UG'
+and isInternational = false
 ),
 
 CourseSectionMCR as (
@@ -1213,7 +1156,7 @@ select personId,
         sfaLargestProgramCIPC,
         (case when totalCredCourses > 0 --exclude students not enrolled for credit
 						then (case when totalESLCourses = totalCredCourses then 0 --exclude students enrolled only in ESL courses/programs
-								   when totalCECourses = totalCredCourses then 0 --exclude students enrolled only in continuing ed courses
+								   --when totalCECourses = totalCredCourses then 0 --exclude students enrolled only in continuing ed courses
 								   when totalIntlCourses = totalCredCourses then 0 --exclude students exclusively enrolled in any foreign branch campuses
 								   when totalAuditCourses = totalCredCourses then 0 --exclude students exclusively auditing classes
 								   -- when... then 0 --exclude PHD residents or interns
