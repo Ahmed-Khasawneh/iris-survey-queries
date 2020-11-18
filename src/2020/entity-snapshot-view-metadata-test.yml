@@ -23,9 +23,9 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
-# 20200813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
-# 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2014-20
-# 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
+# 20150813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
+# 20150710  jhanicak/akhasawneh                       Updated for IPEDS 2014-20
+# 20150701  jhall                 jah 20150701        Created this file with placeholders for tags and date ranges
 #
 # ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
 
@@ -3453,8 +3453,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       # reporting period for Cohort: Fall Census 2019 and prior summer (October 15 )
       # reporting period for Prior Year 1: Fall Census 2018 and prior summer
       # reporting period for Prior Year 2: Fall Census 2017 and prior summer
-      # reporting period for GI Bill: July 1, 2019 - June 30, 2020 
-      # reporting period for Dept Of Defense: October 1, 2019 - September 30, 2020
+      # reporting period for GI Bill: July 1, 2019 - June 30, 2015 
+      # reporting period for Dept Of Defense: October 1, 2019 - September 30, 2015
     
       - viewName: AcademicTerm
         entityName: AcademicTerm
@@ -3534,8 +3534,8 @@ TWELVE_MONTH_ENROLLMENT_2:
           - Department of Defense
           - GI Bill
         snapshotDateRange:
-          start: 2020-05-01
-          end: 2020-12-31
+          start: 2015-05-01
+          end: 2015-12-31
           
       - viewName: Registration
         entityName: Registration
@@ -3555,14 +3555,14 @@ TWELVE_MONTH_ENROLLMENT_2:
           - GI Bill 
         snapshotDateRange:
           start: 2011-05-01
-          end: 2020-12-31
+          end: 2015-12-31
     
     STUDENT_FINANCIAL_AID_2:
       # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
       # reporting period for Prior Year 1: Fall Census 2018 and prior summer
       # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-      # reporting period for GI Bill: July 1, 2014 - June 30, 2020 
-      # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2020
+      # reporting period for GI Bill: July 1, 2014 - June 30, 2015 
+      # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
     
       - viewName: AcademicTerm
         entityName: AcademicTerm
@@ -3642,8 +3642,8 @@ TWELVE_MONTH_ENROLLMENT_2:
           - Department of Defense
           - GI Bill
         snapshotDateRange:
-          start: 2020-05-01
-          end: 2020-12-31
+          start: 2015-05-01
+          end: 2015-12-31
           
       - viewName: Registration
         entityName: Registration
@@ -3663,14 +3663,14 @@ TWELVE_MONTH_ENROLLMENT_2:
           - GI Bill 
         snapshotDateRange:
           start: 2011-05-01
-          end: 2020-12-31
+          end: 2015-12-31
 
     STUDENT_FINANCIAL_AID_3:
       # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
       # reporting period for Prior Year 1: Fall Census 2018 and prior summer
       # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-      # reporting period for GI Bill: July 1, 2014 - June 30, 2020 
-      # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2020
+      # reporting period for GI Bill: July 1, 2014 - June 30, 2015 
+      # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
     
       - viewName: AcademicTerm
         entityName: AcademicTerm
@@ -3750,8 +3750,8 @@ TWELVE_MONTH_ENROLLMENT_2:
           - Department of Defense
           - GI Bill
         snapshotDateRange:
-          start: 2020-05-01
-          end: 2020-12-31
+          start: 2015-05-01
+          end: 2015-12-31
           
       - viewName: Registration
         entityName: Registration
@@ -3771,14 +3771,14 @@ TWELVE_MONTH_ENROLLMENT_2:
           - GI Bill 
         snapshotDateRange:
           start: 2011-05-01
-          end: 2020-12-31
+          end: 2015-12-31
 
     STUDENT_FINANCIAL_AID_4:
       # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
       # reporting period for Prior Year 1: Fall Census 2018 and prior summer
       # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-      # reporting period for GI Bill: July 1, 2014 - June 30, 2020 
-      # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2020
+      # reporting period for GI Bill: July 1, 2014 - June 30, 2015 
+      # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
     
       - viewName: AcademicTerm
         entityName: AcademicTerm
@@ -3858,8 +3858,8 @@ TWELVE_MONTH_ENROLLMENT_2:
           - Department of Defense
           - GI Bill
         snapshotDateRange:
-          start: 2020-05-01
-          end: 2020-12-31
+          start: 2015-05-01
+          end: 2015-12-31
           
       - viewName: Registration
         entityName: Registration
@@ -3879,14 +3879,14 @@ TWELVE_MONTH_ENROLLMENT_2:
           - GI Bill 
         snapshotDateRange:
           start: 2011-05-01
-          end: 2020-12-31
+          end: 2015-12-31
 
     FINANCIAL_AID_5:
       # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
       # reporting period for Prior Year 1: Fall Census 2018 and prior summer
       # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-      # reporting period for GI Bill: July 1, 2014 - June 30, 2020 
-      # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2020
+      # reporting period for GI Bill: July 1, 2014 - June 30, 2015 
+      # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
     
       - viewName: AcademicTerm
         entityName: AcademicTerm
@@ -3966,8 +3966,8 @@ TWELVE_MONTH_ENROLLMENT_2:
           - Department of Defense
           - GI Bill
         snapshotDateRange:
-          start: 2020-05-01
-          end: 2020-12-31
+          start: 2015-05-01
+          end: 2015-12-31
           
       - viewName: Registration
         entityName: Registration
@@ -3987,5 +3987,5 @@ TWELVE_MONTH_ENROLLMENT_2:
           - GI Bill 
         snapshotDateRange:
           start: 2011-05-01
-          end: 2020-12-31
+          end: 2015-12-31
        
