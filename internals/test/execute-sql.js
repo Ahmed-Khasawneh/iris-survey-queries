@@ -237,18 +237,20 @@ async function createSurveyFile({
   reportUri,
   unitId,
   surveyType,
+  surveyYear = 2019,
   stage = 'DEV',
   credentials,
 }) {
   const lambda = new AWS.Lambda({ region: 'us-east-1', credentials });
   const response = await lambda
     .invoke({
-      FunctionName: `iris-connector-doris-2019-${stage}-createSurveyFile`,
+      FunctionName: `iris-connector-doris-${stage}-createSurveyFile`,
       Payload: JSON.stringify({
         surveyFileId: uuid.v4(),
         reportUri,
         unitId,
         surveyDefinitionType: surveyType,
+        calendarYear: surveyYear,
       }),
     })
     .promise();
@@ -397,6 +399,7 @@ async function main() {
       surveyType,
       credentials,
       stage: argv.stage,
+      surveyYear,
     });
 
     spinner.succeed();
