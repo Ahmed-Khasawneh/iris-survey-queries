@@ -43,9 +43,9 @@ def spark_read_s3_source(s3_paths, format="parquet"):
 def spark_refresh_entity_views_v2(tenant_id, survey_type, stage, year=2019, user_id=None):
     lambda_client = boto3.client('lambda', 'us-east-1')
     invoke_response = lambda_client.invoke(
-        FunctionName = "iris-connector-doris-2019-{}-getReportPayload".format(stage) if year == 2019 else "iris-connector-doris-{}-getReportPayload".format(stage),
+        FunctionName = "iris-connector-doris-{}-getReportPayload".format(stage),
         LogType = "None",
-        Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '' }).encode('utf-8') if year == 2019 else json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id }).encode('utf-8')
+        Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id }).encode('utf-8')
     )
     view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
     view_metadata_without_s3_paths["tenantId"] = tenant_id
