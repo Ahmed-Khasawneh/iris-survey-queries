@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
+20201119			ckeller										Modified ipedsEthnicity code to include new DM changes, per PF-1750 Run time 8m 55s
 20200915            jhanicak                                    Updated entire report query based on latest 20-21 version Run time 8m 3s, test data 11m 21s
 20200825            akhasawneh              ak 20200825         Mods to default to dummy output where data is lacking (PF-1654) Run time 11m 26s
 20200814            jhanicak                jh 20200814         Additional mods to support multi snapshot (PF-1449) Run time 6m 46s
@@ -766,6 +767,7 @@ from (
             personENT.isInUSOnVisa isInUSOnVisa,
             to_date(personENT.visaStartDate,'YYYY-MM-DD') visaStartDate,
             to_date(personENT.visaEndDate,'YYYY-MM-DD') visaEndDate,
+			personENT.visaType visaType,
             personENT.isUSCitizen isUSCitizen,
             personENT.gender gender,
             upper(personENT.nation) nation,
@@ -1093,22 +1095,24 @@ from (
              when person.gender = 'Non-Binary' then reg.genderForNonBinary
 			else reg.genderForUnknown
 		end) ipedsGender,
-		(case when person.isUSCitizen = 1 then 
-			  (case when person.isHispanic = true then '2' 
-				    when person.isMultipleRaces = true then '8' 
-				    when person.ethnicity != 'Unknown' and person.ethnicity is not null then
-				           (case when person.ethnicity = 'Hispanic or Latino' then '2'
-				                when person.ethnicity = 'American Indian or Alaskan Native' then '3'
-				                when person.ethnicity = 'Asian' then '4'
-				                when person.ethnicity = 'Black or African American' then '5'
-				                when person.ethnicity = 'Native Hawaiian or Other Pacific Islander' then '6'
-				                when person.ethnicity = 'Caucasian' then '7'
-		                        else '9' 
-			                end) 
-			         else '9' end) -- 'race and ethnicity unknown'
-		        when person.isInUSOnVisa = 1 and person.censusDate between person.visaStartDate and person.visaEndDate then '1' -- 'nonresident alien'
-		        else '9' -- 'race and ethnicity unknown'
-		end) ipedsEthnicity,  
+		 (case when person.isUSCitizen = 1 or ((person.isInUSOnVisa = 1 or person.censusDate between person.visaStartDate and person.visaEndDate)
+                            and person.visaType in ('Employee Resident', 'Other Resident')) then 
+            (case when person.isHispanic = true then '2' 
+                when person.isMultipleRaces = true then '8' 
+                when person.ethnicity != 'Unknown' and person.ethnicity is not null then
+                    (case when person.ethnicity = 'Hispanic or Latino' then '2'
+                        when person.ethnicity = 'American Indian or Alaskan Native' then '3'
+                        when person.ethnicity = 'Asian' then '4'
+                        when person.ethnicity = 'Black or African American' then '5'
+                        when person.ethnicity = 'Native Hawaiian or Other Pacific Islander' then '6'
+                        when person.ethnicity = 'Caucasian' then '7'
+                        else '9' 
+                    end) 
+                else '9' end) -- 'race and ethnicity unknown'
+            when ((person.isInUSOnVisa = 1 or person.censusDate between person.visaStartDate and person.visaEndDate)
+                and person.visaType in ('Student Non-resident', 'Employee Non-resident', 'Other Non-resident')) then '1' -- 'nonresident alien'
+            else '9' -- 'race and ethnicity unknown'
+        end) ipedsEthnicity, 
         coalesce(coursecnt.totalCreditHrs, 0) totalCreditHrs,
         coalesce(coursecnt.totalClockHrs, 0) totalClockUGHrs,
         coalesce(coursecnt.totalCreditUGHrs, 0) totalCreditUGHrs,
@@ -1214,8 +1218,8 @@ select 'B' part,
        null field1,
        field2 field2, -- CREDHRSU - credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.
        field3 field3, -- CONTHRS  - clock hour instructional activity at the undergraduate level, 0 to 9999999, blank = not applicable, if no undergraduate programs are measured in clock hours.
-       field4 field4, -- CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
-       field5 field5, -- RDOCFTE  - reported Doctor'92s degree-professional practice student FTE, 0 to 99999999, blank = not applicable
+       null field4, -- CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
+       null field5, -- RDOCFTE  - reported Doctor'92s degree-professional practice student FTE, 0 to 99999999, blank = not applicable
        null field6,
        null field7,
        null field8,
