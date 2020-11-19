@@ -17,7 +17,7 @@ SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
 20201119			jhanicak									Added surveySection field throughout survey, changed order of fields for consistency,
-                                                                PF-1750 mods to ipedsEthnicity code block
+                                                                PF-1750 mods to ipedsEthnicity code block prod 11m 29s test 9m 47s
 20201116			jhanicak									Updated to latest views; 
                                                                 Added Doctor Prof Practice coursework check PF-1714 Run time prod 5m 44s test 7m 57s
 20201008			jhanicak									Modified field4 & field5 in InstructionHours to be null if indicators 
@@ -1592,10 +1592,10 @@ union
 -- If no records are returned, print the minimum necessary for the survey
 -- Parts A and C will always print at least one record due to the union with formatting views
 
-	select *
-	from (
-		VALUES
-			('B', null, 0, null, 0, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
-		) as dummySet(part, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11,
+select *
+from (
+    VALUES
+        ('B', null, 0, null, 0, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+    ) as dummySet(part, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11,
 									field12, field13, field14, field15, field16, field17, field18, field19)
-    where not exists (select a.yearType from CourseTypeCountsCRN a) 
+where not exists (select a.yearType from CourseTypeCountsCRN a) 
