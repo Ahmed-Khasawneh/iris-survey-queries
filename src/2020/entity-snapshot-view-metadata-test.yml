@@ -3450,26 +3450,26 @@ TWELVE_MONTH_ENROLLMENT_2:
       end: 2014-08-01
 
 STUDENT_FINANCIAL_AID_1:
-    # reporting period for Cohort: Fall Census 2019 and prior summer (October 15 )
-    # reporting period for Prior Year 1: Fall Census 2018 and prior summer
-    # reporting period for Prior Year 2: Fall Census 2017 and prior summer
-    # reporting period for GI Bill: July 1, 2019 - June 30, 2015 
-    # reporting period for Dept Of Defense: October 1, 2019 - September 30, 2015
+  # reporting period for Cohort: Fall Census 2019 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2017 and prior summer
+  # reporting period for GI Bill: July 1, 2019 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2019 - September 30, 2015
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-    
+
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3487,7 +3487,7 @@ STUDENT_FINANCIAL_AID_1:
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census 
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3500,7 +3500,7 @@ STUDENT_FINANCIAL_AID_1:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-  
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -3509,7 +3509,7 @@ STUDENT_FINANCIAL_AID_1:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-      
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -3534,9 +3534,9 @@ STUDENT_FINANCIAL_AID_1:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
-      end: 2015-12-31
-      
+      start: 2014-05-01
+      end: 2014-12-31
+
   - viewName: Registration
     entityName: Registration
     tagNames:
@@ -3552,32 +3552,32 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - Department of Defense
-      - GI Bill 
+      - GI Bill
     snapshotDateRange:
       start: 2011-05-01
-      end: 2015-12-31
+      end: 2014-12-31
 
 STUDENT_FINANCIAL_AID_2:
   # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
   # reporting period for Prior Year 1: Fall Census 2018 and prior summer
   # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2015 
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
   # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-    
+
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3595,7 +3595,7 @@ STUDENT_FINANCIAL_AID_2:
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census 
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3608,7 +3608,7 @@ STUDENT_FINANCIAL_AID_2:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-  
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -3617,7 +3617,7 @@ STUDENT_FINANCIAL_AID_2:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-      
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -3642,9 +3642,9 @@ STUDENT_FINANCIAL_AID_2:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
-      end: 2015-12-31
-      
+      start: 2014-05-01
+      end: 2014-12-31
+
   - viewName: Registration
     entityName: Registration
     tagNames:
@@ -3660,32 +3660,32 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - Department of Defense
-      - GI Bill 
+      - GI Bill
     snapshotDateRange:
       start: 2011-05-01
-      end: 2015-12-31
+      end: 2014-12-31
 
 STUDENT_FINANCIAL_AID_3:
   # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
   # reporting period for Prior Year 1: Fall Census 2018 and prior summer
   # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2015 
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
   # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-    
+
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3703,7 +3703,7 @@ STUDENT_FINANCIAL_AID_3:
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census 
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3716,7 +3716,7 @@ STUDENT_FINANCIAL_AID_3:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-  
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -3725,7 +3725,7 @@ STUDENT_FINANCIAL_AID_3:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-      
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -3750,9 +3750,9 @@ STUDENT_FINANCIAL_AID_3:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
-      end: 2015-12-31
-      
+      start: 2014-05-01
+      end: 2014-12-31
+
   - viewName: Registration
     entityName: Registration
     tagNames:
@@ -3768,32 +3768,32 @@ STUDENT_FINANCIAL_AID_3:
       - Pre-Fall Summer Census
       - Fall Census
       - Department of Defense
-      - GI Bill 
+      - GI Bill
     snapshotDateRange:
       start: 2011-05-01
-      end: 2015-12-31
+      end: 2014-12-31
 
 STUDENT_FINANCIAL_AID_4:
   # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
   # reporting period for Prior Year 1: Fall Census 2018 and prior summer
   # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2015 
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
   # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-    
+
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3811,7 +3811,7 @@ STUDENT_FINANCIAL_AID_4:
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census 
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3824,7 +3824,7 @@ STUDENT_FINANCIAL_AID_4:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-  
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -3833,7 +3833,7 @@ STUDENT_FINANCIAL_AID_4:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-      
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -3858,9 +3858,9 @@ STUDENT_FINANCIAL_AID_4:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
-      end: 2015-12-31
-      
+      start: 2014-05-01
+      end: 2014-12-31
+
   - viewName: Registration
     entityName: Registration
     tagNames:
@@ -3876,32 +3876,32 @@ STUDENT_FINANCIAL_AID_4:
       - Pre-Fall Summer Census
       - Fall Census
       - Department of Defense
-      - GI Bill 
+      - GI Bill
     snapshotDateRange:
       start: 2011-05-01
-      end: 2015-12-31
+      end: 2014-12-31
 
 FINANCIAL_AID_5:
   # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
   # reporting period for Prior Year 1: Fall Census 2018 and prior summer
   # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2015 
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
   # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-    
+
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3919,7 +3919,7 @@ FINANCIAL_AID_5:
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census 
+      - Fall Census
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3932,7 +3932,7 @@ FINANCIAL_AID_5:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-  
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -3941,7 +3941,7 @@ FINANCIAL_AID_5:
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
-      
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -3966,9 +3966,9 @@ FINANCIAL_AID_5:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
-      end: 2015-12-31
-      
+      start: 2014-05-01
+      end: 2014-12-31
+
   - viewName: Registration
     entityName: Registration
     tagNames:
@@ -3984,8 +3984,7 @@ FINANCIAL_AID_5:
       - Pre-Fall Summer Census
       - Fall Census
       - Department of Defense
-      - GI Bill 
+      - GI Bill
     snapshotDateRange:
       start: 2011-05-01
-      end: 2015-12-31
-    
+      end: 2014-12-31
