@@ -1,6 +1,6 @@
 /********************
 
-EVI PRODUCT:    DORIS 2019-20 IPEDS Survey Winter Collection
+EVI PRODUCT:    DORIS 2020-21 IPEDS Survey Winter Collection
 FILE NAME:      Student Financial Aid v1 (SFA)
 FILE DESC:      Student Financial Aid for private institutions reporting on a fall cohort (academic reporters)
 AUTHOR:         Ahmed Khasawneh
