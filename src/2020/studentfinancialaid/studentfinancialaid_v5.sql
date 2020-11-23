@@ -1,10 +1,10 @@
 /********************
 
 EVI PRODUCT:    DORIS 2019-20 IPEDS Survey Winter Collection
-FILE NAME:      Student Financial Aid v3 (SFA)
-FILE DESC:      Student Financial Aid for institutions reporting on a full-year cohort (public program reporters)
-AUTHOR:         Ahmed Khasawneh, Jeff Hall
-CREATED:        20201119
+FILE NAME:      Student Financial Aid v1 (SFA)
+FILE DESC:      Student Financial Aid for public institutions reporting on a fall cohort (academic reporters)
+AUTHOR:         Ahmed Khasawneh
+CREATED:        20201110
 
 SECTIONS:
 Reporting Dates/Terms
@@ -14,10 +14,11 @@ Formatting Views
 Survey Formatting
 
 SUMMARY OF CHANGES
-Date(yyyymmdd)  Author                  Tag                 Comments
------------     --------------------    -------------       -------------------------------------------------
-20201119        jhall                                       Initial version cloned from studentfinancialaid_v1.sql; 
-                                                            configured acadOrProgReporter as 'P'
+Date(yyyymmdd)   Author             	Tag             	Comments
+----------- 	--------------------	-------------   	-------------------------------------------------
+20201123    	akhasawneh 									Initial version cloned from studentfinancialaid_v1.sql;
+                                                            configured sfaGradStudentsOnly as 'Y';
+                                                            commented out formatting output for Parts A-F
 	
 ********************/
 
@@ -40,7 +41,7 @@ WITH DefaultValues as (
  For some schools, it could be based on dates or academic year and for others,
  it may be by listing specific terms. 
  *******************************************************************/ 
-
+/*
 --prod default blocks (2)
 select '2021' surveyYear, 
 	'SFA' surveyId,
@@ -59,13 +60,13 @@ select '2021' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
-    'P' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
+    'A' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
     'U' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
-    'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+    'Y' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 
@@ -88,17 +89,17 @@ select '2021' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
-    'P' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
+    'A' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
     'U' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
-    'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+    'Y' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 
-/*
+*/
 --testing default blocks (2)
 select '1415' surveyYear,  
 	'SFA' surveyId, 
@@ -117,13 +118,13 @@ select '1415' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
-    'P' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
+    'A' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
     'U' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
-    'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+    'Y' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 
@@ -146,16 +147,16 @@ select '1415' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
-    'P' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
+    'A' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
     'U' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
-    'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+    'Y' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
-*/
+
 ),
 
 ReportingPeriodMCR as (
@@ -254,7 +255,8 @@ select ConfigLatest.surveyYear surveyYear,
     upper(ConfigLatest.icOfferGraduateAwardLevel) icOfferGraduateAwardLevel,
     upper(ConfigLatest.icOfferDoctorAwardLevel) icOfferDoctorAwardLevel,
     upper(ConfigLatest.sfaLargestProgramCIPC) sfaLargestProgramCIPC,
-    upper(ConfigLatest.sfaGradStudentsOnly) sfaGradStudentsOnly,
+    -- upper(ConfigLatest.sfaGradStudentsOnly) sfaGradStudentsOnly,
+    'Y' sfaGradStudentsOnly,
     upper(ConfigLatest.sfaReportPriorYear) sfaReportPriorYear, --'N' sfaReportPriorYear, --
 	upper(ConfigLatest.sfaReportSecondPriorYear) sfaReportSecondPriorYear --'N' sfaReportSecondPriorYear --
 from (
@@ -1523,7 +1525,7 @@ group by studentLevel
 BEGIN SECTION - Formatting Views
 The views below are used to ensure that records exist for all IPEDS expected values even if the query result set doesn't contain records that meet all value conditions.
 *****/
-
+/*
 --Part F	
 FormatPartFStudentIncome as (
 select *
@@ -1536,7 +1538,7 @@ from (
 		(5) -- 5=110,001 and more
 	) as studentIncome(ipedsIncome)
 )
-
+*/
 /*****
 BEGIN SECTION - Survey Formatting
 The select query below contains union statements to match each part of the survey specs
@@ -1548,7 +1550,7 @@ The select query below contains union statements to match each part of the surve
 --Valid values
 --Number of students: 0-999999, -2 or blank = not-applicable
 --Total amount of aid: 0-999999999999
-
+/*
 select PART,
         sum(FIELD2_1) FIELD2_1,
         sum(FIELD3_1) FIELD3_1,
@@ -1929,7 +1931,7 @@ where cohortstu.isGroup4 = 1
 group by yearType, familyIncome
 
 union
-
+*/
 --Part G Section 2: Veteran's Benefits
 
 --Valid values

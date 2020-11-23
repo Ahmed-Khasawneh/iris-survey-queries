@@ -1,10 +1,10 @@
 /********************
 
 EVI PRODUCT:    DORIS 2019-20 IPEDS Survey Winter Collection
-FILE NAME:      Student Financial Aid v3 (SFA)
-FILE DESC:      Student Financial Aid for institutions reporting on a full-year cohort (public program reporters)
-AUTHOR:         Ahmed Khasawneh, Jeff Hall
-CREATED:        20201119
+FILE NAME:      Student Financial Aid v1 (SFA)
+FILE DESC:      Student Financial Aid for public institutions reporting on a fall cohort (academic reporters)
+AUTHOR:         Ahmed Khasawneh
+CREATED:        20201110
 
 SECTIONS:
 Reporting Dates/Terms
@@ -14,10 +14,10 @@ Formatting Views
 Survey Formatting
 
 SUMMARY OF CHANGES
-Date(yyyymmdd)  Author                  Tag                 Comments
------------     --------------------    -------------       -------------------------------------------------
-20201119        jhall                                       Initial version cloned from studentfinancialaid_v1.sql; 
-                                                            configured acadOrProgReporter as 'P'
+Date(yyyymmdd)   Author             	Tag             	Comments
+----------- 	--------------------	-------------   	-------------------------------------------------
+20201123    	jhall 									    Initial version cloned from studentfinancialaid_v1.sql; 
+                                                            configured publicOrPrivateInstitution as 'R'
 	
 ********************/
 
@@ -40,7 +40,7 @@ WITH DefaultValues as (
  For some schools, it could be based on dates or academic year and for others,
  it may be by listing specific terms. 
  *******************************************************************/ 
-
+/*
 --prod default blocks (2)
 select '2021' surveyYear, 
 	'SFA' surveyId,
@@ -59,8 +59,8 @@ select '2021' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
-    'P' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
-    'U' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
+    'A' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
+    'R' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
@@ -88,8 +88,8 @@ select '2021' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
-    'P' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
-    'U' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
+    'A' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
+    'R' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
@@ -98,7 +98,7 @@ select '2021' surveyYear,
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 
-/*
+*/
 --testing default blocks (2)
 select '1415' surveyYear,  
 	'SFA' surveyId, 
@@ -117,8 +117,8 @@ select '1415' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
-    'P' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
-    'U' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
+    'A' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
+    'R' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
@@ -146,8 +146,8 @@ select '1415' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
-    'P' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
-    'U' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
+    'A' acadOrProgReporter, --'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or null value): A'
+    'R' publicOrPrivateInstitution, --'Valid values: U = Public, R = Private; Default value (if no record or null value): U'
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
@@ -155,7 +155,7 @@ select '1415' surveyYear,
     'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
-*/
+
 ),
 
 ReportingPeriodMCR as (
@@ -249,7 +249,8 @@ select ConfigLatest.surveyYear surveyYear,
 	upper(ConfigLatest.genderForNonBinary) genderForNonBinary,
     upper(ConfigLatest.instructionalActivityType) instructionalActivityType,
     upper(ConfigLatest.acadOrProgReporter) acadOrProgReporter,
-    upper(ConfigLatest.publicOrPrivateInstitution) publicOrPrivateInstitution,
+    -- upper(ConfigLatest.publicOrPrivateInstitution) publicOrPrivateInstitution,
+    'R' publicOrPrivateInstitution,
     upper(ConfigLatest.icOfferUndergradAwardLevel) icOfferUndergradAwardLevel,
     upper(ConfigLatest.icOfferGraduateAwardLevel) icOfferGraduateAwardLevel,
     upper(ConfigLatest.icOfferDoctorAwardLevel) icOfferDoctorAwardLevel,
