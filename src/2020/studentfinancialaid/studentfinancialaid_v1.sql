@@ -55,7 +55,7 @@ select '2021' surveyYear,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
 	'202010' termCode, --Fall 2019
 	'1' partOfTermCode, 
-	CAST('2020-10-15' AS DATE) censusDate,
+	CAST('2019-10-15' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
@@ -87,7 +87,7 @@ select '2021' surveyYear,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
 	'201930' termCode, --Summer 2019
 	'1' partOfTermCode, 
-	CAST('2020-06-10' AS DATE) censusDate,
+	CAST('2019-06-10' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
@@ -119,7 +119,7 @@ select '1415' surveyYear,
     CAST('2014-06-30' as DATE) reportingDateEnd,
 	'201430' termCode,
 	'A' partOfTermCode, 
-	CAST('2014-06-01' AS DATE) censusDate,
+	CAST('2013-06-01' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
@@ -151,7 +151,7 @@ select '1415' surveyYear,
     CAST('2014-06-30' as DATE) reportingDateEnd,
 	'201430' termCode,
 	'B' partOfTermCode, 
-	CAST('2014-07-10' AS DATE) censusDate,
+	CAST('2013-07-10' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
