@@ -117,9 +117,9 @@ select '1415' surveyYear,
 	CAST('9999-09-09' as DATE) snapshotDate,   
 	CAST('2013-07-01' as DATE) reportingDateStart,
     CAST('2014-06-30' as DATE) reportingDateEnd,
-	'201430' termCode,
-	'A' partOfTermCode, 
-	CAST('2013-06-01' AS DATE) censusDate,
+	'201410' termCode,
+	'1' partOfTermCode,
+	CAST('2013-09-13' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
@@ -149,9 +149,9 @@ select '1415' surveyYear,
 	CAST('9999-09-09' as DATE) snapshotDate,   
 	CAST('2013-07-01' as DATE) reportingDateStart,
     CAST('2014-06-30' as DATE) reportingDateEnd,
-	'201430' termCode,
-	'B' partOfTermCode, 
-	CAST('2013-07-10' AS DATE) censusDate,
+	'201330' termCode,
+	'1' partOfTermCode,
+	CAST('2013-06-10' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
