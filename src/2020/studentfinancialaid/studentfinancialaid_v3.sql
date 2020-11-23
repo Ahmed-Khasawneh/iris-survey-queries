@@ -14,7 +14,7 @@ Formatting Views
 Survey Formatting
 
 SUMMARY OF CHANGES
-Date(yyyymmdd)   Author             	Tag             	Comments
+Date(yyyymmdd)  Author                  Tag                 Comments
 -----------     --------------------    -------------       -------------------------------------------------
 20201119        jhall                                       Initial version cloned from studentfinancialaid_v1.sql; configured acadOrProgReporter as 'P'
 	
