@@ -20,9 +20,23 @@ Date(yyyymmdd)   Author             	Tag             	Comments
                                                             Fixes including filter for First Time students 
                                                             Added financialAidEndDate and changed repPeriodTag2 value
                                                                to Dod to accommodate pulling financial aid for year
-                                                            PF-1771 Run time: prod 26m 5s  test (all years) 26m 54s 
+                                                            PF-1771 Run time: prod 16m 45s  test (all years) 26m 54s 
 20201110    	akhasawneh 									Initial version prod run 21m 34s test run 18m 48s
+
 	
+Snapshot tag requirements:
+
+Multiple snapshots - one for each term/part of term combination:
+Fall Census - enrollment cohort
+Pre-Fall Summer Census - check for studentType of 'First Time' or 'Transfe'r if Fall studentType is 'Continuing'
+
+*If client is reporting the prior year and/or second prior year numbers, there could be up to 3 years of Fall and 
+Summer census snapshots.
+
+One snapshot of each:
+GI Bill - end of GI Bill reporting date
+Department of Defense - end of DoD reporting date
+
 ********************/
 
 /*****
@@ -44,6 +58,10 @@ WITH DefaultValues as (
  For some schools, it could be based on dates or academic year and for others,
  it may be by listing specific terms. 
  *******************************************************************/ 
+
+--jh 20201120 changed value of repPeriodTag2 and created new financialAidEndDate field
+--				to use for FinancialAidMCR in order to get full financial aid year data;
+--				corrected dates in prod censusDates; added updated formatting
 
 --prod default blocks (2)
 select '2021' surveyYear, 
@@ -182,6 +200,9 @@ ReportingPeriodMCR as (
 --  1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
 --  2nd union - pull default values if no record in IPEDSReportingPeriod
 
+--jh 20201120 set default value of surveySection field for surveys like Completions that do not have section values;
+--				added repPeriodTag fields to capture values for other views, as needed
+
 select distinct RepDates.surveyYear	surveyYear,
     RepDates.source source,
     coalesce(upper(RepDates.surveySection), 'COHORT') surveySection,
@@ -259,6 +280,8 @@ ClientConfigMCR as (
 --          1st union 2nd order - pull snapshot for 'Full Year June End'
 --          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
 --          2nd union - pull default values if no record in IPEDSClientConfig
+
+--jh 20201120 added repPeriodTag fields to capture values for other views, as needed
 
 select ConfigLatest.surveyYear surveyYear,
     ConfigLatest.source source,
@@ -413,6 +436,9 @@ where acadTermRn = 1
 AcademicTermOrder as (
 -- Orders term codes based on date span and keeps the numeric value of the greatest term/part of term record. 
 
+--jh 20201120 Added new fields to capture min start and max end date for terms;
+--				changed order by for row_number to censusDate
+
 select termCode termCode, 
     max(termOrder) termOrder,
     to_date(max(censusDate), 'YYYY-MM-DD') maxCensus,
@@ -445,7 +471,9 @@ AcademicTermReporting as (
 --  third order field: acadterm.snapshotDates after the acadterm.census range ordered so the snapshotDate closest to the censusDate is first - descending
 --  if none of the above, order by repperiod.snapshotDate
 
-select repPerTerms.yearType yearType,
+--jh 20201120 Reordered fields for consistency; removed indicators not needed for course views; removed excess fields
+
+select coalesce(repPerTerms.yearType, 'CY') yearType,
         repPerTerms.surveySection surveySection,
         repPerTerms.termCode termCode,
         repPerTerms.partOfTermCode partOfTermCode,
@@ -535,6 +563,8 @@ where repPerTerms.acadTermRnReg = 1
 AcademicTermReportingRefactor as (
 --Returns all records from AcademicTermReporting, converts Summer terms to Pre-Fall or Post-Spring and creates reportingDateStart/End
 
+--jh 20201120 Removed reportingDateStart and End fields, since they were added to AcademicTermOrder
+
 select rep.*,
         (case when rep.termType = 'Summer' and rep.termClassification != 'Standard Length' then 
                     case when (select max(rep2.termOrder)
@@ -552,7 +582,8 @@ from AcademicTermReporting rep
 			                partition by
 			                    rep3.termCode
 			                order by
-				                rep3.censusDate desc
+				                rep3.censusDate desc,
+				                rep3.endDate desc
 		                ) potRn
                 from AcademicTermReporting rep3) potMax on rep.termCode = potMax.termCode
                         and potMax.potRn = 1
@@ -585,8 +616,7 @@ from (
 				campusENT.recordActivityDate desc
 		) campusRn
 	from Campus campusENT 
-        inner join AcademicTermReportingRefactor acadterm on acadterm.snapshotDate = campusENT.snapshotDate
-	where campusENT.isIpedsReportable = 1 
+    where campusENT.isIpedsReportable = 1 
 		and ((to_date(campusENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
 			and to_date(campusENT.recordActivityDate,'YYYY-MM-DD') <= to_date(campusENT.snapshotDate,'YYYY-MM-DD'))
 				or to_date(campusENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
@@ -597,6 +627,8 @@ where campusRn = 1
 RegistrationMCR as ( 
 --Returns all student enrollment records as of the term within period and where course is viable
 --It also is pulling back the most recent version of registration data prior to the census date of that term. 
+
+--jh 20201120 Reordered fields for consistency and accuracy; other minor mods
 
 select *
 from (
@@ -702,15 +734,7 @@ where regCampRn = 1
 StudentMCR as (
 --Returns most up to date student academic information as of the reporting term codes and part of term census periods.  
 
--- jh 20201007 Pulled thru the personId and snapshotDate from RegistrationMCR instead of Student;
---				Included more conditions for isNonDegreeSeeking status
--- jh 20200911 Added studentType field for new 2020-21 requirements: Unduplicated enrollment counts of undergraduate 
---     			students are first-time (entering), transfer-in (non-first-time entering), continuing/returning, and degree/certificate-seeking statuses.
--- jh 20200911 Added join to CampusMCR to determine the following status: (FAQ) Students who are enrolled in your institution and attend classes 
---     			in a foreign country should NOT be included in your enrollment report if: The students are enrolled at a branch campus of your institution in a foreign country
--- jh 20200911 Removed stuLevelCalc for the following change this year: (FAQ) How do I report a student who changes enrollment levels during the 12-month period? (4-year institutions only) 
---     			The enrollment level should be determined at the first “full” term at entry. For example, a student enrolled as an undergraduate 
---     			in the fall and then as a graduate student in the spring should be reported as an undergraduate student on the 12-month Enrollment survey component.
+--jh 20201120 Reordered fields for consistency and accuracy; other minor mods
 
 select stuData.yearType,
         stuData.surveySection,
@@ -781,11 +805,13 @@ StudentRefactor as (
 --Determine student info based on full term and degree-seeking status
 --Drop surveySection from select fields and use yearType only going forward - Prior Summer sections only used to determine student type
 
+--jh 20201120 Removed surveySection field; removed duplicate filter on campus.isInternational; reordered fields for consistency and accuracy; other minor mods
+
 select *
 from ( 
 select stu.yearType yearType,
         acadTermCode.snapshotDate snapshotDate,
-        stu.termCode termCode,
+        stu.firstFullTerm firstFullTerm,
         acadTermCode.censusDate censusDate,
         acadTermCode.maxCensus maxCensus,
         acadTermCode.financialAidYear,
@@ -823,7 +849,7 @@ select stu.yearType yearType,
             yearType,
             min(isNonDegreeSeeking) isNonDegreeSeeking,
             max(studentType) studentType,
-            max(firstFullTerm) termCode,
+            max(firstFullTerm) firstFullTerm,
             max(studentLevel) studentLevel,
             max(studentTypeTermType) studentTypeTermType,
             max(preFallStudType) preFallStudType,
@@ -892,9 +918,9 @@ select stu.yearType yearType,
                 )
             group by personId, yearType
        ) stu    
-    inner join AcademicTermReportingRefactor acadTermCode on acadTermCode.termCode = stu.termCode 
+    inner join AcademicTermReportingRefactor acadTermCode on acadTermCode.termCode = stu.firstFullTerm
         and acadTermCode.partOfTermCode = acadTermCode.maxPOT
-        and coalesce(acadTermCode.yearType, 'CY') = coalesce(stu.yearType, 'CY')
+        and acadTermCode.yearType = stu.yearType
     left join CampusMCR campus on stu.campus = campus.campus
     )
 where regCampRn = 1 
@@ -904,6 +930,8 @@ where regCampRn = 1
 
 CourseSectionMCR as (
 --Included to get enrollment hours of a CRN
+
+--jh 20201120 Removed surveySection field; reordered fields for consistency and accuracy; other minor mods
     
 select *
 from (
@@ -960,9 +988,9 @@ from (
     from RegistrationMCR reg  
 --***** start survey-specific mods - join on StudentRefactor since SFA doesn't use Person
         inner join StudentRefactor stu on stu.personId = reg.personId
-            and stu.termCode = reg.termCode
+            and stu.firstFullTerm = reg.termCode
 --***** end survey-specific mods
-            and coalesce(reg.yearType, 'CY') = coalesce(stu.yearType, 'CY')
+            and reg.yearType = stu.yearType
         left join CourseSection coursesectENT on reg.termCode = coursesectENT.termCode
             and reg.partOfTermCode = coursesectENT.partOfTermCode
             and reg.crn = upper(coursesectENT.crn)
@@ -977,6 +1005,8 @@ where courseRn = 1
 
 CourseSectionScheduleMCR as (
 --Returns course scheduling related info for the registration CRN. 
+
+--jh 20201120 Removed surveySection field; reordered fields for consistency and accuracy; other minor mods
 
 select *
 from (
@@ -1043,6 +1073,8 @@ where courseSectSchedRn = 1
 
 CourseMCR as (
 --Included to get course type information
+
+--jh 20201120 Removed surveySection field; reordered fields for consistency and accuracy; other minor mods
 
 select *
 from (
@@ -1117,6 +1149,9 @@ where courseRn = 1
 
 CourseTypeCountsSTU as (
 -- View used to break down course category type counts for student
+
+--jh 20201120 Added isGroup2Ind field; changed timeStatus block to remove duplicate studentLevel filter (included in StudentRefactor) 
+--				and add the studentType filter; reordered fields for consistency and accuracy; other minor mods
 
 select *,
         (case when timeStatus = 'FT' and isNonDegreeSeeking = 0 and studentType = 'First Time' then 1 else 0 end) isGroup2Ind
@@ -1215,7 +1250,11 @@ FinancialAidMCR as (
 -- included to get student Financial aid information paid any time during the academic year.
 -- Report grant or scholarship aid that was awarded to students. 
 -- Report loans that were awarded to and accepted by the student.
---For public institutions, include only those students paying the in-state or in-district tuition rate. For program reporters, include only those students enrolled in the institution’s largest program.
+-- For public institutions, include only those students paying the in-state or in-district tuition rate. For program reporters, include only those students enrolled in the institution’s largest program.
+
+--jh 20201120 Extended valid recordActivityDate by using the financialAidEndDate (set in DefaultValues) in order to get full financial aid year records;
+--				prioritized using the snapshot for Dept of Defense in order to get full financial aid year records;
+-- 				used isGroup2Ind (defined in CourseTypeCountsSTU) to conditionally populate the other group2 fields
 
 select *,
     isGroup2Ind isGroup2,
@@ -1292,7 +1331,6 @@ from CourseTypeCountsSTU course2
                      course.yearType,
                     FinancialAidENT.financialAidYear,
                     course.personId,
-                    --FinancialAidENT.personId,
 			        FinancialAidENT.fundCode,
 			        FinancialAidENT.fundType,
 			        FinancialAidENT.fundSource
@@ -1327,7 +1365,7 @@ group by course2.personId,
 
 MilitaryBenefitMCR as (
 -- Returns GI Bill and Dept of Defense military benefits
--- do absolute value on amount or note in the ingestion query
+-- do absolute value on amount or note in the ingestion query, since source records could be stored as debits or credits
 
 --GI Bill
 select personId, 
