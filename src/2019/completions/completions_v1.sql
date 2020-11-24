@@ -1,5 +1,3 @@
-	
-
 /********************
 
 EVI PRODUCT:    DORIS 2019-20 IPEDS Survey Fall Collection
@@ -18,6 +16,8 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
+20201123			ckeller										Modified query to accomodate new DM changes, specifically relating to new visaType field
+																In Survey Formatting section, part C, replaced all "SUM(COALESCE(..." with "COALESCE(SUM(..."
 20200922			akhasawneh									Query overhaul to utilize changes made to data model (Degree,FieldOfStudy, DegreeProgram)
 20200911			akhasawneh									Modified tag array() default value & modified case statement syntax
 20200819            jhanicak                                    Removed reference to 'June End' and changed to new tags of 'Full Year June End' or 'Full Year Term End' based on client config
@@ -69,16 +69,8 @@ What to Exclude:
 WITH DefaultValues as (
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
 --IPEDS specs define reporting period as July 1, 2018 and June 30, 2019.
- 
-						 
-				
-											   
-											 
-					
-					 
-									   
-													   
-												
+/*
+
 select '1920' surveyYear,
 	'COM' surveyId,
 	CAST('2018-07-01' AS DATE) reportingDateStart,
@@ -91,7 +83,7 @@ select '1920' surveyYear,
     'F' genderForNonBinary,  --M = Male, F = Female
     'T' compGradDateOrTerm --D = Date, T = Term
 	
-/*
+*/
 select '1415' surveyYear,
 	'COM' surveyId,
 	CAST('2013-07-01' AS DATE) reportingDateStart,
@@ -254,7 +246,7 @@ select '1415' surveyYear,
     'M' genderForUnknown, --M = Male, F = Female
     'F' genderForNonBinary,  --M = Male, F = Female
     'T' compGradDateOrTerm --D = Date, T = Term
-*/
+
 ),
 
 ClientConfigMCR as (
@@ -767,6 +759,7 @@ from (
 		PersonRec.isInUSOnVisa isInUSOnVisa,
 		PersonRec.visaStartDate visaStartDate,
 		PersonRec.visaEndDate visaEndDate,
+		PersonRec.visaType visaType,
 		PersonRec.isUSCitizen isUSCitizen,
 		PersonRec.birthDate birthDate,
         row_number() over (
@@ -790,6 +783,7 @@ from (
                         personENT.isInUSOnVisa isInUSOnVisa,
                         to_date(personENT.visaStartDate,'YYYY-MM-DD') visaStartDate,
                         to_date(personENT.visaEndDate,'YYYY-MM-DD') visaEndDate,
+                        personENT.visaType visaType,
                         personENT.isUSCitizen isUSCitizen,
                         personENT.gender gender,
 -- ak 20200728 Adding snapshotDate reference.
@@ -839,6 +833,7 @@ select personId personId,
 	isInUSOnVisa isInUSOnVisa,
 	visaStartDate visaStartDate,
 	visaEndDate visaEndDate,
+	visaType visaType,
 	isUSCitizen isUSCitizen,
 	birthDate birthDate,	
 	termCodeEffective termCodeEffective,
@@ -874,6 +869,7 @@ from (
 		person2.isInUSOnVisa isInUSOnVisa,
 		person2.visaStartDate visaStartDate,
 		person2.visaEndDate visaEndDate,
+		person2.visaType visaType,
 		person2.isUSCitizen isUSCitizen,
 		person2.birthDate birthDate,	
 		AcadTrackRec.termCodeEffective termCodeEffective,
@@ -1000,7 +996,8 @@ from (
             when gender = 'Non-Binary' then genderForNonBinary
             else genderForUnknown
         end) IPEDSGender,
-        (case when isUSCitizen = 1 then 
+        (case when isUSCitizen = 1 or ((isInUSOnVisa = 1 or awardedDate between visaStartDate and visaEndDate)
+                            and visaType in ('Employee Resident', 'Other Resident')) then
             (case when isHispanic = true then '2' -- 'hispanic/latino'
                   when isMultipleRaces = true then '8' -- 'two or more races'
                   when ethnicity != 'Unknown' and ethnicity is not null
@@ -1012,7 +1009,8 @@ from (
                                when ethnicity = 'Caucasian' then '7'
                         else '9' end) 
                     else '9' end) -- 'race and ethnicity unknown'
-                else (case when isInUSOnVisa = 1 and awardedDate between visaStartDate and visaEndDate then '1' -- 'nonresident alien'
+                else (case when ((isInUSOnVisa = 1 or awardedDate between visaStartDate and visaEndDate)
+                            and visaType in ('Student Non-resident', 'Employee Non-resident', 'Other Non-resident')) then '1' -- 'nonresident alien'
                         else '9' end) -- 'race and ethnicity unknown'
         end) IPEDSethnicity,
         (case when asOfAge < 18 then 'AGE1' --Under 18
@@ -1042,6 +1040,7 @@ from (
 			acadtrack.isInUSOnVisa isInUSOnVisa,
 			acadtrack.visaStartDate visaStartDate,
 			acadtrack.visaEndDate visaEndDate,
+			acadtrack.visaType visaType,
 			acadtrack.isUSCitizen isUSCitizen,
 			floor(DATEDIFF(acadtrack.awardedDate, acadtrack.birthDate) / 365) asOfAge,
 			acadtrack.awardedDate awardedDate,
@@ -1228,39 +1227,13 @@ DistanceEdCountsSTU as (
 select cipCode cipCode,
 	awardLevel awardLevel,
     sum(isDistanceEd) isDistanceEd
-																																			   
-									 
-																																		
-					
-										 
-							
-																	
-		   
-						  
-											
-							
-																	
-				 
-						 
-from (
-						   
+from (			   
 	select distinct program.awardLevel awardLevel,
 		program.cipcode cipCode,
-		(case when coalesce(program.distanceEducationOption, 'No DE option') = 'No DE option'
-																   
-													 
-																																		  
+		(case when coalesce(program.distanceEducationOption, 'No DE option') = 'No DE option'				  
 	        then 0
         else 1 end) isDistanceEd
-																														   
-	   
-												
-						   
-														   
-									  
 	from DegreeFOSProgram program
-   
-							  
 	)
 	group by cipCode, awardLevel
 ),
@@ -1273,10 +1246,7 @@ select distinct coalesce(stuCIP.MajorNum, 1) majorNum,
 	degfosprog.ACAT ACAT,
 	(case when decounts.isDistanceEd > 0 
 		then 1
-	else 2 end) isDistanceEd,
-										
-													
-													
+	else 2 end) isDistanceEd,				
 	coalesce(stuCIP.FIELD1, 0) FIELD1,
 	coalesce(stuCIP.FIELD2, 0) FIELD2,
 	coalesce(stuCIP.FIELD3, 0) FIELD3,
@@ -1436,24 +1406,24 @@ select 'C' ,    --PART 	 - "C"
         null,
         null,
         null,
-        SUM(coalesce(cohortstu.reg1, 0)), --Nonresident Alien
-	    SUM(coalesce(cohortstu.reg2, 0)),
-		SUM(coalesce(cohortstu.reg3, 0)), -- Hispanic/Latino
-        SUM(coalesce(cohortstu.reg4, 0)),
-        SUM(coalesce(cohortstu.reg5, 0)), -- American Indian or Alaska Native
-        SUM(coalesce(cohortstu.reg6, 0)),
-        SUM(coalesce(cohortstu.reg7, 0)), -- Asian
-        SUM(coalesce(cohortstu.reg8, 0)),
-        SUM(coalesce(cohortstu.reg9, 0)), -- Black or African American
-        SUM(coalesce(cohortstu.reg10, 0)),
-        SUM(coalesce(cohortstu.reg11, 0)), -- Native Hawaiian or Other Pacific Islander
-        SUM(coalesce(cohortstu.reg12, 0)),
-        SUM(coalesce(cohortstu.reg13, 0)), -- White
-        SUM(coalesce(cohortstu.reg14, 0)),
-        SUM(coalesce(cohortstu.reg15, 0)), -- Two or more races
-        SUM(coalesce(cohortstu.reg16, 0)),
-        SUM(coalesce(cohortstu.reg17, 0)), -- Race and ethnicity unknown
-        SUM(coalesce(cohortstu.reg18, 0)) 
+        coalesce(SUM(cohortstu.reg1), 0), --Nonresident Alien
+	    coalesce(SUM(cohortstu.reg2), 0),
+		coalesce(SUM(cohortstu.reg3), 0), -- Hispanic/Latino
+        coalesce(SUM(cohortstu.reg4), 0),
+        coalesce(SUM(cohortstu.reg5), 0), -- American Indian or Alaska Native
+        coalesce(SUM(cohortstu.reg6), 0),
+        coalesce(SUM(cohortstu.reg7), 0), -- Asian
+        coalesce(SUM(cohortstu.reg8), 0),
+        coalesce(SUM(cohortstu.reg9), 0), -- Black or African American
+        coalesce(SUM(cohortstu.reg10), 0),
+        coalesce(SUM(cohortstu.reg11), 0), -- Native Hawaiian or Other Pacific Islander
+        coalesce(SUM(cohortstu.reg12), 0),
+        coalesce(SUM(cohortstu.reg13), 0), -- White
+        coalesce(SUM(cohortstu.reg14), 0),
+        coalesce(SUM(cohortstu.reg15), 0), -- Two or more races
+        coalesce(SUM(cohortstu.reg16), 0),
+        coalesce(SUM(cohortstu.reg17), 0), -- Race and ethnicity unknown
+        coalesce(SUM(cohortstu.reg18), 0) 
 from CohortSTU cohortstu
 
 union
