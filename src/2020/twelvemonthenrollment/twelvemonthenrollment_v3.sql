@@ -1445,15 +1445,8 @@ from (
             null --ipedsGender
     from FormatPartA studentLevel
     )
-    cross join (select first(icOfferUndergradAwardLevel) icOfferUndergradAwardLevel,
-                        first(icOfferGraduateAwardLevel) icOfferGraduateAwardLevel
-                    from ClientConfigMCR) config
-where ((config.icOfferUndergradAwardLevel = 'N'
-            and ipedsPartAStudentLevel not in ('1','2','3','7','15','16','17','21'))
-        or (config.icOfferUndergradAwardLevel = 'Y'))
-	and ipedsPartAStudentLevel not in ('2', '16', '99')
+where ipedsPartAStudentLevel in  ('1','3','7','15','17','21')
 group by ipedsPartAStudentLevel
-    
    
 union
 
@@ -1500,13 +1493,7 @@ from (
             null --DEStatus
     from FormatPartC studentLevel
     )
-    cross join (select first(icOfferUndergradAwardLevel) icOfferUndergradAwardLevel,
-							first(icOfferGraduateAwardLevel) icOfferGraduateAwardLevel
-				from ClientConfigMCR) config
-where ((config.icOfferUndergradAwardLevel = 'N'
-            and ipedsPartCStudentLevel not in ('1','2'))
-        or (config.icOfferUndergradAwardLevel = 'Y'))
-   and ipedsPartCStudentLevel not in ('2', '3', '16')
+where ipedsPartCStudentLevel in ('1', '2')
 group by ipedsPartCStudentLevel
 
 union
