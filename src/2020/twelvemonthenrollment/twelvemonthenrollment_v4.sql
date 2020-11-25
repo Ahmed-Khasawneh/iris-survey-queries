@@ -1210,13 +1210,9 @@ CourseTypeCountsSTU as (
 
 --Student level table (Part A)
 --1 - Full-time, first-time degree/certificate-seeking undergraduate
---2 - Full-time, transfer-in degree/certificate-seeking undergraduate
---3 - Full-time, continuing degree/certificate-seeking undergraduate
---7 - Full-time, non-degree/certificate-seeking undergraduate
+--3 - Full-time, All other undergraduate
 --15 - Part-time, first-time degree/certificate-seeking undergraduate
---16 - Part-time, transfer-in degree/certificate-seeking undergraduate
---17 - Part-time, continuing degree/certificate-seeking undergraduate
---21 - Part-time, non-degree/certificate-seeking undergraduate
+--17 - Part-time, All other undergraduate
 
 --mod from v1 - Part C doesn't contain graduate student level value 3
 
@@ -1231,17 +1227,18 @@ select yearType,
 	ipedsEthnicity,
     DEStatus DEStatus,
     (case --when studentLevel = 'GR' then '99' 
-         --when isNonDegreeSeeking = true and timeStatus = 'FT' then '7' --AF 20201124: mod from v3 - Part A does not contain non-degree-seeking values 7,21
-         --when isNonDegreeSeeking = true and timeStatus = 'PT' then '21' --AF 20201124: mod from v3 - Part A does not contain non-degree-seeking values 7,21
+         --when isNonDegreeSeeking = true and timeStatus = 'FT' then '7'
+         --when isNonDegreeSeeking = true and timeStatus = 'PT' then '21'
          when studentLevel = 'UG' then 
-            (case when studentType = 'First Time' and timeStatus = 'FT' then '1' 
-                   -- when studentType = 'Transfer' and timeStatus = 'FT' then '2'
-                    when studentType = 'Returning' and timeStatus = 'FT' then '3'
-                    when studentType = 'First Time' and timeStatus = 'PT' then '15' 
-                   -- when studentType = 'Transfer' and timeStatus = 'PT' then '16'
-                    when studentType = 'Returning' and timeStatus = 'PT' then '17' 
-					else '1' 
-             end)
+            (case when studentType = 'First Time' and timeStatus = 'FT' and isNonDegreeSeeking = false then '1' 
+                    --when studentType = 'Transfer' and timeStatus = 'FT' then '2'
+                    --when studentType = 'Returning' and timeStatus = 'FT' then '3'
+					when timeStatus = 'FT' then '3'
+                    when studentType = 'First Time' and timeStatus = 'PT' and isNonDegreeSeeking = false then '15' 
+                    --when studentType = 'Transfer' and timeStatus = 'PT' then '16'
+                    --when studentType = 'Returning' and timeStatus = 'PT' then '17' 
+					when timeStatus = 'PT' then '17' else '1' 
+			 end)
         else null
     end) ipedsPartAStudentLevel, --only Undergrad (and Continuing Ed, who go in Undergrad) students are counted in headcount
     (case --when studentLevel = 'GR' then '3' 
@@ -1400,14 +1397,9 @@ The select query below contains union statements to match each part of the surve
 
 -- ipedsStudentLevelPartA valid values - Student level table (Part A)
 --1 - Full-time, first-time degree/certificate-seeking undergraduate
---2 - Full-time, transfer-in degree/certificate-seeking undergraduate
---3 - Full-time, continuing degree/certificate-seeking undergraduate
---7 - Full-time, non-degree/certificate-seeking undergraduate
+--3 - Full-time, All other undergraduate
 --15 - Part-time, first-time degree/certificate-seeking undergraduate
---16 - Part-time, transfer-in degree/certificate-seeking undergraduate
---17 - Part-time, continuing degree/certificate-seeking undergraduate
---21 - Part-time, non-degree/certificate-seeking undergraduate
---99 - Total Graduate
+--17 - Part-time, All other undergraduate
 
 --mod from v1 - remove check of config.icOfferGraduateAwardLevel in filter, since no graduate is reported
 --AF 20201124: mod from v3 - Part A doesn't contain non-degree-seeking values 7, 21
@@ -1447,13 +1439,7 @@ from (
             null --ipedsGender
     from FormatPartA studentLevel
     )
-    cross join (select first(icOfferUndergradAwardLevel) icOfferUndergradAwardLevel,
-                        first(icOfferGraduateAwardLevel) icOfferGraduateAwardLevel
-                    from ClientConfigMCR) config
-where ((config.icOfferUndergradAwardLevel = 'N'
-            and ipedsPartAStudentLevel not in ('1','2','3','7','15','16','17','21'))
-        or (config.icOfferUndergradAwardLevel = 'Y'))
-	and ipedsPartAStudentLevel not in ('2', '7', '16', '21', '99') --AF 20201124: added values 7,21 to be excluded
+where ipedsPartAStudentLevel in ('1', '3', '15', '17') --AF 20201124: added values '1', '3', '15', '17' to be included
 group by ipedsPartAStudentLevel
     
    
@@ -1503,13 +1489,7 @@ from (
             null --DEStatus
     from FormatPartC studentLevel
     )
-    cross join (select first(icOfferUndergradAwardLevel) icOfferUndergradAwardLevel,
-							first(icOfferGraduateAwardLevel) icOfferGraduateAwardLevel
-				from ClientConfigMCR) config
-where ((config.icOfferUndergradAwardLevel = 'N'
-            and ipedsPartCStudentLevel != '1') --AF 20201124: mod from v3 - Part C doesn't contain student level value 2 and value 1 is now All undergrad students - not in ('1', '2')
-        or (config.icOfferUndergradAwardLevel = 'Y'))
-   and ipedsPartCStudentLevel not in ('2', '3', '16')
+where ipedsPartCStudentLevel ='1'
 group by ipedsPartCStudentLevel
 
 union
