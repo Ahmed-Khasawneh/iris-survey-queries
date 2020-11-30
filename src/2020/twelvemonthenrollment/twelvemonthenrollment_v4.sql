@@ -17,7 +17,7 @@ SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
 20201119			jhanicak									Added surveySection field throughout survey, changed order of fields for consistency,
-                                                                PF-1750 mods to ipedsEthnicity code block prod 11m 29s test 8m 4s
+                                                                PF-1750 mods to ipedsEthnicity code block prod 7m 16s test 7m 46s
 																Updated to latest views PF-1768
 20201008			jhanicak									Uncommented the graduate level lines except in StuLevel
 																and survey formatting section PF-1706 Run time prod 13m 26s
