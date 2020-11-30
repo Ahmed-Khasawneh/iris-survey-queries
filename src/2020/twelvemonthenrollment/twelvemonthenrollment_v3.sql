@@ -17,7 +17,7 @@ SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
 20201119			jhanicak									Added surveySection field throughout survey, changed order of fields for consistency,
-                                                                PF-1750 mods to ipedsEthnicity code block prod 11m 29s test 8m 4s
+                                                                PF-1750 mods to ipedsEthnicity code block. Prod 6m 15s, Test 7m 39s
 																Updated to latest views PF-1768
 20201008			jhanicak									Uncommented the graduate level lines except in StuLevel
 																and survey formatting section PF-1706 Run time prod 13m 26s
@@ -74,7 +74,7 @@ WITH DefaultValues as (
  *******************************************************************/ 
 
 --Prod blocks (2)
-/*select '2021' surveyYear, 
+select '2021' surveyYear, 
 	'E1E' surveyId,  
 	'Full Year Term End' repPeriodTag1,
 	'Full Year June End' repPeriodTag2,
@@ -119,8 +119,8 @@ select '2021' surveyYear,
 --***** start survey-specific mods
 	 12 tmAnnualDPPCreditHoursFTE --1 to 99
 --***** end survey-specific mods
-*/
 
+/*
 --Testing blocks (2 min)
 select '1415' surveyYear,  
 	'E12' surveyId,  
@@ -168,7 +168,7 @@ select '1415' surveyYear,
 --***** start survey-specific mods
 	 12 tmAnnualDPPCreditHoursFTE --1 to 99
 --***** end survey-specific mods
-
+*/
 ),
 
 ReportingPeriodMCR as (
@@ -674,7 +674,7 @@ where regCampRn = 1
 
 StudentMCR as (
 --Returns most up to date student academic information as of the reporting term codes and part of term census periods.  
-
+--
 select stuData.yearType,
         stuData.surveySection,
         stuData.snapshotDate snapshotDate,
@@ -891,7 +891,7 @@ and isInternational = false
 
 PersonMCR as (
 --Returns most up to date student personal information as of the reporting term codes and part of term census periods. 
---Per PF-1750, modified ipedsEthnicity subquery to account for new visaType field 
+-- Per PF-1750, modified ipedsEthnicity subquery to account for new visaType field 
 select pers.personId personId,
         pers.yearType yearType,
         pers.surveySection surveySection,
