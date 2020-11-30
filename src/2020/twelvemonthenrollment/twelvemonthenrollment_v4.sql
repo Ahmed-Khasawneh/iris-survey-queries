@@ -893,7 +893,7 @@ and isInternational = false
 
 PersonMCR as (
 --Returns most up to date student personal information as of the reporting term codes and part of term census periods. 
--- Per PF-1750, modified ipedsEthnicity subquery to account for new visaType field 
+
 select pers.personId personId,
         pers.yearType yearType,
         pers.surveySection surveySection,
