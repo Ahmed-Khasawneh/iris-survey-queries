@@ -18,7 +18,7 @@ Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
 20201130            jhanicak                                    Updated to latest views and formatting; mods for DM changes;
                                                                 Removed most snapshot logic since only one snapshot used PF-1759 
-                                                                Run time: prod 18m 302  test 29m 31s 
+                                                                Run time: prod 29m 39s  test 29m 31s 
 20200914            akhasawneh          			    		Initial version (Run time 30m)
 
 SNAPSHOT REQUIREMENTS
