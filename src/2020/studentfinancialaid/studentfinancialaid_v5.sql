@@ -16,12 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
-20201120        jhanicak                                    Update to most current views and formatting; 
-                                                            Fixes including filter for First Time students 
-                                                            Added financialAidEndDate and changed repPeriodTag2 value
-                                                               to Dod to accommodate pulling financial aid for year
-                                                            PF-1771 Run time: prod 16m 45s  test (all years) 26m 54s 
-20201110    	akhasawneh 									Initial version prod run 21m 34s test run 18m 48s
+20201123        jhall                                       Initial version cloned from studentfinancialaid_v1.sql
 
 	
 Snapshot tag requirements:
@@ -89,7 +84,7 @@ select '2021' surveyYear,
     CAST('2020-09-30' as DATE) dodEndDate,
     CAST('2020-09-30' as DATE) financialAidEndDate,
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
-    'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+    'Y' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
@@ -121,7 +116,7 @@ select '2021' surveyYear,
     CAST('2020-09-30' as DATE) dodEndDate,
     CAST('2020-09-30' as DATE) financialAidEndDate,
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
-    'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+    'Y' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
@@ -153,7 +148,7 @@ select '1415' surveyYear,
     CAST('2014-09-30' as DATE) dodEndDate,
     CAST('2014-09-30' as DATE) financialAidEndDate,
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
-    'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+    'Y' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
@@ -185,7 +180,7 @@ select '1415' surveyYear,
     CAST('2014-09-30' as DATE) dodEndDate,
     CAST('2014-09-30' as DATE) financialAidEndDate,
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
-    'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+    'Y' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
@@ -1535,7 +1530,7 @@ from (
                         and studentENT.studentStatus = 'Active') --do not report Study Abroad students
                             or to_date(studentENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
                     and studentENT.isIpedsReportable = 1
-                    and studentENT.studentLevel in ('Undergrad', 'Graduate')
+                    and studentENT.studentLevel = 'Graduate'
                 inner join AcademicTermOrder termorder on termorder.termCode = miliben.termCode
             ) stud
         cross join (select first(icOfferUndergradAwardLevel) icOfferUndergradAwardLevel
@@ -1544,14 +1539,15 @@ from (
         ) stu 
     group by personId, benefitType
     )
+    where studentLevel = 'Graduate'
 group by studentLevel
-),
+)--,
 
 /*****
 BEGIN SECTION - Formatting Views
 The views below are used to ensure that records exist for all IPEDS expected values even if the query result set doesn't contain records that meet all value conditions.
 *****/
-
+/*
 --Part F	
 FormatPartFStudentIncome as (
 select *
@@ -1564,12 +1560,12 @@ from (
 		(5) -- 5=110,001 and more
 	) as studentIncome(ipedsIncome)
 )
-
+*/
 /*****
 BEGIN SECTION - Survey Formatting
 The select query below contains union statements to match each part of the survey specs
 *****/
-
+/*
 --Part A All undergraduate counts and financial aid
 --Group 1 -> All undergraduate students
 
@@ -1957,14 +1953,14 @@ where cohortstu.isGroup4 = 1
 group by yearType, familyIncome
 
 union
-
+*/
 --Part G Section 2: Veteran's Benefits
 
 --Valid values
---Student level: 1=Undergraduate, 2=Graduate, 3=Total (Total will be generated)
+--Student level: 2=Graduate, 3=Total (Total will be generated)
 --Number of students: 0 to 999999, -2 or blank = not-applicable
 --Total amount of aid: 0 to 999999999999, -2 or blank = not-applicable
-
+/*
 select 'G' PART,
        max(FIELD2_1) FIELD2_1,
        max(FIELD3_1) FIELD3_1,
@@ -2004,7 +2000,7 @@ from (
     )
     
 union
-
+*/
 select 'G' PART,
        max(FIELD2_1) FIELD2_1,
        max(FIELD3_1) FIELD3_1,

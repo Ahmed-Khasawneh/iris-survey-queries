@@ -3881,7 +3881,7 @@ STUDENT_FINANCIAL_AID_4:
       start: 2011-05-01
       end: 2014-12-31
 
-FINANCIAL_AID_5:
+STUDENT_FINANCIAL_AID_5:
   # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
   # reporting period for Prior Year 1: Fall Census 2018 and prior summer
   # reporting period for Prior Year 2: Fall Census 2011 and prior summer
