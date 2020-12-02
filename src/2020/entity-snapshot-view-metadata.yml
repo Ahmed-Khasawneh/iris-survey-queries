@@ -25,7 +25,8 @@
 # --------  --------------------  -------------       ------------------------------------------------------------------
 # 20201202  jhanicak                                  Moved Student Financial Aid to before 12ME;
 #                                                     Removed AcademicTrack and Degree from 12ME v2 - v4;
-#                                                     Removed Retention views
+#                                                     Removed Retention views from Fall Enrollment and widened DateRange; 
+#                                                     Removed Post-Spring Summer Census tag from Admissions
 # 20201118  akhasawneh                                Added all Admissions versions
 # 20201110  jhanicak                                  Added all Financial Aid versions
 # 20201026  akhasawneh                                Added new entry for Financial Aid
@@ -128,7 +129,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -138,7 +138,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -148,7 +147,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -158,7 +156,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -168,7 +165,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -178,7 +174,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -188,7 +183,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -198,7 +192,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -208,12 +201,8 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2020-05-01
       end: 2020-08-01
 
   - viewName: Registration
@@ -221,7 +210,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -231,7 +219,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -241,7 +228,6 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -404,7 +390,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2020-05-01
+      start: 2019-05-01
       end: 2020-12-31
 
   - viewName: AcademicTrack
@@ -601,7 +587,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2020-05-01
+      start: 2019-05-01
       end: 2020-12-31
 
   - viewName: AcademicTrack
@@ -798,7 +784,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2020-05-01
+      start: 2019-05-01
       end: 2020-12-31
 
   - viewName: AcademicTrack
@@ -995,7 +981,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2020-05-01
+      start: 2019-05-01
       end: 2020-12-31
 
   - viewName: AcademicTrack
@@ -1887,9 +1873,10 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Department of Defense     
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -1995,9 +1982,10 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Department of Defense     
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -2103,9 +2091,10 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Department of Defense     
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -2211,9 +2200,10 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Department of Defense     
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -2319,9 +2309,10 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Department of Defense     
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
