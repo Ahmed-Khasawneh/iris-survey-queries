@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20201202  jhanicak                                  Various mods and fixes - except for DateRange values and ACADEMIC_LIBRARIES_1 - should match prod version
 # 20150813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
 # 20150710  jhanicak/akhasawneh                       Updated for IPEDS 2014-20
 # 20150701  jhall                 jah 20150701        Created this file with placeholders for tags and date ranges
@@ -255,23 +256,6 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-  - viewName: AcademicTermRetention
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
-
   - viewName: AcademicTrack
     entityName: AcademicTrack
     tagNames:
@@ -289,8 +273,8 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-  - viewName: AcademicTrackRetention
-    entityName: AcademicTrack
+  - viewName: Admission
+    entityName: Admission
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -304,7 +288,7 @@ ACADEMIC_LIBRARIES_1:
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2011-01-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Award
     entityName: Award
@@ -339,23 +323,6 @@ ACADEMIC_LIBRARIES_1:
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-
-  - viewName: CampusRetention
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -408,23 +375,6 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-  - viewName: CourseRetention
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
-
   - viewName: CourseSection
     entityName: CourseSection
     tagNames:
@@ -441,23 +391,6 @@ ACADEMIC_LIBRARIES_1:
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-
-  - viewName: CourseSectionRetention
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -476,23 +409,6 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-  - viewName: CourseSectionScheduleRetention
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
-
   - viewName: Degree
     entityName: Degree
     tagNames:
@@ -510,23 +426,6 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-  - viewName: DegreeRetention
-    entityName: Degree
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
-
   - viewName: DegreeProgram
     entityName: DegreeProgram
     tagNames:
@@ -543,23 +442,6 @@ ACADEMIC_LIBRARIES_1:
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-
-  - viewName: DegreeProgramRetention
-    entityName: DegreeProgram
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
 
   - viewName: Employee
     entityName: Employee
@@ -645,23 +527,6 @@ ACADEMIC_LIBRARIES_1:
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-
-  - viewName: FieldOfStudyRetention
-    entityName: FieldOfStudy
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
 
   - viewName: FinancialAid
     entityName: FinancialAid
@@ -765,23 +630,6 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-  - viewName: MajorRetention
-    entityName: Major
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
-
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
@@ -835,23 +683,6 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-  - viewName: PersonRetention
-    entityName: Person
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
-
   - viewName: Registration
     entityName: Registration
     tagNames:
@@ -868,23 +699,6 @@ ACADEMIC_LIBRARIES_1:
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-
-  - viewName: RegistrationRetention
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
 
   - viewName: Student
     entityName: Student
@@ -903,23 +717,6 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
-  - viewName: StudentRetention
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
-
   - viewName: TestScore
     entityName: TestScore
     tagNames:
@@ -937,21 +734,115 @@ ACADEMIC_LIBRARIES_1:
       start: 2011-01-01
       end: 2014-12-31
 
+ADMISSIONS_1:
+  # reporting period for Cohort: Fall Census 2020 and prior summer
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
   - viewName: Admission
     entityName: Admission
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: TestScore
+    entityName: TestScore
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2014-05-01
       end: 2014-12-31
 
 COMPLETIONS_1:
@@ -1123,18 +1014,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: AcademicTermRetention
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -1143,18 +1024,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: AcademicTrackRetention
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -1163,18 +1034,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CampusRetention
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
@@ -1193,18 +1054,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseRetention
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -1213,18 +1064,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionRetention
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -1233,18 +1074,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionScheduleRetention
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Degree
     entityName: Degree
@@ -1253,18 +1084,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: DegreeRetention
-    entityName: Degree
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: DegreeProgram
     entityName: DegreeProgram
@@ -1273,18 +1094,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: DegreeProgramRetention
-    entityName: DegreeProgram
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Employee
     entityName: Employee
@@ -1317,18 +1128,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: FieldOfStudyRetention
-    entityName: FieldOfStudy
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -1345,18 +1146,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSClientConfigRetention
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -1365,18 +1156,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSReportingPeriodRetention
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Major
     entityName: Major
@@ -1385,18 +1166,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: MajorRetention
-    entityName: Major
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Person
     entityName: Person
@@ -1405,18 +1176,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: PersonRetention
-    entityName: Person
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Registration
     entityName: Registration
@@ -1425,18 +1186,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: RegistrationRetention
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Student
     entityName: Student
@@ -1445,18 +1196,8 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: StudentRetention
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
 FALL_ENROLLMENT_2:
   # reporting period for Cohort: Fall Census 2014 and prior summer
@@ -1470,18 +1211,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: AcademicTermRetention
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -1490,18 +1221,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: AcademicTrackRetention
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -1510,18 +1231,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CampusRetention
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
@@ -1540,18 +1251,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseRetention
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -1560,18 +1261,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionRetention
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -1580,18 +1271,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionScheduleRetention
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Degree
     entityName: Degree
@@ -1600,18 +1281,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: DegreeRetention
-    entityName: Degree
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: DegreeProgram
     entityName: DegreeProgram
@@ -1620,18 +1291,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: DegreeProgramRetention
-    entityName: DegreeProgram
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Employee
     entityName: Employee
@@ -1664,18 +1325,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: FieldOfStudyRetention
-    entityName: FieldOfStudy
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -1692,18 +1343,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSClientConfigRetention
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -1712,18 +1353,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSReportingPeriodRetention
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Major
     entityName: Major
@@ -1732,18 +1363,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: MajorRetention
-    entityName: Major
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Person
     entityName: Person
@@ -1752,18 +1373,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: PersonRetention
-    entityName: Person
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Registration
     entityName: Registration
@@ -1772,18 +1383,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: RegistrationRetention
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Student
     entityName: Student
@@ -1792,18 +1393,8 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: StudentRetention
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
 FALL_ENROLLMENT_3:
   # reporting period for Cohort: Fall Census 2014 and prior summer
@@ -1817,18 +1408,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: AcademicTermRetention
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -1837,18 +1418,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: AcademicTrackRetention
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -1857,18 +1428,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CampusRetention
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
@@ -1887,18 +1448,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseRetention
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -1907,18 +1458,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionRetention
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -1927,18 +1468,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionScheduleRetention
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Degree
     entityName: Degree
@@ -1947,18 +1478,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: DegreeRetention
-    entityName: Degree
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: DegreeProgram
     entityName: DegreeProgram
@@ -1967,18 +1488,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: DegreeProgramRetention
-    entityName: DegreeProgram
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Employee
     entityName: Employee
@@ -2011,18 +1522,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: FieldOfStudyRetention
-    entityName: FieldOfStudy
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -2039,18 +1540,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSClientConfigRetention
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -2059,18 +1550,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSReportingPeriodRetention
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Major
     entityName: Major
@@ -2079,18 +1560,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: MajorRetention
-    entityName: Major
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Person
     entityName: Person
@@ -2099,18 +1570,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: PersonRetention
-    entityName: Person
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Registration
     entityName: Registration
@@ -2119,18 +1580,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: RegistrationRetention
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Student
     entityName: Student
@@ -2139,18 +1590,8 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: StudentRetention
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
 FALL_ENROLLMENT_4:
   # reporting period for Cohort: Fall Census 2014 and prior summer
@@ -2164,18 +1605,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: AcademicTermRetention
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -2184,18 +1615,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: AcademicTrackRetention
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -2204,18 +1625,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CampusRetention
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
@@ -2234,18 +1645,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseRetention
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -2254,18 +1655,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionRetention
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -2274,18 +1665,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionScheduleRetention
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Degree
     entityName: Degree
@@ -2294,18 +1675,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: DegreeRetention
-    entityName: Degree
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: DegreeProgram
     entityName: DegreeProgram
@@ -2314,18 +1685,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: DegreeProgramRetention
-    entityName: DegreeProgram
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Employee
     entityName: Employee
@@ -2358,18 +1719,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: FieldOfStudyRetention
-    entityName: FieldOfStudy
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: InstructionalAssignment
     entityName: InstructionalAssignment
@@ -2386,18 +1737,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSClientConfigRetention
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -2406,18 +1747,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSReportingPeriodRetention
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Major
     entityName: Major
@@ -2426,18 +1757,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: MajorRetention
-    entityName: Major
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Person
     entityName: Person
@@ -2446,18 +1767,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: PersonRetention
-    entityName: Person
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Registration
     entityName: Registration
@@ -2466,18 +1777,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: RegistrationRetention
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
   - viewName: Student
     entityName: Student
@@ -2486,18 +1787,8 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: StudentRetention
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Post-Spring Summer Census
-    snapshotDateRange:
       start: 2013-05-01
-      end: 2013-12-31
+      end: 2014-12-31
 
 FINANCE_1:
   # reporting period: fiscal year ending prior to 2014-10-01
@@ -3149,11 +2440,556 @@ INSTITUTIONAL_CHARACTERISTICS_7:
       start: 2014-08-01
       end: 2014-10-15
 
-TWELVE_MONTH_ENROLLMENT_1:
-  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
+STUDENT_FINANCIAL_AID_1:
+  # reporting period for Cohort: Fall Census 2019 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2017 and prior summer
+  # reporting period for GI Bill: July 1, 2019 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2019 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
 
   - viewName: FinancialAid
     entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+STUDENT_FINANCIAL_AID_2:
+  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+STUDENT_FINANCIAL_AID_3:
+  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+STUDENT_FINANCIAL_AID_4:
+  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+STUDENT_FINANCIAL_AID_5:
+  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+TWELVE_MONTH_ENROLLMENT_1:
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3166,8 +3002,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       start: 2013-05-01
       end: 2014-08-01
 
-  - viewName: AcademicTerm
-    entityName: AcademicTerm
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3224,6 +3060,20 @@ TWELVE_MONTH_ENROLLMENT_1:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: Degree
+    entityName: Degree
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3449,542 +3299,290 @@ TWELVE_MONTH_ENROLLMENT_2:
       start: 2013-05-01
       end: 2014-08-01
 
-STUDENT_FINANCIAL_AID_1:
-  # reporting period for Cohort: Fall Census 2019 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2017 and prior summer
-  # reporting period for GI Bill: July 1, 2019 - June 30, 2015
-  # reporting period for Dept Of Defense: October 1, 2019 - September 30, 2015
+
+TWELVE_MONTH_ENROLLMENT_3:
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Course
     entityName: Course
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSection
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: FinancialAid
-    entityName: FinancialAid
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
-  - viewName: MilitaryBenefit
-    entityName: MilitaryBenefit
+  - viewName: Person
+    entityName: Person
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Registration
     entityName: Registration
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Student
     entityName: Student
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Department of Defense
-      - GI Bill
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
-STUDENT_FINANCIAL_AID_2:
-  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
-  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+TWELVE_MONTH_ENROLLMENT_4:
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Course
     entityName: Course
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSection
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: FinancialAid
-    entityName: FinancialAid
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
-  - viewName: MilitaryBenefit
-    entityName: MilitaryBenefit
+  - viewName: Person
+    entityName: Person
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Registration
     entityName: Registration
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Student
     entityName: Student
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Department of Defense
-      - GI Bill
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - Full Year Term End
+      - Full Year June End
     snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-STUDENT_FINANCIAL_AID_3:
-  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
-  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
-
-  - viewName: AcademicTerm
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Campus
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Course
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSection
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionSchedule
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: FinancialAid
-    entityName: FinancialAid
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSClientConfig
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: MilitaryBenefit
-    entityName: MilitaryBenefit
-    tagNames:
-      - Department of Defense
-      - GI Bill
-    snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: Registration
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Student
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense
-      - GI Bill
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-STUDENT_FINANCIAL_AID_4:
-  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
-  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
-
-  - viewName: AcademicTerm
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Campus
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Course
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSection
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionSchedule
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: FinancialAid
-    entityName: FinancialAid
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSClientConfig
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: MilitaryBenefit
-    entityName: MilitaryBenefit
-    tagNames:
-      - Department of Defense
-      - GI Bill
-    snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: Registration
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Student
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense
-      - GI Bill
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-STUDENT_FINANCIAL_AID_5:
-  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
-  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
-
-  - viewName: AcademicTerm
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Campus
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Course
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSection
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: CourseSectionSchedule
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: FinancialAid
-    entityName: FinancialAid
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSClientConfig
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: MilitaryBenefit
-    entityName: MilitaryBenefit
-    tagNames:
-      - Department of Defense
-      - GI Bill
-    snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-12-31
-
-  - viewName: Registration
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
-
-  - viewName: Student
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense
-      - GI Bill
-    snapshotDateRange:
-      start: 2011-05-01
-      end: 2014-12-31
+      start: 2013-05-01
+      end: 2014-08-01
