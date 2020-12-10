@@ -23,9 +23,10 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20201209  akhasawneh                                Updated survey tag lists to include new and modified tags.
 # 20201202  jhanicak                                  Moved Student Financial Aid to before 12ME;
 #                                                     Removed AcademicTrack and Degree from 12ME v2 - v4;
-#                                                     Removed Retention views from Fall Enrollment and widened DateRange; 
+#                                                     Removed Retention views from Fall Enrollment and widened DateRange;
 #                                                     Removed Post-Spring Summer Census tag from Admissions
 # 20201118  akhasawneh                                Added all Admissions versions
 # 20201110  jhanicak                                  Added all Financial Aid versions
@@ -129,6 +130,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -138,6 +140,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -147,6 +150,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -156,6 +160,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -165,6 +170,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -174,6 +180,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -183,6 +190,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -192,6 +200,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -201,6 +210,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-08-01
@@ -210,6 +220,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -219,6 +230,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -228,6 +240,7 @@ ADMISSIONS_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
     snapshotDateRange:
       start: 2020-05-01
       end: 2020-12-31
@@ -242,8 +255,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -255,8 +268,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -268,8 +281,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -281,8 +294,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -294,8 +307,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -307,8 +320,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -320,8 +333,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -333,8 +346,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -346,8 +359,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -359,8 +372,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -372,8 +385,8 @@ COMPLETIONS_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -388,7 +401,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -398,7 +411,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -408,7 +421,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -418,7 +431,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2019-12-31
@@ -428,7 +441,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -438,7 +451,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -448,7 +461,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -458,7 +471,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -468,7 +481,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -502,7 +515,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -520,7 +533,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -530,7 +543,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -540,7 +553,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -550,7 +563,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -560,7 +573,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -570,7 +583,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -585,7 +598,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -595,7 +608,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -605,7 +618,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -615,7 +628,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2019-12-31
@@ -625,7 +638,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -635,7 +648,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -645,7 +658,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -655,7 +668,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -665,7 +678,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -699,7 +712,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -717,7 +730,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -727,7 +740,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -737,7 +750,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -747,7 +760,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -757,7 +770,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -767,7 +780,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -782,7 +795,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -792,7 +805,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -802,7 +815,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -812,7 +825,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2019-12-31
@@ -822,7 +835,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -832,7 +845,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -842,7 +855,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -852,7 +865,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -862,7 +875,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -896,7 +909,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -914,7 +927,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -924,7 +937,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -934,7 +947,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -944,7 +957,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -954,7 +967,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -964,7 +977,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -979,7 +992,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -989,7 +1002,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -999,7 +1012,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1009,7 +1022,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2019-12-31
@@ -1019,7 +1032,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1029,7 +1042,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1039,7 +1052,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1049,7 +1062,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1059,7 +1072,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1093,7 +1106,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1111,7 +1124,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1121,7 +1134,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1131,7 +1144,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1141,7 +1154,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1151,7 +1164,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1161,7 +1174,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-12-31
@@ -1828,6 +1841,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1837,6 +1852,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1846,6 +1863,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1855,6 +1874,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1864,6 +1885,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1873,7 +1896,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Department of Defense     
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -1883,6 +1907,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1892,6 +1918,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1899,6 +1927,10 @@ STUDENT_FINANCIAL_AID_1:
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -1910,6 +1942,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1919,6 +1953,8 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -1937,6 +1973,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1946,6 +1984,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1955,6 +1995,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1964,6 +2006,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1973,6 +2017,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1982,7 +2028,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Department of Defense     
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -1992,6 +2039,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2001,6 +2050,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2008,6 +2059,10 @@ STUDENT_FINANCIAL_AID_2:
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2019,6 +2074,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2028,6 +2085,8 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
+      - October End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2044,8 +2103,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2053,8 +2112,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: Campus
     entityName: Campus
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2062,8 +2121,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: Course
     entityName: Course
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2071,8 +2130,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: CourseSection
     entityName: CourseSection
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2080,8 +2139,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2089,9 +2148,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense     
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2099,8 +2157,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2108,8 +2166,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2117,6 +2175,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
+      - June End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2126,8 +2186,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: Registration
     entityName: Registration
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2135,8 +2195,8 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: Student
     entityName: Student
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2153,8 +2213,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2162,8 +2222,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: Campus
     entityName: Campus
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2171,8 +2231,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: Course
     entityName: Course
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2180,8 +2240,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: CourseSection
     entityName: CourseSection
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2189,8 +2249,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2198,9 +2258,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense     
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2208,8 +2267,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2217,8 +2276,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2226,6 +2285,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
+      - June End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2235,8 +2296,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: Registration
     entityName: Registration
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2244,8 +2305,8 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: Student
     entityName: Student
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - June End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2262,8 +2323,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2271,8 +2332,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: Campus
     entityName: Campus
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2280,8 +2341,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: Course
     entityName: Course
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2289,8 +2350,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: CourseSection
     entityName: CourseSection
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2298,8 +2359,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2307,9 +2368,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense     
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2317,8 +2377,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2326,8 +2386,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2344,8 +2404,8 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: Registration
     entityName: Registration
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
+      - Department of Defense
+      - GI Bill
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2353,8 +2413,6 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: Student
     entityName: Student
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2371,8 +2429,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2384,8 +2442,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2397,8 +2455,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2410,8 +2468,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2423,8 +2481,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2436,8 +2494,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2449,8 +2507,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2462,8 +2520,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2475,8 +2533,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2488,8 +2546,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2501,8 +2559,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2514,8 +2572,8 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2530,8 +2588,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2543,8 +2601,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2556,8 +2614,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2569,8 +2627,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2582,8 +2640,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2595,8 +2653,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2608,8 +2666,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2621,8 +2679,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2634,8 +2692,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2647,8 +2705,8 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2663,8 +2721,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2676,8 +2734,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2689,8 +2747,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2702,8 +2760,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2715,8 +2773,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2728,8 +2786,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2741,8 +2799,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2754,8 +2812,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2767,8 +2825,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2780,8 +2838,8 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2796,8 +2854,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2809,8 +2867,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2822,8 +2880,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2835,8 +2893,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2848,8 +2906,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2861,8 +2919,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2874,8 +2932,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2887,8 +2945,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2900,8 +2958,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
@@ -2913,8 +2971,8 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
+      - June End
     snapshotDateRange:
       start: 2019-05-01
       end: 2020-08-01
