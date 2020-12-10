@@ -23,7 +23,6 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
-# 20201209  akhasawneh                                Updated survey tag lists to include new and modified tags.
 # 20201202  jhanicak                                  Moved Student Financial Aid to before 12ME;
 #                                                     Removed AcademicTrack and Degree from 12ME v2 - v4;
 #                                                     Removed Retention views from Fall Enrollment and widened DateRange;
@@ -2107,7 +2106,7 @@ STUDENT_FINANCIAL_AID_3:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -2116,7 +2115,7 @@ STUDENT_FINANCIAL_AID_3:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Course
     entityName: Course
@@ -2125,7 +2124,7 @@ STUDENT_FINANCIAL_AID_3:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -2134,7 +2133,7 @@ STUDENT_FINANCIAL_AID_3:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -2143,7 +2142,7 @@ STUDENT_FINANCIAL_AID_3:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: FinancialAid
     entityName: FinancialAid
@@ -2161,7 +2160,7 @@ STUDENT_FINANCIAL_AID_3:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -2170,7 +2169,7 @@ STUDENT_FINANCIAL_AID_3:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
@@ -2190,7 +2189,7 @@ STUDENT_FINANCIAL_AID_3:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Student
     entityName: Student
@@ -2217,7 +2216,7 @@ STUDENT_FINANCIAL_AID_4:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Campus
     entityName: Campus
@@ -2226,7 +2225,7 @@ STUDENT_FINANCIAL_AID_4:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Course
     entityName: Course
@@ -2235,7 +2234,7 @@ STUDENT_FINANCIAL_AID_4:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -2244,7 +2243,7 @@ STUDENT_FINANCIAL_AID_4:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -2253,7 +2252,7 @@ STUDENT_FINANCIAL_AID_4:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: FinancialAid
     entityName: FinancialAid
@@ -2271,7 +2270,7 @@ STUDENT_FINANCIAL_AID_4:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -2280,7 +2279,7 @@ STUDENT_FINANCIAL_AID_4:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
@@ -2300,7 +2299,7 @@ STUDENT_FINANCIAL_AID_4:
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Student
     entityName: Student
