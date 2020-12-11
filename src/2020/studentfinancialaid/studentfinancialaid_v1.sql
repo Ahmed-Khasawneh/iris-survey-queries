@@ -1400,8 +1400,8 @@ from (
 				      else 2 end) asc,
 				(case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.giBillStartDate, 1) and date_add(config.giBillEndDate, 3) then 3 
 				    else 4 end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.giBillStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.giBillEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+                (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.giBillEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.giBillStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 MilitaryBenefitENT.recordActivityDate desc
 	    ) militarybenefitRn
     from MilitaryBenefit MilitaryBenefitENT
@@ -1456,8 +1456,8 @@ from (
 				      else 2 end) asc,
 				(case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.dodStartDate, 1) and date_add(config.dodEndDate, 3) then 3 
 				    else 4 end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.dodStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.dodEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+                (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.dodEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.dodStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 MilitaryBenefitENT.recordActivityDate desc
 	    ) militarybenefitRn
     from MilitaryBenefit MilitaryBenefitENT
