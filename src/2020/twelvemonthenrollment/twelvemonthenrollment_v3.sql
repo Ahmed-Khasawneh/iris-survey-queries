@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
+20201210            akhasawneh                                  Fixes and tag updates per PF-1865, 1861, 1865, 1855
 20201119			jhanicak									Added surveySection field throughout survey, changed order of fields for consistency,
                                                                 PF-1750 mods to ipedsEthnicity code block. Prod 6m 15s, Test 7m 39s
 																Updated to latest views PF-1768
@@ -76,8 +77,8 @@ WITH DefaultValues as (
 --Prod blocks (2)
 select '2021' surveyYear, 
 	'E1E' surveyId,  
-	'Full Year Term End' repPeriodTag1,
-	'Full Year June End' repPeriodTag2,
+	'Academic Year End' repPeriodTag1,
+	'June End' repPeriodTag2,
 	CAST('9999-09-09' as DATE) snapshotDate,  
 	CAST('2019-07-01' AS DATE) reportingDateStart,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
@@ -100,8 +101,8 @@ union
 
 select '2021' surveyYear, 
 	'E1E' surveyId,  
-	'Full Year Term End' repPeriodTag1,
-	'Full Year June End' repPeriodTag2,
+	'Academic Year End' repPeriodTag1,
+	'June End' repPeriodTag2,
 	CAST('9999-09-09' as DATE) snapshotDate,  
 	CAST('2019-07-01' AS DATE) reportingDateStart,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
@@ -124,8 +125,8 @@ select '2021' surveyYear,
 --Testing blocks (2 min)
 select '1415' surveyYear,  
 	'E12' surveyId,  
-	'Full Year Term End' repPeriodTag1,
-	'Full Year June End' repPeriodTag2,
+	'Academic Year End' repPeriodTag1,
+	'June End' repPeriodTag2,
 	CAST('9999-09-09' as DATE) snapshotDate,   
 	CAST('2013-07-01' as DATE) reportingDateStart,
     CAST('2014-06-30' as DATE) reportingDateEnd, 
@@ -149,8 +150,8 @@ union
 
 select '1415' surveyYear,  
 	'E12' surveyId,   
-	'Full Year Term End' repPeriodTag1,
-	'Full Year June End' repPeriodTag2,
+	'Academic Year End' repPeriodTag1,
+	'June End' repPeriodTag2,
 	CAST('9999-09-09' as DATE) snapshotDate,   
 	CAST('2013-07-01' as DATE) reportingDateStart,
     CAST('2014-06-30' as DATE) reportingDateEnd, 
@@ -298,8 +299,8 @@ from (
 				clientConfigENT.surveyCollectionYear
 			order by
 			    (case when to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
-			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 				clientConfigENT.recordActivityDate desc
 		) configRn
 	from IPEDSClientConfig clientConfigENT
@@ -471,8 +472,8 @@ select distinct 'CY' yearType,
                       when acadterm.snapshotDate <= to_date(date_add(acadterm.censusdate, 3), 'YYYY-MM-DD') 
                             and acadterm.snapshotDate >= to_date(date_sub(acadterm.censusDate, 1), 'YYYY-MM-DD') then 2
                      else 3 end) asc,
-                (case when acadterm.snapshotDate < acadterm.censusDate then acadterm.snapshotDate else CAST('1900-09-09' as DATE) end) desc,
-                (case when acadterm.snapshotDate > acadterm.censusDate then acadterm.snapshotDate else CAST('9999-09-09' as DATE) end) asc
+                (case when acadterm.snapshotDate > acadterm.censusDate then acadterm.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
+                (case when acadterm.snapshotDate < acadterm.censusDate then acadterm.snapshotDate else CAST('1900-09-09' as DATE) end) desc
             ) acadTermRnReg,
             termorder.termOrder termOrder,
         termorder.maxCensus maxCensus,
@@ -611,8 +612,8 @@ from (
                     regData.crnLevel
                 order by 
                     (case when campus.snapshotDate = regData.snapshotDate then 1 else 2 end) asc,
-                    (case when campus.snapshotDate < regData.snapshotDate then campus.snapshotDate else CAST('1900-09-09' as DATE) end) desc,
-                    (case when campus.snapshotDate > regData.snapshotDate then campus.snapshotDate else CAST('9999-09-09' as DATE) end) asc
+                    (case when campus.snapshotDate > regData.snapshotDate then campus.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
+                    (case when campus.snapshotDate < regData.snapshotDate then campus.snapshotDate else CAST('1900-09-09' as DATE) end) desc
             ) regCampRn
     from ( 
         select regENT.personId personId,
@@ -653,8 +654,8 @@ from (
                     regENT.crnLevel
                 order by 
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
-                    (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     regENT.recordActivityDate desc
             ) regRn
         from AcademicTermReportingRefactor repperiod   
@@ -692,6 +693,7 @@ select stuData.yearType,
         coalesce((case when stuData.studentType = 'High School' then true
                     when stuData.studentLevel = 'Continuing Ed' then true
                     when stuData.studentLevel = 'Occupational/Professional' then true
+                    when stuData.studentLevel = 'Other' then true
                   else stuData.isNonDegreeSeeking end), false) isNonDegreeSeeking,
         stuData.studentLevel,
         stuData.studentType,
@@ -724,8 +726,8 @@ from (
                     studentENT.termCode
                 order by
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') = reg.snapshotDate then 1 else 2 end) asc,
-                    (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') > reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     studentENT.recordActivityDate desc
             ) studRn
 	from RegistrationMCR reg
@@ -793,10 +795,9 @@ select stu.yearType yearType,
              else stu.studentType 
         end) studentType,
         stu.studentLevel studentLevelORIG,
-        (case when stu.studentLevel in ('Undergrad', 'Continuing Ed', 'Occupational/Professional')  then 'UG'
-                          when stu.studentLevel in ('Graduate') then 'GR'
-                          else null 
-                    end) studentLevel,
+        (case when stu.studentLevel = 'Graduate' then 'GR'
+                          else 'UG'
+        end) studentLevel,
         stu.campus campus,
         coalesce(campus.isInternational, false) isInternational,        
 	    row_number() over (
@@ -806,8 +807,8 @@ select stu.yearType yearType,
                     stu.personId
                 order by 
                     (case when campus.snapshotDate = acadTermCode.snapshotDate then 1 else 2 end) asc,
-                    (case when campus.snapshotDate < acadTermCode.snapshotDate then campus.snapshotDate else CAST('1900-09-09' as DATE) end) desc,
-                    (case when campus.snapshotDate > acadTermCode.snapshotDate then campus.snapshotDate else CAST('9999-09-09' as DATE) end) asc
+                    (case when campus.snapshotDate > acadTermCode.snapshotDate then campus.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
+                    (case when campus.snapshotDate < acadTermCode.snapshotDate then campus.snapshotDate else CAST('1900-09-09' as DATE) end) desc
             ) regCampRn
     from ( 
         select distinct personId,
@@ -963,8 +964,8 @@ from (
                     personENT.personId
                 order by
                     (case when to_date(personENT.snapshotDate,'YYYY-MM-DD') = stu.snapshotDate then 1 else 2 end) asc,
-			        (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') < stu.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') > stu.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+			        (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') > stu.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') < stu.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     personENT.recordActivityDate desc
             ) personRn
     from StudentRefactor stu 
@@ -1028,8 +1029,8 @@ from (
                     coursesectENT.courseNumber
                 order by
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') = reg.snapshotDate then 1 else 2 end) asc,
-                    (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') > reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     coursesectENT.recordActivityDate desc
             ) courseRn
     from RegistrationMCR reg   
@@ -1103,8 +1104,8 @@ from (
                 coursesect.courseNumber
 			order by
 			    (case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') = coursesect.snapshotDate then 1 else 2 end) asc,
-                (case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') < coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 (case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') > coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') < coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 			    coursesectschedENT.recordActivityDate desc
 		) courseSectSchedRn
 	from CourseSectionMCR coursesect
@@ -1175,8 +1176,8 @@ from (
                 coursesectsched.courseNumber
 			order by
 			    (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') = coursesectsched.snapshotDate then 1 else 2 end) asc,
-                (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') < coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') > coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') < coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 			    termorder.termOrder desc,
 			    courseENT.recordActivityDate desc
 		) courseRn
