@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
+20201215            akhasawneh									Updating tag values ('June End' & 'Academic Year End')
 20201119			ckeller										Modified ipedsEthnicity code to include new DM changes, per PF-1750 Run time 8m 27s test data 11m 0s
 20200915            jhanicak                                    Updated entire report query based on latest 20-21 version Run time 7m 44s, test data 11m 0s
 20200825            akhasawneh              ak 20200825         Mods to default to dummy output where data is lacking (PF-1654) Run time 11m 26s
@@ -225,8 +226,8 @@ ClientConfigMCR as (
 -- Pulls client reporting preferences from the IPEDSClientConfig entity. 
 
 -- jh 20200915 Removed filter in first union for tag values and added a case stmt to the row_number() function to handle no snapshots that match tags 
---          1st union 1st order - pull snapshot for 'Full Year Term End' 
---          1st union 2nd order - pull snapshot for 'Full Year June End'
+--          1st union 1st order - pull snapshot for 'Academic Year End' 
+--          1st union 2nd order - pull snapshot for 'June End'
 --          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
 --          2nd union - pull default values if no record in IPEDSClientConfig
 -- ak 20200729 Adding snapshotDate reference
@@ -271,8 +272,8 @@ from (
 			partition by
 				clientConfigENT.surveyCollectionYear
 			order by
-			    (case when array_contains(clientConfigENT.tags, 'Full Year Term End') then 1
-                     when array_contains(clientConfigENT.tags, 'Full Year June End') then 1
+			    (case when array_contains(clientConfigENT.tags, 'Academic Year End') then 1
+                     when array_contains(clientConfigENT.tags, 'June End') then 1
 			         else 2 end) asc,
 			    clientConfigENT.snapshotDate desc,
 				clientConfigENT.recordActivityDate desc
@@ -315,8 +316,8 @@ ReportingPeriodMCR as (
 --Returns applicable term/part of term codes for this survey submission year. 
 
 -- jh 20200915 Removed filter in first union for tag values and added a case stmt to the row_number() function to handle no snapshots that match tags
---          1st union 1st order - pull snapshot for 'Full Year Term End' 
---          1st union 2nd order - pull snapshot for 'Full Year June End'
+--          1st union 1st order - pull snapshot for 'Academic Year End' 
+--          1st union 2nd order - pull snapshot for 'June End'
 --          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
 --          2nd union - pull default values if no record in IPEDSReportingPeriod
 -- ak 20200729 Adding snapshotDate reference
@@ -364,8 +365,8 @@ from (
 				repperiodENT.termCode,
 				repperiodENT.partOfTermCode	
 			order by 
-                (case when array_contains(repperiodENT.tags, 'Full Year Term End') then 1
-                     when array_contains(repperiodENT.tags, 'Full Year June End') then 1
+                (case when array_contains(repperiodENT.tags, 'Academic Year End') then 1
+                     when array_contains(repperiodENT.tags, 'June End') then 1
 			         else 2 end) asc,
 			    repperiodENT.snapshotDate desc,
                 repperiodENT.recordActivityDate desc	
