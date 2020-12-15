@@ -16,11 +16,12 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
+20201215            akhasawneh									Updating tag values ('June End' & 'Academic Year End')
 20201123			ckeller										Modified query to accomodate new DM changes, specifically relating to new visaType field
 																In Survey Formatting section, part C, replaced all "SUM(COALESCE(..." with "COALESCE(SUM(..."
 20200922			akhasawneh									Query overhaul to utilize changes made to data model (Degree,FieldOfStudy, DegreeProgram)
 20200911			akhasawneh									Modified tag array() default value & modified case statement syntax
-20200819            jhanicak                                    Removed reference to 'June End' and changed to new tags of 'Full Year June End' or 'Full Year Term End' based on client config
+20200819            jhanicak                                    Removed reference to 'June End' and changed to new tags of 'June End' or 'Academic Year End' based on client config
 20200728			akhasawneh				ak 20200728			Added support for multiple/historic ingestions (PF-1579) -Run time 19m 27s, test data 24m, 23s
 20200727            jhanicak                jh 20200727         Added upper() to strings for comparison
                                                                 Added to_date functions to strip time
@@ -253,8 +254,8 @@ ClientConfigMCR as (
 -- Pulls client reporting preferences from the IPEDSClientConfig entity. 
 
 -- jh 20200826 Removed filter in first union for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
---          1st union 1st order - pull snapshot for 'Full Year Term End' where compGradDateOrTerm = 'T' or 'Full Year June End' where compGradDateOrTerm = 'D' 
---          1st union 2nd order - pull snapshot for 'Full Year Term End' or 'Full Year June End'
+--          1st union 1st order - pull snapshot for 'Academic Year End' where compGradDateOrTerm = 'T' or 'June End' where compGradDateOrTerm = 'D' 
+--          1st union 2nd order - pull snapshot for 'Academic Year End' or 'June End'
 --          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
 --          3rd union - pull default values if no record in IPEDSClientConfig
 -- ak 20200728 Adding snapshotDate reference
@@ -291,11 +292,11 @@ from (
 				clientConfigENT.surveyCollectionYear
 			order by
 			    (case when clientConfigENT.compGradDateOrTerm = 'T' 
-						and array_contains(clientConfigENT.tags, 'Full Year Term End') then 1
+						and array_contains(clientConfigENT.tags, 'Academic Year End') then 1
 			         when clientConfigENT.compGradDateOrTerm = 'D' 
-						and array_contains(clientConfigENT.tags, 'Full Year June End') then 1
-			         when array_contains(clientConfigENT.tags, 'Full Year June End') 
-						or array_contains(clientConfigENT.tags, 'Full Year Term End') then 2
+						and array_contains(clientConfigENT.tags, 'June End') then 1
+			         when array_contains(clientConfigENT.tags, 'June End') 
+						or array_contains(clientConfigENT.tags, 'Academic Year End') then 2
 				 else 3 end) asc,
 			    clientConfigENT.snapshotDate desc,
 				clientConfigENT.recordActivityDate desc
@@ -332,8 +333,8 @@ ReportingPeriodMCR as (
 --Returns applicable term/part of term codes for this survey submission year. 
 
 -- jh 20200826 Removed filter in first union for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
---          1st union 1st order - pull snapshot for 'Full Year Term End' where compGradDateOrTerm = 'T' or 'Full Year June End' where compGradDateOrTerm = 'D' 
---          1st union 2nd order - pull snapshot for 'Full Year Term End' or 'Full Year June End'
+--          1st union 1st order - pull snapshot for 'Academic Year End' where compGradDateOrTerm = 'T' or 'June End' where compGradDateOrTerm = 'D' 
+--          1st union 2nd order - pull snapshot for 'Academic Year End' or 'June End'
 --          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
 --          3rd union - pull default values if no record in IPEDSReportingPeriod
 -- ak 20200728 Adding snapshotDate reference
@@ -372,11 +373,11 @@ from (
                 repPeriodENT.partOfTermCode	
             order by
                 (case when clientconfig.compGradDateOrTerm = 'T' 
-						and array_contains(repPeriodENT.tags, 'Full Year Term End') then 1
+						and array_contains(repPeriodENT.tags, 'Academic Year End') then 1
 			         when clientconfig.compGradDateOrTerm = 'D' 
-						and array_contains(repPeriodENT.tags, 'Full Year June End') then 1
-			         when array_contains(repPeriodENT.tags, 'Full Year June End') 
-						or array_contains(repPeriodENT.tags, 'Full Year Term End') then 2
+						and array_contains(repPeriodENT.tags, 'June End') then 1
+			         when array_contains(repPeriodENT.tags, 'June End') 
+						or array_contains(repPeriodENT.tags, 'Academic Year End') then 2
 				 else 3 end) asc,
 			    repPeriodENT.snapshotDate desc,
 				repPeriodENT.recordActivityDate desc
@@ -575,8 +576,8 @@ AwardMCR as (
 --Pulls all distinct student awards obtained withing the reporting terms/dates.
 
 -- jh 20200826 Removed filter for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
---          1st order - pull snapshot for 'Full Year Term End' where compGradDateOrTerm = 'T' or 'Full Year June End' where compGradDateOrTerm = 'D' 
---          2nd order - pull snapshot for 'Full Year Term End' or 'Full Year June End'
+--          1st order - pull snapshot for 'Academic Year End' where compGradDateOrTerm = 'T' or 'June End' where compGradDateOrTerm = 'D' 
+--          2nd order - pull snapshot for 'Academic Year End' or 'June End'
 --          3rd order - pull other snapshot, ordered by snapshotDate desc
 -- ak 20200728 Adding snapshotDate/snapshotTerm reference
 --ak 20200611 Adding term order indicator (PF-1494)
@@ -608,9 +609,9 @@ from (
                 awardENT.degreeLevel,
                 awardENT.degree
             order by
-                (case when repperiod.compGradDateOrTerm = 'T' and array_contains(awardENT.tags, 'Full Year Term End') then 1
-			         when repperiod.compGradDateOrTerm = 'D' and array_contains(awardENT.tags, 'Full Year June End') then 1
-			         when array_contains(awardENT.tags, 'Full Year June End') or array_contains(awardENT.tags, 'Full Year Term End') then 2
+                (case when repperiod.compGradDateOrTerm = 'T' and array_contains(awardENT.tags, 'Academic Year End') then 1
+			         when repperiod.compGradDateOrTerm = 'D' and array_contains(awardENT.tags, 'June End') then 1
+			         when array_contains(awardENT.tags, 'June End') or array_contains(awardENT.tags, 'Academic Year End') then 2
 			         else 3 end) asc,
 			    awardENT.snapshotDate desc,
                 repperiod.termOrder desc,
