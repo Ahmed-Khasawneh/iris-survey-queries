@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20201215  Akhasawneh                                Updated tag values (June End & Academic Year End)
 # 20201026  Akhasawneh                                Added new entry for Financial Aid
 # 20200908  jhanicak                                  Added new entities DegreeProgram and FieldOfStudy PF-1629
 # 20200813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
@@ -125,8 +126,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -139,8 +139,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -153,8 +152,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -167,8 +165,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -181,8 +178,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -195,8 +191,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -209,8 +204,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -223,8 +217,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -237,8 +230,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -251,8 +243,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -265,8 +256,7 @@ COMPLETIONS_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -1976,16 +1966,16 @@ STUDENT_FINANCIAL_AID_1:
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2016-05-01
       end: 2018-12-31
-   
+
   - viewName: Campus
     entityName: Campus
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census     
+      - Fall Census
     snapshotDateRange:
       start: 2016-05-01
       end: 2018-12-31
@@ -2003,7 +1993,7 @@ STUDENT_FINANCIAL_AID_1:
     entityName: CourseSection
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census 
+      - Fall Census
     snapshotDateRange:
       start: 2016-05-01
       end: 2018-12-31
@@ -2016,7 +2006,7 @@ STUDENT_FINANCIAL_AID_1:
     snapshotDateRange:
       start: 2016-05-01
       end: 2018-12-31
-  
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -2025,7 +2015,7 @@ STUDENT_FINANCIAL_AID_1:
     snapshotDateRange:
       start: 2016-05-01
       end: 2018-12-31
-      
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -2052,12 +2042,12 @@ STUDENT_FINANCIAL_AID_1:
     snapshotDateRange:
       start: 2019-05-01
       end: 2019-12-31
- 
+
   - viewName: Person
     entityName: Person
     tagNames:
       - Pre-Fall Summer Census
-      - Fall Census    
+      - Fall Census
     snapshotDateRange:
       start: 2016-05-01
       end: 2018-12-31
@@ -2077,11 +2067,11 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - Department of Defense
-      - GI Bill 
+      - GI Bill
     snapshotDateRange:
       start: 2016-05-01
       end: 2019-12-31
-      
+
 HUMAN_RESOURCES_1:
   # reporting period: as of 10/31/19
 
@@ -2140,7 +2130,7 @@ HUMAN_RESOURCES_1:
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
-      
+
 HUMAN_RESOURCES_2:
   # reporting period: as of 10/31/19
 
@@ -2437,8 +2427,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2451,8 +2440,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2465,8 +2453,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2479,8 +2466,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2493,8 +2479,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2507,8 +2492,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2521,8 +2505,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2535,8 +2518,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2549,8 +2531,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2563,8 +2544,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2580,8 +2560,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2594,8 +2573,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End      
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2608,8 +2586,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End  
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2622,8 +2599,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End  
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2636,8 +2612,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End  
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2650,8 +2625,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End  
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2664,8 +2638,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End  
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2678,8 +2651,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End  
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2692,8 +2664,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End  
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
@@ -2706,8 +2677,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Spring Census
       - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End  
+      - Academic Year End
     snapshotDateRange:
       start: 2018-05-01
       end: 2019-08-01
