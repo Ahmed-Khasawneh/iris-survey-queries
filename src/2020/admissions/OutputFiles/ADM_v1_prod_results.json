@@ -1,38 +1,6 @@
 {
-  "Location": "s3://doris-survey-reports-dev/tmp-for-testing/report-output/069cb8b7-9e1b-4779-ab10-15a13b335a85/part-00000-fd9edf53-e246-4708-ae7e-15552fb9aa4e-c000.json",
+  "Location": "s3://doris-survey-reports-dev/tmp-for-testing/report-output/6ab1d9c7-d01d-41d2-8e7a-a9c5b1da2ad8/part-00000-8dfb07fe-3171-4ed5-87f5-e0b5c0905b82-c000.json",
   "Items": [
-    {
-      "part": "C",
-      "field1": "1",
-      "field2": "1.0",
-      "field3": "12",
-      "field4": "15.0",
-      "field5": "650",
-      "field6": "650",
-      "field7": "650",
-      "field8": "650",
-      "field9": "25",
-      "field10": "30",
-      "field11": "25",
-      "field12": "25",
-      "field13": "25",
-      "field14": "25"
-    },
-    {
-      "part": "B",
-      "field1": "165",
-      "field2": "69",
-      "field3": "234",
-      "field4": "165",
-      "field5": "69",
-      "field6": "234",
-      "field7": "34",
-      "field8": "16",
-      "field9": "50",
-      "field10": "22",
-      "field11": "8",
-      "field12": "30"
-    },
     {
       "part": "A",
       "field1": "1",
@@ -44,6 +12,26 @@
       "field7": "1",
       "field8": "3",
       "field9": "5"
+    },
+    {
+      "part": "C",
+      "field1": "0",
+      "field2": "0",
+      "field3": "0",
+      "field4": "0",
+      "field5": "200",
+      "field6": "200",
+      "field7": "200",
+      "field8": "200",
+      "field9": "1",
+      "field10": "1",
+      "field11": "1",
+      "field12": "1",
+      "field13": "1",
+      "field14": "1"
+    },
+    {
+      "part": "B"
     }
   ]
 }
