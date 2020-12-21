@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20201221  jhanicak                                  Added the new tags to all entities in Academic Libraries for testing
 # 20201202  jhanicak                                  Various mods and fixes - except for DateRange values and ACADEMIC_LIBRARIES_1 - should match prod version
 # 20150813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
 # 20150710  jhanicak/akhasawneh                       Updated for IPEDS 2014-20
@@ -46,6 +47,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -62,27 +67,14 @@ ACADEMIC_LIBRARIES_1:
       - Full Year June End
       - IC Reporting Start
       - HR Reporting End
-      - Fiscal Year Lockdownn
+      - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-
-  - viewName: IPEDSClientConfigRetention
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -97,26 +89,13 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
-
-  - viewName: IPEDSReportingPeriodRetention
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2011-01-01
-      end: 2013-12-31
 
   - viewName: InterlibraryLoanStatistic
     entityName: InterlibraryLoanStatistic
@@ -131,6 +110,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -148,6 +131,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -165,6 +152,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -182,6 +173,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -199,6 +194,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -216,6 +215,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -233,6 +236,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -252,6 +259,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -269,6 +280,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -286,6 +301,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -303,6 +322,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -320,6 +343,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -337,6 +364,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -354,6 +385,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -371,6 +406,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -388,6 +427,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -405,6 +448,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -422,6 +469,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -439,6 +490,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -456,6 +511,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -473,6 +532,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -490,6 +553,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -507,6 +574,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -524,6 +595,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -541,6 +616,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -558,6 +637,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -575,6 +658,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -592,6 +679,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -609,6 +700,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -626,6 +721,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -645,6 +744,10 @@ ACADEMIC_LIBRARIES_1:
       - Fiscal Year Lockdown
       - Department of Defense
       - GI Bill
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -662,6 +765,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -679,6 +786,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -696,6 +807,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -713,6 +828,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -730,6 +849,10 @@ ACADEMIC_LIBRARIES_1:
       - IC Reporting Start
       - HR Reporting End
       - Fiscal Year Lockdown
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
@@ -748,6 +871,10 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - Fiscal Year Lockdown
       - Student Transfer Data
+      - August End
+      - Financial Aid Year End
+      - Academic Year End
+      - October End
     snapshotDateRange:
       start: 2011-01-01
       end: 2014-12-31
