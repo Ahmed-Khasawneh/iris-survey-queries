@@ -1,5 +1,5 @@
 ---
-# ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
+# ---2019 TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
 # DORIS Entity Snapshot View Properties IPEDS Survey TEST FILE
 #
 # This file defines the set of DORIS entities to be included in an IPEDS report for a specific survey type.  For each
@@ -3074,6 +3074,675 @@ INSTITUTIONAL_CHARACTERISTICS_7:
     snapshotDateRange:
       start: 2014-08-01
       end: 2014-10-15
+
+OUTCOME_MEASURES_1:
+  # reporting period: terms within 2006-07-01 to 2007-06-30; as-of dates 2010-08-31, 2012-08-31, 2014-08-31
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2010-08-01
+      end: 2014-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: IPEDSClientConfig  
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+STUDENT_FINANCIAL_AID_1:
+  # reporting period for Cohort: Fall Census 2019 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2017 and prior summer
+  # reporting period for GI Bill: July 1, 2019 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2019 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+STUDENT_FINANCIAL_AID_2:
+  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+STUDENT_FINANCIAL_AID_3:
+  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+STUDENT_FINANCIAL_AID_4:
+  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+STUDENT_FINANCIAL_AID_5:
+  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2018 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2011 and prior summer
+  # reporting period for GI Bill: July 1, 2014 - June 30, 2015
+  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2015
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2014-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2014-12-31
 
 TWELVE_MONTH_ENROLLMENT_1:
   # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30

@@ -2660,10 +2660,7 @@ OUTCOME_MEASURES_1:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2006-05-01
       end: 2007-08-01
@@ -2778,9 +2775,7 @@ STUDENT_FINANCIAL_AID_1:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -2887,9 +2882,7 @@ STUDENT_FINANCIAL_AID_2:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -2996,9 +2989,7 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3105,9 +3096,7 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
@@ -3214,9 +3203,7 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Department of Defense
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2011-05-01
       end: 2014-12-31
