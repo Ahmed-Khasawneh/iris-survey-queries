@@ -1,5 +1,5 @@
 ---
-# ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
+# ---2020 TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
 # DORIS Entity Snapshot View Properties IPEDS Survey TEST FILE
 #
 # This file defines the set of DORIS entities to be included in an IPEDS report for a specific survey type.  For each
@@ -23,7 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
-# 20201222  jhanicak                                  Extended date range to start with 2005 for OM
+# 20201222  jhanicak                                  Extended testing date range to start with 2005 for OM; added entry for OUTCOME_MEASURES_1
 # 20201221  jhanicak                                  Added the new tags to all entities in Academic Libraries for testing
 # 20201202  jhanicak                                  Various mods and fixes - except for DateRange values and ACADEMIC_LIBRARIES_1 - should match prod version
 # 20150813  jhanicak/akhasawneh                       Updated tag list for 12 mo. and Completions to include new 'Full Year June End' and 'Full Year Term' End tags
@@ -2586,6 +2586,143 @@ INSTITUTIONAL_CHARACTERISTICS_7:
       start: 2014-08-01
       end: 2014-10-15
 
+OUTCOME_MEASURES_1:
+  # reporting period: terms within 2006-07-01 to 2007-06-30; as-of dates 2010-08-31, 2012-08-31, 2014-08-31
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2010-08-01
+      end: 2014-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+ - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+    snapshotDateRange:
+      start: 2006-05-01
+      end: 2007-08-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
 STUDENT_FINANCIAL_AID_1:
   # reporting period for Cohort: Fall Census 2019 and prior summer (October 15 )
   # reporting period for Prior Year 1: Fall Census 2018 and prior summer
@@ -3588,7 +3725,6 @@ TWELVE_MONTH_ENROLLMENT_3:
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
-
 
 TWELVE_MONTH_ENROLLMENT_4:
   # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
