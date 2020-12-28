@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
+20201228        akhasawneh                                  Fixes and inclusion of new field 'awardStatusActionDate'. PF-1906
 20201210        akhasawneh                                  Fixes and tag updates per PF-1865, 1861, 1865, 1855
 20201120        jhanicak                                    Update to most current views and formatting; 
                                                             Fixes including filter for First Time students 
@@ -1331,6 +1332,7 @@ from CourseTypeCountsSTU course2
                 partition by
                      course.yearType,
                     FinancialAidENT.financialAidYear,
+                    FinancialAidENT.termCode,
                     course.personId,
 			        FinancialAidENT.fundCode,
 			        FinancialAidENT.fundType,
@@ -1349,10 +1351,13 @@ from CourseTypeCountsSTU course2
         inner join FinancialAid FinancialAidENT on course.personId = FinancialAidENT.personId
 	        and course.financialAidYear = FinancialAidENT.financialAidYear
 		    and FinancialAidENT.isIpedsReportable = 1
-		    and ((to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-			    and to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') <= config.financialAidEndDate
-                and FinancialAidENT.awardStatus not in ('Source Declined', 'Cancelled'))
-				    or to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))
+            and FinancialAidENT.awardStatus not in ('Source Denied', 'Cancelled')
+            and ((to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+			        and to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') <= config.financialAidEndDate)
+                or ((to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
+                    and to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+                    and to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') <= config.financialAidEndDate)
+                        or to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)))
         ) finaid on course2.personId = finaid.personId
 	        and course2.financialAidYear = finaid.financialAidYear
             and finaid.finAidRn = 1
