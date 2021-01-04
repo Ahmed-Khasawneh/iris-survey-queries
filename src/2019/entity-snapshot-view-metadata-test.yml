@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20210104  jhanicak                                  Added new views for status points in OM and GR, modified dates and tags
 # 20201222  jhanicak                                  Extended date range to start with 2005 for OM
 #                                                     Added the new tags to all entities in Academic Libraries for testing
 # 20201023  jhanicak                                  Removed Retention views and finance views for ACADEMIC_LIBRARIES_1
@@ -38,22 +39,9 @@ ACADEMIC_LIBRARIES_1:
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: IPEDSClientConfig
@@ -74,7 +62,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2007-01-01
       end: 2014-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -95,154 +83,63 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2007-01-01
       end: 2014-12-31
 
   - viewName: InterlibraryLoanStatistic
     entityName: InterlibraryLoanStatistic
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: LibraryBranch
     entityName: LibraryBranch
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: LibraryCirculationStatistic
     entityName: LibraryCirculationStatistic
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: LibraryCollectionStatistic
     entityName: LibraryCollectionStatistic
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: LibraryExpenses
     entityName: LibraryExpenses
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: LibraryInventory
     entityName: LibraryInventory
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: LibraryItemTransaction
     entityName: LibraryItemTransaction
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   # Adding all views for testing purposes
@@ -265,7 +162,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
       end: 2014-12-31
 
   - viewName: AcademicTrack
@@ -286,7 +183,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
       end: 2014-12-31
 
   - viewName: Admission
@@ -307,7 +204,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: Award
@@ -328,7 +225,31 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
+      end: 2014-12-31
+
+  - viewName: AwardStatusEarliest
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2010-01-01
+      end: 2012-12-31
+
+  - viewName: AwardStatusMid
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2012-01-01
+      end: 2014-12-31
+
+  - viewName: AwardStatusLatest
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-01-01
       end: 2014-12-31
 
   - viewName: Campus
@@ -349,28 +270,15 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
       end: 2014-12-31
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: CohortExclusion
@@ -391,7 +299,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: Course
@@ -412,7 +320,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
       end: 2014-12-31
 
   - viewName: CourseSection
@@ -433,7 +341,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
       end: 2014-12-31
 
   - viewName: CourseSectionSchedule
@@ -454,7 +362,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
       end: 2014-12-31
 
   - viewName: Degree
@@ -475,7 +383,31 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
+      end: 2014-12-31
+
+  - viewName: DegreeStatusEarliest
+    entityName: Degree
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2010-01-01
+      end: 2012-12-31
+
+  - viewName: DegreeStatusMid
+    entityName: Degree
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2012-01-01
+      end: 2014-12-31
+
+  - viewName: DegreeStatusLatest
+    entityName: Degree
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-01-01
       end: 2014-12-31
 
   - viewName: DegreeProgram
@@ -496,91 +428,63 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
+      end: 2014-12-31
+
+  - viewName: DegreeProgramStatusEarliest
+    entityName: DegreeProgram
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2010-01-01
+      end: 2012-12-31
+
+  - viewName: DegreeProgramStatusMid
+    entityName: DegreeProgram
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2012-01-01
+      end: 2014-12-31
+
+  - viewName: DegreeProgramStatusLatest
+    entityName: DegreeProgram
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-01-01
       end: 2014-12-31
 
   - viewName: Employee
     entityName: Employee
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
       - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: EmployeeAssignment
     entityName: EmployeeAssignment
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
       - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: EmployeePosition
     entityName: EmployeePosition
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
       - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: Faculty
     entityName: Faculty
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
       - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: FieldOfStudy
@@ -601,7 +505,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: FinancialAid
@@ -622,70 +526,31 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2007-01-01
       end: 2014-12-31
 
   - viewName: GeneralLedgerReporting
     entityName: GeneralLedgerReporting
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
       - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: InstitCharUndergradGrad
     entityName: InstitCharUndergradGrad
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
       - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: InstructionalAssignment
@@ -695,18 +560,9 @@ ACADEMIC_LIBRARIES_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
       - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: Major
@@ -719,59 +575,29 @@ ACADEMIC_LIBRARIES_1:
       - June End
       - Full Year Term End
       - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
       - August End
       - Financial Aid Year End
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2010-01-01
       end: 2014-12-31
 
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
       - Department of Defense
       - GI Bill
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: OperatingLedgerReporting
     entityName: OperatingLedgerReporting
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
       - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: Person
@@ -792,7 +618,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
       end: 2014-12-31
 
   - viewName: Registration
@@ -813,7 +639,31 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
+      end: 2014-12-31
+
+  - viewName: RegistrationStatusEarliest
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2010-01-01
+      end: 2012-12-31
+
+  - viewName: RegistrationStatusMid
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2012-01-01
+      end: 2014-12-31
+
+  - viewName: RegistrationStatusLatest
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-01-01
       end: 2014-12-31
 
   - viewName: Student
@@ -834,7 +684,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2006-01-01
       end: 2014-12-31
 
   - viewName: TestScore
@@ -842,42 +692,18 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2012-01-01
       end: 2014-12-31
 
   - viewName: Transfer
     entityName: Transfer
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
       - Student Transfer Data
       - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2005-01-01
+      start: 2014-01-01
       end: 2014-12-31
 
 COMPLETIONS_1:
