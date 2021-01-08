@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20210108  jhanicak                                  Added OM and make other mods, as needed
 # 20201202  jhanicak                                  Moved Student Financial Aid to before 12ME;
 #                                                     Removed AcademicTrack and Degree from 12ME v2 - v4;
 #                                                     Removed Retention views from Fall Enrollment and widened DateRange;
@@ -1828,6 +1829,160 @@ INSTITUTIONAL_CHARACTERISTICS_7:
       start: 2020-08-01
       end: 2020-10-15
 
+OUTCOME_MEASURES_1:
+  # reporting period: terms within 2006-07-01 to 2007-06-30; as-of dates 2010-08-31, 2012-08-31, 2014-08-31
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - August End
+    snapshotDateRange:
+      start: 2012-05-01
+      end: 2020-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2016-08-01
+      end: 2020-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2012-05-01
+      end: 2013-08-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2016-08-01
+      end: 2020-10-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: IPEDSClientConfig  
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2020-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
 STUDENT_FINANCIAL_AID_1:
   # reporting period for Cohort: Fall Census 2019 and prior summer (October 15 )
   # reporting period for Prior Year 1: Fall Census 2018 and prior summer
@@ -1841,7 +1996,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1852,7 +2007,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1863,7 +2018,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1874,7 +2029,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1885,7 +2040,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1893,9 +2048,6 @@ STUDENT_FINANCIAL_AID_1:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - October End
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
@@ -1907,7 +2059,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1918,7 +2070,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1942,7 +2094,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1953,7 +2105,7 @@ STUDENT_FINANCIAL_AID_1:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -1973,7 +2125,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1984,7 +2136,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -1995,7 +2147,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2006,7 +2158,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2017,7 +2169,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2025,9 +2177,6 @@ STUDENT_FINANCIAL_AID_2:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - October End
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
@@ -2039,7 +2188,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2050,7 +2199,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2074,7 +2223,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
     snapshotDateRange:
       start: 2017-05-01
       end: 2019-12-31
@@ -2085,7 +2234,7 @@ STUDENT_FINANCIAL_AID_2:
       - Pre-Fall Summer Census
       - Fall Census
       - October End
-      - Financial Aid Year End
+      - June End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2103,7 +2252,6 @@ STUDENT_FINANCIAL_AID_3:
     entityName: AcademicTerm
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2112,7 +2260,6 @@ STUDENT_FINANCIAL_AID_3:
     entityName: Campus
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2121,7 +2268,6 @@ STUDENT_FINANCIAL_AID_3:
     entityName: Course
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2130,7 +2276,6 @@ STUDENT_FINANCIAL_AID_3:
     entityName: CourseSection
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2139,7 +2284,6 @@ STUDENT_FINANCIAL_AID_3:
     entityName: CourseSectionSchedule
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2147,7 +2291,6 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - June End
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
@@ -2157,7 +2300,6 @@ STUDENT_FINANCIAL_AID_3:
     entityName: IPEDSClientConfig
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2166,7 +2308,6 @@ STUDENT_FINANCIAL_AID_3:
     entityName: IPEDSReportingPeriod
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2174,7 +2315,6 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
-      - June End
       - Financial Aid Year End
       - Department of Defense
       - GI Bill
@@ -2186,7 +2326,6 @@ STUDENT_FINANCIAL_AID_3:
     entityName: Registration
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2213,7 +2352,6 @@ STUDENT_FINANCIAL_AID_4:
     entityName: AcademicTerm
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2222,7 +2360,6 @@ STUDENT_FINANCIAL_AID_4:
     entityName: Campus
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2231,7 +2368,6 @@ STUDENT_FINANCIAL_AID_4:
     entityName: Course
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2240,7 +2376,6 @@ STUDENT_FINANCIAL_AID_4:
     entityName: CourseSection
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2249,7 +2384,6 @@ STUDENT_FINANCIAL_AID_4:
     entityName: CourseSectionSchedule
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2257,7 +2391,6 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - June End
       - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
@@ -2267,7 +2400,6 @@ STUDENT_FINANCIAL_AID_4:
     entityName: IPEDSClientConfig
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2276,7 +2408,6 @@ STUDENT_FINANCIAL_AID_4:
     entityName: IPEDSReportingPeriod
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2284,7 +2415,6 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
-      - June End
       - Financial Aid Year End
       - Department of Defense
       - GI Bill
@@ -2296,7 +2426,6 @@ STUDENT_FINANCIAL_AID_4:
     entityName: Registration
     tagNames:
       - June End
-      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2322,53 +2451,47 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - June End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Campus
     entityName: Campus
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - June End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Course
     entityName: Course
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - June End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: CourseSection
     entityName: CourseSection
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - June End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - June End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - Financial Aid Year End
     snapshotDateRange:
       start: 2017-05-01
       end: 2020-12-31
@@ -2376,24 +2499,23 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - June End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - June End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
@@ -2403,15 +2525,16 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: Registration
     entityName: Registration
     tagNames:
-      - Department of Defense
-      - GI Bill
+      - June End
     snapshotDateRange:
       start: 2017-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Student
     entityName: Student
     tagNames:
+      - June End
+      - Financial Aid Year End
       - Department of Defense
       - GI Bill
     snapshotDateRange:
