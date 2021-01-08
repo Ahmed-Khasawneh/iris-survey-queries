@@ -46,7 +46,7 @@ WITH DefaultValues as (
  For some schools, it could be based on dates or academic year and for others,
  it may be by listing specific terms. 
  *******************************************************************/ 
-/*
+
 --Prod blocks (2)
 select '2021' surveyYear, 
 	'OM1' surveyId,  
@@ -104,7 +104,7 @@ select '2021' surveyYear,
     CAST('2014-08-31' as DATE) latestStatusDate
 --***** end survey-specific mods
 
-*/
+/*
 
 --Testing blocks (2 min)
 select '1415' surveyYear,  
@@ -162,7 +162,7 @@ select '1415' surveyYear,
     CAST('2012-08-31' as DATE) midStatusDate,
     CAST('2014-08-31' as DATE) latestStatusDate
 --***** end survey-specific mods
-
+*/
 ),
 
 ReportingPeriodMCR as (
