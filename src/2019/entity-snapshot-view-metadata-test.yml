@@ -2980,7 +2980,7 @@ OUTCOME_MEASURES_1:
       start: 2006-05-01
       end: 2007-08-01
 
-  - viewName: IPEDSClientConfig  
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - August End
@@ -3586,7 +3586,7 @@ TWELVE_MONTH_ENROLLMENT_1:
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
-      
+
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
@@ -3610,7 +3610,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3624,7 +3624,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3638,7 +3638,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3652,7 +3652,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3666,7 +3666,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3680,7 +3680,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3694,7 +3694,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3708,7 +3708,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3722,7 +3722,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3739,7 +3739,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3753,7 +3753,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End      
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3767,7 +3767,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3781,7 +3781,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3795,7 +3795,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3809,7 +3809,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3823,7 +3823,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3837,7 +3837,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3851,7 +3851,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
@@ -3865,7 +3865,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Post-Spring Summer Census
       - June End
       - Full Year Term End
-      - Full Year June End  
+      - Full Year June End
     snapshotDateRange:
       start: 2013-05-01
       end: 2014-08-01
