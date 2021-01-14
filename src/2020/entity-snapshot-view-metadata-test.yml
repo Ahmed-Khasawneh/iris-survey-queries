@@ -702,7 +702,6 @@ ACADEMIC_LIBRARIES_1:
     entityName: Transfer
     tagNames:
       - Student Transfer Data
-      - August End
     snapshotDateRange:
       start: 2014-01-01
       end: 2014-12-31
