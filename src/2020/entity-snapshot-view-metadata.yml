@@ -1496,8 +1496,8 @@ GRADUATION_RATES_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2014-05-01
-      end: 2014-10-01
+      start: 2020-05-01
+      end: 2020-10-01
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
