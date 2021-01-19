@@ -1497,7 +1497,7 @@ GRADUATION_RATES_1:
       - August End
     snapshotDateRange:
       start: 2014-05-01
-      end: 2014-10-01
+      end: 2020-10-01
 
   - viewName: AcademicTrack
     entityName: AcademicTrack

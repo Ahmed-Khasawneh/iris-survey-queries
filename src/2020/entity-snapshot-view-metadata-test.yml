@@ -702,6 +702,7 @@ ACADEMIC_LIBRARIES_1:
     entityName: Transfer
     tagNames:
       - Student Transfer Data
+      - August End
     snapshotDateRange:
       start: 2014-01-01
       end: 2014-12-31
@@ -2067,6 +2068,176 @@ FINANCE_6:
       - Fiscal Year Lockdown
     snapshotDateRange:
       start: 2014-01-01
+      end: 2014-10-01
+
+GRADUATION_RATES_1:
+  # reporting period: terms within 2006-07-01 to 2007-06-30; as-of dates 2010-08-31, 2012-08-31, 2014-08-31
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2014-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2008-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2012-08-01
+      end: 2014-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2008-10-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2008-10-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2008-10-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2008-10-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2014-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2014-10-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2009-03-01
+      end: 2009-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2008-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2014-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2014-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2008-10-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2014-08-01
       end: 2014-10-01
 
 HUMAN_RESOURCES_1:
