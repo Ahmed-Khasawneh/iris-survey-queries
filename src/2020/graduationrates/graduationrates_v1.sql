@@ -4,7 +4,7 @@ EVI PRODUCT:	DORIS 2020-21 IPEDS Survey
 FILE NAME: 		Graduation Rates v1 (GR1)
 FILE DESC:      Graduation Rates Full Instructions - 4-Year Institutions
 AUTHOR:         akhasawneh
-CREATED:        20201117
+CREATED:        20210121
 
 SECTIONS:
 Reporting Dates/Terms
@@ -16,7 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	------------------------------------------------- 
-20201117	        akhasawneh				                    Initial version (runtime: m, s)
+20210121	        akhasawneh				                    Initial version (runtime: prod 1h 37m 35s, test 1h 24m 11s)
 
 ********************/ 
 
@@ -27,18 +27,20 @@ The views below are used to determine the dates, academic terms, academic year, 
 
 WITH DefaultValues as (
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
-/*
+
 --Production Default (Begin)
 select '2021' surveyYear, 
 	'GR1' surveyId,
-	'Fall Census' repPeriodTag1,
-	'Fall Census' repPeriodTag2,
+	'August End' repPeriodTag1, --used for all status updates and IPEDS tables
+	'Financial Aid Year End' repPeriodTag2, --used to pull FA for cohort
+    'Student Transfer Data' repPeriodTag3, --used to pull transfer out data for last update
+    null repPeriodTag4,
 	CAST('9999-09-09' as DATE) snapshotDate,  
 	CAST('2014-07-01' AS DATE) reportingDateStart,
-	CAST('2020-06-30' AS DATE) reportingDateEnd,
+	CAST('2020-08-31' AS DATE) reportingDateEnd,
 	'201410' termCode, --Fall 2014
 	'1' partOfTermCode, 
-	CAST('2014-10-15' AS DATE) censusDate,
+	CAST('2014-09-15' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
@@ -47,25 +49,32 @@ select '2021' surveyYear,
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+    CAST('2015-05-30' as DATE) financialAidEndDate, --For GR report: only aid for first year of enrollment(July 1 - June 30)
+    CAST('2018-08-31' as DATE) earliestStatusDate, --BS4YrDate
+    CAST('2019-08-31' as DATE) midStatusDate, --BS5YrDate
+    CAST('2020-08-31' as DATE) latestStatusDate, --BS6YrDate
 --***** start survey-specific mods
 	CAST('2015-08-31' AS DATE) cohortDateEnd,
     'D' compGradDateOrTerm,
     'Fall' surveySection,
-	'000000' ncSchoolCode
+	'000000' ncSchoolCode,
+    '00' ncBranchCode
 --***** end survey-specific mods
 
 union
 
 select '2021' surveyYear, 
 	'GR1' surveyId,
-	'Fall Census' repPeriodTag1,
-	'Fall Census' repPeriodTag2,
+	'August End' repPeriodTag1, --used for all status updates and IPEDS tables
+	'Financial Aid Year End' repPeriodTag2, --used to pull FA for cohort
+    'Student Transfer Data' repPeriodTag3, --used to pull transfer out data for last update
+    null repPeriodTag4,
 	CAST('9999-09-09' as DATE) snapshotDate,  
 	CAST('2014-07-01' AS DATE) reportingDateStart,
-	CAST('2020-06-30' AS DATE) reportingDateEnd,
+	CAST('2020-08-31' AS DATE) reportingDateEnd,
 	'201430' termCode, --Fall 2014
 	'1' partOfTermCode, 
-	CAST('2014-10-15' AS DATE) censusDate,
+	CAST('2014-06-15' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'CR' instructionalActivityType, --'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no record or null value): CR'
@@ -74,14 +83,19 @@ select '2021' surveyYear,
     'Y' icOfferUndergradAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferGraduateAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
     'Y' icOfferDoctorAwardLevel, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+    CAST('2015-05-30' as DATE) financialAidEndDate, --For GR report: only aid for first year of enrollment(July 1 - June 30)
+    CAST('2018-08-31' as DATE) earliestStatusDate, --BS4YrDate
+    CAST('2019-08-31' as DATE) midStatusDate, --BS5YrDate
+    CAST('2020-08-31' as DATE) latestStatusDate, --BS6YrDate
 --***** start survey-specific mods
 	CAST('2015-08-31' AS DATE) cohortDateEnd,
     'D' compGradDateOrTerm,
-    'Prior Summer' surveySection,
-	'000000' ncSchoolCode
+    'Fall' surveySection,
+	'000000' ncSchoolCode,
+    '00' ncBranchCode
 --***** end survey-specific mods
-*/
 
+/*
 --Test Default (Begin)
 select '1415' surveyYear, 
 	'GR1' surveyId,
@@ -90,7 +104,7 @@ select '1415' surveyYear,
     'Student Transfer Data' repPeriodTag3, --used to pull transfer out data for last update
     null repPeriodTag4,
 	CAST('9999-09-09' as DATE) snapshotDate,  
-	CAST('2008-07-01' AS DATE) reportingDateStart, --(July 1 - June 30)
+	CAST('2008-07-01' AS DATE) reportingDateStart, 
 	CAST('2014-08-31' AS DATE) reportingDateEnd,
 	'200810' termCode, --Fall 2008
 	'1' partOfTermCode, 
@@ -149,6 +163,7 @@ select '1415' surveyYear,
     '00' ncBranchCode
 --***** end survey-specific mods
 --Test Default (End)
+*/
 ),
 
 ReportingPeriodMCR as (
@@ -203,9 +218,9 @@ from (
 		) reportPeriodRn	
 		from IPEDSReportingPeriod repperiodENT
 		    inner join DefaultValues defvalues on repperiodENT.surveyId = defvalues.surveyId
-	    and repperiodENT.surveyCollectionYear = defvalues.surveyYear
-	    --where repperiodENT.termCode is not null
-		--and repperiodENT.partOfTermCode is not null
+	            and repperiodENT.surveyCollectionYear = defvalues.surveyYear
+	    where repperiodENT.termCode is not null
+		    and repperiodENT.partOfTermCode is not null
 	
     union 
  
@@ -229,8 +244,8 @@ from (
 										  from IPEDSReportingPeriod repperiodENT
 										  where repperiodENT.surveyCollectionYear = defvalues.surveyYear
 											and upper(repperiodENT.surveyId) = defvalues.surveyId 
-											--and repperiodENT.termCode is not null
-											--and repperiodENT.partOfTermCode is not null
+											and repperiodENT.termCode is not null
+											and repperiodENT.partOfTermCode is not null
 										) 
     ) RepDates
 where RepDates.reportPeriodRn = 1
@@ -518,172 +533,9 @@ select distinct repperiod.surveySection surveySection,
             and repperiod.partOfTermCode = acadterm.partOfTermCode
         left join AcademicTermOrder termorder on termOrder.termCode = repperiod.termCode
         inner join ClientConfigMCR clientconfig on repperiod.surveyYear = clientconfig.surveyYear
-    --where upper(repperiod.surveySection) in ('FALL', 'PRIOR SUMMER', 'BS FOUR YEAR', 'BS FIVE YEAR' 'BS SIX YEAR') -- Oddly, this filter causes 4 and 5 year sections to not print even though the strings match.
     ) repPerTerms
 where repPerTerms.acadTermRnReg = 1 
 ),
-
-/*
-AcademicTermReporting as (
---Combines ReportingPeriodMCR and AcademicTermMCR in order to use the correct snapshot dates for the reporting terms
-
---	first order field: assign 1 if acadterm.snapshotDate falls within the acadterm.census range and the acadterm.tags value matches with the acadterm.termType
---  first order field: assign 2 if acadterm.snapshotDate falls within the acadterm.census range but acadterm.tags/acadterm.termType values don't match
---  first order field: assign 3 if acadterm.snapshotDate doesn't fall within the acadterm.census range and acadterm.tags/acadterm.termType values don't match
---  second order field: acadterm.snapshotDates before the acadterm.census range ordered so the snapshotDate closest to the censusDate is first - ascending
---  third order field: acadterm.snapshotDates after the acadterm.census range ordered so the snapshotDate closest to the censusDate is first - descending
---  if none of the above, order by repperiod.snapshotDate
-
-select coalesce(repPerTerms.yearType, 'CY') yearType,
-        repPerTerms.surveySection surveySection,
-        repPerTerms.termCode termCode,
-        repPerTerms.partOfTermCode partOfTermCode,
-        repPerTerms.financialAidYear financialAidYear,
-        repPerTerms.termOrder termOrder,
-        repPerTerms.maxCensus maxCensus,
-        repPerTerms.snapshotDate snapshotDate,
-        repPerTerms.reportingDateStart reportingDateStart,
-        --repPerTerms.reportingDateEnd reportingDateEnd, 
-        repPerTerms.termClassification termClassification,
-        repPerTerms.termType termType,
-        repPerTerms.startDate startDate,
-        repPerTerms.endDate endDate,
-        repPerTerms.censusDate censusDate,
-        repPerTerms.requiredFTCreditHoursGR,
-	    repPerTerms.requiredFTCreditHoursUG,
-	    repPerTerms.requiredFTClockHoursUG,
-	    repPerTerms.genderForUnknown,
-		repPerTerms.genderForNonBinary,
-		repPerTerms.instructionalActivityType,
-	    repPerTerms.equivCRHRFactor equivCRHRFactor,
-        (case when repPerTerms.termClassification = 'Standard Length' then 1
-             when repPerTerms.termClassification is null then (case when repPerTerms.termType in ('Fall', 'Spring') then 1 else 2 end)
-             else 2
-        end) fullTermOrder,
---***** start survey-specific mods
-        repPerTerms.cohortDateEnd cohortDateEnd,
-        repPerTerms.surveyYear surveyYear,
-        repPerTerms.compGradDateOrTerm compGradDateOrTerm,
-		repPerTerms.ncSchoolCode ncSchoolCode
---***** end survey-specific mods
-from (
-    select *
-    from (
-        select distinct 'CY' yearType,
-                repperiod.surveySection surveySection,
-                repperiod.termCode termCode,
-                repperiod.partOfTermCode partOfTermCode,
-                acadterm.financialAidYear financialAidYear,
-                acadterm.snapshotDate snapshotDate,
-                repperiod.reportingDateStart reportingDateStart,
-                --repperiod.reportingDateEnd reportingDateEnd,
-                acadterm.tags tags,
-                coalesce(acadterm.censusDate, repperiod.censusDate) censusDate,
-                termorder.termOrder termOrder,
-                termorder.maxCensus maxCensus,
-                acadterm.termClassification termClassification,
-                acadterm.termType termType,
-                acadterm.startDate startDate,
-                acadterm.endDate endDate,
-                acadterm.requiredFTCreditHoursGR,
-                acadterm.requiredFTCreditHoursUG,
-                acadterm.requiredFTClockHoursUG,
-                clientconfig.genderForUnknown,
-                clientconfig.genderForNonBinary,
-                clientconfig.instructionalActivityType,
-                coalesce(acadterm.requiredFTCreditHoursUG/
-                    coalesce(acadterm.requiredFTClockHoursUG, acadterm.requiredFTCreditHoursUG), 1) equivCRHRFactor,
-                row_number() over (
-                    partition by 
-                        repperiod.termCode,
-                        repperiod.partOfTermCode
-                    order by
-                        (case when acadterm.snapshotDate <= to_date(date_add(acadterm.censusdate, 3), 'YYYY-MM-DD') 
-                                    and acadterm.snapshotDate >= to_date(date_sub(acadterm.censusDate, 1), 'YYYY-MM-DD') 
-                                    and ((array_contains(acadterm.tags, 'Fall Census') and acadterm.termType = 'Fall' and repperiod.surveySection = 'FALL')
-                                        or (array_contains(acadterm.tags, 'Pre-Fall Summer Census') and acadterm.termType = 'Summer' and repperiod.surveySection = 'PRIOR SUMMER')) then 1
-                              when acadterm.snapshotDate <= to_date(date_add(acadterm.censusdate, 3), 'YYYY-MM-DD') 
-                                    and acadterm.snapshotDate >= to_date(date_sub(acadterm.censusDate, 1), 'YYYY-MM-DD') then 2
-                             else 3 end) asc,
-                        (case when acadterm.snapshotDate > acadterm.censusDate then acadterm.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
-                        (case when acadterm.snapshotDate < acadterm.censusDate then acadterm.snapshotDate else CAST('1900-09-09' as DATE) end) desc
-                    ) acadTermRnReg,
-        --***** start survey-specific mods
-                clientconfig.cohortDateEnd cohortDateEnd,
-                repperiod.surveyYear surveyYear,
-                clientconfig.compGradDateOrTerm compGradDateOrTerm,
-                clientconfig.ncSchoolCode ncSchoolCode
-        --***** end survey-specific mods
-            from ReportingPeriodMCR repperiod 
-                left join AcademicTermMCR acadterm on repperiod.termCode = acadterm.termCode
-                    and repperiod.partOfTermCode = acadterm.partOfTermCode
-                left join AcademicTermOrder termorder on termOrder.termCode = repperiod.termCode
-                inner join ClientConfigMCR clientconfig on repperiod.surveyYear = clientconfig.surveyYear
-            )
-        where acadTermRnReg = 1 
-        
-        union
-        
-        select *
-        from (
-            select distinct 'SY' yearType,
-                    config.surveySection surveySection,
-                    acadterm.termCode termCode,
-                    acadterm.partOfTermCode partOfTermCode,
-                    acadterm.financialAidYear financialAidYear,
-                    acadterm.snapshotDate snapshotDate,
-                    config.reportingDateStart reportingDateStart,
-                    --repperiod.reportingDateEnd reportingDateEnd,
-                    acadterm.tags tags,
-                    acadterm.censusDate censusDate,
-                    termorder.termOrder termOrder,
-                    termorder.maxCensus maxCensus,
-                    acadterm.termClassification termClassification,
-                    acadterm.termType termType,
-                    acadterm.startDate startDate,
-                    acadterm.endDate endDate,
-                    acadterm.requiredFTCreditHoursGR,
-                    acadterm.requiredFTCreditHoursUG,
-                    acadterm.requiredFTClockHoursUG,
-                    config.genderForUnknown,
-                    config.genderForNonBinary,
-                    config.instructionalActivityType,
-                    coalesce(acadterm.requiredFTCreditHoursUG/
-                        coalesce(acadterm.requiredFTClockHoursUG, acadterm.requiredFTCreditHoursUG), 1) equivCRHRFactor,
-                    row_number() over (
-                        partition by 
-                            acadterm.termCode,
-                            acadterm.partOfTermCode
-                        order by
-                            (case when array_contains(acadterm.tags, config.repPeriodTag1) then 1 else 2 end) asc,
-                            acadterm.snapshotDate desc
-                        ) acadTermRnReg,
-            --***** start survey-specific mods
-                    config.cohortDateEnd cohortDateEnd,
-                    config.surveyYear surveyYear,
-                    config.compGradDateOrTerm compGradDateOrTerm,
-                    config.ncSchoolCode ncSchoolCode
-            --***** end survey-specific mods
-            from AcademicTermMCR acadterm 
-            left join AcademicTermOrder termorder on termOrder.termCode = acadterm.termCode
-            cross join (select first(latestStatusDate) latestStatusDate,
-                                first(repPeriodTag1) repPeriodTag1,
-                                first(genderForUnknown) genderForUnknown,
-                                first(genderForNonBinary) genderForNonBinary,
-                                first(instructionalActivityType) instructionalActivityType,
-                                first(cohortDateEnd) cohortDateEnd,
-                                first(surveyYear) surveyYear,
-                                first(compGradDateOrTerm) compGradDateOrTerm,
-                                first(reportingDateStart) reportingDateStart,
-                                first(surveySection) surveySection,
-                                first(ncSchoolCode) ncSchoolCode
-                        from ClientConfigMCR) config 
-            where acadterm.startDate between date_sub(config.latestStatusDate, 90) and date_add(config.latestStatusDate, 60)
-            )
-        where acadTermRnReg = 1
-    ) repPerTerms
-),
-*/
 
 AcademicTermReportingRefactor as (
 --Returns all records from AcademicTermReporting, converts Summer terms to Pre-Fall or Post-Spring and creates reportingDateStart/End
@@ -722,9 +574,6 @@ The views below pull the most recent records based on activity date and other fi
 
 CampusMCR as ( 
 -- Returns most recent campus record for all snapshots in the ReportingPeriod
--- We only use campus for international status. We are maintaining the ability to look at a campus at different points in time through relevant snapshots. 
--- Will there ever be a case where a campus changes international status? 
--- Otherwise, we could just get all unique campus codes and forget about when the record was made.
 
 select campus,
 	isInternational,
@@ -751,10 +600,11 @@ where campusRn = 1
 ),
 
 DegreeMCR as (
+-- Returns all degree values at the end of the reporting period
 
 select *
 from (
-select upper(degreeENT.degree) degree,
+    select upper(degreeENT.degree) degree,
                 degreeENT.degreeLevel degreeLevel,
                 degreeENT.awardLevel awardLevel,
                 to_date(degreeENT.snapshotDate, 'YYYY-MM-DD') snapshotDate,
@@ -836,7 +686,7 @@ where programRN = 1
 ),
 
 ProgramAwardLevel as (
--- Returns all degreeProgram values at the end of the reporting period
+-- Returns all degreeProgram and the degree award level values at the end of the reporting period
 
 select *
 from (
@@ -1698,7 +1548,7 @@ select pers2.yearType,
         pers2.reportingDateStart,
         pers2.cohortDateEnd,
         pers2.personId,
-        pers2.termCode, --student firstFullTerm
+        pers2.termCode, 
         pers2.termOrder,
         pers2.termStart,
         pers2.ipedsGender,
@@ -1712,7 +1562,7 @@ select pers2.yearType,
               when finaid.isSubLoanRec > 0 then 1 
               else 0 
         end) isSubLoanRec
-from PersonMCR pers2 --CourseTypeCountsSTU course2
+from PersonMCR pers2 
     left join (  
         select personId personId,
                 sum((case when isPellGrant = 'Y' then IPEDSOutcomeMeasuresAmount else 0 end)) isPellRec,
@@ -1766,10 +1616,7 @@ from PersonMCR pers2 --CourseTypeCountsSTU course2
 ),
 
 AcademicTrackMCR as (
---Returns most up to date student academic track information as of their award date and term. 
---"If a student has switched programs, you will calculate 150% of normal time to completion based on his or her most recent program for reporting outcomes. 
--- However, the student's "clock" does not reset once they switch programs."
---! 186 count at this point. 
+--Returns most current data based on initial academic track of student
 
 select * 
 from (
@@ -1789,20 +1636,23 @@ from (
 			finaid2.isSubLoanRec isSubLoanRec,
 			finaid2.compGradDateOrTerm compGradDateOrTerm,
 			finaid2.ncSchoolCode ncSchoolCode,
-			--acadtrack.degree degreeCOH,
-            coalesce(acadtrack.degreeCOH, 'BA') degreeCOH,
-            --acadtrack.collegeCOH collegeCOH,
-            coalesce(acadtrack.collegeCOH, 'AS') collegeCOH,
-            coalesce(acadtrack.campusCOH, 'BA') campusCOH,
+			acadtrack.degreeCOH degreeCOH,           
+            acadtrack.collegeCOH collegeCOH,
+            acadtrack.campusCOH campusCOH,
             acadtrack.departmentCOH departmentCOH,
-            --acadtrackENT.termCodeEffective termCodeEffective,
-            coalesce(acadtrack.degreeProgramCOH, 'BA-ENGL') degreeProgramCOH,
-            --acadtrack.academicTrackLevelCOH academicTrackLevelCOH,
-            coalesce(acadtrack.academicTrackLevelCOH, 'Undergrad') academicTrackLevelCOH,
-            --acadtrack.fieldOfStudyCOH fieldOfStudyCOH,
-            coalesce(acadtrack.fieldOfStudyCOH, 'ENGL') fieldOfStudyCOH,
-            --acadtrack.fieldOfStudyPriorityCOH fieldOfStudyPriorityCOH,
+            acadtrack.degreeProgramCOH degreeProgramCOH,
+            acadtrack.academicTrackLevelCOH academicTrackLevelCOH,
+            acadtrack.fieldOfStudyCOH fieldOfStudyCOH,
             coalesce(acadtrack.fieldOfStudyPriorityCOH, 1) fieldOfStudyPriorityCOH,
+--internal testing
+            --coalesce(acadtrack.fieldOfStudyCOH, 'ENGL') fieldOfStudyCOH,
+            --coalesce(acadtrack.degreeProgramCOH, 'BA-ENGL') degreeProgramCOH,
+            --coalesce(acadtrack.academicTrackLevelCOH, 'Undergrad') academicTrackLevelCOH,
+            --coalesce(acadtrack.campusCOH, 'BA') campusCOH,
+            --coalesce(acadtrack.collegeCOH, 'AS') collegeCOH,
+            --acadtrack.fieldOfStudyPriorityCOH fieldOfStudyPriorityCOH,
+            --coalesce(acadtrack.degreeCOH, 'BA') degreeCOH,
+--internal testing end
             row_number() over (
                 partition by
                     finaid2.personId
@@ -1815,7 +1665,7 @@ from (
                         row_number() over (
                             partition by					
                                 finaid.yearType,
-                                acadTrackENT.personId, --coalesce(acadTrackENT.personId, finaid.personId),
+                                acadTrackENT.personId,
                                 acadtrackENT.degree,
                                 acadtrackENT.degreeProgram,
                                 acadtrackENT.fieldOfStudyPriority
@@ -1869,6 +1719,7 @@ select *,
 	least(to_date(add_months(termStart, (lengthInMonths * 1.5)),'YYYY-MM-DD'), latestStatusDate) gradDate150
 from (
     select acadtrack.personId personId,
+			(case when deg.awardLevelNo = 3 then 2 else 3 end) subCohort, --2 bach-seeking, 3 other-seeking
 			acadtrack.yearType yearType,
             acadtrack.snapshotDate snapshotDate,
 			acadtrack.termCode termCode,
@@ -1892,11 +1743,6 @@ from (
             acadtrack.fieldOfStudyCOH fieldOfStudyCOH,
             deg.awardLevel awardLevel,
 			deg.awardLevelNo awardLevelNo,
---Section table (defines cohort)
---1 - Establishing cohorts, cohort year 2013
---2 - Subcohort of full-time, first-time students seeking a bachelor's or equivalent degree, cohort year 2013
---3 - Subcohort of full-time, first-time students seeking other than a bachelor's degree, cohort year 2013
-			(case when deg.awardLevelNo = 3 then 2 else 3 end) subCohort,
 			acadtrack.termStart termStart,
 			deg.lengthInMonths lengthInMonths,
 			defval.earliestStatusDate earliestStatusDate,
@@ -1925,11 +1771,11 @@ from (
                         from DefaultValues) defval
         )
 where degRn = 1
-or degRn is null
+    or degRn is null
 ),
 
 AwardMCR as (
---Pulls all distinct student awards obtained as-of four year status date '2010-08-31'
+--Pulls all distinct student awards obtained as-of four year status date '2020-08-31'
 
 select cohort2.personId personId,
 			cohort2.subCohort subCohort,
@@ -2015,11 +1861,10 @@ select cohort2.personId personId,
                where isInternational = false
                     and awardLatestRn = 1
 		) awardData on cohort2.personId = awardData.personId
-) ,
+),
     
 CohortStatus as (
--- Pulls degree information as of the reporting period
---Priority of reporting status: completers, transfer, exclusion, still enrolled
+-- Pulls degree information as of the reporting period and assigns status based on priority (in order): completers, transfer, exclusion, still enrolled
 
 select personId personId,
         subCohort subCohort, --2 bach-seeking, 3 other-seeking
@@ -2027,9 +1872,6 @@ select personId personId,
 		isSubLoanRec isSubLoanRec,
         ipedsGender ipedsGender,
 		ipedsEthnicity ipedsEthnicity,
-        latestStatusDate latestStatusDate,
-        snapshotDate snapshotDate,
-        termOrder termOrder,
         (case when ipedsEthnicity ='1' and ipedsGender = 'M' then 1 else 0 end) field1, --Nonresident Alien
         (case when ipedsEthnicity ='1' and ipedsGender = 'F' then 1 else 0 end) field2,
         (case when ipedsEthnicity ='2' and ipedsGender = 'M' then 1 else 0 end) field3, -- Hispanic/Latino
@@ -2048,18 +1890,24 @@ select personId personId,
         (case when ipedsEthnicity ='8' and ipedsGender = 'F' then 1 else 0 end) field16,
         (case when ipedsEthnicity ='9' and ipedsGender = 'M' then 1 else 0 end) field17, -- Race and ethnicity unknown
         (case when ipedsEthnicity ='9' and ipedsGender = 'F' then 1 else 0 end) field18,
-        (case when awardedDate <= gradDate150AW and awardedAwardLevelNo = 1 then 11
-              when awardedDate <= gradDate150AW and awardedAwardLevelNo = 2 then 12
-              when gradDate100AW is not null and awardedDate <= gradDate100AW then 19
-              when gradDate125AW is not null and awardedDate between gradDate100AW and gradDate125AW then 20
-              when awardedDate <= gradDate150AW and awardedAwardLevelNo = 3 then 18
-              when transPersonId is not null then 30
-              when exclPersonId is not null then 45  
-              when regPersonId is not null then 51
-              else null end) cohortStatus,
-        (case when awardedDate <= gradDate150AW and awardedAwardLevelNo = 3 then 1 else 0 end) stat18, --Completed bachelor's degree or equivalent within 150%
-        (case when awardedDate <= gradDate150AW then 1 else 0 end) stat29, --Total completers within 150%
-        (case when transPersonId is null and exclPersonId is not null then 1 else 0 end) stat45 --Total exclusions
+--if awarded degree program is less than 2 years and within the awarded grad date 150%
+        (case when awardedAwardLevelNo = 1 and awardedDate <= gradDate150AW then 1 else 0 end) stat11,
+--if awarded degree program is at least 2 years and less than 4 years and within the awarded grad date 150%
+        (case when awardedAwardLevelNo = 2 and awardedDate <= gradDate150AW then 1 else 0 end) stat12,
+--if awarded degree program is bachelor level and within the awarded grad date 150% 
+        (case when awardedAwardLevelNo = 3 and awardedDate <= gradDate150AW then 1 else 0 end) stat18,
+--if awarded degree program is bachelor and initial degree program is bachelor and within the awarded grad date of 100% (4 years)
+        (case when gradDate100AW is not null and awardedDate <= gradDate100AW then 1 else 0 end) stat19,
+--if awarded degree program is bachelor and initial degree program is bachelor and within the awarded grad date of 125% (5 years)
+        (case when gradDate125AW is not null and awardedDate between gradDate100AW and gradDate125AW then 1 else 0 end) stat20,
+--if awarded degree program within the awarded grad date 150%
+        (case when awardedDate <= gradDate150AW then 1 else 0 end) stat29,
+--if no award and transfered out (awardInd filter used in join to TransferMCR)
+        (case when transPersonId is not null then 1 else 0 end) stat30,
+--if no award, not transfered out and an exclusion (awardInd filter used in join to CohortExclusionMCR)
+        (case when transPersonId is null and exclPersonId is not null then 1 else 0 end) stat45,
+--if no award, not transfered out, not an exclusion and is still registered (awardInd filter used in join to RegStatusMCR) 
+        (case when transPersonId is null and exclPersonId is null and regPersonId is not null then 1 else 0 end) stat51
 from (
     select award2.personId personId,
             award2.subCohort subCohort,
@@ -2079,12 +1927,13 @@ from (
             AwardDegData.awardedAwardLevel awardedAwardLevel,
             AwardDegData.awardedAwardLevelNo awardedAwardLevelNo,
             AwardDegData.awardedLengthInMonths awardedLengthInMonths,
+--if awarded degree program is same length as initial degree program, grad date 150% is same, else re-calculate based on awarded degree program
             (case when AwardDegData.awardedLengthInMonths = award2.lengthInMonthsCOH then gradDate150COH
                     else least(to_date(add_months(award2.termStart, (AwardDegData.awardedLengthInMonths * 1.5)),'YYYY-MM-DD'), award2.latestStatusDate) end) gradDate150AW,
-            (case when award2.subCohort = 2 and AwardDegData.awardedAwardLevelNo = 3 then
-                        least(to_date(add_months(award2.termStart, (AwardDegData.awardedLengthInMonths * 1.25)),'YYYY-MM-DD'), award2.midStatusDate) end) gradDate125AW,
-             (case when award2.subCohort = 2 and AwardDegData.awardedAwardLevelNo = 3 then
-                        least(to_date(add_months(award2.termStart, AwardDegData.awardedLengthInMonths),'YYYY-MM-DD'), award2.earliestStatusDate) end) gradDate100AW,
+--if initial degree program is bachelor level and awarded degree program is bachelor level, use awarded degree program to calculate grad date 125%
+            (case when award2.subCohort = 2 and AwardDegData.awardedAwardLevelNo = 3 then least(to_date(add_months(award2.termStart, (AwardDegData.awardedLengthInMonths * 1.25)),'YYYY-MM-DD'), award2.midStatusDate) end) gradDate125AW,
+--if initial degree program is bachelor level and awarded degree program is bachelor level, use awarded degree program to calculate grad date 100%
+             (case when award2.subCohort = 2 and AwardDegData.awardedAwardLevelNo = 3 then least(to_date(add_months(award2.termStart, AwardDegData.awardedLengthInMonths),'YYYY-MM-DD'), award2.earliestStatusDate) end) gradDate100AW,
             exclusion.personId exclPersonId,
             transfer.personId transPersonId,
             reg.personId regPersonId
@@ -2132,32 +1981,66 @@ from (
                 and award2.awardedDegree = AwardDegData.awardedDegree
                 and award2.awardedDegreeLevel = AwardDegData.awardedDegreeLevel
                 and AwardDegData.awardRn = 1
-        left join CohortExclusionMCR exclusion on award2.personId = exclusion.personId
         left join TransferMCR transfer on award2.personId = transfer.personId
+            and award2.awardInd = 0
+        left join CohortExclusionMCR exclusion on award2.personId = exclusion.personId
+            and award2.awardInd = 0
         left join RegStatusMCR reg on award2.personId = reg.personId
+            and award2.awardInd = 0
     )
-) --,
+),
 
 /*****
 BEGIN SECTION - Formatting Views
 The views below are used to ensure that records exist for all IPEDS expected values even if the query result set doesn't contain records that meet all value conditions.
 *****/
 
-FormatPartBSection2And3 as (
+estabSubCohortPartB1 as (
+
+select *
+from (
+    VALUES
+        (1), -- Revised cohort of all full-time, first-time degree or certificate seeking undergraduates, cohort year 2014
+        (2)  -- Subcohort of full-time, first-time students seeking a bachelor's or equivalent degree, cohort year 2014
+    ) as PartBSection1 (subcoh)
+),
+
+estabSubCohort as (
+
+select *
+from (
+    VALUES
+        (2), -- Subcohort of full-time, first-time students seeking a bachelor's or equivalent degree, cohort year 2014
+        (3)  -- Subcohort of full-time, first-time students seeking other than a bachelor's degree, cohort year 2014
+    ) as estSubCohort (subcoh)
+),
+
+FormatPartB as (
+
 select *
 from (
 	VALUES
-		--(10), -- 10 - Number of students in cohort
 		(11), -- 11 - Completers of programs of less than 2 years within 150% of normal time --all
 		(12), -- 12 - Completers of programs of at least 2 but less than 4 years within 150% of normal time --all
 		(18), -- 18 - Completers of bachelor's or equivalent degree programs within 150% of normal time --all
 		(19), -- 19 - Completers of bachelor's or equivalent degree programs in 4 years or less --subcohort 2
 		(20), -- 20 - Completers of bachelor's or equivalent degree programs in 5 years --subcohort 2
-		--(29), -- 29 - Total completers within 150%
 		(30), -- 30 - Total transfer-out students (non-completers)
 		(45), -- 45 - Total exclusions 
 		(51)  -- 51 - Still enrolled 
-	) as section2and3(cohort)
+	) as PartB (cohortStatus)
+),
+
+FormatPartC as (
+
+select *
+from (
+	VALUES
+		(10), -- 10 - Number of students in cohort
+		(18), -- 18 - Completed bachelor's degree or equivalent within 150%
+		(29), -- 29 - Total completers within 150%
+		(45)  -- 45 - Total exclusions
+	) as PartC (cohortStatus)
 )
 
 /*****
@@ -2165,463 +2048,672 @@ BEGIN SECTION - Survey Formatting
 The select query below contains union statements to match each part of the survey specs
 *****/
 
---Section table (defines cohort)
---1 - Establishing cohorts, cohort year 2014
---2 - Subcohort of full-time, first-time students seeking a bachelor's or equivalent degree, cohort year 2014
---3 - Subcohort of full-time, first-time students seeking other than a bachelor's degree, cohort year 2014
-
---Establishing cohort table (section 1)
---1 - Revised cohort of all full-time, first-time degree or certificate seeking undergraduates, cohort year 2014
---2 - Subcohort of full-time, first-time students seeking a bachelor's or equivalent degree, cohort year 2014
---3 - Subcohort of full-time, first-time students seeking other than a bachelor's degree, cohort year 2014. Do not include in import file, will be generated.
-
---GR1 & 2
---Part B: Section I, Establishing Cohorts
-
-SELECT 'B' part,
-	'1' section, --Sub survey section - identifies cohort: 1 - Establishing cohorts, cohort year 2014
-	1 line, --Status of students in cohort: 1 - Revised cohort of all full-time, first-time degree or certificate seeking undergraduates, cohort year 2014
-	cast(sum(field1) as string) field1, --Nonresident Alien
-	cast(sum(field2) as string) field2,
-	cast(sum(field3) as string) field3, -- Hispanic/Latino
-	cast(sum(field4) as string) field4,
-	cast(sum(field5) as string) field5, -- American Indian or Alaska Native
-	cast(sum(field6) as string) field6,
-	cast(sum(field7) as string) field7, -- Asian
-	cast(sum(field8) as string) field8,
-	cast(sum(field9) as string) field9, -- Black or African American
-	cast(sum(field10) as string) field10,
-	cast(sum(field11) as string) field11, -- Native Hawaiian or Other Pacific Islander
-	cast(sum(field12) as string) field12,
-	cast(sum(field13) as string) field13, -- White
-	cast(sum(field14) as string) field14,
-	cast(sum(field15) as string) field15, -- Two or more races
-	cast(sum(field16) as string) field16,
-	cast(sum(field17) as string) field17, -- Race and ethnicity unknown
-	cast(sum(field18) as string) field18
-FROM CohortStatus
-
-union
-
---Part B: Section I, Establishing Cohorts
-
-SELECT 'B' part,
-	'1' section, --Sub survey section - identifies cohort: 1 - Establishing cohorts, cohort year 2014
-	2 line, -- Status of students in cohort: 2 - Subcohort of full-time, first-time students seeking a bachelor's or equivalent degree, cohort year 2014
-	cast(sum(field1) as string) field1, --Nonresident Alien
-	cast(sum(field2) as string) field2,
-	cast(sum(field3) as string) field3, -- Hispanic/Latino
-	cast(sum(field4) as string) field4,
-	cast(sum(field5) as string) field5, -- American Indian or Alaska Native
-	cast(sum(field6) as string) field6,
-	cast(sum(field7) as string) field7, -- Asian
-	cast(sum(field8) as string) field8,
-	cast(sum(field9) as string) field9, -- Black or African American
-	cast(sum(field10) as string) field10,
-	cast(sum(field11) as string) field11, -- Native Hawaiian or Other Pacific Islander
-	cast(sum(field12) as string) field12,
-	cast(sum(field13) as string) field13, -- White
-	cast(sum(field14) as string) field14,
-	cast(sum(field15) as string) field15, -- Two or more races
-	cast(sum(field16) as string) field16,
-	cast(sum(field17) as string) field17, -- Race and ethnicity unknown
-	cast(sum(field18) as string) field18
-FROM CohortStatus
-where subCohort = 2
-
-union
-
---Part B: Section II, Cohort of Full-time, First-time Students Seeking a Bachelor's or Equivalent Degree Cohort Year 2014
-
-SELECT 'B' part,
-	'2' section, --Sub survey section - identifies cohort: 2 - Subcohort of full-time, first-time students seeking a bachelor's or equivalent degree, cohort year 2014
-	cohortStatus line, --Status of students in cohort: valid values 11,12,18,19,20,30,45,51
-	cast(sum(field1) as string) field1, --Nonresident Alien
-	cast(sum(field2) as string) field2,
-	cast(sum(field3) as string) field3, -- Hispanic/Latino
-	cast(sum(field4) as string) field4,
-	cast(sum(field5) as string) field5, -- American Indian or Alaska Native
-	cast(sum(field6) as string) field6,
-	cast(sum(field7) as string) field7, -- Asian
-	cast(sum(field8) as string) field8,
-	cast(sum(field9) as string) field9, -- Black or African American
-	cast(sum(field10) as string) field10,
-	cast(sum(field11) as string) field11, -- Native Hawaiian or Other Pacific Islander
-	cast(sum(field12) as string) field12,
-	cast(sum(field13) as string) field13, -- White
-	cast(sum(field14) as string) field14,
-	cast(sum(field15) as string) field15, -- Two or more races
-	cast(sum(field16) as string) field16,
-	cast(sum(field17) as string) field17, -- Race and ethnicity unknown
-	cast(sum(field18) as string) field18
-FROM (
-    select personId personId,
-            cohortStatus cohortStatus,
-            field1 field1, --Nonresident Alien
-            field2 field2,
-            field3 field3, -- Hispanic/Latino
-            field4 field4,
-            field5 field5, -- American Indian or Alaska Native
-            field6 field6,
-            field7 field7, -- Asian
-            field8 field8,
-            field9 field9, -- Black or African American
-            field10 field10,
-            field11 field11, -- Native Hawaiian or Other Pacific Islander
-            field12 field12,
-            field13 field13, -- White
-            field14 field14,
-            field15 field15, -- Two or more races
-            field16 field16,
-            field17 field17, -- Race and ethnicity unknown
-            field18 field18
-	from CohortStatus
-    where subCohort = 2 
-        and cohortStatus is not null
-        
-	union
-	
-	select null,
-            formatsect.cohort,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-	from FormatPartBSection2And3 formatsect
-	)
-group by cohortStatus
+select 'B' part,
+        '1' section, 
+        cast(subCohortPB1 as string) line, --subcohort
+        cast((case when subCohortPB1 = 1 then field1
+                   else field1_2 end) as string) field1,
+        cast((case when subCohortPB1 = 1 then field2
+                   else field2_2 end) as string) field2,
+        cast((case when subCohortPB1 = 1 then field3
+                   else field3_2 end) as string) field3,
+        cast((case when subCohortPB1 = 1 then field4
+                   else field4_2 end) as string) field4,
+        cast((case when subCohortPB1 = 1 then field5
+                   else field5_2 end) as string) field5,
+        cast((case when subCohortPB1 = 1 then field6
+                   else field6_2 end) as string) field6,
+        cast((case when subCohortPB1 = 1 then field7
+                   else field7_2 end) as string) field7,
+        cast((case when subCohortPB1 = 1 then field8
+                   else field8_2 end) as string) field8,
+        cast((case when subCohortPB1 = 1 then field9
+                   else field9_2 end) as string) field9,
+        cast((case when subCohortPB1 = 1 then field10
+                   else field10_2 end) as string) field10,
+        cast((case when subCohortPB1 = 1 then field11
+                   else field11_2 end) as string) field11,
+        cast((case when subCohortPB1 = 1 then field12
+                   else field12_2 end) as string) field12,
+        cast((case when subCohortPB1 = 1 then field13
+                   else field13_2 end) as string) field13,
+        cast((case when subCohortPB1 = 1 then field14
+                   else field14_2 end) as string) field14,
+        cast((case when subCohortPB1 = 1 then field15
+                   else field15_2 end) as string) field15,
+        cast((case when subCohortPB1 = 1 then field16
+                   else field16_2 end) as string) field16,
+        cast((case when subCohortPB1 = 1 then field17
+                   else field17_2 end) as string) field17,
+        cast((case when subCohortPB1 = 1 then field18
+                   else field18_2 end) as string) field18
+from ( 
+    select pb1.subcoh subCohortPB1,
+            sum(field1) field1, 
+            sum(field1_2) field1_2,
+            sum(field2) field2, 
+            sum(field2_2) field2_2,
+            sum(field3) field3, 
+            sum(field3_2) field3_2,
+            sum(field4) field4, 
+            sum(field4_2) field4_2,
+            sum(field5) field5,
+            sum(field5_2) field5_2,
+            sum(field6) field6, 
+            sum(field6_2) field6_2,
+            sum(field7) field7, 
+            sum(field7_2) field7_2,
+            sum(field8) field8,
+            sum(field8_2) field8_2,
+            sum(field9) field9,
+            sum(field9_2) field9_2,
+            sum(field10) field10, 
+            sum(field10_2) field10_2,
+            sum(field11) field11, 
+            sum(field11_2) field11_2,
+            sum(field12) field12, 
+            sum(field12_2) field12_2,
+            sum(field13) field13,
+            sum(field13_2) field13_2,
+            sum(field14) field14,
+            sum(field14_2) field14_2,
+            sum(field15) field15, 
+            sum(field15_2) field15_2,
+            sum(field16) field16, 
+            sum(field16_2) field16_2,
+            sum(field17) field17, 
+            sum(field17_2) field17_2,
+            sum(field18) field18,
+            sum(field18_2) field18_2
+    from (
+        select personId personId,          
+                field1 field1,
+                (case when subCohort = 2 then field1 else 0 end) field1_2,
+                field2 field2,
+                (case when subCohort = 2 then field2 else 0 end) field2_2,
+                field3 field3,
+                (case when subCohort = 2 then field3 else 0 end) field3_2,
+                field4 field4,
+                (case when subCohort = 2 then field4 else 0 end) field4_2,
+                field5 field5,
+                (case when subCohort = 2 then field5 else 0 end) field5_2,
+                field6 field6,
+                (case when subCohort = 2 then field6 else 0 end) field6_2,
+                field7 field7,
+                (case when subCohort = 2 then field7 else 0 end) field7_2,
+                field8 field8, 
+                (case when subCohort = 2 then field8 else 0 end) field8_2,
+                field9 field9,
+                (case when subCohort = 2 then field9 else 0 end) field9_2,
+                field10 field10,
+                (case when subCohort = 2 then field10 else 0 end) field10_2,
+                field11 field11,
+                (case when subCohort = 2 then field11 else 0 end) field11_2,
+                field12 field12,
+                (case when subCohort = 2 then field12 else 0 end) field12_2,
+                field13 field13,
+                (case when subCohort = 2 then field13 else 0 end) field13_2,
+                field14 field14,
+                (case when subCohort = 2 then field14 else 0 end) field14_2,
+                field15 field15,
+                (case when subCohort = 2 then field15 else 0 end) field15_2,
+                field16 field16, 
+                (case when subCohort = 2 then field16 else 0 end) field16_2,
+                field17 field17, 
+                (case when subCohort = 2 then field17 else 0 end) field17_2,
+                field18 field18, 
+                (case when subCohort = 2 then field18 else 0 end) field18_2
+            from CohortStatus
+        )
+    cross join estabSubCohortPartB1 pb1
+    group by pb1.subcoh
+)
 
 union
 
-----Part C: Section 2 - Bachelor’s or equivalent degree-seeking cohort - Pell recipients and recipients of a subsidized Direct Loan who did not receive a Pell Grant
-
---Pell recipients and recipients of a Direct Subsidized Loan who did not receive a Pell Grant table (sections 2 and 3)
---10. Number of students in cohort
---18. Completed bachelor's degree or equivalent within 150%
---29. Total completers within 150%
---45. Total exclusions
-
--- Group 10 - Number of students in cohort
-select 'C' part, 
-	'2' section,
-	10 line,--cohort line, 
-	cast(sum(isPellRec) as string) field1, --Recipients of a Pell Grant (within entering year)
-	cast(sum(isSubLoanRec) as string) field2, --Recipients of a Direct Subsidized Loan (within entering year) that did not receive a Pell Grant
-	null field3,
-	null field4,
-	null field5,
-	null field6,
-	null field7,
-	null field8,
-	null field9,
-	null field10,
-	null field11,
-	null field12,
-	null field13,
-	null field14,
-	null field15,
-	null field16,
-	null field17,
-	null field18
-from CohortStatus
-where subCohort = 2
-	
-union
-
--- Group 18 - Completers of bachelor's or equivalent degree programs within 150% of normal time
-select 'C' part, 
-	'2' section,
-	18 line, --cohort line, 
-	cast(sum(isPellRec) as string) field1, --Recipients of a Pell Grant (within entering year)
-	cast(sum(isSubLoanRec) as string) field2, --Recipients of a Direct Subsidized Loan (within entering year) that did not receive a Pell Grant
-	null field3,
-	null field4,
-	null field5,
-	null field6,
-	null field7,
-	null field8,
-	null field9,
-	null field10,
-	null field11,
-	null field12,
-	null field13,
-	null field14,
-	null field15,
-	null field16,
-	null field17,
-	null field18
-from CohortStatus
-where subCohort = 2
-    and stat18 = 1
+select 'B' part,
+        cast(subCohortall as string) section, --subcohort
+        cast(cohortStatusall as string) line, --cohort status
+        cast((case when cohortStatusall = 11 then field1_11
+              when cohortStatusall = 12 then field1_12
+              when cohortStatusall = 18 then field1_18
+              when cohortStatusall = 19 then field1_19
+              when cohortStatusall = 20 then field1_20
+              when cohortStatusall = 30 then field1_30
+              when cohortStatusall = 45 then field1_45
+              when cohortStatusall = 51 then field1_51
+            else 0 end) as string) field1,
+        cast((case when cohortStatusall = 11 then field2_11
+              when cohortStatusall = 12 then field2_12
+              when cohortStatusall = 18 then field2_18
+              when cohortStatusall = 19 then field2_19
+              when cohortStatusall = 20 then field2_20
+              when cohortStatusall = 30 then field2_30
+              when cohortStatusall = 45 then field2_45
+              when cohortStatusall = 51 then field2_51
+            else 0 end) as string) field2,
+        cast((case when cohortStatusall = 11 then field3_11
+              when cohortStatusall = 12 then field3_12
+              when cohortStatusall = 18 then field3_18
+              when cohortStatusall = 19 then field3_19
+              when cohortStatusall = 20 then field3_20
+              when cohortStatusall = 30 then field3_30
+              when cohortStatusall = 45 then field3_45
+              when cohortStatusall = 51 then field3_51
+            else 0 end) as string) field3,
+        cast((case when cohortStatusall = 11 then field4_11
+              when cohortStatusall = 12 then field4_12
+              when cohortStatusall = 18 then field4_18
+              when cohortStatusall = 19 then field4_19
+              when cohortStatusall = 20 then field4_20
+              when cohortStatusall = 30 then field4_30
+              when cohortStatusall = 45 then field4_45
+              when cohortStatusall = 51 then field4_51
+            else 0 end) as string) field4,
+        cast((case when cohortStatusall = 11 then field5_11
+              when cohortStatusall = 12 then field5_12
+              when cohortStatusall = 18 then field5_18
+              when cohortStatusall = 19 then field5_19
+              when cohortStatusall = 20 then field5_20
+              when cohortStatusall = 30 then field5_30
+              when cohortStatusall = 45 then field5_45
+              when cohortStatusall = 51 then field5_51
+            else 0 end) as string) field5,
+        cast((case when cohortStatusall = 11 then field6_11
+              when cohortStatusall = 12 then field6_12
+              when cohortStatusall = 18 then field6_18
+              when cohortStatusall = 19 then field6_19
+              when cohortStatusall = 20 then field6_20
+              when cohortStatusall = 30 then field6_30
+              when cohortStatusall = 45 then field6_45
+              when cohortStatusall = 51 then field6_51
+            else 0 end) as string) field6,
+        cast((case when cohortStatusall = 11 then field7_11
+              when cohortStatusall = 12 then field7_12
+              when cohortStatusall = 18 then field7_18
+              when cohortStatusall = 19 then field7_19
+              when cohortStatusall = 20 then field7_20
+              when cohortStatusall = 30 then field7_30
+              when cohortStatusall = 45 then field7_45
+              when cohortStatusall = 51 then field7_51
+            else 0 end) as string) field7,
+        cast((case when cohortStatusall = 11 then field8_11
+              when cohortStatusall = 12 then field8_12
+              when cohortStatusall = 18 then field8_18
+              when cohortStatusall = 19 then field8_19
+              when cohortStatusall = 20 then field8_20
+              when cohortStatusall = 30 then field8_30
+              when cohortStatusall = 45 then field8_45
+              when cohortStatusall = 51 then field8_51
+            else 0 end) as string) field8,
+        cast((case when cohortStatusall = 11 then field9_11
+              when cohortStatusall = 12 then field9_12
+              when cohortStatusall = 18 then field9_18
+              when cohortStatusall = 19 then field9_19
+              when cohortStatusall = 20 then field9_20
+              when cohortStatusall = 30 then field9_30
+              when cohortStatusall = 45 then field9_45
+              when cohortStatusall = 51 then field9_51
+            else 0 end) as string) field9,
+        cast((case when cohortStatusall = 11 then field10_11
+              when cohortStatusall = 12 then field10_12
+              when cohortStatusall = 18 then field10_18
+              when cohortStatusall = 19 then field10_19
+              when cohortStatusall = 20 then field10_20
+              when cohortStatusall = 30 then field10_30
+              when cohortStatusall = 45 then field10_45
+              when cohortStatusall = 51 then field10_51
+            else 0 end) as string) field10,
+        cast((case when cohortStatusall = 11 then field11_11
+              when cohortStatusall = 12 then field11_12
+              when cohortStatusall = 18 then field11_18
+              when cohortStatusall = 19 then field11_19
+              when cohortStatusall = 20 then field11_20
+              when cohortStatusall = 30 then field11_30
+              when cohortStatusall = 45 then field11_45
+              when cohortStatusall = 51 then field11_51
+            else 0 end) as string) field11,
+        cast((case when cohortStatusall = 11 then field12_11
+              when cohortStatusall = 12 then field12_12
+              when cohortStatusall = 18 then field12_18
+              when cohortStatusall = 19 then field12_19
+              when cohortStatusall = 20 then field12_20
+              when cohortStatusall = 30 then field12_30
+              when cohortStatusall = 45 then field12_45
+              when cohortStatusall = 51 then field12_51
+            else 0 end) as string) field12,
+        cast((case when cohortStatusall = 11 then field13_11
+              when cohortStatusall = 12 then field13_12
+              when cohortStatusall = 18 then field13_18
+              when cohortStatusall = 19 then field13_19
+              when cohortStatusall = 20 then field13_20
+              when cohortStatusall = 30 then field13_30
+              when cohortStatusall = 45 then field13_45
+              when cohortStatusall = 51 then field13_51
+            else 0 end) as string) field13,
+        cast((case when cohortStatusall = 11 then field14_11
+              when cohortStatusall = 12 then field14_12
+              when cohortStatusall = 18 then field14_18
+              when cohortStatusall = 19 then field14_19
+              when cohortStatusall = 20 then field14_20
+              when cohortStatusall = 30 then field14_30
+              when cohortStatusall = 45 then field14_45
+              when cohortStatusall = 51 then field14_51
+            else 0 end) as string) field14,
+        cast((case when cohortStatusall = 11 then field15_11
+              when cohortStatusall = 12 then field15_12
+              when cohortStatusall = 18 then field15_18
+              when cohortStatusall = 19 then field15_19
+              when cohortStatusall = 20 then field15_20
+              when cohortStatusall = 30 then field15_30
+              when cohortStatusall = 45 then field15_45
+              when cohortStatusall = 51 then field15_51
+            else 0 end) as string) field15,
+        cast((case when cohortStatusall = 11 then field16_11
+              when cohortStatusall = 12 then field16_12
+              when cohortStatusall = 18 then field16_18
+              when cohortStatusall = 19 then field16_19
+              when cohortStatusall = 20 then field16_20
+              when cohortStatusall = 30 then field16_30
+              when cohortStatusall = 45 then field16_45
+              when cohortStatusall = 51 then field16_51
+            else 0 end) as string) field16,
+        cast((case when cohortStatusall = 11 then field17_11
+              when cohortStatusall = 12 then field17_12
+              when cohortStatusall = 18 then field17_18
+              when cohortStatusall = 19 then field17_19
+              when cohortStatusall = 20 then field17_20
+              when cohortStatusall = 30 then field17_30
+              when cohortStatusall = 45 then field17_45
+              when cohortStatusall = 51 then field17_51
+            else 0 end) as string) field17,
+        cast((case when cohortStatusall = 11 then field18_11
+              when cohortStatusall = 12 then field18_12
+              when cohortStatusall = 18 then field18_18
+              when cohortStatusall = 19 then field18_19
+              when cohortStatusall = 20 then field18_20
+              when cohortStatusall = 30 then field18_30
+              when cohortStatusall = 45 then field18_45
+              when cohortStatusall = 51 then field18_51
+            else 0 end) as string) field18
+from (
+    select subCohort subCohort,
+            subCoh.subcoh subCohortall,
+            cohSt.cohortStatus cohortStatusall,
+            sum(field1_11) field1_11, 
+            sum(field1_12) field1_12,
+            sum(field1_18) field1_18,
+            sum(field1_19) field1_19,
+            sum(field1_20) field1_20,
+            sum(field1_30) field1_30,
+            sum(field1_45) field1_45,
+            sum(field1_51) field1_51,
+            sum(field2_11) field2_11, 
+            sum(field2_12) field2_12,
+            sum(field2_18) field2_18,
+            sum(field2_19) field2_19,
+            sum(field2_20) field2_20,
+            sum(field2_30) field2_30,
+            sum(field2_45) field2_45,
+            sum(field2_51) field2_51,
+            sum(field3_11) field3_11, 
+            sum(field3_12) field3_12,
+            sum(field3_18) field3_18,
+            sum(field3_19) field3_19,
+            sum(field3_20) field3_20,
+            sum(field3_30) field3_30,
+            sum(field3_45) field3_45,
+            sum(field3_51) field3_51,
+            sum(field4_11) field4_11, 
+            sum(field4_12) field4_12,
+            sum(field4_18) field4_18,
+            sum(field4_19) field4_19,
+            sum(field4_20) field4_20,
+            sum(field4_30) field4_30,
+            sum(field4_45) field4_45,
+            sum(field4_51) field4_51,
+            sum(field5_11) field5_11, 
+            sum(field5_12) field5_12,
+            sum(field5_18) field5_18,
+            sum(field5_19) field5_19,
+            sum(field5_20) field5_20,
+            sum(field5_30) field5_30,
+            sum(field5_45) field5_45,
+            sum(field5_51) field5_51,
+            sum(field6_11) field6_11, 
+            sum(field6_12) field6_12,
+            sum(field6_18) field6_18,
+            sum(field6_19) field6_19,
+            sum(field6_20) field6_20,
+            sum(field6_30) field6_30,
+            sum(field6_45) field6_45,
+            sum(field6_51) field6_51,
+            sum(field7_11) field7_11, 
+            sum(field7_12) field7_12,
+            sum(field7_18) field7_18,
+            sum(field7_19) field7_19,
+            sum(field7_20) field7_20,
+            sum(field7_30) field7_30,
+            sum(field7_45) field7_45,
+            sum(field7_51) field7_51,
+            sum(field8_11) field8_11, 
+            sum(field8_12) field8_12,
+            sum(field8_18) field8_18,
+            sum(field8_19) field8_19,
+            sum(field8_20) field8_20,
+            sum(field8_30) field8_30,
+            sum(field8_45) field8_45,
+            sum(field8_51) field8_51,
+            sum(field9_11) field9_11, 
+            sum(field9_12) field9_12,
+            sum(field9_18) field9_18,
+            sum(field9_19) field9_19,
+            sum(field9_20) field9_20,
+            sum(field9_30) field9_30,
+            sum(field9_45) field9_45,
+            sum(field9_51) field9_51,
+            sum(field10_11) field10_11, 
+            sum(field10_12) field10_12,
+            sum(field10_18) field10_18,
+            sum(field10_19) field10_19,
+            sum(field10_20) field10_20,
+            sum(field10_30) field10_30,
+            sum(field10_45) field10_45,
+            sum(field10_51) field10_51,
+            sum(field11_11) field11_11, 
+            sum(field11_12) field11_12,
+            sum(field11_18) field11_18,
+            sum(field11_19) field11_19,
+            sum(field11_20) field11_20,
+            sum(field11_30) field11_30,
+            sum(field11_45) field11_45,
+            sum(field11_51) field11_51,
+            sum(field12_11) field12_11, 
+            sum(field12_12) field12_12,
+            sum(field12_18) field12_18,
+            sum(field12_19) field12_19,
+            sum(field12_20) field12_20,
+            sum(field12_30) field12_30,
+            sum(field12_45) field12_45,
+            sum(field12_51) field12_51,
+            sum(field13_11) field13_11, 
+            sum(field13_12) field13_12,
+            sum(field13_18) field13_18,
+            sum(field13_19) field13_19,
+            sum(field13_20) field13_20,
+            sum(field13_30) field13_30,
+            sum(field13_45) field13_45,
+            sum(field13_51) field13_51,
+            sum(field14_11) field14_11, 
+            sum(field14_12) field14_12,
+            sum(field14_18) field14_18,
+            sum(field14_19) field14_19,
+            sum(field14_20) field14_20,
+            sum(field14_30) field14_30,
+            sum(field14_45) field14_45,
+            sum(field14_51) field14_51,
+            sum(field15_11) field15_11, 
+            sum(field15_12) field15_12,
+            sum(field15_18) field15_18,
+            sum(field15_19) field15_19,
+            sum(field15_20) field15_20,
+            sum(field15_30) field15_30,
+            sum(field15_45) field15_45,
+            sum(field15_51) field15_51,
+            sum(field16_11) field16_11, 
+            sum(field16_12) field16_12,
+            sum(field16_18) field16_18,
+            sum(field16_19) field16_19,
+            sum(field16_20) field16_20,
+            sum(field16_30) field16_30,
+            sum(field16_45) field16_45,
+            sum(field16_51) field16_51,
+            sum(field17_11) field17_11, 
+            sum(field17_12) field17_12,
+            sum(field17_18) field17_18,
+            sum(field17_19) field17_19,
+            sum(field17_20) field17_20,
+            sum(field17_30) field17_30,
+            sum(field17_45) field17_45,
+            sum(field17_51) field17_51,
+            sum(field18_11) field18_11, 
+            sum(field18_12) field18_12,
+            sum(field18_18) field18_18,
+            sum(field18_19) field18_19,
+            sum(field18_20) field18_20,
+            sum(field18_30) field18_30,
+            sum(field18_45) field18_45,
+            sum(field18_51) field18_51
+    from (
+        select personId personId,
+                subCohort subCohort,
+                (case when stat11 = 1 then field1 else 0 end) field1_11, 
+                (case when stat12 = 1 then field1 else 0 end) field1_12,
+                (case when stat18 = 1 then field1 else 0 end) field1_18,
+                (case when stat19 = 1 then field1 else 0 end) field1_19,
+                (case when stat20 = 1 then field1 else 0 end) field1_20,
+                (case when stat30 = 1 then field1 else 0 end) field1_30,
+                (case when stat45 = 1 then field1 else 0 end) field1_45,
+                (case when stat51 = 1 then field1 else 0 end) field1_51,
+                (case when stat11 = 1 then field2 else 0 end) field2_11, 
+                (case when stat12 = 1 then field2 else 0 end) field2_12,
+                (case when stat18 = 1 then field2 else 0 end) field2_18,
+                (case when stat19 = 1 then field2 else 0 end) field2_19,
+                (case when stat20 = 1 then field2 else 0 end) field2_20,
+                (case when stat30 = 1 then field2 else 0 end) field2_30,
+                (case when stat45 = 1 then field2 else 0 end) field2_45,
+                (case when stat51 = 1 then field2 else 0 end) field2_51,
+                (case when stat11 = 1 then field3 else 0 end) field3_11, 
+                (case when stat12 = 1 then field3 else 0 end) field3_12,
+                (case when stat18 = 1 then field3 else 0 end) field3_18,
+                (case when stat19 = 1 then field3 else 0 end) field3_19,
+                (case when stat20 = 1 then field3 else 0 end) field3_20,
+                (case when stat30 = 1 then field3 else 0 end) field3_30,
+                (case when stat45 = 1 then field3 else 0 end) field3_45,
+                (case when stat51 = 1 then field3 else 0 end) field3_51,
+                (case when stat11 = 1 then field4 else 0 end) field4_11, 
+                (case when stat12 = 1 then field4 else 0 end) field4_12,
+                (case when stat18 = 1 then field4 else 0 end) field4_18,
+                (case when stat19 = 1 then field4 else 0 end) field4_19,
+                (case when stat20 = 1 then field4 else 0 end) field4_20,
+                (case when stat30 = 1 then field4 else 0 end) field4_30,
+                (case when stat45 = 1 then field4 else 0 end) field4_45,
+                (case when stat51 = 1 then field4 else 0 end) field4_51,
+                (case when stat11 = 1 then field5 else 0 end) field5_11, 
+                (case when stat12 = 1 then field5 else 0 end) field5_12,
+                (case when stat18 = 1 then field5 else 0 end) field5_18,
+                (case when stat19 = 1 then field5 else 0 end) field5_19,
+                (case when stat20 = 1 then field5 else 0 end) field5_20,
+                (case when stat30 = 1 then field5 else 0 end) field5_30,
+                (case when stat45 = 1 then field5 else 0 end) field5_45,
+                (case when stat51 = 1 then field5 else 0 end) field5_51,
+                (case when stat11 = 1 then field6 else 0 end) field6_11, 
+                (case when stat12 = 1 then field6 else 0 end) field6_12,
+                (case when stat18 = 1 then field6 else 0 end) field6_18,
+                (case when stat19 = 1 then field6 else 0 end) field6_19,
+                (case when stat20 = 1 then field6 else 0 end) field6_20,
+                (case when stat30 = 1 then field6 else 0 end) field6_30,
+                (case when stat45 = 1 then field6 else 0 end) field6_45,
+                (case when stat51 = 1 then field6 else 0 end) field6_51,
+                (case when stat11 = 1 then field7 else 0 end) field7_11, 
+                (case when stat12 = 1 then field7 else 0 end) field7_12,
+                (case when stat18 = 1 then field7 else 0 end) field7_18,
+                (case when stat19 = 1 then field7 else 0 end) field7_19,
+                (case when stat20 = 1 then field7 else 0 end) field7_20,
+                (case when stat30 = 1 then field7 else 0 end) field7_30,
+                (case when stat45 = 1 then field7 else 0 end) field7_45,
+                (case when stat51 = 1 then field7 else 0 end) field7_51,
+                (case when stat11 = 1 then field8 else 0 end) field8_11, 
+                (case when stat12 = 1 then field8 else 0 end) field8_12,
+                (case when stat18 = 1 then field8 else 0 end) field8_18,
+                (case when stat19 = 1 then field8 else 0 end) field8_19,
+                (case when stat20 = 1 then field8 else 0 end) field8_20,
+                (case when stat30 = 1 then field8 else 0 end) field8_30,
+                (case when stat45 = 1 then field8 else 0 end) field8_45,
+                (case when stat51 = 1 then field8 else 0 end) field8_51,
+                (case when stat11 = 1 then field9 else 0 end) field9_11, 
+                (case when stat12 = 1 then field9 else 0 end) field9_12,
+                (case when stat18 = 1 then field9 else 0 end) field9_18,
+                (case when stat19 = 1 then field9 else 0 end) field9_19,
+                (case when stat20 = 1 then field9 else 0 end) field9_20,
+                (case when stat30 = 1 then field9 else 0 end) field9_30,
+                (case when stat45 = 1 then field9 else 0 end) field9_45,
+                (case when stat51 = 1 then field9 else 0 end) field9_51,
+                (case when stat11 = 1 then field10 else 0 end) field10_11, 
+                (case when stat12 = 1 then field10 else 0 end) field10_12,
+                (case when stat18 = 1 then field10 else 0 end) field10_18,
+                (case when stat19 = 1 then field10 else 0 end) field10_19,
+                (case when stat20 = 1 then field10 else 0 end) field10_20,
+                (case when stat30 = 1 then field10 else 0 end) field10_30,
+                (case when stat45 = 1 then field10 else 0 end) field10_45,
+                (case when stat51 = 1 then field10 else 0 end) field10_51,
+                (case when stat11 = 1 then field11 else 0 end) field11_11, 
+                (case when stat12 = 1 then field11 else 0 end) field11_12,
+                (case when stat18 = 1 then field11 else 0 end) field11_18,
+                (case when stat19 = 1 then field11 else 0 end) field11_19,
+                (case when stat20 = 1 then field11 else 0 end) field11_20,
+                (case when stat30 = 1 then field11 else 0 end) field11_30,
+                (case when stat45 = 1 then field11 else 0 end) field11_45,
+                (case when stat51 = 1 then field11 else 0 end) field11_51,
+                (case when stat11 = 1 then field12 else 0 end) field12_11, 
+                (case when stat12 = 1 then field12 else 0 end) field12_12,
+                (case when stat18 = 1 then field12 else 0 end) field12_18,
+                (case when stat19 = 1 then field12 else 0 end) field12_19,
+                (case when stat20 = 1 then field12 else 0 end) field12_20,
+                (case when stat30 = 1 then field12 else 0 end) field12_30,
+                (case when stat45 = 1 then field12 else 0 end) field12_45,
+                (case when stat51 = 1 then field12 else 0 end) field12_51,
+                (case when stat11 = 1 then field13 else 0 end) field13_11, 
+                (case when stat12 = 1 then field13 else 0 end) field13_12,
+                (case when stat18 = 1 then field13 else 0 end) field13_18,
+                (case when stat19 = 1 then field13 else 0 end) field13_19,
+                (case when stat20 = 1 then field13 else 0 end) field13_20,
+                (case when stat30 = 1 then field13 else 0 end) field13_30,
+                (case when stat45 = 1 then field13 else 0 end) field13_45,
+                (case when stat51 = 1 then field13 else 0 end) field13_51,
+                (case when stat11 = 1 then field14 else 0 end) field14_11, 
+                (case when stat12 = 1 then field14 else 0 end) field14_12,
+                (case when stat18 = 1 then field14 else 0 end) field14_18,
+                (case when stat19 = 1 then field14 else 0 end) field14_19,
+                (case when stat20 = 1 then field14 else 0 end) field14_20,
+                (case when stat30 = 1 then field14 else 0 end) field14_30,
+                (case when stat45 = 1 then field14 else 0 end) field14_45,
+                (case when stat51 = 1 then field14 else 0 end) field14_51,
+                (case when stat11 = 1 then field15 else 0 end) field15_11, 
+                (case when stat12 = 1 then field15 else 0 end) field15_12,
+                (case when stat18 = 1 then field15 else 0 end) field15_18,
+                (case when stat19 = 1 then field15 else 0 end) field15_19,
+                (case when stat20 = 1 then field15 else 0 end) field15_20,
+                (case when stat30 = 1 then field15 else 0 end) field15_30,
+                (case when stat45 = 1 then field15 else 0 end) field15_45,
+                (case when stat51 = 1 then field15 else 0 end) field15_51,
+                (case when stat11 = 1 then field16 else 0 end) field16_11, 
+                (case when stat12 = 1 then field16 else 0 end) field16_12,
+                (case when stat18 = 1 then field16 else 0 end) field16_18,
+                (case when stat19 = 1 then field16 else 0 end) field16_19,
+                (case when stat20 = 1 then field16 else 0 end) field16_20,
+                (case when stat30 = 1 then field16 else 0 end) field16_30,
+                (case when stat45 = 1 then field16 else 0 end) field16_45,
+                (case when stat51 = 1 then field16 else 0 end) field16_51,
+                (case when stat11 = 1 then field17 else 0 end) field17_11, 
+                (case when stat12 = 1 then field17 else 0 end) field17_12,
+                (case when stat18 = 1 then field17 else 0 end) field17_18,
+                (case when stat19 = 1 then field17 else 0 end) field17_19,
+                (case when stat20 = 1 then field17 else 0 end) field17_20,
+                (case when stat30 = 1 then field17 else 0 end) field17_30,
+                (case when stat45 = 1 then field17 else 0 end) field17_45,
+                (case when stat51 = 1 then field17 else 0 end) field17_51,
+                (case when stat11 = 1 then field18 else 0 end) field18_11, 
+                (case when stat12 = 1 then field18 else 0 end) field18_12,
+                (case when stat18 = 1 then field18 else 0 end) field18_18,
+                (case when stat19 = 1 then field18 else 0 end) field18_19,
+                (case when stat20 = 1 then field18 else 0 end) field18_20,
+                (case when stat30 = 1 then field18 else 0 end) field18_30,
+                (case when stat45 = 1 then field18 else 0 end) field18_45,
+                (case when stat51 = 1 then field18 else 0 end) field18_51 
+            from CohortStatus
+        ) 
+        cross join estabSubCohort subCoh
+        cross join FormatPartB cohSt
+    group by subCohort, subCohortall, cohortStatusall
+)
+where subCohort = subCohortall
+    and not (subCohortall = 3
+            and cohortStatusall = 19)
+    and not (subCohortall = 3
+            and cohortStatusall = 20)
     
 union
 
--- Group 29 - Total completers within 150%
-select 'C' part, 
-	'2' section,
-	29 line,--cohort line, 
-	cast(sum(isPellRec) as string) field1, --Recipients of a Pell Grant (within entering year)
-	cast(sum(isSubLoanRec) as string) field2, --Recipients of a Direct Subsidized Loan (within entering year) that did not receive a Pell Grant
-	null field3,
-	null field4,
-	null field5,
-	null field6,
-	null field7,
-	null field8,
-	null field9,
-	null field10,
-	null field11,
-	null field12,
-	null field13,
-	null field14,
-	null field15,
-	null field16,
-	null field17,
-	null field18
-from CohortStatus
-where subCohort = 2
-    and stat29 = 1
+select 'C' part,
+        cast(subCohortall as string) section, --subcohort
+        cast(cohortStatusall as string) line, --cohort status
+        cast((case when cohortStatusall = 10 then isPellRec 
+                   when cohortStatusall = 18 then isPellRec18
+                   when cohortStatusall = 29 then isPellRec29
+                   else isPellRec45 
+            end) as string) field1, --isPell,
+        cast((case when cohortStatusall = 10 then isSubLoanRec 
+                   when cohortStatusall = 18 then isSubLoanRec18
+                   when cohortStatusall = 29 then isSubLoanRec29
+                   else isSubLoanRec45 
+            end) as string) field2, --isSubLoan,
+        null field3,
+        null field4,
+        null field5,
+        null field6,
+        null field7,
+        null field8,
+        null field9,
+        null field10,
+        null field11,
+        null field12,
+        null field13,
+        null field14,
+        null field15,
+        null field16,
+        null field17,
+        null field18
+from (
+    select subCohort subCohort,
+            subCoh.subcoh subCohortall,
+            cohSt.cohortStatus cohortStatusall,
+            isPellRec isPellRec,
+            isPellRec18 isPellRec18,
+            isPellRec29 isPellRec29,
+            isPellRec45 isPellRec45,
+            isSubLoanRec isSubLoanRec,
+            isSubLoanRec18 isSubLoanRec18,
+            isSubLoanRec29 isSubLoanRec29,
+            isSubLoanRec45 isSubLoanRec45
+    from (
+        select subCohort subCohort,
+                sum(isPellRec) isPellRec,
+                sum(isPellRec18) isPellRec18,
+                sum(isPellRec29) isPellRec29,
+                sum(isPellRec45) isPellRec45,
+                sum(isSubLoanRec) isSubLoanRec,
+                sum(isSubLoanRec18) isSubLoanRec18,
+                sum(isSubLoanRec29) isSubLoanRec29,
+                sum(isSubLoanRec45) isSubLoanRec45
+        from ( 
+            select personId personId,
+                    subCohort subCohort,
+                    isPellRec isPellRec,
+                    isSubLoanRec isSubLoanRec,
+                    (case when stat18 = 1 then isPellRec else 0 end) isPellRec18,
+                    (case when stat29 = 1 then isPellRec else 0 end) isPellRec29,
+                    (case when stat45 = 1 then isPellRec else 0 end) isPellRec45,
+                    (case when stat18 = 1 then isSubLoanRec else 0 end) isSubLoanRec18,
+                    (case when stat29 = 1 then isSubLoanRec else 0 end) isSubLoanRec29,
+                    (case when stat45 = 1 then isSubLoanRec else 0 end) isSubLoanRec45
+            from CohortStatus
+            )
+        group by subCohort
+        ) 
+    cross join estabSubCohort subCoh
+    cross join FormatPartC cohSt
+    )
+where subCohort = subCohortall
 
-union
-
--- Group 45 - Total exclusions 
-select 'C' part, 
-	'2' section,
-	45 line,--cohort line, 
-	cast(sum(isPellRec) as string) field1, --Recipients of a Pell Grant (within entering year)
-	cast(sum(isSubLoanRec) as string) field2, --Recipients of a Direct Subsidized Loan (within entering year) that did not receive a Pell Grant
-	null field3,
-	null field4,
-	null field5,
-	null field6,
-	null field7,
-	null field8,
-	null field9,
-	null field10,
-	null field11,
-	null field12,
-	null field13,
-	null field14,
-	null field15,
-	null field16,
-	null field17,
-	null field18
-from CohortStatus
-where subCohort = 2
-    and stat45 = 1
-    
-union
-
---Part B: Section 3 - Cohort of Full-time, First-time Students Seeking Other than a Bachelor's Degree Cohort Year 2014
-
-SELECT 'B' part,
-	'3' section, --Sub survey section - identifies cohort:3 - Subcohort of full-time, first-time students seeking other than a bachelor's degree, cohort year 2014
-	cohortStatus line, --Status of students in cohort: valid values 11,12,18,30,45,51
-	cast(sum(field1) as string) field1, --Nonresident Alien
-	cast(sum(field2) as string) field2,
-	cast(sum(field3) as string) field3, -- Hispanic/Latino
-	cast(sum(field4) as string) field4,
-	cast(sum(field5) as string) field5, -- American Indian or Alaska Native
-	cast(sum(field6) as string) field6,
-	cast(sum(field7) as string) field7, -- Asian
-	cast(sum(field8) as string) field8,
-	cast(sum(field9) as string) field9, -- Black or African American
-	cast(sum(field10) as string) field10,
-	cast(sum(field11) as string) field11, -- Native Hawaiian or Other Pacific Islander
-	cast(sum(field12) as string) field12,
-	cast(sum(field13) as string) field13, -- White
-	cast(sum(field14) as string) field14,
-	cast(sum(field15) as string) field15, -- Two or more races
-	cast(sum(field16) as string) field16,
-	cast(sum(field17) as string) field17, -- Race and ethnicity unknown
-	cast(sum(field18) as string) field18
-FROM (
-    select personId personId,
-            cohortStatus cohortStatus,
-            field1 field1, --Nonresident Alien
-            field2 field2,
-            field3 field3, -- Hispanic/Latino
-            field4 field4,
-            field5 field5, -- American Indian or Alaska Native
-            field6 field6,
-            field7 field7, -- Asian
-            field8 field8,
-            field9 field9, -- Black or African American
-            field10 field10,
-            field11 field11, -- Native Hawaiian or Other Pacific Islander
-            field12 field12,
-            field13 field13, -- White
-            field14 field14,
-            field15 field15, -- Two or more races
-            field16 field16,
-            field17 field17, -- Race and ethnicity unknown
-            field18 field18
-	from CohortStatus
-    where subCohort = 3 
-        --and cast(cohortStatus as string) in ('11', '12', '18', '30', '45', '51')
-        
-	union
-	
-	select null,
-            formatsect.cohort,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-	from FormatPartBSection2And3 formatsect
-    --where cast(formatsect.cohort as string) in ('11', '12', '18', '30', '45', '51')
-	)
-where cast(cohortStatus as string) in ('11', '12', '18', '30', '45', '51')
-group by cohortStatus
-    
-
-union
-
-----Part C: Section 3 - Other degree/certificate-seeking subcohort - Pell recipients and recipients of a subsidized Direct Loan who did not receive a Pell Grant
-
---Pell recipients and recipients of a Direct Subsidized Loan who did not receive a Pell Grant table (sections 2 and 3)
---10. Number of students in cohort
---18. Completed bachelor's degree or equivalent within 150%
---29. Total completers within 150%
---45. Total exclusions
-
--- Group 10 - Number of students in cohort
-select 'C' part, 
-	'3' section,
-	10 line,--cohort line, 
-	cast(sum(isPellRec) as string) field1, --Recipients of a Pell Grant (within entering year)
-	cast(sum(isSubLoanRec) as string) field2, --Recipients of a Direct Subsidized Loan (within entering year) that did not receive a Pell Grant
-	null field3,
-	null field4,
-	null field5,
-	null field6,
-	null field7,
-	null field8,
-	null field9,
-	null field10,
-	null field11,
-	null field12,
-	null field13,
-	null field14,
-	null field15,
-	null field16,
-	null field17,
-	null field18
-from CohortStatus
-where subCohort = 3
-	
-union
-
--- Group 18 - Completers of bachelor's or equivalent degree programs within 150% of normal time
-select 'C' part, 
-	'3' section,
-	18 line, --cohort line, 
-	cast(sum(isPellRec) as string) field1, --Recipients of a Pell Grant (within entering year)
-	cast(sum(isSubLoanRec) as string) field2, --Recipients of a Direct Subsidized Loan (within entering year) that did not receive a Pell Grant
-	null field3,
-	null field4,
-	null field5,
-	null field6,
-	null field7,
-	null field8,
-	null field9,
-	null field10,
-	null field11,
-	null field12,
-	null field13,
-	null field14,
-	null field15,
-	null field16,
-	null field17,
-	null field18
-from CohortStatus
-where subCohort = 3
-    and stat18 = 1
-    
-union
-
--- Group 29 - Total completers within 150%
-select 'C' part, 
-	'3' section,
-	29 line,--cohort line, 
-	cast(sum(isPellRec) as string) field1, --Recipients of a Pell Grant (within entering year)
-	cast(sum(isSubLoanRec) as string) field2, --Recipients of a Direct Subsidized Loan (within entering year) that did not receive a Pell Grant
-	null field3,
-	null field4,
-	null field5,
-	null field6,
-	null field7,
-	null field8,
-	null field9,
-	null field10,
-	null field11,
-	null field12,
-	null field13,
-	null field14,
-	null field15,
-	null field16,
-	null field17,
-	null field18
-from CohortStatus
-where subCohort = 3
-    and stat29 = 1
-
-union
-
--- Group 45 - Total exclusions 
-select 'C' part, 
-	'3' section,
-	45 line,--cohort line, 
-	cast(sum(isPellRec) as string) field1, --Recipients of a Pell Grant (within entering year)
-	cast(sum(isSubLoanRec) as string) field2, --Recipients of a Direct Subsidized Loan (within entering year) that did not receive a Pell Grant
-	null field3,
-	null field4,
-	null field5,
-	null field6,
-	null field7,
-	null field8,
-	null field9,
-	null field10,
-	null field11,
-	null field12,
-	null field13,
-	null field14,
-	null field15,
-	null field16,
-	null field17,
-	null field18
-from CohortStatus
-where subCohort = 3
-    and stat45 = 1
-
---select * from --RegStatusMCR
---StudentMCR
---CohortStatus --27m 27s 28m 50s
+--order by 1, 2, 3
