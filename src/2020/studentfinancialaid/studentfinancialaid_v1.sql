@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
+20200122        akhasawneh                                  Adding support for CARES Act considerations. PF-1936
 20201228        akhasawneh                                  Fixes and inclusion of new field 'awardStatusActionDate'. PF-1906
 20201210        akhasawneh                                  Fixes and tag updates per PF-1865, 1861, 1865, 1855
 20201120        jhanicak                                    Update to most current views and formatting; 
@@ -64,7 +65,7 @@ WITH DefaultValues as (
 --jh 20201120 changed value of repPeriodTag2 and created new financialAidEndDate field
 --				to use for FinancialAidMCR in order to get full financial aid year data;
 --				corrected dates in prod censusDates; added updated formatting
-
+/*
 --prod default blocks (2)
 select '2021' surveyYear, 
 	'SFA' surveyId,
@@ -127,8 +128,8 @@ select '2021' surveyYear,
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
+*/
 
-/*
 --testing default blocks (2)
 select '1415' surveyYear,  
 	'SFA' surveyId, 
@@ -191,7 +192,7 @@ select '1415' surveyYear,
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
-*/
+
 ),
 
 ReportingPeriodMCR as (
@@ -308,7 +309,9 @@ select ConfigLatest.surveyYear surveyYear,
     upper(ConfigLatest.sfaLargestProgramCIPC) sfaLargestProgramCIPC,
     upper(ConfigLatest.sfaGradStudentsOnly) sfaGradStudentsOnly,
     upper(ConfigLatest.sfaReportPriorYear) sfaReportPriorYear, --'N' sfaReportPriorYear, --
-	upper(ConfigLatest.sfaReportSecondPriorYear) sfaReportSecondPriorYear --'N' sfaReportSecondPriorYear --
+	upper(ConfigLatest.sfaReportSecondPriorYear) sfaReportSecondPriorYear, --'N' sfaReportSecondPriorYear --
+    upper(ConfigLatest.eviReserved1) caresAct1,
+    upper(ConfigLatest.eviReserved2) caresAct2
 --***** end survey-specific mods
 from (
     select clientConfigENT.surveyCollectionYear surveyYear,
@@ -335,6 +338,8 @@ from (
         coalesce(clientConfigENT.sfaGradStudentsOnly, defvalues.sfaGradStudentsOnly) sfaGradStudentsOnly,
         coalesce(clientConfigENT.sfaReportPriorYear, defvalues.sfaReportPriorYear) sfaReportPriorYear,
         coalesce(clientConfigENT.sfaReportSecondPriorYear, defvalues.sfaReportSecondPriorYear) sfaReportSecondPriorYear,
+        clientConfigENT.eviReserved1 eviReserved1,
+        clientConfigENT.eviReserved2 eviReserved2,
 --***** end survey-specific mods
 		row_number() over (
 			partition by
@@ -375,6 +380,8 @@ from (
         defvalues.sfaGradStudentsOnly sfaGradStudentsOnly,
         defvalues.sfaReportPriorYear sfaReportPriorYear,
         defvalues.sfaReportSecondPriorYear sfaReportSecondPriorYear,
+        null eviReserved1,
+        null eviReserved2,
 --***** end survey-specific mods
 		1 configRn
     from DefaultValues defvalues
@@ -497,6 +504,8 @@ select coalesce(repPerTerms.yearType, 'CY') yearType,
 		repPerTerms.genderForNonBinary,
 		repPerTerms.instructionalActivityType,
 	    repPerTerms.equivCRHRFactor equivCRHRFactor,
+	    repPerTerms.caresAct1 caresAct1,
+        repPerTerms.caresAct2 caresAct2,
         (case when repPerTerms.termClassification = 'Standard Length' then 1
              when repPerTerms.termClassification is null then (case when repPerTerms.termType in ('Fall', 'Spring') then 1 else 2 end)
              else 2
@@ -530,6 +539,8 @@ select distinct repperiod.surveySection surveySection,
 		clientconfig.instructionalActivityType,
 	    coalesce(acadterm.requiredFTCreditHoursUG/
 		    coalesce(acadterm.requiredFTClockHoursUG, acadterm.requiredFTCreditHoursUG), 1) equivCRHRFactor,
+        clientconfig.caresAct1 caresAct1,
+        clientconfig.caresAct2 caresAct2,
 		row_number() over (
             partition by 
                 repperiod.termCode,
@@ -656,6 +667,8 @@ from (
 		regData.genderForNonBinary,
 		regData.instructionalActivityType,
         regData.equivCRHRFactor,
+        regData.caresAct1,
+        regData.caresAct2,
         regData.personId,                    
         regData.crn,
         regData.crnLevel,    
@@ -699,6 +712,8 @@ from (
 		    repperiod.genderForNonBinary,
 		    repperiod.instructionalActivityType,
             repperiod.equivCRHRFactor,
+            repperiod.caresAct1 caresAct1,
+            repperiod.caresAct2 caresAct2,
             upper(regENT.campus) campus,
             coalesce(regENT.crnGradingMode, 'Standard') crnGradingMode,                    
             upper(regENT.crn) crn,
@@ -958,6 +973,8 @@ from (
 --***** start survey-specific mods - SFA doesn't report ethnicity and gender
 	    null ipedsGender,
 	    null ipedsEthnicity,
+        reg.caresAct1,
+        reg.caresAct2,
 --***** end survey-specific mods
         to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
         reg.crn,
@@ -1031,6 +1048,8 @@ from (
 	    coursesect.isNonDegreeSeeking,
 	    coursesect.ipedsGender,
 	    coursesect.ipedsEthnicity,
+        coursesect.caresAct1,
+        coursesect.caresAct2,
 	    coursesect.residency,
 		to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
 	    coursesect.crn crn,
@@ -1101,6 +1120,8 @@ from (
 	    coursesectsched.isNonDegreeSeeking,
 	    coursesectsched.ipedsGender,
 	    coursesectsched.ipedsEthnicity,
+        coursesectsched.caresAct1,
+        coursesectsched.caresAct2,
 	    coursesectsched.residency,
 	    coursesectsched.crn crn,
 		coursesectsched.section section,
@@ -1176,6 +1197,8 @@ from (
             residency,
             ipedsGender,
             ipedsEthnicity,
+            caresAct1,
+            caresAct2,
             residency,
             (case when totalCredCourses > 0 --exclude students not enrolled for credit
                             then (case when totalESLCourses = totalCredCourses then 0 --exclude students enrolled only in ESL courses/programs
@@ -1205,6 +1228,8 @@ from (
                 course.residency,
                 course.ipedsGender,
                 course.ipedsEthnicity,
+                course.caresAct1,
+                course.caresAct2,
 	            course.residency,
                 sum((case when course.enrollmentHours >= 0 then 1 else 0 end)) totalCourses,
                 sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 then course.enrollmentHours else 0 end)) totalCreditHrs,
@@ -1242,7 +1267,9 @@ from (
                 course.residency,
                 course.ipedsGender,
                 course.ipedsEthnicity,
-	            course.residency
+	            course.residency,
+	            course.caresAct1,
+	            course.caresAct2
         )
     )
 where ipedsInclude = 1
@@ -1273,6 +1300,7 @@ select course2.personId personId,
         course2.residency residency,
         round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalLoan,
         round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalGrantSchol,
+        round(sum(coalesce(case when finaid.fundType = 'Grant' and finaid.fundSource = 'Federal' and finaid.fundCode in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end, 0)), 0) caresFederalGrant,
         round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalWorkStudy,
         round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalLoan,
         round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalGrantSchol,
@@ -1291,8 +1319,10 @@ select course2.personId personId,
         round(sum(finaid.IPEDSFinancialAidAmount), 0) totalAid,
         round(sum(case when course2.isGroup2Ind = 1 then finaid.IPEDSFinancialAidAmount end)) group2aTotal,
 		round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Loan', 'Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group2bTotal,
-        round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group3Total,
-        round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 then finaid.IPEDSFinancialAidAmount end)) group4Total,
+        --round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group3Total, --Pre CARES Act (Revert after CARES Act phases out)
+        round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') and finaid.fundCode not in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end)) group3Total,
+        --round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 then finaid.IPEDSFinancialAidAmount end)) group4Total, --Pre CARES Act (Revert after CARES Act phases out)
+        round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 and finaid.fundCode not in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end)) group4Total,
         (case when course2.isGroup2Ind = 1 then (case when first(finaid.familyIncome) <= 30000 then 1
 		                                            when first(finaid.familyIncome) between 30001 and 48000 then 2
 		                                            when first(finaid.familyIncome) between 48001 and 75000 then 3
@@ -1307,7 +1337,7 @@ from CourseTypeCountsSTU course2
             course.yearType yearType,
             course.financialAidYear financialAidYear,
             FinancialAidENT.fundType fundType,
-            FinancialAidENT.fundCode fundCode,
+            upper(FinancialAidENT.fundCode) fundCode,
             FinancialAidENT.fundSource fundSource,
             FinancialAidENT.recordActivityDate recordActivity,
             FinancialAidENT.termCode termCode,
@@ -1571,6 +1601,7 @@ from (
 	) as studentIncome(ipedsIncome)
 )
 
+
 /*****
 BEGIN SECTION - Survey Formatting
 The select query below contains union statements to match each part of the survey specs
@@ -1778,9 +1809,9 @@ from (
             coalesce(SUM(case when cohortstu.yearType = 'CY' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) FIELD11_1, --Count of Group 3 current year living off campus not with family, 0-999999
             (case when config.sfaReportPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY1' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) else null end) FIELD12_1, --Count of Group 3 prior year living off campus not with family, 0-999999
             (case when config.sfaReportSecondPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY2' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) else null end) FIELD13_1, --Count of Group 3 prior2 year living off campus not with family, 0-999999
-            ROUND(coalesce(SUM(case when cohortstu.yearType = 'CY' then cohortstu.totalAid end), 0)) FIELD14_1, --Total aid for Group 3 current year, 0-999999999999
-            ROUND((case when config.sfaReportPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY1' then cohortstu.totalAid end), 0) else null end)) FIELD15_1, --Total aid for Group 3 prior year, 0-999999999999
-            ROUND((case when config.sfaReportSecondPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY2' then cohortstu.totalAid end), 0) else null end)) FIELD16_1  --Total aid for Group 3 prior2 year, 0-999999999999
+            ROUND(coalesce(SUM(case when cohortstu.yearType = 'CY' then cohortstu.group3Total end), 0)) FIELD14_1, --Total aid for Group 3 current year, 0-999999999999
+            ROUND((case when config.sfaReportPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY1' then cohortstu.group3Total end), 0) else null end)) FIELD15_1, --Total aid for Group 3 prior year, 0-999999999999
+            ROUND((case when config.sfaReportSecondPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY2' then cohortstu.group3Total end), 0) else null end)) FIELD16_1  --Total aid for Group 3 prior2 year, 0-999999999999
     from FinancialAidMCR cohortstu
         cross join (select first(sfaReportPriorYear) sfaReportPriorYear,
                             first(sfaReportSecondPriorYear) sfaReportSecondPriorYear,
@@ -1897,8 +1928,10 @@ select 'F' PART,
         end) FIELD2_1, --Acad Year, prior
        familyIncome FIELD3_1, --Income range of Group 4 students (values 1 - 5)
        sum(isGroup4) FIELD4_1, --Count of Group 4 students who were awarded any Title IV aid
-       SUM(case when allGrantSchol > 0 then isGroup4 else 0 end) FIELD5_1, --Count of Group 4 students who were awarded any grant or scholarship aid
-       SUM(allGrantSchol) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
+-- Emergency grants funded through the CARES Act should be NOT included for Group 4 in Part E under “grant or scholarship aid from the following sources: 
+--     the federal government, state/local government, or the institution,” as inclusion of these grants would skew net price calculations.
+       SUM(case when (allGrantSchol - caresFederalGrant) > 0 then isGroup4 else 0 end) FIELD5_1, --Count of Group 4 students who were awarded any grant or scholarship aid
+       SUM(allGrantSchol) = SUM(caresFederalGrant) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
        null FIELD7_1,
        null FIELD8_1,
        null FIELD9_1,
@@ -2048,3 +2081,5 @@ from (
         null,
         null
     ) 
+
+order by part, field2_1, field3_1
