@@ -65,7 +65,7 @@ WITH DefaultValues as (
 --jh 20201120 changed value of repPeriodTag2 and created new financialAidEndDate field
 --				to use for FinancialAidMCR in order to get full financial aid year data;
 --				corrected dates in prod censusDates; added updated formatting
-/*
+
 --prod default blocks (2)
 select '2021' surveyYear, 
 	'SFA' surveyId,
@@ -128,8 +128,8 @@ select '2021' surveyYear,
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
-*/
 
+/*
 --testing default blocks (2)
 select '1415' surveyYear,  
 	'SFA' surveyId, 
@@ -192,7 +192,7 @@ select '1415' surveyYear,
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
-
+*/
 ),
 
 ReportingPeriodMCR as (
