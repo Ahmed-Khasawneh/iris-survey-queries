@@ -1601,7 +1601,6 @@ from (
 	) as studentIncome(ipedsIncome)
 )
 
-
 /*****
 BEGIN SECTION - Survey Formatting
 The select query below contains union statements to match each part of the survey specs
@@ -1930,8 +1929,8 @@ select 'F' PART,
        sum(isGroup4) FIELD4_1, --Count of Group 4 students who were awarded any Title IV aid
 -- Emergency grants funded through the CARES Act should be NOT included for Group 4 in Part E under “grant or scholarship aid from the following sources: 
 --     the federal government, state/local government, or the institution,” as inclusion of these grants would skew net price calculations.
-       SUM(case when (allGrantSchol - caresFederalGrant) > 0 then isGroup4 else 0 end) FIELD5_1, --Count of Group 4 students who were awarded any grant or scholarship aid
-       SUM(allGrantSchol) = SUM(caresFederalGrant) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
+       SUM(case when (allGrantSchol - caresFederalGrant) > 0 then isGroup4 else 0 end) FIELD5_1, --Count of Group 4 students who were awarded any grant or scholarship aid 
+       SUM(allGrantSchol) - SUM(caresFederalGrant) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
        null FIELD7_1,
        null FIELD8_1,
        null FIELD9_1,
@@ -1947,6 +1946,7 @@ from (
         cohortstu.isGroup4 isGroup4,
         cohortstu.familyIncome familyIncome,
         cohortstu.allGrantSchol allGrantSchol,
+        cohortstu.caresFederalGrant caresFederalGrant,
         cohortstu.yearType yearType
     from FinancialAidMCR cohortstu
 where cohortstu.isGroup4 = 1
@@ -1968,6 +1968,7 @@ where cohortstu.isGroup4 = 1
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
         0, --allGrantSchol
+        0, --caresFederalGrant
         'CY' --yearType
     from FormatPartFStudentIncome studentIncome
     
@@ -1977,6 +1978,7 @@ where cohortstu.isGroup4 = 1
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
         0, --allGrantSchol
+        0, --caresFederalGrant
         'PY1' --yearType
     from FormatPartFStudentIncome studentIncome
     where (select first(upper(sfaReportPriorYear))
@@ -1988,6 +1990,7 @@ where cohortstu.isGroup4 = 1
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
         0, --allGrantSchol
+        0, --caresFederalGrant
         'PY2' --yearType
     from FormatPartFStudentIncome studentIncome
     where (select first(upper(sfaReportSecondPriorYear))
@@ -2083,3 +2086,4 @@ from (
     ) 
 
 order by part, field2_1, field3_1
+
