@@ -1803,7 +1803,7 @@ from (
             coalesce(SUM(case when cohortstu.yearType = 'CY' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) FIELD11_1, --Count of Group 3 current year living off campus not with family, 0-999999
             (case when config.sfaReportPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY1' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) else null end) FIELD12_1, --Count of Group 3 prior year living off campus not with family, 0-999999
             (case when config.sfaReportSecondPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY2' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) else null end) FIELD13_1, --Count of Group 3 prior2 year living off campus not with family, 0-999999
-            ROUND(coalesce(SUM(case when cohortstu.yearType = 'CY' then cohortstu.totagroup3TotallAid end), 0)) FIELD14_1, --Total aid for Group 3 current year, 0-999999999999
+            ROUND(coalesce(SUM(case when cohortstu.yearType = 'CY' then cohortstu.group3Total end), 0)) FIELD14_1, --Total aid for Group 3 current year, 0-999999999999
             ROUND((case when config.sfaReportPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY1' then cohortstu.group3Total end), 0) else null end)) FIELD15_1, --Total aid for Group 3 prior year, 0-999999999999
             ROUND((case when config.sfaReportSecondPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY2' then cohortstu.group3Total end), 0) else null end)) FIELD16_1  --Total aid for Group 3 prior2 year, 0-999999999999
     from FinancialAidMCR cohortstu
@@ -1925,7 +1925,7 @@ select 'F' PART,
 -- Emergency grants funded through the CARES Act should be NOT included for Group 4 in Part E under “grant or scholarship aid from the following sources: 
 --     the federal government, state/local government, or the institution,” as inclusion of these grants would skew net price calculations.
        SUM(case when (allGrantSchol - caresFederalGrant) > 0 then isGroup4 else 0 end) FIELD5_1, --Count of Group 4 students who were awarded any grant or scholarship aid
-       SUM(allGrantSchol) = SUM(caresFederalGrant) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
+       SUM(allGrantSchol) - SUM(caresFederalGrant) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
        null FIELD7_1,
        null FIELD8_1,
        null FIELD9_1,
@@ -1940,6 +1940,7 @@ from (
     select cohortstu.personId personId,
         cohortstu.isGroup4 isGroup4,
         cohortstu.familyIncome familyIncome,
+        cohortstu.caresFederalGrant caresFederalGrant,
         cohortstu.allGrantSchol allGrantSchol,
         cohortstu.yearType yearType
     from FinancialAidMCR cohortstu
@@ -1961,6 +1962,7 @@ where cohortstu.isGroup4 = 1
     select null, -- personId
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
+        0, --caresFederalGrant
         0, --allGrantSchol
         'CY' --yearType
     from FormatPartFStudentIncome studentIncome
@@ -1970,6 +1972,7 @@ where cohortstu.isGroup4 = 1
     select null, -- personId
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
+        0, --caresFederalGrant
         0, --allGrantSchol
         'PY1' --yearType
     from FormatPartFStudentIncome studentIncome
@@ -1981,6 +1984,7 @@ where cohortstu.isGroup4 = 1
     select null, -- personId
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
+        0, --caresFederalGrant
         0, --allGrantSchol
         'PY2' --yearType
     from FormatPartFStudentIncome studentIncome
