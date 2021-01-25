@@ -1656,6 +1656,176 @@ GRADUATION_RATES_1:
       start: 2020-08-01
       end: 2020-10-01
 
+GRADUATION_RATES_3:
+  # reporting period: terms within 2017-07-01 to 2020-08-31;
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2019-08-01
+      end: 2020-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-10-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2018-03-01
+      end: 2018-10-01
+
+  - viewName: IPEDSClientConfig  
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2020-10-01
+
 HUMAN_RESOURCES_1:
   # reporting period: as of 10/31/19
 
