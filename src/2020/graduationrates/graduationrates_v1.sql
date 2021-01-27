@@ -1912,42 +1912,42 @@ The select query below contains union statements to match each part of the surve
 select 'B' part,
         1 section, 
         cast(subCohortPB1 as string) line, --subcohort
-        cast((case when subCohortPB1 = 1 then field1
-              else field1_2 end) as string) field1,
-        cast((case when subCohortPB1 = 1 then field2
-              else field2_2 end) as string) field2,
-        cast((case when subCohortPB1 = 1 then field3
-              else field3_2 end) as string) field3,
-        cast((case when subCohortPB1 = 1 then field4
-              else field4_2 end) as string) field4,
-        cast((case when subCohortPB1 = 1 then field5
-              else field5_2 end) as string) field5,
-        cast((case when subCohortPB1 = 1 then field6
-              else field6_2 end) as string) field6,
-        cast((case when subCohortPB1 = 1 then field7
-              else field7_2 end) as string) field7,
-        cast((case when subCohortPB1 = 1 then field8
-              else field8_2 end) as string) field8,
-        cast((case when subCohortPB1 = 1 then field9
-              else field9_2 end) as string) field9,
-        cast((case when subCohortPB1 = 1 then field10
-              else field10_2 end) as string) field10,
-        cast((case when subCohortPB1 = 1 then field11
-              else field11_2 end) as string) field11,
-        cast((case when subCohortPB1 = 1 then field12
-              else field12_2 end) as string) field12,
-        cast((case when subCohortPB1 = 1 then field13
-              else field13_2 end) as string) field13,
-        cast((case when subCohortPB1 = 1 then field14
-              else field14_2 end) as string) field14,
-        cast((case when subCohortPB1 = 1 then field15
-              else field15_2 end) as string) field15,
-        cast((case when subCohortPB1 = 1 then field16
-              else field16_2 end) as string) field16,
-        cast((case when subCohortPB1 = 1 then field17
-              else field17_2 end) as string) field17,
-        cast((case when subCohortPB1 = 1 then field18
-              else field18_2 end) as string) field18
+        cast(coalesce((case when subCohortPB1 = 1 then field1
+              else field1_2 end), 0) as string) field1,
+        cast(coalesce((case when subCohortPB1 = 1 then field2
+              else field2_2 end), 0) as string) field2,
+        cast(coalesce((case when subCohortPB1 = 1 then field3
+              else field3_2 end), 0) as string) field3,
+        cast(coalesce((case when subCohortPB1 = 1 then field4
+              else field4_2 end), 0) as string) field4,
+        cast(coalesce((case when subCohortPB1 = 1 then field5
+              else field5_2 end), 0) as string) field5,
+        cast(coalesce((case when subCohortPB1 = 1 then field6
+              else field6_2 end), 0) as string) field6,
+        cast(coalesce((case when subCohortPB1 = 1 then field7
+              else field7_2 end), 0) as string) field7,
+        cast(coalesce((case when subCohortPB1 = 1 then field8
+              else field8_2 end), 0) as string) field8,
+        cast(coalesce((case when subCohortPB1 = 1 then field9
+              else field9_2 end), 0) as string) field9,
+        cast(coalesce((case when subCohortPB1 = 1 then field10
+              else field10_2 end), 0) as string) field10,
+        cast(coalesce((case when subCohortPB1 = 1 then field11
+              else field11_2 end), 0) as string) field11,
+        cast(coalesce((case when subCohortPB1 = 1 then field12
+              else field12_2 end), 0) as string) field12,
+        cast(coalesce((case when subCohortPB1 = 1 then field13
+              else field13_2 end), 0) as string) field13,
+        cast(coalesce((case when subCohortPB1 = 1 then field14
+              else field14_2 end), 0) as string) field14,
+        cast(coalesce((case when subCohortPB1 = 1 then field15
+              else field15_2 end), 0) as string) field15,
+        cast(coalesce((case when subCohortPB1 = 1 then field16
+              else field16_2 end), 0) as string) field16,
+        cast(coalesce((case when subCohortPB1 = 1 then field17
+              else field17_2 end), 0) as string) field17,
+        cast(coalesce((case when subCohortPB1 = 1 then field18
+              else field18_2 end), 0) as string) field18
 from ( 
     select pb1.subcoh subCohortPB1,
             sum(field1) field1, 
@@ -1986,8 +1986,10 @@ from (
             sum(field17_2) field17_2,
             sum(field18) field18,
             sum(field18_2) field18_2
-    from (
-        select personId personId,          
+    from estabSubCohortPartB1 pb1
+        left join (
+        select personId personId,
+                (case when subCohort = 2 then 2 else 1 end) subcoh,         
                 field1 field1,
                 (case when subCohort = 2 then field1 else 0 end) field1_2,
                 field2 field2,
@@ -2025,8 +2027,7 @@ from (
                 field18 field18, 
                 (case when subCohort = 2 then field18 else 0 end) field18_2
             from CohortStatus
-        )
-    cross join estabSubCohortPartB1 pb1
+        ) innerData on pb1.subcoh = innerData.subcoh
     group by pb1.subcoh
 )
 
@@ -2035,7 +2036,7 @@ union
 select 'B' part,
          cast(subCohortall as string) section, --subcohort
         cast(cohortStatusall as string) line, --cohort status
-        cast((case when cohortStatusall = 11 then field1_11
+        cast(coalesce((case when cohortStatusall = 11 then field1_11
               when cohortStatusall = 12 then field1_12
               when cohortStatusall = 18 then field1_18
               when cohortStatusall = 19 then field1_19
@@ -2043,8 +2044,8 @@ select 'B' part,
               when cohortStatusall = 30 then field1_30
               when cohortStatusall = 45 then field1_45
               when cohortStatusall = 51 then field1_51
-            else 0 end) as string) field1,
-        cast((case when cohortStatusall = 11 then field2_11
+            else 0 end), 0) as string) field1,
+        cast(coalesce((case when cohortStatusall = 11 then field2_11
               when cohortStatusall = 12 then field2_12
               when cohortStatusall = 18 then field2_18
               when cohortStatusall = 19 then field2_19
@@ -2052,8 +2053,8 @@ select 'B' part,
               when cohortStatusall = 30 then field2_30
               when cohortStatusall = 45 then field2_45
               when cohortStatusall = 51 then field2_51
-            else 0 end) as string) field2,
-        cast((case when cohortStatusall = 11 then field3_11
+            else 0 end), 0) as string) field2,
+        cast(coalesce((case when cohortStatusall = 11 then field3_11
               when cohortStatusall = 12 then field3_12
               when cohortStatusall = 18 then field3_18
               when cohortStatusall = 19 then field3_19
@@ -2061,8 +2062,8 @@ select 'B' part,
               when cohortStatusall = 30 then field3_30
               when cohortStatusall = 45 then field3_45
               when cohortStatusall = 51 then field3_51
-            else 0 end) as string) field3,
-        cast((case when cohortStatusall = 11 then field4_11
+            else 0 end), 0) as string) field3,
+        cast(coalesce((case when cohortStatusall = 11 then field4_11
               when cohortStatusall = 12 then field4_12
               when cohortStatusall = 18 then field4_18
               when cohortStatusall = 19 then field4_19
@@ -2070,8 +2071,8 @@ select 'B' part,
               when cohortStatusall = 30 then field4_30
               when cohortStatusall = 45 then field4_45
               when cohortStatusall = 51 then field4_51
-            else 0 end) as string) field4,
-        cast((case when cohortStatusall = 11 then field5_11
+            else 0 end), 0) as string) field4,
+        cast(coalesce((case when cohortStatusall = 11 then field5_11
               when cohortStatusall = 12 then field5_12
               when cohortStatusall = 18 then field5_18
               when cohortStatusall = 19 then field5_19
@@ -2079,8 +2080,8 @@ select 'B' part,
               when cohortStatusall = 30 then field5_30
               when cohortStatusall = 45 then field5_45
               when cohortStatusall = 51 then field5_51
-            else 0 end) as string) field5,
-        cast((case when cohortStatusall = 11 then field6_11
+            else 0 end), 0) as string) field5,
+        cast(coalesce((case when cohortStatusall = 11 then field6_11
               when cohortStatusall = 12 then field6_12
               when cohortStatusall = 18 then field6_18
               when cohortStatusall = 19 then field6_19
@@ -2088,8 +2089,8 @@ select 'B' part,
               when cohortStatusall = 30 then field6_30
               when cohortStatusall = 45 then field6_45
               when cohortStatusall = 51 then field6_51
-            else 0 end) as string) field6,
-        cast((case when cohortStatusall = 11 then field7_11
+            else 0 end), 0) as string) field6,
+        cast(coalesce((case when cohortStatusall = 11 then field7_11
               when cohortStatusall = 12 then field7_12
               when cohortStatusall = 18 then field7_18
               when cohortStatusall = 19 then field7_19
@@ -2097,8 +2098,8 @@ select 'B' part,
               when cohortStatusall = 30 then field7_30
               when cohortStatusall = 45 then field7_45
               when cohortStatusall = 51 then field7_51
-            else 0 end) as string) field7,
-        cast((case when cohortStatusall = 11 then field8_11
+            else 0 end), 0) as string) field7,
+        cast(coalesce((case when cohortStatusall = 11 then field8_11
               when cohortStatusall = 12 then field8_12
               when cohortStatusall = 18 then field8_18
               when cohortStatusall = 19 then field8_19
@@ -2106,8 +2107,8 @@ select 'B' part,
               when cohortStatusall = 30 then field8_30
               when cohortStatusall = 45 then field8_45
               when cohortStatusall = 51 then field8_51
-            else 0 end) as string) field8,
-        cast((case when cohortStatusall = 11 then field9_11
+            else 0 end), 0) as string) field8,
+        cast(coalesce((case when cohortStatusall = 11 then field9_11
               when cohortStatusall = 12 then field9_12
               when cohortStatusall = 18 then field9_18
               when cohortStatusall = 19 then field9_19
@@ -2115,8 +2116,8 @@ select 'B' part,
               when cohortStatusall = 30 then field9_30
               when cohortStatusall = 45 then field9_45
               when cohortStatusall = 51 then field9_51
-            else 0 end) as string) field9,
-        cast((case when cohortStatusall = 11 then field10_11
+            else 0 end), 0) as string) field9,
+        cast(coalesce((case when cohortStatusall = 11 then field10_11
               when cohortStatusall = 12 then field10_12
               when cohortStatusall = 18 then field10_18
               when cohortStatusall = 19 then field10_19
@@ -2124,8 +2125,8 @@ select 'B' part,
               when cohortStatusall = 30 then field10_30
               when cohortStatusall = 45 then field10_45
               when cohortStatusall = 51 then field10_51
-            else 0 end) as string) field10,
-        cast((case when cohortStatusall = 11 then field11_11
+            else 0 end), 0) as string) field10,
+        cast(coalesce((case when cohortStatusall = 11 then field11_11
               when cohortStatusall = 12 then field11_12
               when cohortStatusall = 18 then field11_18
               when cohortStatusall = 19 then field11_19
@@ -2133,8 +2134,8 @@ select 'B' part,
               when cohortStatusall = 30 then field11_30
               when cohortStatusall = 45 then field11_45
               when cohortStatusall = 51 then field11_51
-            else 0 end) as string) field11,
-        cast((case when cohortStatusall = 11 then field12_11
+            else 0 end), 0) as string) field11,
+        cast(coalesce((case when cohortStatusall = 11 then field12_11
               when cohortStatusall = 12 then field12_12
               when cohortStatusall = 18 then field12_18
               when cohortStatusall = 19 then field12_19
@@ -2142,8 +2143,8 @@ select 'B' part,
               when cohortStatusall = 30 then field12_30
               when cohortStatusall = 45 then field12_45
               when cohortStatusall = 51 then field12_51
-            else 0 end) as string) field12,
-        cast((case when cohortStatusall = 11 then field13_11
+            else 0 end), 0) as string) field12,
+        cast(coalesce((case when cohortStatusall = 11 then field13_11
               when cohortStatusall = 12 then field13_12
               when cohortStatusall = 18 then field13_18
               when cohortStatusall = 19 then field13_19
@@ -2151,8 +2152,8 @@ select 'B' part,
               when cohortStatusall = 30 then field13_30
               when cohortStatusall = 45 then field13_45
               when cohortStatusall = 51 then field13_51
-            else 0 end) as string) field13,
-        cast((case when cohortStatusall = 11 then field14_11
+            else 0 end), 0) as string) field13,
+        cast(coalesce((case when cohortStatusall = 11 then field14_11
               when cohortStatusall = 12 then field14_12
               when cohortStatusall = 18 then field14_18
               when cohortStatusall = 19 then field14_19
@@ -2160,8 +2161,8 @@ select 'B' part,
               when cohortStatusall = 30 then field14_30
               when cohortStatusall = 45 then field14_45
               when cohortStatusall = 51 then field14_51
-            else 0 end) as string) field14,
-        cast((case when cohortStatusall = 11 then field15_11
+            else 0 end), 0) as string) field14,
+        cast(coalesce((case when cohortStatusall = 11 then field15_11
               when cohortStatusall = 12 then field15_12
               when cohortStatusall = 18 then field15_18
               when cohortStatusall = 19 then field15_19
@@ -2169,8 +2170,8 @@ select 'B' part,
               when cohortStatusall = 30 then field15_30
               when cohortStatusall = 45 then field15_45
               when cohortStatusall = 51 then field15_51
-            else 0 end) as string) field15,
-        cast((case when cohortStatusall = 11 then field16_11
+            else 0 end), 0) as string) field15,
+        cast(coalesce((case when cohortStatusall = 11 then field16_11
               when cohortStatusall = 12 then field16_12
               when cohortStatusall = 18 then field16_18
               when cohortStatusall = 19 then field16_19
@@ -2178,8 +2179,8 @@ select 'B' part,
               when cohortStatusall = 30 then field16_30
               when cohortStatusall = 45 then field16_45
               when cohortStatusall = 51 then field16_51
-            else 0 end) as string) field16,
-        cast((case when cohortStatusall = 11 then field17_11
+            else 0 end), 0) as string) field16,
+        cast(coalesce((case when cohortStatusall = 11 then field17_11
               when cohortStatusall = 12 then field17_12
               when cohortStatusall = 18 then field17_18
               when cohortStatusall = 19 then field17_19
@@ -2187,8 +2188,8 @@ select 'B' part,
               when cohortStatusall = 30 then field17_30
               when cohortStatusall = 45 then field17_45
               when cohortStatusall = 51 then field17_51
-            else 0 end) as string) field17,
-        cast((case when cohortStatusall = 11 then field18_11
+            else 0 end), 0) as string) field17,
+        cast(coalesce((case when cohortStatusall = 11 then field18_11
               when cohortStatusall = 12 then field18_12
               when cohortStatusall = 18 then field18_18
               when cohortStatusall = 19 then field18_19
@@ -2196,7 +2197,7 @@ select 'B' part,
               when cohortStatusall = 30 then field18_30
               when cohortStatusall = 45 then field18_45
               when cohortStatusall = 51 then field18_51
-            else 0 end) as string) field18
+            else 0 end), 0) as string) field18
 from (
     select subCoh.subcoh subCohortall,
         cohSt.cohortStatus cohortStatusall,
@@ -2523,14 +2524,14 @@ union
 select 'C' part,
         cast(subCohortall as string) section, --subcohort
         cast(cohortStatusall as string) line, --cohort status
-        cast((case when cohortStatusall = 10 then isPellRec 
+        cast(coalesce((case when cohortStatusall = 10 then isPellRec 
               when cohortStatusall = 18 then isPellRec18
               when cohortStatusall = 29 then isPellRec29
-            else isPellRec45 end) as string) field1, --isPell,
-        cast((case when cohortStatusall = 10 then isSubLoanRec 
+            else isPellRec45 end), 0) as string) field1, --isPell,
+        cast(coalesce((case when cohortStatusall = 10 then isSubLoanRec 
               when cohortStatusall = 18 then isSubLoanRec18
               when cohortStatusall = 29 then isSubLoanRec29
-            else isSubLoanRec45 end) as string) field2, --isSubLoan,
+            else isSubLoanRec45 end), 0) as string) field2, --isSubLoan,
 	null field3,
 	null field4,
 	null field5,
