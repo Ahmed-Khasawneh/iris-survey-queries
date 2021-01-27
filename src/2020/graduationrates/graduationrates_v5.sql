@@ -16,7 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	------------------------------------------------- 
-20210126	        akhasawneh				                    Initial version (runtime: m, s)
+20210126	        akhasawneh				                    Initial version (runtime: 16m, 42s, test data: 19m, 36s)
 
 ********************/ 
 
