@@ -16,6 +16,8 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)  	Author             	    Tag             	Comments
 ----------- 		--------------------	-------------   	-------------------------------------------------
+20210201            jhanicak                                    PF-1925 Remove old IPEDSReportingPeriod fields (runtime: prod 6m 9s test 6m 56s)
+                                                                PF-1895 Modify registrationStatusActionDate logic in RegistrationMCR
 20201210            akhasawneh                                  Fixes and tag updates per PF-1865, 1861, 1865, 1855
 20201119			jhanicak									Added surveySection field throughout survey, changed order of fields for consistency,
                                                                 PF-1750 mods to ipedsEthnicity code block prod 7m 16s test 7m 46s
@@ -81,11 +83,13 @@ WITH DefaultValues as (
 	'E1F' surveyId,  
 	'Academic Year End' repPeriodTag1,
 	'June End' repPeriodTag2,
+    1 blockNum,
 	CAST('9999-09-09' as DATE) snapshotDate,  
 	CAST('2019-07-01' AS DATE) reportingDateStart,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
 	'202010' termCode, --Fall 2019
 	'1' partOfTermCode, 
+    'Cohort' surveySection, 
 	CAST('2019-10-15' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
@@ -105,11 +109,13 @@ select '2021' surveyYear,
 	'E1F' surveyId,  
 	'Academic Year End' repPeriodTag1,
 	'June End' repPeriodTag2,
+    2 blockNum,
 	CAST('9999-09-09' as DATE) snapshotDate,  
 	CAST('2019-07-01' AS DATE) reportingDateStart,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
 	'201930' termCode, --Summer 2019
 	'1' partOfTermCode, 
+    'Cohort' surveySection,
 	CAST('2019-06-10' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
@@ -129,11 +135,13 @@ select '1415' surveyYear,
 	'E1F' surveyId,  
 	'Academic Year End' repPeriodTag1,
 	'June End' repPeriodTag2,
+    1 blockNum,
 	CAST('9999-09-09' as DATE) snapshotDate,   
 	CAST('2013-07-01' as DATE) reportingDateStart,
     CAST('2014-06-30' as DATE) reportingDateEnd, 
 	'201410' termCode,
 	'1' partOfTermCode,
+    'Cohort' surveySection,
 	CAST('2013-09-13' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
@@ -154,11 +162,13 @@ select '1415' surveyYear,
 	'E1F' surveyId,   
 	'Academic Year End' repPeriodTag1,
 	'June End' repPeriodTag2,
+    2 blockNum,
 	CAST('9999-09-09' as DATE) snapshotDate,   
 	CAST('2013-07-01' as DATE) reportingDateStart,
     CAST('2014-06-30' as DATE) reportingDateEnd, 
 	'201330' termCode,
 	'1' partOfTermCode,
+    'Cohort' surveySection,
 	CAST('2013-06-10' AS DATE) censusDate,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
@@ -184,7 +194,7 @@ ReportingPeriodMCR as (
 
 select distinct RepDates.surveyYear	surveyYear,
     RepDates.source source,
-    coalesce(upper(RepDates.surveySection), 'COHORT') surveySection,
+    coalesce(upper(RepDates.surveySection), 'Cohort') surveySection,
     to_date(RepDates.snapshotDate,'YYYY-MM-DD') snapshotDate,
     RepDates.termCode termCode,	
 	RepDates.partOfTermCode partOfTermCode,
@@ -199,11 +209,11 @@ from (
 		repperiodENT.snapshotDate snapshotDate,
 		repPeriodENT.surveyId surveyId,
 		repPeriodENT.surveySection surveySection,
-		coalesce(repperiodENT.reportingDateStart, defvalues.reportingDateStart) reportingDateStart,
-		coalesce(repperiodENT.reportingDateEnd, defvalues.reportingDateEnd) reportingDateEnd,
-		coalesce(repperiodENT.termCode, defvalues.termCode) termCode,
-		coalesce(repperiodENT.partOfTermCode, defvalues.partOfTermCode) partOfTermCode,
-		defvalues.censusDate censusDate,
+		defvalues.reportingDateStart reportingDateStart,
+		defvalues.reportingDateEnd reportingDateEnd,
+		repperiodENT.termCode termCode,
+		repperiodENT.partOfTermCode partOfTermCode,
+		null censusDate,
 		defvalues.repPeriodTag1 repPeriodTag1,
 	    defvalues.repPeriodTag2 repPeriodTag2,
 		row_number() over (	
@@ -222,17 +232,18 @@ from (
 		) reportPeriodRn	
 		from IPEDSReportingPeriod repperiodENT
 		    inner join DefaultValues defvalues on repperiodENT.surveyId = defvalues.surveyId
-	    and repperiodENT.surveyCollectionYear = defvalues.surveyYear
+                and repperiodENT.surveyCollectionYear = defvalues.surveyYear
 	    where repperiodENT.termCode is not null
-		and repperiodENT.partOfTermCode is not null
+            and repperiodENT.partOfTermCode is not null
+            and repperiodENT.surveySection = 'Cohort'
 	
     union 
  
 	select defvalues.surveyYear surveyYear,
 	    'DefaultValues' source,
-		CAST('9999-09-09' as DATE) snapshotDate,
+		defvalues.snapshotDate snapshotDate,
 		defvalues.surveyId surveyId, 
-		null surveySection,
+		defvalues.surveySection surveySection,
 		defvalues.reportingDateStart reportingDateStart,
 		defvalues.reportingDateEnd reportingDateEnd,
 		defvalues.termCode termCode,
@@ -247,7 +258,8 @@ from (
 										  where repperiodENT.surveyCollectionYear = defvalues.surveyYear
 											and upper(repperiodENT.surveyId) = defvalues.surveyId 
 											and repperiodENT.termCode is not null
-											and repperiodENT.partOfTermCode is not null) 
+											and repperiodENT.partOfTermCode is not null
+                                            and upper(repperiodENT.surveySection) = 'COHORT') 
     ) RepDates
 where RepDates.reportPeriodRn = 1
 ),
@@ -263,7 +275,6 @@ ClientConfigMCR as (
 select ConfigLatest.surveyYear surveyYear,
     ConfigLatest.source source,
     to_date(ConfigLatest.snapshotDate,'YYYY-MM-DD') snapshotDate,
-    ConfigLatest.repperiodSnapshotDate repperiodSnapshotDate,
 	upper(ConfigLatest.genderForUnknown) genderForUnknown,
 	upper(ConfigLatest.genderForNonBinary) genderForNonBinary,
     upper(ConfigLatest.instructionalActivityType) instructionalActivityType,
@@ -280,9 +291,8 @@ select ConfigLatest.surveyYear surveyYear,
 
 from (
     select clientConfigENT.surveyCollectionYear surveyYear,
-        'configFullYearTag' source,
-		clientConfigENT.snapshotDate snapshotDate, 
-		repperiod.snapshotDate repperiodSnapshotDate,
+        'IPEDSClientConfig' source,
+		coalesce(clientConfigENT.snapshotDate, defvalues.snapshotDate) snapshotDate,
 		coalesce(clientConfigENT.genderForUnknown, defvalues.genderForUnknown) genderForUnknown,
 		coalesce(clientConfigENT.genderForNonBinary, defvalues.genderForNonBinary) genderForNonBinary,
         coalesce(clientConfigENT.instructionalActivityType, defvalues.instructionalActivityType) instructionalActivityType,
@@ -300,21 +310,21 @@ from (
 			partition by
 				clientConfigENT.surveyCollectionYear
 			order by
-			    (case when to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
-			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
-                (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-				clientConfigENT.recordActivityDate desc
+			    (case when array_contains(clientConfigENT.tags, defvalues.repPeriodTag1) then 1
+                     when array_contains(clientConfigENT.tags, defvalues.repPeriodTag2) then 2
+			         else 3 end) asc,
+			     clientConfigENT.snapshotDate desc,
+                clientConfigENT.recordActivityDate desc
 		) configRn
 	from IPEDSClientConfig clientConfigENT
 	    inner join DefaultValues defvalues on clientConfigENT.surveyCollectionYear = defvalues.surveyYear
-		inner join ReportingPeriodMCR repperiod on clientConfigENT.surveyCollectionYear = repperiod.surveyYear
+            and defvalues.blockNum = 1
 
     union
 
 	select defvalues.surveyYear surveyYear,
-	    'default' source,
-	    CAST('9999-09-09' as DATE) snapshotDate,
-	    null repperiodSnapshotDate,  
+	    'DefaultValues' source,
+		defvalues.snapshotDate snapshotDate,  
 		defvalues.genderForUnknown genderForUnknown,
 		defvalues.genderForNonBinary genderForNonBinary,
         defvalues.instructionalActivityType instructionalActivityType,
@@ -665,7 +675,10 @@ from (
                 and repperiod.partOfTermCode = regENT.partOfTermCode
                 and ((to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
                     and to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') <= repperiod.censusDate)
-                        or to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
+                        or (to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE) 
+                            and ((to_date(regENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE) 
+                                and to_date(regENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.censusDate) 
+                            or to_date(regENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE)))) 
                 and regENT.isEnrolled = 1
                 and regENT.isIpedsReportable = 1 
                 ) regData
@@ -746,35 +759,7 @@ where stuData.studRn = 1
 
 StudentRefactor as (
 --Determine student info based on full term and degree-seeking status
-/*
-1. Student level:
 
-use first full term to determine student level
-if no term is a full (standard-length) term, use first term
-
-2. Degree-seeking status for Undergrad:
-
-if student's degree-seeking status is the same for all terms, use first full (standard-length) term to determine degree-seeking status
-    if no term is a full (standard-length) term, use first term
-if status changes, use first full (standard-length) term where student is degree-seeking
-    if no term is a full (standard-length) term, use first term where student is degree-seeking
-
-3. Student Type for degree-seeking status: 
-
-student is ds for all terms - then use first full (standard-length) term to determine student type
-    if no term is a full (standard-length) term, use first term
- ***still need to add: if student type is Continuing, check if a snapshot with tag 'Pre-Fall Summer Census' exists if student was enrolled, use that student type
-    
-if degree-seeking status changes from non-degree... to degree... then student type is Continuing
-
-if a student's type is not indicated directly and the student does not enroll with prior credits or transcripts from another institution, 
-    then assume the student is first-time
-    
-4. Attendance Status/Enrollment Level (Full-Time vs. Part-Time):
-
-use first full term to determine attendence status
-if no term is a full (standard-length) term, use first term
-*/
 select *
 from ( 
 select stu.yearType yearType,
@@ -894,7 +879,7 @@ and isInternational = false
 
 PersonMCR as (
 --Returns most up to date student personal information as of the reporting term codes and part of term census periods. 
---Per PF-1750, modified ipedsEthnicity subquery to account for new visaType field 
+
 select pers.personId personId,
         pers.yearType yearType,
         pers.surveySection surveySection,
