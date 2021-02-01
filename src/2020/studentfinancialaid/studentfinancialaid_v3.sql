@@ -16,6 +16,9 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
+20200122        akhasawneh                                  Adding support for CARES Act considerations. PF-1936
+20201228        akhasawneh                                  Fixes and inclusion of new field 'awardStatusActionDate'. PF-1906
+20201210        akhasawneh                                  Fixes and tag updates per PF-1865, 1861, 1865, 1855
 20201123        jhall                                       Initial version cloned from studentfinancialaid_v1.sql
 
 
@@ -23,7 +26,7 @@ Snapshot tag requirements:
 
 Multiple snapshots - one for each term/part of term combination:
 Fall Census - enrollment cohort
-Pre-Fall Summer Census - check for studentType of 'First Time' or 'Transfe'r if Fall studentType is 'Continuing'
+Pre-Fall Summer Census - check for studentType of 'First Time' or 'Transfer' if Fall studentType is 'Continuing'
 
 *If client is reporting the prior year and/or second prior year numbers, there could be up to 3 years of Fall and 
 Summer census snapshots.
@@ -62,7 +65,7 @@ WITH DefaultValues as (
 select '2021' surveyYear, 
 	'SFA' surveyId,
 	'Fall Census' repPeriodTag1,
-	'Department of Defense' repPeriodTag2,
+	'Financial Aid Year End' repPeriodTag2,
 	CAST('9999-09-09' as DATE) snapshotDate,  
 	CAST('2019-07-01' AS DATE) reportingDateStart,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
@@ -82,7 +85,7 @@ select '2021' surveyYear,
     CAST('2020-06-30' as DATE) giBillEndDate,
     CAST('2019-10-01' as DATE) dodStartDate,
     CAST('2020-09-30' as DATE) dodEndDate,
-    CAST('2020-09-30' as DATE) financialAidEndDate,
+    CAST('2020-06-30' as DATE) financialAidEndDate,
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
     'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
@@ -94,7 +97,7 @@ union
 select '2021' surveyYear, 
 	'SFA' surveyId,
 	'Fall Census' repPeriodTag1,
-	'Department of Defense' repPeriodTag2,
+	'Financial Aid Year End' repPeriodTag2,
 	CAST('9999-09-09' as DATE) snapshotDate,  
 	CAST('2019-07-01' AS DATE) reportingDateStart,
 	CAST('2020-06-30' AS DATE) reportingDateEnd,
@@ -114,7 +117,7 @@ select '2021' surveyYear,
     CAST('2020-06-30' as DATE) giBillEndDate,
     CAST('2019-10-01' as DATE) dodStartDate,
     CAST('2020-09-30' as DATE) dodEndDate,
-    CAST('2020-09-30' as DATE) financialAidEndDate,
+    CAST('2020-06-30' as DATE) financialAidEndDate,
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
     'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
@@ -126,7 +129,7 @@ select '2021' surveyYear,
 select '1415' surveyYear,  
 	'SFA' surveyId, 
 	'Fall Census' repPeriodTag1,
-	'Department of Defense' repPeriodTag2,
+	'Financial Aid Year End' repPeriodTag2,
 	CAST('9999-09-09' as DATE) snapshotDate,   
 	CAST('2013-07-01' as DATE) reportingDateStart,
     CAST('2014-06-30' as DATE) reportingDateEnd,
@@ -146,7 +149,7 @@ select '1415' surveyYear,
     CAST('2014-06-30' as DATE) giBillEndDate,
     CAST('2013-10-01' as DATE) dodStartDate,
     CAST('2014-09-30' as DATE) dodEndDate,
-    CAST('2014-09-30' as DATE) financialAidEndDate,
+    CAST('2014-06-30' as DATE) financialAidEndDate,
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
     'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
@@ -158,7 +161,7 @@ union
 select '1415' surveyYear,  
 	'SFA' surveyId, 
 	'Fall Census' repPeriodTag1,
-	'Department of Defense' repPeriodTag2,
+	'Financial Aid Year End' repPeriodTag2,
 	CAST('9999-09-09' as DATE) snapshotDate,   
 	CAST('2013-07-01' as DATE) reportingDateStart,
     CAST('2014-06-30' as DATE) reportingDateEnd,
@@ -178,7 +181,7 @@ select '1415' surveyYear,
     CAST('2014-06-30' as DATE) giBillEndDate,
     CAST('2013-10-01' as DATE) dodStartDate,
     CAST('2014-09-30' as DATE) dodEndDate,
-    CAST('2014-09-30' as DATE) financialAidEndDate,
+    CAST('2014-06-30' as DATE) financialAidEndDate,
     '' sfaLargestProgCIPC, --'CIPC (no dashes, just numeric characters); Default value (if no record): null'
     'N' sfaGradStudentsOnly, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
@@ -301,7 +304,9 @@ select ConfigLatest.surveyYear surveyYear,
     upper(ConfigLatest.sfaLargestProgramCIPC) sfaLargestProgramCIPC,
     upper(ConfigLatest.sfaGradStudentsOnly) sfaGradStudentsOnly,
     upper(ConfigLatest.sfaReportPriorYear) sfaReportPriorYear, --'N' sfaReportPriorYear, --
-	upper(ConfigLatest.sfaReportSecondPriorYear) sfaReportSecondPriorYear --'N' sfaReportSecondPriorYear --
+	upper(ConfigLatest.sfaReportSecondPriorYear) sfaReportSecondPriorYear, --'N' sfaReportSecondPriorYear --
+    upper(ConfigLatest.eviReserved1) caresAct1,
+    upper(ConfigLatest.eviReserved2) caresAct2
 --***** end survey-specific mods
 from (
     select clientConfigENT.surveyCollectionYear surveyYear,
@@ -328,14 +333,16 @@ from (
         coalesce(clientConfigENT.sfaGradStudentsOnly, defvalues.sfaGradStudentsOnly) sfaGradStudentsOnly,
         coalesce(clientConfigENT.sfaReportPriorYear, defvalues.sfaReportPriorYear) sfaReportPriorYear,
         coalesce(clientConfigENT.sfaReportSecondPriorYear, defvalues.sfaReportSecondPriorYear) sfaReportSecondPriorYear,
+        clientConfigENT.eviReserved1 eviReserved1,
+        clientConfigENT.eviReserved2 eviReserved2,
 --***** end survey-specific mods
 		row_number() over (
 			partition by
 				clientConfigENT.surveyCollectionYear
 			order by
 			    (case when to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
-			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 				clientConfigENT.recordActivityDate desc
 		) configRn
 	from IPEDSClientConfig clientConfigENT
@@ -368,6 +375,8 @@ from (
         defvalues.sfaGradStudentsOnly sfaGradStudentsOnly,
         defvalues.sfaReportPriorYear sfaReportPriorYear,
         defvalues.sfaReportSecondPriorYear sfaReportSecondPriorYear,
+        null eviReserved1,
+        null eviReserved2,
 --***** end survey-specific mods
 		1 configRn
     from DefaultValues defvalues
@@ -490,6 +499,8 @@ select coalesce(repPerTerms.yearType, 'CY') yearType,
 		repPerTerms.genderForNonBinary,
 		repPerTerms.instructionalActivityType,
 	    repPerTerms.equivCRHRFactor equivCRHRFactor,
+	    repPerTerms.caresAct1 caresAct1,
+        repPerTerms.caresAct2 caresAct2,
         (case when repPerTerms.termClassification = 'Standard Length' then 1
              when repPerTerms.termClassification is null then (case when repPerTerms.termType in ('Fall', 'Spring') then 1 else 2 end)
              else 2
@@ -523,7 +534,9 @@ select distinct repperiod.surveySection surveySection,
 		clientconfig.instructionalActivityType,
 	    coalesce(acadterm.requiredFTCreditHoursUG/
 		    coalesce(acadterm.requiredFTClockHoursUG, acadterm.requiredFTCreditHoursUG), 1) equivCRHRFactor,
-		row_number() over (
+        clientconfig.caresAct1 caresAct1,
+        clientconfig.caresAct2 caresAct2,
+        row_number() over (
             partition by 
                 repperiod.termCode,
                 repperiod.partOfTermCode
@@ -535,8 +548,8 @@ select distinct repperiod.surveySection surveySection,
                       when acadterm.snapshotDate <= to_date(date_add(acadterm.censusdate, 3), 'YYYY-MM-DD') 
                             and acadterm.snapshotDate >= to_date(date_sub(acadterm.censusDate, 1), 'YYYY-MM-DD') then 2
                      else 3 end) asc,
-                (case when acadterm.snapshotDate < acadterm.censusDate then acadterm.snapshotDate else CAST('1900-09-09' as DATE) end) desc,
-                (case when acadterm.snapshotDate > acadterm.censusDate then acadterm.snapshotDate else CAST('9999-09-09' as DATE) end) asc
+                (case when acadterm.snapshotDate > acadterm.censusDate then acadterm.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
+                (case when acadterm.snapshotDate < acadterm.censusDate then acadterm.snapshotDate else CAST('1900-09-09' as DATE) end) desc
             ) acadTermRnReg
     from ReportingPeriodMCR repperiod 
         left join AcademicTermMCR acadterm on repperiod.termCode = acadterm.termCode
@@ -649,6 +662,8 @@ from (
 		regData.genderForNonBinary,
 		regData.instructionalActivityType,
         regData.equivCRHRFactor,
+        regData.caresAct1,
+        regData.caresAct2,
         regData.personId,                    
         regData.crn,
         regData.crnLevel,    
@@ -666,8 +681,8 @@ from (
                     regData.crnLevel
                 order by 
                     (case when campus.snapshotDate = regData.snapshotDate then 1 else 2 end) asc,
-                    (case when campus.snapshotDate < regData.snapshotDate then campus.snapshotDate else CAST('1900-09-09' as DATE) end) desc,
-                    (case when campus.snapshotDate > regData.snapshotDate then campus.snapshotDate else CAST('9999-09-09' as DATE) end) asc
+                    (case when campus.snapshotDate > regData.snapshotDate then campus.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
+                    (case when campus.snapshotDate < regData.snapshotDate then campus.snapshotDate else CAST('1900-09-09' as DATE) end) desc
             ) regCampRn
     from ( 
         select regENT.personId personId,
@@ -692,6 +707,8 @@ from (
 		    repperiod.genderForNonBinary,
 		    repperiod.instructionalActivityType,
             repperiod.equivCRHRFactor,
+            repperiod.caresAct1 caresAct1,
+            repperiod.caresAct2 caresAct2,
             upper(regENT.campus) campus,
             coalesce(regENT.crnGradingMode, 'Standard') crnGradingMode,                    
             upper(regENT.crn) crn,
@@ -707,8 +724,8 @@ from (
                     regENT.crnLevel
                 order by 
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
-                    (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     regENT.recordActivityDate desc
             ) regRn
         from AcademicTermReportingRefactor repperiod   
@@ -748,6 +765,7 @@ select stuData.yearType,
         coalesce((case when stuData.studentType = 'High School' then true
                     when stuData.studentLevel = 'Continuing Ed' then true
                     when stuData.studentLevel = 'Occupational/Professional' then true
+                    when stuData.studentLevel = 'Other' then true
                   else stuData.isNonDegreeSeeking end), false) isNonDegreeSeeking,
         stuData.studentLevel,
         stuData.studentType,
@@ -780,8 +798,8 @@ from (
                     studentENT.termCode
                 order by
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') = reg.snapshotDate then 1 else 2 end) asc,
-                    (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') > reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     studentENT.recordActivityDate desc
             ) studRn
 	from RegistrationMCR reg
@@ -823,10 +841,9 @@ select stu.yearType yearType,
              else stu.studentType 
         end) studentType,
         stu.studentLevel studentLevelORIG,
-        (case when stu.studentLevel in ('Undergrad', 'Continuing Ed', 'Occupational/Professional')  then 'UG'
-                          when stu.studentLevel in ('Graduate') then 'GR'
-                          else null 
-                    end) studentLevel,
+        (case when stu.studentLevel = 'Graduate' then 'GR'
+            else 'UG' 
+        end) studentLevel,
         stu.campus campus,
         coalesce(stu.residency, 'In District') residency,
         coalesce(campus.isInternational, false) isInternational,        
@@ -836,8 +853,8 @@ select stu.yearType yearType,
                     stu.personId
                 order by 
                     (case when campus.snapshotDate = acadTermCode.snapshotDate then 1 else 2 end) asc,
-                    (case when campus.snapshotDate < acadTermCode.snapshotDate then campus.snapshotDate else CAST('1900-09-09' as DATE) end) desc,
-                    (case when campus.snapshotDate > acadTermCode.snapshotDate then campus.snapshotDate else CAST('9999-09-09' as DATE) end) asc
+                    (case when campus.snapshotDate > acadTermCode.snapshotDate then campus.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
+                    (case when campus.snapshotDate < acadTermCode.snapshotDate then campus.snapshotDate else CAST('1900-09-09' as DATE) end) desc
             ) regCampRn
     from ( 
         select distinct personId,
@@ -951,6 +968,8 @@ from (
 --***** start survey-specific mods - SFA doesn't report ethnicity and gender
 	    null ipedsGender,
 	    null ipedsEthnicity,
+        reg.caresAct1,
+        reg.caresAct2,
 --***** end survey-specific mods
         to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
         reg.crn,
@@ -976,8 +995,8 @@ from (
                     coursesectENT.courseNumber
                 order by
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') = reg.snapshotDate then 1 else 2 end) asc,
-                    (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') > reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     coursesectENT.recordActivityDate desc
             ) courseRn
     from RegistrationMCR reg  
@@ -1024,6 +1043,8 @@ from (
 	    coursesect.isNonDegreeSeeking,
 	    coursesect.ipedsGender,
 	    coursesect.ipedsEthnicity,
+        coursesect.caresAct1,
+        coursesect.caresAct2,
 	    coursesect.residency,
 		to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
 	    coursesect.crn crn,
@@ -1050,8 +1071,8 @@ from (
                 coursesect.courseNumber
 			order by
 			    (case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') = coursesect.snapshotDate then 1 else 2 end) asc,
-                (case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') < coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 (case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') > coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') < coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 			    coursesectschedENT.recordActivityDate desc
 		) courseSectSchedRn
 	from CourseSectionMCR coursesect
@@ -1094,6 +1115,8 @@ from (
 	    coursesectsched.isNonDegreeSeeking,
 	    coursesectsched.ipedsGender,
 	    coursesectsched.ipedsEthnicity,
+        coursesectsched.caresAct1,
+        coursesectsched.caresAct2,
 	    coursesectsched.residency,
 	    coursesectsched.crn crn,
 		coursesectsched.section section,
@@ -1122,8 +1145,8 @@ from (
                 coursesectsched.courseNumber
 			order by
 			    (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') = coursesectsched.snapshotDate then 1 else 2 end) asc,
-                (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') < coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') > coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') < coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 			    termorder.termOrder desc,
 			    courseENT.recordActivityDate desc
 		) courseRn
@@ -1169,6 +1192,8 @@ from (
             residency,
             ipedsGender,
             ipedsEthnicity,
+            caresAct1,
+            caresAct2,
             residency,
             (case when totalCredCourses > 0 --exclude students not enrolled for credit
                             then (case when totalESLCourses = totalCredCourses then 0 --exclude students enrolled only in ESL courses/programs
@@ -1198,6 +1223,8 @@ from (
                 course.residency,
                 course.ipedsGender,
                 course.ipedsEthnicity,
+                course.caresAct1,
+                course.caresAct2,
 	            course.residency,
                 sum((case when course.enrollmentHours >= 0 then 1 else 0 end)) totalCourses,
                 sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 then course.enrollmentHours else 0 end)) totalCreditHrs,
@@ -1235,7 +1262,9 @@ from (
                 course.residency,
                 course.ipedsGender,
                 course.ipedsEthnicity,
-	            course.residency
+	            course.residency,
+	            course.caresAct1,
+	            course.caresAct2
         )
     )
 where ipedsInclude = 1
@@ -1266,6 +1295,7 @@ select course2.personId personId,
         course2.residency residency,
         round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalLoan,
         round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalGrantSchol,
+        round(sum(coalesce(case when finaid.fundType = 'Grant' and finaid.fundSource = 'Federal' and finaid.fundCode in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end, 0)), 0) caresFederalGrant,
         round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalWorkStudy,
         round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalLoan,
         round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalGrantSchol,
@@ -1284,8 +1314,10 @@ select course2.personId personId,
         round(sum(finaid.IPEDSFinancialAidAmount), 0) totalAid,
         round(sum(case when course2.isGroup2Ind = 1 then finaid.IPEDSFinancialAidAmount end)) group2aTotal,
 		round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Loan', 'Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group2bTotal,
-        round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group3Total,
-        round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 then finaid.IPEDSFinancialAidAmount end)) group4Total,
+        --round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group3Total, --Pre CARES Act (Revert after CARES Act phases out)
+        round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') and finaid.fundCode not in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end)) group3Total,
+        --round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 then finaid.IPEDSFinancialAidAmount end)) group4Total, --Pre CARES Act (Revert after CARES Act phases out)
+        round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 and finaid.fundCode not in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end)) group4Total,
         (case when course2.isGroup2Ind = 1 then (case when first(finaid.familyIncome) <= 30000 then 1
 		                                            when first(finaid.familyIncome) between 30001 and 48000 then 2
 		                                            when first(finaid.familyIncome) between 48001 and 75000 then 3
@@ -1300,7 +1332,7 @@ from CourseTypeCountsSTU course2
             course.yearType yearType,
             course.financialAidYear financialAidYear,
             FinancialAidENT.fundType fundType,
-            FinancialAidENT.fundCode fundCode,
+            upper(FinancialAidENT.fundCode) fundCode,
             FinancialAidENT.fundSource fundSource,
             FinancialAidENT.recordActivityDate recordActivity,
             FinancialAidENT.termCode termCode,
@@ -1325,15 +1357,16 @@ from CourseTypeCountsSTU course2
                 partition by
                      course.yearType,
                     FinancialAidENT.financialAidYear,
+                    FinancialAidENT.termCode,
                     course.personId,
 			        FinancialAidENT.fundCode,
 			        FinancialAidENT.fundType,
 			        FinancialAidENT.fundSource
 		        order by 		    
                     (case when array_contains(FinancialAidENT.tags, config.repPeriodTag2) then 1
-                          when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.financialAidEndDate, 1) and date_add(config.financialAidEndDate, 3) then 2 else 3 end) asc,
-                    (case when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') < config.financialAidEndDate then to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+                        when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.financialAidEndDate, 30) and date_add(config.financialAidEndDate, 10) then 2 else 3 end) asc,
                     (case when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') > config.financialAidEndDate then to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') < config.financialAidEndDate then to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     FinancialAidENT.recordActivityDate desc
             ) finAidRn
         from CourseTypeCountsSTU course   
@@ -1343,10 +1376,13 @@ from CourseTypeCountsSTU course2
         inner join FinancialAid FinancialAidENT on course.personId = FinancialAidENT.personId
 	        and course.financialAidYear = FinancialAidENT.financialAidYear
 		    and FinancialAidENT.isIpedsReportable = 1
-		    and ((to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-			    and to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') <= config.financialAidEndDate
-                and FinancialAidENT.awardStatus not in ('Source Declined', 'Cancelled'))
-				    or to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))
+            and FinancialAidENT.awardStatus not in ('Source Denied', 'Cancelled')
+            and ((to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+			        and to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') <= config.financialAidEndDate)
+                or (to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
+                    and ((to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+                            and to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') <= config.financialAidEndDate)
+                        or to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))))     
         ) finaid on course2.personId = finaid.personId
 	        and course2.financialAidYear = finaid.financialAidYear
             and finaid.finAidRn = 1
@@ -1394,8 +1430,8 @@ from (
 				      else 2 end) asc,
 				(case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.giBillStartDate, 1) and date_add(config.giBillEndDate, 3) then 3 
 				    else 4 end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.giBillStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.giBillEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.giBillStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 MilitaryBenefitENT.recordActivityDate desc
 	    ) militarybenefitRn
     from MilitaryBenefit MilitaryBenefitENT
@@ -1450,8 +1486,8 @@ from (
 				      else 2 end) asc,
 				(case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.dodStartDate, 1) and date_add(config.dodEndDate, 3) then 3 
 				    else 4 end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.dodStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.dodEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.dodStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 MilitaryBenefitENT.recordActivityDate desc
 	    ) militarybenefitRn
     from MilitaryBenefit MilitaryBenefitENT
@@ -1518,8 +1554,8 @@ from (
                         miliben.benefitAmount
                     order by
                         (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') = miliben.snapshotDate then 1 else 2 end) asc,
-                        (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < miliben.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                         (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') > miliben.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else miliben.snapshotDate end) asc,
+                        (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < miliben.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                         studentENT.recordActivityDate desc
                 ) studRn
             from MilitaryBenefitMCR miliben
@@ -1767,9 +1803,9 @@ from (
             coalesce(SUM(case when cohortstu.yearType = 'CY' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) FIELD11_1, --Count of Group 3 current year living off campus not with family, 0-999999
             (case when config.sfaReportPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY1' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) else null end) FIELD12_1, --Count of Group 3 prior year living off campus not with family, 0-999999
             (case when config.sfaReportSecondPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY2' and cohortstu.livingArrangement = 'Off Campus' then isGroup3 end), 0) else null end) FIELD13_1, --Count of Group 3 prior2 year living off campus not with family, 0-999999
-            ROUND(coalesce(SUM(case when cohortstu.yearType = 'CY' then cohortstu.totalAid end), 0)) FIELD14_1, --Total aid for Group 3 current year, 0-999999999999
-            ROUND((case when config.sfaReportPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY1' then cohortstu.totalAid end), 0) else null end)) FIELD15_1, --Total aid for Group 3 prior year, 0-999999999999
-            ROUND((case when config.sfaReportSecondPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY2' then cohortstu.totalAid end), 0) else null end)) FIELD16_1  --Total aid for Group 3 prior2 year, 0-999999999999
+            ROUND(coalesce(SUM(case when cohortstu.yearType = 'CY' then cohortstu.group3Total end), 0)) FIELD14_1, --Total aid for Group 3 current year, 0-999999999999
+            ROUND((case when config.sfaReportPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY1' then cohortstu.group3Total end), 0) else null end)) FIELD15_1, --Total aid for Group 3 prior year, 0-999999999999
+            ROUND((case when config.sfaReportSecondPriorYear = 'Y' then coalesce(SUM(case when cohortstu.yearType = 'PY2' then cohortstu.group3Total end), 0) else null end)) FIELD16_1  --Total aid for Group 3 prior2 year, 0-999999999999
     from FinancialAidMCR cohortstu
         cross join (select first(sfaReportPriorYear) sfaReportPriorYear,
                             first(sfaReportSecondPriorYear) sfaReportSecondPriorYear,
@@ -1886,8 +1922,10 @@ select 'F' PART,
         end) FIELD2_1, --Acad Year, prior
        familyIncome FIELD3_1, --Income range of Group 4 students (values 1 - 5)
        sum(isGroup4) FIELD4_1, --Count of Group 4 students who were awarded any Title IV aid
-       SUM(case when allGrantSchol > 0 then isGroup4 else 0 end) FIELD5_1, --Count of Group 4 students who were awarded any grant or scholarship aid
-       SUM(allGrantSchol) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
+-- Emergency grants funded through the CARES Act should be NOT included for Group 4 in Part E under “grant or scholarship aid from the following sources: 
+--     the federal government, state/local government, or the institution,” as inclusion of these grants would skew net price calculations.
+       SUM(case when (allGrantSchol - caresFederalGrant) > 0 then isGroup4 else 0 end) FIELD5_1, --Count of Group 4 students who were awarded any grant or scholarship aid
+       SUM(allGrantSchol) - SUM(caresFederalGrant) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
        null FIELD7_1,
        null FIELD8_1,
        null FIELD9_1,
@@ -1902,6 +1940,7 @@ from (
     select cohortstu.personId personId,
         cohortstu.isGroup4 isGroup4,
         cohortstu.familyIncome familyIncome,
+        cohortstu.caresFederalGrant caresFederalGrant,
         cohortstu.allGrantSchol allGrantSchol,
         cohortstu.yearType yearType
     from FinancialAidMCR cohortstu
@@ -1923,6 +1962,7 @@ where cohortstu.isGroup4 = 1
     select null, -- personId
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
+        0, --caresFederalGrant
         0, --allGrantSchol
         'CY' --yearType
     from FormatPartFStudentIncome studentIncome
@@ -1932,6 +1972,7 @@ where cohortstu.isGroup4 = 1
     select null, -- personId
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
+        0, --caresFederalGrant
         0, --allGrantSchol
         'PY1' --yearType
     from FormatPartFStudentIncome studentIncome
@@ -1943,6 +1984,7 @@ where cohortstu.isGroup4 = 1
     select null, -- personId
         0, --isGroup4
         studentIncome.ipedsIncome, --familyIncome
+        0, --caresFederalGrant
         0, --allGrantSchol
         'PY2' --yearType
     from FormatPartFStudentIncome studentIncome
