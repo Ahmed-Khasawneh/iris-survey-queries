@@ -432,4 +432,7 @@ async function main() {
   }
 }
 
-main().catch(() => null);
+main().catch(e => {
+  console.error(e.message);
+  process.exit(1);
+});
