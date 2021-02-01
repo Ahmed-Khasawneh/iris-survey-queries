@@ -60,7 +60,7 @@ function getSurveyTypeFromFileName(fileName) {
       let word = _word;
       // if word is number ONLY, add v in front
       // example: 1 becomes v1, 2 becomes v2
-      if (word.match(/^\d+$/)) {
+      if (word.match(/^\d+$/) && word !== '200') {
         word = `v${word}`;
       }
       if (!fileName.toLowerCase().includes(word.toLowerCase())) {
