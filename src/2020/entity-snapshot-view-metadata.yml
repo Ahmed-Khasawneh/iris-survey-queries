@@ -1988,7 +1988,7 @@ GRADUATION_RATES_5:
       end: 2021-02-10
       
 GRADUATION_RATES_200_1:
-  # reporting period: terms within 2006-07-01 to 2007-06-30; as-of dates 2010-08-31, 2012-08-31, 2014-08-31
+  # reporting period: terms within 2012-07-01 to 2020-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
