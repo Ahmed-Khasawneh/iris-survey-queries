@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const Path = require('path');
 const uuid = require('uuid');
 const ora = require('ora');
+const _ = require('lodash');
 const { argv } = require('yargs');
 const moment = require('moment');
 const SurveyTypes = require('./survey-types');
@@ -52,7 +53,11 @@ async function asPromise(method, ...args) {
 }
 
 function getSurveyTypeFromFileName(fileName) {
-  return Object.keys(SurveyTypes).find(surveyType => {
+  const sortedSurveyTypes = _.sortBy(
+    Object.keys(SurveyTypes),
+    surveyType => surveyType.split('_').length,
+  ).reverse();
+  return sortedSurveyTypes.find(surveyType => {
     const words = surveyType.split('_');
     let foundAllWords = true;
 
