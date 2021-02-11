@@ -708,6 +708,14 @@ ACADEMIC_LIBRARIES_1:
       start: 2014-01-01
       end: 2014-12-31
 
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2010-01-01
+      end: 2014-12-31
+
 ADMISSIONS_1:
   # reporting period for Cohort: Fall Census 2020 and prior summer
 
