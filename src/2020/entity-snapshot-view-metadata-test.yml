@@ -2866,12 +2866,13 @@ GRADUATION_RATES_200_2:
       end: 2010-10-01
 
 HUMAN_RESOURCES_1:
-  # reporting period: as of 10/31/19
+  # reporting period: as of 10/31/14
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2880,6 +2881,7 @@ HUMAN_RESOURCES_1:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2888,6 +2890,7 @@ HUMAN_RESOURCES_1:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2896,6 +2899,16 @@ HUMAN_RESOURCES_1:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2014-10-15
+      end: 2014-11-15
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2904,14 +2917,7 @@ HUMAN_RESOURCES_1:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2014-10-15
-      end: 2014-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2920,17 +2926,19 @@ HUMAN_RESOURCES_1:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
 
 HUMAN_RESOURCES_2:
-  # reporting period: as of 10/31/19
+  # reporting period: as of 10/31/14
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2939,6 +2947,7 @@ HUMAN_RESOURCES_2:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2947,6 +2956,7 @@ HUMAN_RESOURCES_2:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2955,6 +2965,16 @@ HUMAN_RESOURCES_2:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2014-10-15
+      end: 2014-11-15
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2963,14 +2983,7 @@ HUMAN_RESOURCES_2:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2014-10-15
-      end: 2014-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2979,17 +2992,19 @@ HUMAN_RESOURCES_2:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
 
 HUMAN_RESOURCES_3:
-  # reporting period: as of 10/31/19
+  # reporting period: as of 10/31/14
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -2998,6 +3013,7 @@ HUMAN_RESOURCES_3:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -3006,6 +3022,7 @@ HUMAN_RESOURCES_3:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -3014,6 +3031,7 @@ HUMAN_RESOURCES_3:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -3022,14 +3040,7 @@ HUMAN_RESOURCES_3:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2014-10-15
-      end: 2014-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -3038,17 +3049,19 @@ HUMAN_RESOURCES_3:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
 
 HUMAN_RESOURCES_4:
-  # reporting period: as of 10/31/19
+  # reporting period: as of 10/31/14
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -3057,6 +3070,7 @@ HUMAN_RESOURCES_4:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -3065,14 +3079,7 @@ HUMAN_RESOURCES_4:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2014-10-15
-      end: 2014-11-15
-
-  - viewName: Faculty
-    entityName: Faculty
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -3081,14 +3088,7 @@ HUMAN_RESOURCES_4:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2014-10-15
-      end: 2014-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
@@ -3097,6 +3097,7 @@ HUMAN_RESOURCES_4:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2014-10-15
       end: 2014-11-15
