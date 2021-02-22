@@ -18,13 +18,14 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
-20200702			akhasawneh			ak 20200702		Modify HR report query with standardized view naming/aliasing convention (PF-1533) (Run time 1m 1s) 
+20200222            akhasawneh                          !!!COMPLETE REFACTOR!!! Updating to standardized views and modifying for 'Faculty' and 'FacultyAppointment' changes (PF-1973) 1m 2s (prod), 52s (test)
+20200702						akhasawneh					ak 20200702			Modify HR report query with standardized view naming/aliasing convention (PF-1533) (Run time 1m 1s) 
 20200702            jhanicak                            Fixed OccCat case stmts (run time 1m 5s)
 20200527            jhanicak                            Remove reference to IPEDSClientConfig.hrIncludeTenure field PF-1488
-20200427			jhanicak			jh 20200428		Add default values and filter most current record queries on prior query PF-1318
-20200424 	    	akhasawneh 			ak 20200424 	Adding dummy date considerations (PF-1375)
-20200423            akhasawneh          ak 20200423     Modification to use 'isInUSOnVisa' and 'isUSCitizen' for ethnicity (PF-1441)
-20200205            jhanicak            jh 20200205     Added default values for IPEDSReportingPeriod and IPEDSClientConfig
+20200427						jhanicak						jh 20200428			Add default values and filter most current record queries on prior query PF-1318
+20200424						akhasawneh					ak 20200424			Adding dummy date considerations (PF-1375)
+20200423            akhasawneh					ak 20200423     Modification to use 'isInUSOnVisa' and 'isUSCitizen' for ethnicity (PF-1441)
+20200205            jhanicak						jh 20200205     Added default values for IPEDSReportingPeriod and IPEDSClientConfig
 20200106            akhasawneh                          Move original code to template 
 20200103            jhanicak                            Initial version 
 
@@ -38,129 +39,164 @@ The views below are used to determine the dates, academic terms, academic year, 
 WITH DefaultValues as (
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
 
+--Production Default (Begin)
 select '1920' surveyYear, 
 	'HR1' surveyId,
-	CAST('2019-11-01' AS TIMESTAMP) asOfDate,
-	CAST('2018-11-01' AS TIMESTAMP) newHireStartDate,
-	CAST('2019-10-31' AS TIMESTAMP) newHireendDate,
-	'N' hrIncludeSecondarySalary, --Y = Yes, N = No
-	'M' genderForUnknown, --M = Male, F = Female
-	'F' genderForNonBinary  --M = Male, F = Female
+	'HR Reporting End' repPeriodTag1, --used for all status updates and IPEDS tables
+	--null repPeriodTag2, -- Not used for HR 
+    --null repPeriodTag3, -- Not used for HR 
+    --null repPeriodTag4, -- Not used for HR 
+	CAST('9999-09-09' as DATE) snapshotDate,  
+	CAST('2018-11-01' AS DATE) reportingDateStart, --newHireStartDate
+	CAST('2019-10-31' AS DATE) reportingDateEnd, --newHireendDate
+	--null termCode, -- Not used for HR 
+	--null partOfTermCode, -- Not used for HR 
+	--CAST('2019-11-01' AS TIMESTAMP) censusDate, -- Not used for HR
+	'M' genderForUnknown, --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
+	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
+    --null instructionalActivityType, -- Not used for HR 
+    --null acadOrProgReporter, -- Not used for HR 
+    --null publicOrPrivateInstitution, -- Not used for HR 
+    --null financialAidEndDate, -- Not used for HR 
+    --null earliestStatusDate, -- Not used for HR 
+    --null midStatusDate, -- Not used for HR 
+    --null latestStatusDate, -- Not used for HR 
+--***** start survey-specific mods
+    CAST('2019-11-01' AS TIMESTAMP) asOfDate,
+	'N' hrIncludeSecondarySalary --Y = Yes, N = No
+--***** end survey-specific mods
 
---Use for testing internally only
 /*
+--Test Default (Begin)
 select '1516' surveyYear, 
 	'HR1' surveyId,
-	CAST('2015-11-01' AS TIMESTAMP) asOfDate,
-	CAST('2014-11-01' AS TIMESTAMP) newHireStartDate,
-	CAST('2015-10-31' AS TIMESTAMP) newHireendDate,
-	'N' hrIncludeSecondarySalary, --Y = Yes, N = No
-	'M' genderForUnknown, --M = Male, F = Female
-	'F' genderForNonBinary  --M = Male, F = Female
+	'HR Reporting End' repPeriodTag1, --used for all status updates and IPEDS tables
+	--null repPeriodTag2, -- Not used for HR 
+    --null repPeriodTag3, -- Not used for HR 
+    --null repPeriodTag4, -- Not used for HR 
+	CAST('9999-09-09' as DATE) snapshotDate,  
+	CAST('2014-11-01' AS DATE) reportingDateStart, --newHireStartDate
+	CAST('2015-10-31' AS DATE) reportingDateEnd, --newHireendDate
+	--null termCode, -- Not used for HR 
+	--null partOfTermCode, -- Not used for HR 
+	--CAST('2015-11-01' AS TIMESTAMP) censusDate, -- asOfDate
+	'M' genderForUnknown, --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
+	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
+    --null instructionalActivityType, -- Not used for HR 
+    --null acadOrProgReporter, -- Not used for HR 
+    --null publicOrPrivateInstitution, -- Not used for HR 
+    --null financialAidEndDate, -- Not used for HR 
+    --null earliestStatusDate, -- Not used for HR 
+    --null midStatusDate, -- Not used for HR 
+    --null latestStatusDate, -- Not used for HR 
+--***** start survey-specific mods
+    CAST('2015-11-01' AS TIMESTAMP) asOfDate,
+	'N' hrIncludeSecondarySalary --Y = Yes, N = No
+--***** end survey-specific mods
 */
 ),
 
-ClientConfigMCR as (
--- Pulls client reporting preferences from the IPEDSClientConfig entity. 
+/*
+ReportingPeriodMCR as (
+- This view will no longer be needed for HR reporting. Fields being pulled in here under the 'HR1' surveyId are defined by IPEDS and can be assumed in the DefaultVales view. 
+),
+*/
 
---jh 20200428 rewrote and added default fields
+ClientConfigMCR as ( 
+-- Pulls client reporting preferences from the IPEDSClientConfig entity. 
+--          1st union 1st order - pull snapshot for 'June End' 
+--          1st union 2nd order - pull snapshot for 'August End'
+--          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
+--          2nd union - pull default values if no record in IPEDSClientConfig
 
 select ConfigLatest.surveyYear surveyYear,
-	ConfigLatest.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-	ConfigLatest.genderForUnknown genderForUnknown,
-	ConfigLatest.genderForNonBinary genderForNonBinary,
-	ConfigLatest.surveyId surveyId,
-	ConfigLatest.asOfDate asOfDate,
-	ConfigLatest.newHireStartDate newHireStartDate,
-	ConfigLatest.newHireendDate newHireendDate
+    ConfigLatest.source source,
+    to_date(ConfigLatest.snapshotDate,'YYYY-MM-DD') snapshotDate,
+    --ConfigLatest.repperiodSnapshotDate repperiodSnapshotDate, -- Not used for HR 
+	upper(ConfigLatest.genderForUnknown) genderForUnknown,
+	upper(ConfigLatest.genderForNonBinary) genderForNonBinary,
+    --upper(ConfigLatest.instructionalActivityType) instructionalActivityType, -- Not used for HR 
+    --upper(ConfigLatest.acadOrProgReporter) acadOrProgReporter, -- Not used for HR 
+    --upper(ConfigLatest.publicOrPrivateInstitution) publicOrPrivateInstitution, -- Not used for HR 
+    ConfigLatest.repPeriodTag1 repPeriodTag1,
+	--ConfigLatest.repPeriodTag2 repPeriodTag2, -- Not used for HR 
+	--ConfigLatest.repPeriodTag3 repPeriodTag3, -- Not used for HR 
+	--ConfigLatest.financialAidEndDate financialAidEndDate, -- Not used for HR 
+    --ConfigLatest.earliestStatusDate earliestStatusDate, -- Not used for HR 
+    --ConfigLatest.midStatusDate midStatusDate, -- Not used for HR 
+    --ConfigLatest.latestStatusDate latestStatusDate, -- Not used for HR 
+--***** start survey-specific mods
+    ConfigLatest.reportingDateStart reportingDateStart,
+    ConfigLatest.reportingDateEnd reportingDateEnd,
+    ConfigLatest.asOfDate asOfDate,
+    ConfigLatest.hrIncludeSecondarySalary hrIncludeSecondarySalary
+--***** end survey-specific mods
 from (
-	select clientconfigENT.surveyCollectionYear surveyYear,
-		NVL(clientconfigENT.hrIncludeSecondarySalary, defvalues.hrIncludeSecondarySalary) hrIncludeSecondarySalary,
-		NVL(clientconfigENT.genderForUnknown, defvalues.genderForUnknown) genderForUnknown,
-		NVL(clientconfigENT.genderForNonBinary, defvalues.genderForNonBinary) genderForNonBinary,
-		defvalues.surveyId surveyId,
-		defvalues.asOfDate asOfDate,
-		defvalues.newHireStartDate newHireStartDate,
-		defvalues.newHireendDate newHireendDate,
-		ROW_NUMBER() OVER (
-			PARTITION BY
-				clientconfigENT.surveyCollectionYear
-			ORDER BY
-				clientconfigENT.recordActivityDate DESC
+    select clientConfigENT.surveyCollectionYear surveyYear,
+        'configFullYearTag' source,
+		clientConfigENT.snapshotDate snapshotDate, 
+		--repperiod.snapshotDate repperiodSnapshotDate, -- Not used for HR 
+		coalesce(clientConfigENT.genderForUnknown, defvalues.genderForUnknown) genderForUnknown,
+		coalesce(clientConfigENT.genderForNonBinary, defvalues.genderForNonBinary) genderForNonBinary,
+        --coalesce(clientConfigENT.instructionalActivityType, defvalues.instructionalActivityType) instructionalActivityType, -- Not used for HR 
+        --coalesce(clientconfigENT.acadOrProgReporter, defvalues.acadOrProgReporter) acadOrProgReporter, -- Not used for HR 
+        --coalesce(clientconfigENT.publicOrPrivateInstitution, defvalues.publicOrPrivateInstitution) publicOrPrivateInstitution, -- Not used for HR 
+		defvalues.repPeriodTag1 repPeriodTag1,
+	    --defvalues.repPeriodTag2 repPeriodTag2, -- Not used for HR 
+	    --defvalues.repPeriodTag3 repPeriodTag3, -- Not used for HR 
+        --defvalues.financialAidEndDate financialAidEndDate, -- Not used for HR 
+        --defvalues.earliestStatusDate earliestStatusDate, -- Not used for HR 
+        --defvalues.midStatusDate midStatusDate, -- Not used for HR 
+        --defvalues.latestStatusDate latestStatusDate, -- Not used for HR 
+--***** start survey-specific mods
+        defvalues.reportingDateStart reportingDateStart,
+        defvalues.reportingDateEnd reportingDateEnd,
+        defvalues.asOfDate asOfDate,
+        coalesce(clientConfigENT.hrIncludeSecondarySalary, defvalues.hrIncludeSecondarySalary) hrIncludeSecondarySalary,
+--***** end survey-specific mods
+		row_number() over (
+			partition by
+				clientConfigENT.surveyCollectionYear
+			order by
+				(case when array_contains(clientConfigENT.tags, defvalues.repPeriodTag1) then 1 else 2 end) asc,
+			    to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') desc,
+				clientConfigENT.recordActivityDate desc
 		) configRn
-	from IPEDSClientConfig clientconfigENT
-		cross join DefaultValues defvalues
-	where clientconfigENT.surveyCollectionYear = defvalues.surveyYear
+	from IPEDSClientConfig clientConfigENT
+	    cross join DefaultValues defvalues on clientConfigENT.surveyCollectionYear = defvalues.surveyYear
+		--inner join ReportingPeriodMCR repperiod on clientConfigENT.surveyCollectionYear = repperiod.surveyYear -- Not used for HR 
 
-	union
+    union
 
--- Defaults config information to avoid IRIS validator errors if an applicable 'IPEDSClientConfig' record is not present. 
 	select defvalues.surveyYear surveyYear,
-		defvalues.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+	    'default' source,
+	    CAST('9999-09-09' as DATE) snapshotDate,
+	    --null repperiodSnapshotDate, -- Not used for HR 
 		defvalues.genderForUnknown genderForUnknown,
 		defvalues.genderForNonBinary genderForNonBinary,
-		defvalues.surveyId surveyId,
-		defvalues.asOfDate asOfDate,
-		defvalues.newHireStartDate newHireStartDate,
-		defvalues.newHireendDate newHireendDate,
+        --defvalues.instructionalActivityType instructionalActivityType, -- Not used for HR 
+        --defvalues.acadOrProgReporter acadOrProgReporter, -- Not used for HR 
+        --defvalues.publicOrPrivateInstitution publicOrPrivateInstitution, -- Not used for HR 
+		defvalues.repPeriodTag1 repPeriodTag1,
+	    --defvalues.repPeriodTag2 repPeriodTag2, -- Not used for HR 
+	    --defvalues.repPeriodTag3 repPeriodTag3, -- Not used for HR 
+        --defvalues.financialAidEndDate financialAidEndDate, -- Not used for HR 
+        --defvalues.earliestStatusDate earliestStatusDate, -- Not used for HR 
+        --defvalues.midStatusDate midStatusDate, -- Not used for HR 
+        --defvalues.latestStatusDate latestStatusDate, -- Not used for HR 
+--***** start survey-specific mods
+        defvalues.reportingDateStart reportingDateStart,
+        defvalues.reportingDateEnd reportingDateEnd,
+        defvalues.asOfDate asOfDate,
+        defvalues.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+--***** end survey-specific mods
 		1 configRn
-	from DefaultValues defvalues
-	where defvalues.surveyYear not in (select clientconfigENT.surveyCollectionYear
-										from IPEDSClientConfig clientconfigENT
-										where clientconfigENT.surveyCollectionYear = defvalues.surveyYear)
+    from DefaultValues defvalues
+    where defvalues.surveyYear not in (select max(configENT.surveyCollectionYear)
+										from IPEDSClientConfig configENT
+										where configENT.surveyCollectionYear = defvalues.surveyYear)
 	) ConfigLatest
-where ConfigLatest.configRn = 1
-),
-
-ReportingPeriodMCR as (
---Returns client specified reporting period for HR reporting and defaults to IPEDS specified date range if not otherwise defined 
-
---jh 20200428 rewrote and added Config fields
-
-select surveyYear surveyYear,
-	asOfDate asOfDate,
-	newHireStartDate newHireStartDate,
-	newHireendDate newHireendDate,
-	hrIncludeSecondarySalary hrIncludeSecondarySalary,
-	genderForUnknown genderForUnknown,
-	genderForNonBinary genderForNonBinary
-from (
-	select repperiodENT.surveyCollectionYear surveyYear,
-		NVL(repperiodENT.asOfDate, clientconfig.asOfDate) asOfDate,
-		NVL(repperiodENT.reportingDateStart, clientconfig.newHireStartDate) newHireStartDate,
-		NVL(repperiodENT.reportingDateend, clientconfig.newHireendDate) newHireendDate,
-		clientconfig.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-		clientconfig.genderForUnknown genderForUnknown,
-		clientconfig.genderForNonBinary genderForNonBinary,
-		ROW_NUMBER() OVER (
-			PARTITION BY
-				repperiodENT.surveyCollectionYear
-			ORDER BY
-				repperiodENT.recordActivityDate DESC
-		) repperiodRn
-	from ClientConfigMCR clientconfig
-		cross join IPEDSReportingPeriod repperiodENT
-	where repperiodENT.surveyCollectionYear = clientconfig.surveyYear
-		and repperiodENT.surveyId like clientconfig.surveyId
-	
-	union
-	
-	select clientconfig.surveyYear surveyYear,
-		clientconfig.asOfDate asOfDate,
-		clientconfig.newHireStartDate newHireStartDate,
-		clientconfig.newHireendDate newHireendDate,
-		clientconfig.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-		clientconfig.genderForUnknown genderForUnknown,
-		clientconfig.genderForNonBinary genderForNonBinary,
-		1 repperiodRn
-	from ClientConfigMCR clientconfig
-		where clientconfig.surveyYear not in (select repperiodENT.surveyCollectionYear
-											  from ClientConfigMCR clientconfig
-												cross join IPEDSReportingPeriod repperiodENT
-											  where repperiodENT.surveyCollectionYear = clientconfig.surveyYear
-												and repperiodENT.surveyId like clientconfig.surveyId)
-	)
-where repperiodRn = 1
+where ConfigLatest.configRn = 1	
 ),
 
 /*****
@@ -171,70 +207,198 @@ The views below pull the most recent records based on activity date and other fi
 EmployeeMCR AS (
 select *
 from (
---jh 20200428 added ReportingPeriodMCR and Config fields
-	select empENT.*,
-		repperiod.asOfDate asOfDate,
-		repperiod.hrIncludeSecondarySalary hrIncludeSecondarySalary,
-		repperiod.genderForUnknown genderForUnknown,
-		repperiod.genderForNonBinary genderForNonBinary,
---jh 20200123 added isNewHire and isCurrentEmployee fields here in order to remove repperiod from EmployeeBase
-		case when (empENT.hireDate >= repperiod.newHireStartDate
-                        and empENT.hireDate <= repperiod.newHireendDate)
-                        then 1 
-                 else null 
-            end isNewHire,
-        case when ((empENT.terminationDate is null) 
+    select empENT.personId personId,
+	    empENT.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+	    empENT.primaryFunction primaryFunction,
+	    empENT.employeeGroup employeeGroup,
+	    empENT.snapshotDate snapshotDate,
+        case when (empENT.hireDate >= repperiod.reportingDateStart
+						and empENT.hireDate <= repperiod.reportingDateEnd)
+						then 1 
+				 else null 
+        end isNewHire,
+		case when ((empENT.terminationDate is null) 
 					or (empENT.terminationDate > repperiod.asOfDate
-                    and empENT.hireDate <= repperiod.asOfDate)) then 1 
+					and empENT.hireDate <= repperiod.asOfDate)) then 1 
 			 else null 
 		end isCurrentEmployee,
 		ROW_NUMBER() OVER (
 			PARTITION BY
 				empENT.personId
 			ORDER BY
-				empENT.recordActivityDate DESC
-		) empRn
-    from ReportingPeriodMCR repperiod
--- ak 20200424 Adding dummy date considerations (PF-1375).
-		inner join Employee empENT 
+			    (case when to_date(empENT.snapshotDate,'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
+			    (case when to_date(empENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(empENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(empENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(empENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+				empENT.recordActivityDate desc
+		) empRn,
+--***** start survey-specific mods
+        repperiod.asOfDate asOfDate,
+        repperiod.reportingDateStart reportingDateStart,
+		repperiod.reportingDateEnd reportingDateEnd,
+		repperiod.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+		repperiod.genderForUnknown genderForUnknown,
+		repperiod.genderForNonBinary genderForNonBinary
+--***** end survey-specific mods
+--    from ReportingPeriodMCR repperiod
+    from Employee empENT 
+        cross join ClientConfigMCR repperiod
 			on ((empENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and empENT.recordActivityDate <= repperiod.asOfDate
                 and empENT.employeeStatus = 'Active')
 			        or empENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
     where ((empENT.terminationDate is null) -- all non-terminated employees
-			or (empENT.hireDate BETWEEN repperiod.newHireStartDate 
-				and repperiod.newHireendDate) -- new hires between Nov 1 and Oct 31
+			or (empENT.hireDate BETWEEN repperiod.reportingDateStart 
+				and repperiod.reportingDateEnd) -- new hires between Nov 1 and Oct 31
 			or (empENT.terminationDate > repperiod.asOfDate
 				and empENT.hireDate <= repperiod.asOfDate)) -- employees terminated after the as-of date
-            and empENT.isIpedsReportable = 1
+			and empENT.isIpedsReportable = 1
     )
 where empRn = 1
 ),
 
+PersonMCR as ( 
+--Returns most up to date student personal information as of the reporting term codes and part of term census periods. 
+
+select pers.personId personId, 
+    pers.snapshotDate snapshotDate,
+    pers.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+    pers.primaryFunction primaryFunction,
+    pers.employeeGroup employeeGroup,
+    pers.isNewHire isNewHire,
+    pers.isCurrentEmployee isCurrentEmployee,
+    (case when pers.gender = 'Male' then 'M'
+            when pers.gender = 'Female' then 'F' 
+            when pers.gender = 'Non-Binary' then pers.genderForNonBinary
+            else pers.genderForUnknown
+    end) ipedsGender,
+    (case when pers.isUSCitizen = 1 or ((pers.isInUSOnVisa = 1 or pers.asOfDate between pers.visaStartDate and pers.visaEndDate)
+                            and pers.visaType in ('Employee Resident', 'Other Resident')) then 
+        (case when pers.isHispanic = true then '2' 
+            when pers.isMultipleRaces = true then '8' 
+            when pers.ethnicity != 'Unknown' and pers.ethnicity is not null then
+                (case when pers.ethnicity = 'Hispanic or Latino' then '2'
+                    when pers.ethnicity = 'American Indian or Alaskan Native' then '3'
+                    when pers.ethnicity = 'Asian' then '4'
+                    when pers.ethnicity = 'Black or African American' then '5'
+                    when pers.ethnicity = 'Native Hawaiian or Other Pacific Islander' then '6'
+                    when pers.ethnicity = 'Caucasian' then '7'
+                else '9' end) 
+            else '9' end) -- 'race and ethnicity unknown'
+        when ((pers.isInUSOnVisa = 1 or pers.asOfDate between pers.visaStartDate and pers.visaEndDate)
+                and pers.visaType in ('Student Non-resident', 'Employee Non-resident', 'Other Non-resident')) then '1' -- 'nonresident alien'
+        else '9' -- 'race and ethnicity unknown'
+    end) ipedsEthnicity,
+--***** start survey-specific mods
+    pers.asOfDate asOfDate,
+    pers.reportingDateStart reportingDateStart,
+    pers.reportingDateEnd reportingDateEnd,
+    pers.hrIncludeSecondarySalary hrIncludeSecondarySalary
+--***** start survey-specific mods
+from ( 
+    select distinct emp.personId personId,
+            --emp.yearType yearType,
+            emp.snapshotDate snapshotDate,
+            --emp.financialAidYear financialAidYear,
+            --emp.termCode termCode,
+            --emp.censusDate censusDate,
+            --emp.termStart,
+            --emp.termOrder termOrder,
+            --emp.financialAidEndDate,
+            --emp.repPeriodTag1,
+            --emp.repPeriodTag2,
+            --emp.earliestStatusDate,
+            --emp.midStatusDate,
+            --emp.latestStatusDate,
+            emp.genderForNonBinary genderForNonBinary,
+            emp.genderForUnknown genderForUnknown,
+	        emp.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+	        emp.primaryFunction primaryFunction,
+	        emp.employeeGroup employeeGroup,
+            emp.isNewHire isNewHire,
+		    emp.isCurrentEmployee isCurrentEmployee,
+            personENT.ethnicity ethnicity,
+            personENT.isHispanic isHispanic,
+            personENT.isMultipleRaces isMultipleRaces,
+            personENT.isInUSOnVisa isInUSOnVisa,
+            to_date(personENT.visaStartDate,'YYYY-MM-DD') visaStartDate,
+            to_date(personENT.visaEndDate,'YYYY-MM-DD') visaEndDate,
+            personENT.visaType visaType,
+            personENT.isUSCitizen isUSCitizen,
+            personENT.gender gender,
+            upper(personENT.nation) nation,
+            upper(personENT.state) state,
+            row_number() over (
+                partition by
+                    --emp.yearType,
+                    emp.personId,
+                    personENT.personId
+                order by
+                    (case when to_date(personENT.snapshotDate,'YYYY-MM-DD') = emp.snapshotDate then 1 else 2 end) asc,
+			        (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') > emp.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') < emp.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+                    personENT.recordActivityDate desc
+            ) personRn,
+--***** start survey-specific mods
+            emp.asOfDate asOfDate,
+            emp.reportingDateStart reportingDateStart,
+            emp.reportingDateEnd reportingDateEnd,
+		    emp.hrIncludeSecondarySalary hrIncludeSecondarySalary
+--***** start survey-specific mods
+    from EmployeeMCR emp 
+        inner join Person personENT on emp.personId = personENT.personId
+            and personENT.isIpedsReportable = 1
+            and ((to_date(personENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+               and to_date(personENT.recordActivityDate,'YYYY-MM-DD') <= emp.asOfDate) 
+                or to_date(personENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))
+    ) pers
+where pers.personRn = 1
+),
+
 EmployeeAssignmentMCR AS (
+
 select *
 from (
-    select empassignENT.*,
-		emp.asOfDate asOfDate,
+	select person.personId personId, 
+        person.snapshotDate snapshotDate,
+        person.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+        person.primaryFunction primaryFunction,
+        person.employeeGroup employeeGroup,
+        person.isNewHire isNewHire,
+        person.isCurrentEmployee isCurrentEmployee,
+        person.ipedsGender ipedsGender,
+        person.ipedsEthnicity ipedsEthnicity,
+        empassignENT.fullOrPartTimeStatus fullOrPartTimeStatus,
+        empassignENT.isFaculty isFaculty,
+	    empassignENT.position position,
+	    empassignENT.assignmentDescription assignmentDescription,
+        empassignENT.employeeClass employeeClass,
+        empassignENT.annualSalary annualSalary,
+--***** start survey-specific mods
+        person.asOfDate asOfDate,
+        person.reportingDateStart reportingDateStart,
+        person.reportingDateEnd reportingDateEnd,
+        person.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+--***** start survey-specific mods
         ROW_NUMBER() OVER (
 			PARTITION BY
-				empassignENT.personId,
+				person.personId,
 				empassignENT.position,
 				empassignENT.suffix
 			ORDER BY
-				empassignENT.recordActivityDate DESC
-		) jobRn
---jh 20200428 filter on records in EmployeeMCR and removed ReportingDates since needed fields have been added to EmployeeMCR
-    from EmployeeMCR emp
--- ak 20200423 Adding dummy date considerations (PF-1375).
-		inner join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
+			    (case when to_date(empassignENT.snapshotDate,'YYYY-MM-DD') = person.snapshotDate then 1 else 2 end) asc,
+			    (case when to_date(empassignENT.snapshotDate, 'YYYY-MM-DD') > person.snapshotDate then to_date(empassignENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(empassignENT.snapshotDate, 'YYYY-MM-DD') < person.snapshotDate then to_date(empassignENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+				empassignENT.recordActivityDate desc
+         ) jobRn
+    from PersonMCR person
+		left join EmployeeAssignment empassignENT on person.personId = empassignENT.personId
 			and ((empassignENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and empassignENT.recordActivityDate <= emp.asOfDate
+				and empassignENT.recordActivityDate <= person.asOfDate
                 and empassignENT.assignmentStatus = 'Active')
 			        or empassignENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-			and empassignENT.assignmentStartDate <= emp.asOfDate
+			and empassignENT.assignmentStartDate <= person.asOfDate
 			and (empassignENT.assignmentendDate is null 
-				or empassignENT.assignmentendDate >= emp.asOfDate)
+				or empassignENT.assignmentendDate >= person.asOfDate)
 			and empassignENT.isUndergradStudent = 0
 			and empassignENT.isWorkStudy = 0
 			and empassignENT.isTempOrSeasonal = 0
@@ -244,43 +408,95 @@ from (
 where jobRn = 1
 ),
 
-PersonMCR AS (
-select *
-from (
-    select personENT.*,
-        ROW_NUMBER() OVER (
-            PARTITION BY
-                personENT.personId
-            ORDER BY
-                personENT.recordActivityDate DESC
-		) personRn
---jh 20200428 filter on records in EmployeeMCR and removed ReportingDates since needed fields have been added to EmployeeMCR
-    from EmployeeMCR employee
--- ak 20200424 Adding dummy date considerations (PF-1375).
-		inner join Person personENT on employee.personId = personENT.personId
-			and ((personENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-				and personENT.recordActivityDate <= employee.asOfDate)
-			        or personENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
-    where personENT.isIpedsReportable = 1
-    )
-where personRn = 1
-),
+/* --n/a for this version 
+EmployeeAssignmentMCR_SEC AS (
+--Employee second assignment
 
-EmployeePositionMCR AS (
-select *
-from (
-	select empposENT.*,
+select personId personId,
+	SUM(annualSalary) annualSalary2
+from(
+    select empassignprim.personId personId,
+        empassignENT.annualSalary annualSalary,
 		ROW_NUMBER() OVER (
 			PARTITION BY
+				empassignprim.personId,
+				empassignENT.position,
+				empassignENT.suffix
+			ORDER BY
+                (case when to_date(empassignENT.snapshotDate,'YYYY-MM-DD') = empassignprim.snapshotDate then 1 else 2 end) asc,
+                (case when to_date(empassignENT.snapshotDate, 'YYYY-MM-DD') > empassignprim.snapshotDate then to_date(empassignENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(empassignENT.snapshotDate, 'YYYY-MM-DD') < empassignprim.snapshotDate then to_date(empassignENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+				empassignENT.recordActivityDate desc
+		 ) empassignRn
+    from EmployeeAssignmentMCR empassignprim
+		inner join EmployeeAssignment empassignENT on empassignprim.personId = empassignENT.personId
+			and ((empassignENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and empassignENT.recordActivityDate <= empassignprim.asOfDate
+                and empassignENT.assignmentStatus = 'Active')
+			        or empassignENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 
+			and empassignENT.assignmentStartDate <= empassignprim.asOfDate
+			and (empassignENT.assignmentendDate is null 
+				or empassignENT.assignmentendDate >= empassignprim.asOfDate)
+			and empassignENT.isUndergradStudent = 0
+			and empassignENT.isWorkStudy = 0
+			and empassignENT.isTempOrSeasonal = 0
+			and empassignENT.isIpedsReportable = 1
+			and empassignENT.assignmentType = 'Secondary'
+	where empassignprim.hrIncludeSecondarySalary = 'Y'
+  )
+where empassignRn = 1
+group by personId
+),
+*/
+
+EmployeePositionMCR AS (
+
+select *
+from (
+	select empassign.personId personId, 
+        empassign.snapshotDate snapshotDate,
+        empassign.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+        empassign.primaryFunction primaryFunction,
+        empassign.employeeGroup employeeGroup,
+        empassign.isNewHire isNewHire,
+        empassign.isCurrentEmployee isCurrentEmployee,
+        empassign.ipedsGender ipedsGender,
+        empassign.ipedsEthnicity ipedsEthnicity,
+        empassign.fullOrPartTimeStatus fullOrPartTimeStatus,
+        empassign.isFaculty isFaculty,
+	    empassign.position position,
+	    empassign.assignmentDescription assignmentDescription,
+        empassign.employeeClass employeeClass,
+        empassign.annualSalary annualSalary,
+	    empposENT.positionDescription positionDescription,
+	    empposENT.standardOccupationalCategory standardOccupationalCategory,
+    	empposENT.skillClass skillClass,
+	    empposENT.positionGroup positionGroup,
+	    empposENT.positionClass positionClass,
+	    empposENT.federalEmploymentCategory federalEmploymentCategory, 
+--***** start survey-specific mods
+        empassign.asOfDate asOfDate,
+        empassign.reportingDateStart reportingDateStart,
+        empassign.reportingDateEnd reportingDateEnd,
+        empassign.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+        case when empassign.primaryFunction != 'None' 
+                and empassign.primaryFunction is not null then empassign.primaryFunction
+		    else empposENT.standardOccupationalCategory 
+	    end employeeFunction,
+--***** start survey-specific mods
+		ROW_NUMBER() OVER (
+			PARTITION BY
+			    empassign.personId,
 				empposENT.position
 			ORDER BY
+                (case when to_date(empposENT.snapshotDate,'YYYY-MM-DD') = empassign.snapshotDate then 1 else 2 end) asc,
+                (case when to_date(empposENT.snapshotDate, 'YYYY-MM-DD') > empassign.snapshotDate then to_date(empposENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(empposENT.snapshotDate, 'YYYY-MM-DD') < empassign.snapshotDate then to_date(empposENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 				empposENT.startDate DESC,
 				empposENT.recordActivityDate DESC
         ) empposRn
---jh 20200428 filter on records in EmployeeAssignmentMCR and removed ReportingDates since needed fields have been added to EmployeeAssignmentMCR
-    from EmployeeAssignmentMCR empassign
--- ak 20200424 Adding dummy date considerations (PF-1375).
-		inner join EmployeePosition empposENT on empassign.position = empposENT.position
+    from EmployeeAssignmentMCR empassign 
+		left join EmployeePosition empposENT on empassign.position = empposENT.position
 			and ((empposENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
 				and empposENT.recordActivityDate <= empassign.asOfDate
                 and empposENT.positionStatus = 'Active')
@@ -290,7 +506,140 @@ from (
 				or empposENT.endDate >= empassign.asOfDate)
 			and empposENT.isIpedsReportable = 1
 	)
-where empposRn = 1
+where empposRn <= 1
+),
+
+/* --Not applicable for v4
+FacultyMCR AS (
+
+select *
+from (
+	select DISTINCT 
+	    emppos.personId personId,
+    	facultyENT.facultyRank facultyRank,
+    	empassignsec.annualSalary2 annualSalary2,
+        emppos.snapshotDate snapshotDate,
+        emppos.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+        emppos.primaryFunction primaryFunction,
+        (case when emppos.primaryFunction != 'None' and emppos.primaryFunction is not null 
+            then emppos.primaryFunction
+		    else emppos.standardOccupationalCategory 
+	    end) employeeFunction,
+        emppos.employeeGroup employeeGroup,
+        emppos.isNewHire isNewHire,
+        emppos.isCurrentEmployee isCurrentEmployee,
+        emppos.ipedsGender ipedsGender,
+        emppos.ipedsEthnicity ipedsEthnicity,
+        emppos.fullOrPartTimeStatus fullOrPartTimeStatus,
+        emppos.isFaculty isFaculty,
+	    emppos.position position,
+	    emppos.assignmentDescription assignmentDescription,
+        emppos.employeeClass employeeClass,
+        emppos.annualSalary annualSalary,
+	    emppos.positionDescription positionDescription,
+	    emppos.standardOccupationalCategory ESOC,
+    	emppos.skillClass skillClass,
+	    emppos.positionGroup positionGroup,
+	    emppos.positionClass positionClass,
+	    emppos.federalEmploymentCategory ECIP, 
+--***** start survey-specific mods
+        emppos.asOfDate asOfDate,
+        emppos.reportingDateStart reportingDateStart,
+        emppos.reportingDateEnd reportingDateEnd,
+        emppos.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+--***** start survey-specific mods
+		ROW_NUMBER() OVER (
+			PARTITION BY
+				emppos.personId
+            ORDER BY
+                (case when to_date(facultyENT.snapshotDate,'YYYY-MM-DD') = emppos.snapshotDate then 1 else 2 end) asc,
+                (case when to_date(facultyENT.snapshotDate, 'YYYY-MM-DD') > emppos.snapshotDate then to_date(facultyENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(facultyENT.snapshotDate, 'YYYY-MM-DD') < emppos.snapshotDate then to_date(facultyENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+				facultyENT.facultyRankStartDate desc,
+				facultyENT.recordActivityDate desc
+          ) facultyRn
+    from EmployeePositionMCR emppos
+		left join Faculty facultyENT on emppos.personId = facultyENT.personId
+			and ((facultyENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
+				and facultyENT.recordActivityDate <= emppos.asOfDate)
+			        or facultyENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP)) 			
+			and (facultyENT.facultyRank is not null
+                and facultyENT.facultyRankStartDate <= emppos.asOfDate
+                and facultyENT.facultyRankActionDate <= emppos.asOfDate)
+			and facultyENT.isIpedsReportable = 1
+		left join EmployeeAssignmentMCR_SEC empassignsec on empassignsec.personId = emppos.personId
+  )
+where facultyRn <= 1
+),
+
+
+--Not applicable for v4
+FacultyAppointmentMCR as (
+*/
+
+/*****
+BEGIN SECTION - Cohort Refactoring
+The view below reformats and configures the base cohort fields based on the IPEDS survey specs
+*****/
+
+CohortRefactorEMP AS (
+
+select cohortemp.personId personId,
+	cohortemp.isCurrentEmployee currentEmployee, --1, null
+	cohortemp.fullOrPartTimeStatus fullPartInd, --Full Time, Part Time, Other
+	(case when cohortemp.ipedsGender = 'M' then cohortemp.ipedsEthnicity
+	   when cohortemp.ipedsGender = 'F'
+	        then (case when cohortemp.ipedsEthnicity = '1' then '10' -- 'nonresident alien'
+	                when cohortemp.ipedsEthnicity = '2' then '11' -- 'hispanic/latino'
+	                when cohortemp.ipedsEthnicity = '3' then '12' -- 'American Indian or Alaskan Native'
+	                when cohortemp.ipedsEthnicity = '4' then '13' -- 'Asian'
+	                when cohortemp.ipedsEthnicity = '5' then '14' -- 'Black or African American'
+	                when cohortemp.ipedsEthnicity = '6' then '15' --'Native Hawaiian or Other Pacific Islander'
+	                when cohortemp.ipedsEthnicity = '7' then '16' -- 'Caucasian'
+	                when cohortemp.ipedsEthnicity = '8' then '17' -- 'two or more races'
+	                when cohortemp.ipedsEthnicity = '9' then '18' -- 'race and ethnicity unknown'
+	             else '18' end)
+    end) reg,
+--Occupational Category - All Staff
+	case 
+		when cohortemp.isCurrentEmployee = 1
+			then case 
+					when cohortemp.employeeFunction in (
+								'Instruction with Research/Public Service',
+								'Instruction - Credit',
+								'Instruction - Non-credit',
+								'Instruction - Combined Credit/Non-credit'
+								) 
+						then 1 -- Instruction
+					when cohortemp.employeeFunction like '25-4%' then 2 -- Librarians, Curators, and Archivists
+                    when cohortemp.employeeFunction like '25-2%' then 3 -- Student and Academic Affairs and Other Education Services Occupations
+                    when cohortemp.employeeFunction like '25-3%' then 3
+                    when cohortemp.employeeFunction like '25-9%' then 3
+					when cohortemp.employeeFunction like '11-%' then 4 -- Management Occupations
+					when cohortemp.employeeFunction like '13-%' then 5
+                    when cohortemp.employeeFunction like '15-%' then 6 -- Computer, Engineering, and Science Occupations
+                    when cohortemp.employeeFunction like '17-%' then 6
+                    when cohortemp.employeeFunction like '19-%' then 6
+                    when cohortemp.employeeFunction like '21-%' then 7 -- Community, Social Service, Legal, Arts, Design, Entertainment, Sports and Media Occupations
+                    when cohortemp.employeeFunction like '23-%' then 7
+                    when cohortemp.employeeFunction like '27-%' then 7
+                    when cohortemp.employeeFunction like '29-%' then 8 -- Healthcare Practitioners and Technical Occupations
+                    when cohortemp.employeeFunction like '31-%' then 9 -- Service Occupations
+                    when cohortemp.employeeFunction like '33-%' then 9
+                    when cohortemp.employeeFunction like '35-%' then 9
+                    when cohortemp.employeeFunction like '37-%' then 9
+                    when cohortemp.employeeFunction like '39-%' then 9
+                    when cohortemp.employeeFunction like '41-%' then 10 -- Sales and Related Occupations
+                    when cohortemp.employeeFunction like '43-%' then 11 -- Office and Administrative Support Occupations
+                    when cohortemp.employeeFunction like '45-%' then 12 -- Natural Resources, Construction, and Maintenance Occupations
+                    when cohortemp.employeeFunction like '47-%' then 12
+                    when cohortemp.employeeFunction like '49-%' then 12
+                    when cohortemp.employeeFunction like '51-%' then 13 -- Production, Transportation, and Material Moving Occupations
+                    when cohortemp.employeeFunction like '53-%' then 13
+					else null 
+				end
+	end occCat
+from EmployeePositionMCR cohortemp --bypassing FacultyMCR which does not apply to this version
 ),
 
 /*****
@@ -341,128 +690,6 @@ from (
 		(12), -- Natural Resources, Construction, and Maintenance Occupations (45-0000 + 47-0000 + 49-0000)
 		(13) -- Production, Transportation, and Material Moving Occupations (51-0000 + 53-0000)
 	) occCat (ipedsOccCat)
-),
-
-/*****
-BEGIN SECTION - Cohort Creation
-The view below pulls the base cohort based on IPEDS survey requirements and the data model definitions
-*****/
-
-CohortEMP AS (
-select emp.personId personId,
-	emp.asOfDate asOfDate,
---jh 20200205 moved the assignment of the isCurrentEmployee field to EmployeePerAsOfDate
-	emp.isCurrentEmployee isCurrentEmployee,
-	empassign.fullOrPartTimeStatus fullOrPartTimeStatus,
-	case when person.gender = 'Male' then 'M'
-		when person.gender = 'Female' then 'F'
---jh 20200428 added config values
-		when person.gender = 'Non-Binary' then emp.genderForNonBinary
-		else emp.genderForUnknown
-	end gender,
---jh 20200428 added ethnicity fields and moved reg field to EmployeeFinal in order to use modified gender values
-	person.isInUSOnVisa isInUSOnVisa,
-	person.visaStartDate visaStartDate,
-	person.visaEndDate visaEndDate,
-	person.isUSCitizen isUSCitizen,
-	person.isHispanic isHispanic,
-	person.isMultipleRaces isMultipleRaces,
-	person.ethnicity ethnicity,
-	case when emp.primaryFunction != 'None' 
-				and emp.primaryFunction is not null then emp.primaryFunction
-		 else position.standardOccupationalCategory 
-	end employeeFunction
---jh 20200205 - Removed ReportingDates view and changed emp to EmployeeMCR
-from EmployeeMCR emp
-	inner join PersonMCR person on emp.personId = person.personId
-	inner join EmployeeAssignmentMCR empassign on emp.personId = empassign.personId
-	left join EmployeePositionMCR position on empassign.position = position.position
-),
-
-/*****
-BEGIN SECTION - Cohort Refactoring
-The view below reformats and configures the base cohort fields based on the IPEDS survey specs
-*****/
-
-CohortRefactorEMP AS (
-select cohortemp.personId personId,
-	cohortemp.isCurrentEmployee currentEmployee, --1, null
-	cohortemp.fullOrPartTimeStatus fullPartInd, --Full Time, Part Time, Other
-    case when cohortemp.gender = 'M' then 
---ak 20200423 (PF-1441) Modification to use 'isInUSOnVisa' and 'isUSCitizen' for ethnicity assignments
-                        case when cohortemp.isUSCitizen = 1 then 
-		                    (case when cohortemp.isHispanic = true then 2 -- 'hispanic/latino'
-	    	                    when cohortemp.isMultipleRaces = true then 8 -- 'two or more races'
-			                    when cohortemp.ethnicity != 'Unknown' and cohortemp.ethnicity is not null
-				                then (case when cohortemp.ethnicity = 'Hispanic or Latino' then 2
-                                        when cohortemp.ethnicity = 'American Indian or Alaskan Native' then 3
-							            when cohortemp.ethnicity = 'Asian' then 4
-							            when cohortemp.ethnicity = 'Black or African American' then 5
-							            when cohortemp.ethnicity = 'Native Hawaiian or Other Pacific Islander' then 6
-							            when cohortemp.ethnicity = 'Caucasian' then 7
-							            else 9 end) 
-			                        else 9 end) -- 'race and ethnicity unknown'
-                                else (case when cohortemp.isInUSOnVisa = 1 and cohortemp.asOfDate between cohortemp.visaStartDate and cohortemp.visaEndDate then 1 -- 'nonresident alien'
-                            else 9 end) -- 'race and ethnicity unknown'
-		                end
-            when cohortemp.gender = 'F' then
---ak 20200423 (PF-1441) Modification to use 'isInUSOnVisa' and 'isUSCitizen' for ethnicity assignments
-                        case when cohortemp.isUSCitizen = 1 then 
-		                    (case when cohortemp.isHispanic = true then 11 -- 'hispanic/latino'
-	    	                    when cohortemp.isMultipleRaces = true then 17 -- 'two or more races'
-			                    when cohortemp.ethnicity != 'Unknown' and cohortemp.ethnicity is not null
-				                then (case when cohortemp.ethnicity = 'Hispanic or Latino' then 11
-                                        when cohortemp.ethnicity = 'American Indian or Alaskan Native' then 12
-							            when cohortemp.ethnicity = 'Asian' then 13
-							            when cohortemp.ethnicity = 'Black or African American' then 14
-							            when cohortemp.ethnicity = 'Native Hawaiian or Other Pacific Islander' then 15
-							            when cohortemp.ethnicity = 'Caucasian' then 16
-							            else 18 end) 
-			                        else 18 end) -- 'race and ethnicity unknown'
-                                else (case when cohortemp.isInUSOnVisa = 1 and cohortemp.asOfDate between cohortemp.visaStartDate and cohortemp.visaEndDate then 10 -- 'nonresident alien'
-                            else 18 end) -- 'race and ethnicity unknown'
-		                end
-        end reg,
---Occupational Category - All Staff
-	case 
-		when cohortemp.isCurrentEmployee = 1
-			then case 
-					when cohortemp.employeeFunction in (
-								'Instruction with Research/Public Service',
-								'Instruction - Credit',
-								'Instruction - Non-credit',
-								'Instruction - Combined Credit/Non-credit'
-								) 
-						then 1 -- Instruction
-					when cohortemp.employeeFunction like '25-4%' then 2 -- Librarians, Curators, and Archivists
-                    when cohortemp.employeeFunction like '25-2%' then 3 -- Student and Academic Affairs and Other Education Services Occupations
-                    when cohortemp.employeeFunction like '25-3%' then 3
-                    when cohortemp.employeeFunction like '25-9%' then 3
-					when cohortemp.employeeFunction like '11-%' then 4 -- Management Occupations
-					when cohortemp.employeeFunction like '13-%' then 5
-                    when cohortemp.employeeFunction like '15-%' then 6 -- Computer, Engineering, and Science Occupations
-                    when cohortemp.employeeFunction like '17-%' then 6
-                    when cohortemp.employeeFunction like '19-%' then 6
-                    when cohortemp.employeeFunction like '21-%' then 7 -- Community, Social Service, Legal, Arts, Design, Entertainment, Sports and Media Occupations
-                    when cohortemp.employeeFunction like '23-%' then 7
-                    when cohortemp.employeeFunction like '27-%' then 7
-                    when cohortemp.employeeFunction like '29-%' then 8 -- Healthcare Practitioners and Technical Occupations
-                    when cohortemp.employeeFunction like '31-%' then 9 -- Service Occupations
-                    when cohortemp.employeeFunction like '33-%' then 9
-                    when cohortemp.employeeFunction like '35-%' then 9
-                    when cohortemp.employeeFunction like '37-%' then 9
-                    when cohortemp.employeeFunction like '39-%' then 9
-                    when cohortemp.employeeFunction like '41-%' then 10 -- Sales and Related Occupations
-                    when cohortemp.employeeFunction like '43-%' then 11 -- Office and Administrative Support Occupations
-                    when cohortemp.employeeFunction like '45-%' then 12 -- Natural Resources, Construction, and Maintenance Occupations
-                    when cohortemp.employeeFunction like '47-%' then 12
-                    when cohortemp.employeeFunction like '49-%' then 12
-                    when cohortemp.employeeFunction like '51-%' then 13 -- Production, Transportation, and Material Moving Occupations
-                    when cohortemp.employeeFunction like '53-%' then 13
-					else null 
-				end
-	end occCat
-from CohortEMP cohortemp
 )
 
 /*****
@@ -548,5 +775,4 @@ from (
 	)
 group by occCat,
 	reg
-
---order by 1, 2, 3, 4
+  
