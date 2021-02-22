@@ -2332,15 +2332,6 @@ HUMAN_RESOURCES_1:
       start: 2020-10-15
       end: 2020-11-15
 
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
-      - October End
-    snapshotDateRange:
-      start: 2020-10-15
-      end: 2020-11-15
-
   - viewName: Person
     entityName: Person
     tagNames:
@@ -2351,12 +2342,13 @@ HUMAN_RESOURCES_1:
       end: 2020-11-15
 
 HUMAN_RESOURCES_2:
-  # reporting period: as of 10/31/19
+  # reporting period: as of 10/31/20
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2365,6 +2357,7 @@ HUMAN_RESOURCES_2:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2373,6 +2366,7 @@ HUMAN_RESOURCES_2:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2381,6 +2375,16 @@ HUMAN_RESOURCES_2:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2020-10-15
+      end: 2020-11-15
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2389,14 +2393,7 @@ HUMAN_RESOURCES_2:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2020-10-15
-      end: 2020-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2405,6 +2402,7 @@ HUMAN_RESOURCES_2:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
