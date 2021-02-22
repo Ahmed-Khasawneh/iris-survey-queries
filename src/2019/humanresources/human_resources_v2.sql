@@ -15,7 +15,7 @@ Cohort Refactoring
 Survey Formatting
 
 SUMMARY OF CHANGES
-
+ 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
 20200222            akhasawneh                          !!!COMPLETE REFACTOR!!! Updating to standardized views and modifying for 'Faculty' and 'FacultyAppointment' changes (PF-1973) 2m 23s (prod), 2m 12s (test)
