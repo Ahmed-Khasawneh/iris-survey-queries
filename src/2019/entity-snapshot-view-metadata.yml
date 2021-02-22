@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20200222  Akhasawneh                                Updated HR values PF-1996
 # 20201215  Akhasawneh                                Updated tag values (June End & Academic Year End)
 # 20201026  Akhasawneh                                Added new entry for Financial Aid
 # 20200908  jhanicak                                  Added new entities DegreeProgram and FieldOfStudy PF-1629
@@ -2073,12 +2074,13 @@ STUDENT_FINANCIAL_AID_1:
       end: 2019-12-31
 
 HUMAN_RESOURCES_1:
-  # reporting period: as of 10/31/19
+  # reporting period: as of 10/31/20
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2087,6 +2089,7 @@ HUMAN_RESOURCES_1:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2095,6 +2098,7 @@ HUMAN_RESOURCES_1:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2103,6 +2107,16 @@ HUMAN_RESOURCES_1:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2019-10-15
+      end: 2019-11-15
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2111,14 +2125,7 @@ HUMAN_RESOURCES_1:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2127,17 +2134,19 @@ HUMAN_RESOURCES_1:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
 
 HUMAN_RESOURCES_2:
-  # reporting period: as of 10/31/19
+  # reporting period: as of 10/31/20
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2146,6 +2155,7 @@ HUMAN_RESOURCES_2:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2154,6 +2164,7 @@ HUMAN_RESOURCES_2:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2162,6 +2173,16 @@ HUMAN_RESOURCES_2:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2019-10-15
+      end: 2019-11-15
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2170,14 +2191,7 @@ HUMAN_RESOURCES_2:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2186,6 +2200,7 @@ HUMAN_RESOURCES_2:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2197,6 +2212,7 @@ HUMAN_RESOURCES_3:
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2205,6 +2221,7 @@ HUMAN_RESOURCES_3:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2213,6 +2230,7 @@ HUMAN_RESOURCES_3:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2221,6 +2239,7 @@ HUMAN_RESOURCES_3:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2229,14 +2248,7 @@ HUMAN_RESOURCES_3:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2245,6 +2257,7 @@ HUMAN_RESOURCES_3:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2256,6 +2269,7 @@ HUMAN_RESOURCES_4:
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2264,6 +2278,7 @@ HUMAN_RESOURCES_4:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2272,14 +2287,7 @@ HUMAN_RESOURCES_4:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
-
-  - viewName: Faculty
-    entityName: Faculty
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2288,14 +2296,7 @@ HUMAN_RESOURCES_4:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
-    snapshotDateRange:
-      start: 2019-10-15
-      end: 2019-11-15
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
@@ -2304,6 +2305,7 @@ HUMAN_RESOURCES_4:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2019-10-15
       end: 2019-11-15
