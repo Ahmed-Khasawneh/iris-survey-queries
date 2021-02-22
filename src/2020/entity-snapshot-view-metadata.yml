@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20210212  akhasawneh                                Updating HR v1 entry ('October End' tag and new 'FacultyAppointment' entity) 
 # 20200201  akhasawneh                                Added GR200 v1,2
 # 20210108  jhanicak                                  Added GR v1
 # 20210108  jhanicak                                  Added OM and make other mods, as needed
@@ -2274,12 +2275,13 @@ GRADUATION_RATES_200_2:
       end: 2016-10-01
 
 HUMAN_RESOURCES_1:
-  # reporting period: as of 10/31/19
+  # reporting period: as of 10/31/20
 
   - viewName: Employee
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2288,6 +2290,7 @@ HUMAN_RESOURCES_1:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2296,6 +2299,7 @@ HUMAN_RESOURCES_1:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2304,6 +2308,17 @@ HUMAN_RESOURCES_1:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2020-10-15
+      end: 2020-11-15
+
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2312,6 +2327,7 @@ HUMAN_RESOURCES_1:
     entityName: IPEDSClientConfig
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2320,6 +2336,7 @@ HUMAN_RESOURCES_1:
     entityName: IPEDSReportingPeriod
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
@@ -2328,6 +2345,7 @@ HUMAN_RESOURCES_1:
     entityName: Person
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2020-10-15
       end: 2020-11-15
