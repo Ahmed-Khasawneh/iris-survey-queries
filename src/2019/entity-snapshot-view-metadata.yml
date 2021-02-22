@@ -2074,7 +2074,7 @@ STUDENT_FINANCIAL_AID_1:
       end: 2019-12-31
 
 HUMAN_RESOURCES_1:
-  # reporting period: as of 10/31/20
+  # reporting period: as of 10/31/19
 
   - viewName: Employee
     entityName: Employee
@@ -2140,7 +2140,7 @@ HUMAN_RESOURCES_1:
       end: 2019-11-15
 
 HUMAN_RESOURCES_2:
-  # reporting period: as of 10/31/20
+  # reporting period: as of 10/31/19
 
   - viewName: Employee
     entityName: Employee
