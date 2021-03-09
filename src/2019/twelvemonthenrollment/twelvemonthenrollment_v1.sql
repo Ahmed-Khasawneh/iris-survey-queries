@@ -1029,8 +1029,8 @@ select reg.personId personId,
 	sum((case when course.courseLevel in ('Graduate', 'Professional') then 1 else 0 end)) totalGRCourses,
 	sum((case when course.courseLevel = 'Postgraduate' then 1 else 0 end)) totalPostGRCourses,
 	sum((case when course.courseLevel = 'Continuing Ed' then 1 else 0 end)) totalCECourses,
-	sum((case when course.isESL = 'Y' then 1 else 0 end)) totalESLCourses,
-	sum((case when course.isRemedial = 'Y' then 1 else 0 end)) totalRemCourses,
+	sum((case when course.isESL = 1 then 1 else 0 end)) totalESLCourses,
+	sum((case when course.isRemedial = 1 then 1 else 0 end)) totalRemCourses,
 	sum((case when reg.isInternational = 1 then 1 else 0 end)) totalIntlCourses, 
 	sum((case when reg.crnGradingMode = 'Audit' then 1 else 0 end)) totalAuditCourses
 from RegistrationMCR reg

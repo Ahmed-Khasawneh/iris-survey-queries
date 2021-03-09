@@ -999,8 +999,8 @@ select cohortInd cohortInd,
 			case when course.courseLevel in ('Graduate', 'Occupational/Professional') then 1 else 0 end totalGRCourses,
 			case when course.courseLevel = 'Postgraduate' then 1 else 0 end totalPostGRCourses,
 			case when course.courseLevel = 'Continuing Ed' then 1 else 0 end totalCECourses,
-			case when course.isESL = 'Y' then 1 else 0 end totalESLCourses,
-			case when course.isRemedial = 'Y' then 1 else 0 end totalRemCourses,
+			case when course.isESL = 1 then 1 else 0 end totalESLCourses,
+			case when course.isRemedial = 1 then 1 else 0 end totalRemCourses,
 			case when reg.isInternational = 1 then 1 else 0 end totalIntlCourses,
 			-- ak 20200330 added Registration.crnGradingMode (PF-1253)
 			case when reg.crnGradingMode = 'Audit' then 1 else 0 end totalAuditCourses
