@@ -826,13 +826,11 @@ from (
                     stu.termCode, 
                     stu.termOrder,
                     stu.financialAidYear,
-                    stu.maxCensus,
                     stu.termType,
                     stu.startDate,
                     stu.censusDate,
                     stu.maxCensus,
                     stu.fullTermOrder,
-                    stu.startDate,
                     stu.personId,
                     stu.isNonDegreeSeeking,
                     stu.homeCampus,
@@ -1532,8 +1530,7 @@ from (
                 left join Student studentENT on miliben.personId = studentENT.personId
                     and miliben.termCode = studentENT.termCode
                     and ((to_date(studentENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)  
-                        and to_date(studentENT.recordActivityDate,'YYYY-MM-DD') <= miliben.EndDate
-                        and studentENT.studentStatus = 'Active') --do not report Study Abroad students
+                        and to_date(studentENT.recordActivityDate,'YYYY-MM-DD') <= miliben.EndDate)
                             or to_date(studentENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
                     and studentENT.isIpedsReportable = 1
                     and studentENT.studentLevel in ('Undergrad', 'Graduate')
@@ -2050,4 +2047,4 @@ from (
         null
     ) 
 
-order by part, field2_1, field3_1
+--order by part, field2_1, field3_1
