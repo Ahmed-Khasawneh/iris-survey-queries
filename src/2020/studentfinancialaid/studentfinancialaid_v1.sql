@@ -1154,7 +1154,6 @@ from (
             ipedsEthnicity,
             caresAct1,
             caresAct2,
-            residency,
             isNonDegreeSeeking,
             (case when totalCECourses = totalCourses then 0 --exclude students enrolled only in continuing ed courses
 				when totalIntlCourses = totalCourses then 0 --exclude students exclusively enrolled in any foreign branch campuses
@@ -1183,7 +1182,6 @@ from (
                 course.ipedsEthnicity,
                 course.caresAct1,
                 course.caresAct2,
-	            course.residency,
 				course.studyAbroadStatus,
                 sum((case when course.enrollmentHours >= 0 then 1 else 0 end)) totalCourses,
                 sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 then course.enrollmentHours else 0 end)) totalCreditHrs,
@@ -1229,10 +1227,9 @@ from (
                 course.residency,
                 course.ipedsGender,
                 course.ipedsEthnicity,
-	            course.residency,
-	            course.caresAct1,
-	            course.caresAct2,
-	            course.studyAbroadStatus
+	        course.caresAct1,
+	        course.caresAct2,
+	        course.studyAbroadStatus
         )
     )
 where ipedsInclude = 1
