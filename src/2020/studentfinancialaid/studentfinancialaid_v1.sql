@@ -68,7 +68,7 @@ WITH DefaultValues as (
 --				corrected dates in prod censusDates; added updated formatting
 
 --prod default blocks (2)
-select '2021' surveyYear, 
+/*select '2021' surveyYear, 
 	'SFA' surveyId,
 	'Fall Census' repPeriodTag1,
 	'Financial Aid Year End' repPeriodTag2,
@@ -128,7 +128,7 @@ select '2021' surveyYear,
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
 
-/*
+*/
 --testing default blocks (2)
 select '1415' surveyYear,  
 	'SFA' surveyId, 
@@ -189,7 +189,7 @@ select '1415' surveyYear,
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
-*/
+
 ),
 
 ReportingPeriodMCR as (
@@ -642,7 +642,6 @@ from (
         regData.partOfTermCode,
         regData.regENTSSD regENTSSD,
         regData.repSSD repSSD,
-        --campus.snapshotDate campusSSD,
         regData.financialAidYear,
         regData.termorder,
         regData.maxCensus,
@@ -798,7 +797,13 @@ where stuData.studRn = 1
 
 StudentRefactor as ( 
 --Determine student info based on full term and degree-seeking status
---Drop surveySection from select fields and use yearType only going forward - Prior Summer sections only used to determine student type
+
+--studentType logic: if studentType = 'Continuing' in fall term, assign prior summer studentType if exists; 
+--   if studentType = 'Unknown' in fall or prior summer term and studentLevel equates to undergraduate, assign studentType of 'First Time';
+--   if studentType in fall term is null, assign prior summer studentType
+
+--Fall term enrollment mod: Drop surveySection from select fields and use yearType only going forward - Prior Summer sections only used to determine student type
+--SFA mod: added outer filter of FallStu.studentLevelUGGR = 'UG' for all undergraduate requirement for Group 1
 
 select *
 from ( 
@@ -807,7 +812,11 @@ from (
             FallStu.termCode termCode,
             FallStu.yearType yearType,
             FallStu.studentLevel studentLevel,
-            (case when FallStu.studentType = 'Continuing' and SumStu.personId is not null then 'First Time' else FallStu.studentType end) studentType,
+            FallStu.studentLevelUGGR,
+            (case when FallStu.studentType = 'Continuing' and SumStu.personId is not null then SumStu.studentType 
+                  when coalesce(FallStu.studentType, SumStu.studentType) = 'Unknown' and FallStu.studentLevelUGGR = 'UG' then 'First Time' 
+                  else coalesce(FallStu.studentType, SumStu.studentType) 
+            end) studentType, 
             FallStu.isNonDegreeSeeking isNonDegreeSeeking,
             FallStu.snapshotDate,
 			FallStu.censusDate censusDate,
@@ -815,8 +824,6 @@ from (
 			FallStu.financialAidYear,
 			FallStu.termOrder,
 			FallStu.termType,
-			--FallStu.genderForUnknown,
-			--FallStu.genderForNonBinary,
 	        coalesce(FallStu.residency, 'In District') residency,
 			FallStu.studyAbroadStatus
     from (
@@ -835,11 +842,9 @@ from (
                     stu.isNonDegreeSeeking,
                     stu.homeCampus,
                     stu.studentType,
-                    stu.studentLevel studentLevelORIG,
+                    stu.studentLevel,
+                    (case when stu.studentLevel in ('Undergraduate', 'Continuing Education', 'Other') then 'UG' else 'GR' end) studentLevelUGGR,
                     stu.residency,
-                    (case when stu.studentLevel in ('Undergraduate', 'Continuing Education', 'Other') then 'UG'
-                        else 'GR' 
-                    end) studentLevel,
 					stu.studyAbroadStatus
             from StudentMCR stu
             where stu.termType = 'Fall'
@@ -847,9 +852,8 @@ from (
         left join (select stu2.personId personId,
                           stu2.studentType studentType
                     from StudentMCR stu2
-                    where stu2.termType != 'Fall'
-                        and stu2.studentType = 'First Time') SumStu on FallStu.personId = SumStu.personId
-    where FallStu.studentLevel = 'UG'
+                    where stu2.termType != 'Fall') SumStu on FallStu.personId = SumStu.personId
+    where FallStu.studentLevelUGGR = 'UG'
     )
 ),
 
@@ -949,7 +953,6 @@ from (
 		row_number() over (
 				partition by
 					CourseData.yearType,
-					--CourseData.surveySection,
 					CourseData.termCode,
 					CourseData.partOfTermCode,
 					CourseData.personId,
@@ -1082,11 +1085,13 @@ from (
 		coalesce(coursesectsched.college, courseENT.courseCollege) college,
 		coalesce(coursesectsched.division, courseENT.courseDivision) division,
 		coalesce(coursesectsched.department, courseENT.courseDepartment) department,
-		coursesectsched.enrollmentHours enrollmentHours,
 		coursesectsched.equivCRHRFactor equivCRHRFactor,
 		coursesectsched.isInternational isInternational,
 		coursesectsched.isClockHours isClockHours,
-        --coursesectsched.courseSectionNumberGradingMode courseSectionNumberGradingMode,
+		(case when coursesectsched.instructionalActivityType = 'CR' then coursesectsched.enrollmentHours
+		      when coursesectsched.isClockHours = 0 then coursesectsched.enrollmentHours
+              when coursesectsched.isClockHours = 1 and coursesectsched.instructionalActivityType = 'B' then coursesectsched.equivCRHRFactor * coursesectsched.enrollmentHours
+              else coursesectsched.enrollmentHours end) enrollmentHours,
         coursesectsched.campus,
 		coursesectsched.instructionType,
 		coursesectsched.locationType,
@@ -1114,7 +1119,8 @@ from (
 	from CourseSectionScheduleMCR coursesectsched
 	    left join Course courseENT on coursesectsched.subject = upper(courseENT.subject) 
 			        and coursesectsched.courseNumber = upper(courseENT.courseNumber) 
-			        and coursesectsched.courseSectionLevel = courseENT.courseLevel 
+			      --nope
+			        --and coursesectsched.courseSectionLevel = courseENT.courseLevel 
 			        and courseENT.isIpedsReportable = 1
 			        and ((to_date(courseENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
 				        and to_date(courseENT.recordActivityDate, 'YYYY-MM-DD') <= coursesectsched.censusDate
@@ -1129,8 +1135,7 @@ where courseRn = 1
 CourseTypeCountsSTU as (
 -- View used to break down course category type counts for student
 
---jh 20201120 Added isGroup2Ind field; changed timeStatus block to remove duplicate studentLevel filter (included in StudentRefactor) 
---				and add the studentType filter; reordered fields for consistency and accuracy; other minor mods
+----SFA mod: added timeStatus filter for only first time, degree-seeking students per Group 1 requirement; no graduate timeStatus calculation
 
 select *,
         (case when timeStatus = 'FT' and isNonDegreeSeeking = 0 and studentType = 'First Time' then 1 else 0 end) isGroup2Ind
@@ -1142,10 +1147,10 @@ from (
             personId,
             (case when studentType = 'First Time' and isNonDegreeSeeking = 0 then
                     (case when instructionalActivityType in ('CR', 'B') then 
-                                (case when totalCreditHrsCalc >= requiredFTCreditHoursUG then 'FT' else 'PT' end)
+                                (case when totalCreditHrs >= requiredFTCreditHoursUG then 'FT' else 'PT' end)
                           when instructionalActivityType = 'CL' then 
                                 (case when totalClockHrs >= requiredFTClockHoursUG then 'FT' else 'PT' end) 
-                          else 'UG null' end)
+                          else null end)
                 else null end) timeStatus,
             studentLevel,
             studentType,
@@ -1155,84 +1160,107 @@ from (
             caresAct1,
             caresAct2,
             isNonDegreeSeeking,
-            (case when totalCECourses = totalCourses then 0 --exclude students enrolled only in continuing ed courses
-				when totalIntlCourses = totalCourses then 0 --exclude students exclusively enrolled in any foreign branch campuses
-				when totalAuditCourses = totalCourses then 0 --exclude students exclusively auditing classes
-				when totalProfResidencyCourses > 0 then 0 --exclude PHD residents or interns
-				when totalThesisCourses > 0 then 0 --exclude PHD residents or interns
-				when totalRemCourses = totalCourses and isNonDegreeSeeking = 0 then 1 --include students taking remedial courses if degree-seeking
-				when totalESLCourses = totalCourses and isNonDegreeSeeking = 0 then 1 --exclude students enrolled only in ESL courses/programs
-				when isNonDegreeSeeking = 1 then 0 --do not include non degree seeking
-                when totalCreditHrs > 0 then 1
-				else 0
-             end) ipedsInclude
+            totalCreditHrs,
+            totalClockHrs,
+            instructionalActivityType
     from (
-         select course.yearType,
-                course.snapshotDate,
-                course.censusDate,
-                course.financialAidYear,
-                course.instructionalActivityType,
-                course.requiredFTCreditHoursUG,
-                course.requiredFTClockHoursUG,
-                course.personId,
-                course.studentLevel,
-                course.studentType,
-                course.residency,
-                course.ipedsGender,
-                course.ipedsEthnicity,
-                course.caresAct1,
-                course.caresAct2,
-				course.studyAbroadStatus,
-                sum((case when course.enrollmentHours >= 0 then 1 else 0 end)) totalCourses,
-                sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 then course.enrollmentHours else 0 end)) totalCreditHrs,
-                --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Undergraduate' then coalesce(course.enrollmentHours, 0) else 0 end)) totalUndergraduateHrs,
-                --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel not in ('Undergraduate', 'Continuing Education', 'Other') then coalesce(course.enrollmentHours, 0) else 0 end)) totalGraduateHrs,
-				--sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Masters' then coalesce(course.enrollmentHours, 0) else 0 end)) totalMastersHrs,
-				--sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Doctorate' then coalesce(course.enrollmentHours, 0) else 0 end)) totalDoctorateHrs,
-				--sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Professional Practice Doctorate' then coalesce(course.enrollmentHours, 0) else 0 end)) totalProfDoctorateHrs,
-                sum((case when course.isClockHours = 1 and course.enrollmentHours > 0 and course.courseLevel = 'Undergraduate' then course.enrollmentHours else 0 end)) totalClockHrs,
-                --sum((case when course.enrollmentHours = 0 then 1 else 0 end)) totalNonCredCourses,
-                --sum((case when course.enrollmentHours > 0 then 1 else 0 end)) totalCredCourses,
-                --sum((case when course.distanceEducationType != 'Not distance education' then 1 else 0 end)) totalDECourses,
-				--sum((case when course.onlineInstructionType not in ('Hybrid', 'Not Online') then 1 else 0 end)) totalOnlineCourses,
-				-- host institution study abroad
-                --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Undergraduate' then 1 else 0 end)) totalUndergraduateCourses,
-                --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel not in ('Undergraduate', 'Continuing Education', 'Other')then 1 else 0 end)) totalGraduateCourses,
-                sum((case when course.courseLevel = 'Continuing Education' then 1 else 0 end)) totalCECourses,
-                --sum((case when course.locationType = 'Foreign Country' and course.studyAbroadStatus = 'Study Abroad - Home Institution' then 1 else 0 end)) totalSAHomeCourses,
-				(case when sum((case when course.locationType = 'Foreign Country' and course.studyAbroadStatus = 'Study Abroad - Home Institution' then 1 else 0 end)) > 0 then false else course.isNonDegreeSeeking end) isNonDegreeSeeking,
-                sum((case when course.isESL = 'Y' then 1 else 0 end)) totalESLCourses,
-                sum((case when course.isRemedial = 'Y' then 1 else 0 end)) totalRemCourses,
-                sum((case when course.isInternational = 1 then 1 else 0 end)) totalIntlCourses,
-                sum((case when course.isAudited = 'Y' then 1 else 0 end)) totalAuditCourses,
-                sum((case when course.courseLevel = 'Undergraduate' then
-                    (case when course.instructionalActivityType in ('CR', 'B') and course.isClockHours = 0 then course.enrollmentHours
-                              when course.instructionalActivityType = 'B' and course.isClockHours = 1 then course.equivCRHRFactor * course.enrollmentHours
-                              else 0 end)
-                    else 0 end)) totalCreditHrsCalc,
-				sum((case when course.instructionType = 'Thesis/Capstone' then 1 else 0 end)) totalThesisCourses,
-                sum((case when course.instructionType in ('Residency', 'Internship', 'Practicum') and course.studentLevel = 'Professional Practice Doctorate' then 1 else 0 end)) totalProfResidencyCourses
-        from CourseMCR course
-        group by course.yearType,
-                course.snapshotDate,
-                course.censusDate,
-                course.financialAidYear,
-                course.instructionalActivityType,
-                course.requiredFTCreditHoursUG,
-                course.requiredFTClockHoursUG,
-                course.personId,
-                course.studentLevel,
-                course.studentType,
-                course.isNonDegreeSeeking,
-                course.residency,
-                course.ipedsGender,
-                course.ipedsEthnicity,
-	        course.caresAct1,
-	        course.caresAct2,
-	        course.studyAbroadStatus
+        select yearType,
+                snapshotDate,
+                censusDate,
+                financialAidYear,
+                instructionalActivityType,
+                requiredFTCreditHoursUG,
+                requiredFTClockHoursUG,
+                personId,
+                studentLevel,
+                studentType,
+                residency,
+                ipedsGender,
+                ipedsEthnicity,
+                caresAct1,
+                caresAct2,
+                totalClockHrs,
+                totalCreditHrs,
+                (case when studyAbroadStatus != 'Study Abroad - Home Institution' then isNonDegreeSeeking
+                      when totalSAHomeCourses > 0 or totalCreditHrs > 0 or totalClockHrs > 0 then false 
+                      else isNonDegreeSeeking 
+                  end) isNonDegreeSeeking,
+                (case when totalCECourses = totalCourses then 0 --exclude students enrolled only in continuing ed courses
+                    when totalIntlCourses = totalCourses then 0 --exclude students exclusively enrolled in any foreign branch campuses
+                    when totalAuditCourses = totalCourses then 0 --exclude students exclusively auditing classes
+                    when totalProfResidencyCourses > 0 then 0 --exclude PHD residents or interns
+                    when totalThesisCourses > 0 then 0 --exclude PHD residents or interns
+                    when totalRemCourses = totalCourses and isNonDegreeSeeking = false then 1 --include students taking remedial courses if degree-seeking
+                    when totalESLCourses = totalCourses and isNonDegreeSeeking = false then 1 --exclude students enrolled only in ESL courses/programs
+                    when totalSAHomeCourses > 0 then 1 --include study abroad student where home institution provides resources, even if credit hours = 0
+                    when totalCreditHrs > 0 then 1
+                    when totalClockHrs > 0 then 1
+                    else 0
+                 end) ipedsInclude
+        from (
+             select course.yearType,
+                    course.snapshotDate,
+                    course.censusDate,
+                    course.financialAidYear,
+                    course.instructionalActivityType,
+                    course.requiredFTCreditHoursUG,
+                    course.requiredFTClockHoursUG,
+                    course.personId,
+                    course.studentLevel,
+                    course.studentType,
+                    course.isNonDegreeSeeking,
+                    course.residency,
+                    course.ipedsGender,
+                    course.ipedsEthnicity,
+                    course.caresAct1,
+                    course.caresAct2,
+                    course.studyAbroadStatus,
+                    sum((case when course.enrollmentHours >= 0 then 1 else 0 end)) totalCourses,
+                    sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 then course.enrollmentHours else 0 end)) totalCreditHrs,
+                    --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Undergraduate' then coalesce(course.enrollmentHours, 0) else 0 end)) totalUndergraduateHrs,
+                    --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel not in ('Undergraduate', 'Continuing Education', 'Other') then coalesce(course.enrollmentHours, 0) else 0 end)) totalGraduateHrs,
+                    --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Masters' then coalesce(course.enrollmentHours, 0) else 0 end)) totalMastersHrs,
+                    --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Doctorate' then coalesce(course.enrollmentHours, 0) else 0 end)) totalDoctorateHrs,
+                    --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Professional Practice Doctorate' then coalesce(course.enrollmentHours, 0) else 0 end)) totalProfDoctorateHrs,
+                    sum((case when course.isClockHours = 1 and course.enrollmentHours > 0 and course.courseLevel = 'Undergraduate' then course.enrollmentHours else 0 end)) totalClockHrs,
+                    --sum((case when course.enrollmentHours = 0 then 1 else 0 end)) totalNonCredCourses,
+                    --sum((case when course.enrollmentHours > 0 then 1 else 0 end)) totalCredCourses,
+                    --sum((case when course.distanceEducationType != 'Not distance education' then 1 else 0 end)) totalDECourses,
+                    --sum((case when course.onlineInstructionType not in ('Hybrid', 'Not Online') then 1 else 0 end)) totalOnlineCourses,
+                    -- host institution study abroad
+                    --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel = 'Undergraduate' then 1 else 0 end)) totalUndergraduateCourses,
+                    --sum((case when course.isClockHours = 0 and course.enrollmentHours > 0 and course.courseLevel not in ('Undergraduate', 'Continuing Education', 'Other')then 1 else 0 end)) totalGraduateCourses,
+                    sum((case when course.courseLevel = 'Continuing Education' then 1 else 0 end)) totalCECourses,
+                    sum((case when course.locationType = 'Foreign Country' then 1 else 0 end)) totalSAHomeCourses, 
+                    sum((case when course.isESL = 'Y' then 1 else 0 end)) totalESLCourses,
+                    sum((case when course.isRemedial = 'Y' then 1 else 0 end)) totalRemCourses,
+                    sum((case when course.isInternational = 1 then 1 else 0 end)) totalIntlCourses,
+                    sum((case when course.isAudited = 'Y' then 1 else 0 end)) totalAuditCourses,
+                    --sum(course.enrollmentHours) totalEnrollHrs,
+                    sum((case when course.instructionType = 'Thesis/Capstone' then 1 else 0 end)) totalThesisCourses,
+                    sum((case when course.instructionType in ('Residency', 'Internship', 'Practicum') and course.studentLevel = 'Professional Practice Doctorate' then 1 else 0 end)) totalProfResidencyCourses
+            from CourseMCR course
+            group by course.yearType,
+                    course.snapshotDate,
+                    course.censusDate,
+                    course.financialAidYear,
+                    course.instructionalActivityType,
+                    course.requiredFTCreditHoursUG,
+                    course.requiredFTClockHoursUG,
+                    course.personId,
+                    course.studentLevel,
+                    course.studentType,
+                    course.isNonDegreeSeeking,
+                    course.residency,
+                    course.ipedsGender,
+                    course.ipedsEthnicity,
+                    course.caresAct1,
+                    course.caresAct2,
+                    course.studyAbroadStatus
+            )
         )
+    where ipedsInclude = 1
     )
-where ipedsInclude = 1
 ),
 
 FinancialAidMCR as (
@@ -1252,110 +1280,112 @@ select *,
     (case when isGroup2Ind = 1 and group3Total > 0 then 1 else 0 end) isGroup3,
     (case when isGroup2Ind = 1 and group4Total > 0 then 1 else 0 end) isGroup4 
 from (
-select course2.personId personId,
-        course2.yearType yearType,
-        course2.financialAidYear financialAidYear,
-        course2.isGroup2Ind isGroup2Ind,
-        first(finaid.livingArrangement) livingArrangement,
-        course2.residency residency,
-        round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalLoan,
-        round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalGrantSchol,
-        round(sum(coalesce(case when finaid.fundType = 'Grant' and finaid.fundSource = 'Federal' and finaid.fundCode in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end, 0)), 0) caresFederalGrant,
-        round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalWorkStudy,
-        round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalLoan,
-        round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalGrantSchol,
-        round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalWorkStudy,
-        round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource = 'Institution' then finaid.IPEDSFinancialAidAmount end, 0)), 0) institutionLoan,
-        round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Institution' then finaid.IPEDSFinancialAidAmount end, 0)), 0) institutionGrantSchol,
-        round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource = 'Institution' then finaid.IPEDSFinancialAidAmount end, 0)), 0) institutionalWorkStudy,        
-        round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource = 'Other' then finaid.IPEDSFinancialAidAmount end, 0)), 0) otherLoan, 
-        round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Other' then finaid.IPEDSFinancialAidAmount end, 0)), 0) otherGrantSchol, 
-        round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource = 'Other' then finaid.IPEDSFinancialAidAmount end, 0)), 0) otherWorkStudy, 
-        round(sum(coalesce(case when finaid.isPellGrant = 1 then finaid.IPEDSFinancialAidAmount end, 0)), 0) pellGrant, 
-        round(sum(coalesce(case when finaid.isTitleIV = 1 then finaid.IPEDSFinancialAidAmount end, 0)), 0) titleIV, 
-        round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') then finaid.IPEDSFinancialAidAmount end, 0)), 0) allGrantSchol, 
-        round(sum(coalesce(case when finaid.fundType = 'Loan' then finaid.IPEDSFinancialAidAmount end, 0)), 0) allLoan, 
-        round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Federal' and finaid.isPellGrant != 1 then finaid.IPEDSFinancialAidAmount end, 0)), 0) nonPellFederalGrantSchol, 
-        round(sum(finaid.IPEDSFinancialAidAmount), 0) totalAid,
-        round(sum(case when course2.isGroup2Ind = 1 then finaid.IPEDSFinancialAidAmount end)) group2aTotal,
-		round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Loan', 'Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group2bTotal,
-        --round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group3Total, --Pre CARES Act (Revert after CARES Act phases out)
-        round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') and finaid.fundCode not in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end)) group3Total,
-        --round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 then finaid.IPEDSFinancialAidAmount end)) group4Total, --Pre CARES Act (Revert after CARES Act phases out)
-        round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 and finaid.fundCode not in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end)) group4Total,
-        (case when course2.isGroup2Ind = 1 then (case when first(finaid.familyIncome) <= 30000 then 1
-		                                            when first(finaid.familyIncome) between 30001 and 48000 then 2
-		                                            when first(finaid.familyIncome) between 48001 and 75000 then 3
-		                                            when first(finaid.familyIncome) between 75001 and 110000 then 4
-		                                            when first(finaid.familyIncome) > 110000 then 5
-	                                                else 1 end)
-	       end) familyIncome
-from CourseTypeCountsSTU course2
-    left join (    
-        select DISTINCT
-            course.personId personId,
-            course.yearType yearType,
-            course.financialAidYear financialAidYear,
-            FinancialAidENT.fundType fundType,
-            upper(FinancialAidENT.fundCode) fundCode,
-            FinancialAidENT.fundSource fundSource,
-            FinancialAidENT.recordActivityDate recordActivity,
-            FinancialAidENT.termCode termCode,
-            FinancialAidENT.awardStatus awardStatus,
-            FinancialAidENT.isPellGrant isPellGrant,
-            FinancialAidENT.isTitleIV isTitleIV,
-            FinancialAidENT.isSubsidizedDirectLoan isSubsidizedDirectLoan,
-            FinancialAidENT.acceptedAmount acceptedAmount,
-            FinancialAidENT.offeredAmount offeredAmount,
-            FinancialAidENT.paidAmount paidAmount,
-            (case when FinancialAidENT.IPEDSFinancialAidAmount is not null and FinancialAidENT.IPEDSFinancialAidAmount > 0 then FinancialAidENT.IPEDSFinancialAidAmount
-                 else (case when FinancialAidENT.fundType = 'Loan' then FinancialAidENT.acceptedAmount
-                        when FinancialAidENT.fundType in ('Grant', 'Scholarship') then FinancialAidENT.offeredAmount
-                        when FinancialAidENT.fundType = 'Work Study' then FinancialAidENT.paidAmount
-                        else FinancialAidENT.IPEDSFinancialAidAmount end)
-            end) IPEDSFinancialAidAmount, 
-            FinancialAidENT.IPEDSOutcomeMeasuresAmount IPEDSOutcomeMeasuresAmount,
-            round(regexp_replace(FinancialAidENT.familyIncome, ',', ''), 0) familyIncome,
-            FinancialAidENT.livingArrangement livingArrangement,
-            FinancialAidENT.isIPEDSReportable isIPEDSReportable,
-            row_number() over (
-                partition by
-                     course.yearType,
-                    FinancialAidENT.financialAidYear,
-                    FinancialAidENT.termCode,
-                    course.personId,
-			        FinancialAidENT.fundCode,
-			        FinancialAidENT.fundType,
-			        FinancialAidENT.fundSource
-		        order by 	
-                    (case when array_contains(FinancialAidENT.tags, config.repPeriodTag2) then 1 
-                        when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.financialAidEndDate, 30) and date_add(config.financialAidEndDate, 10) then 2 else 3 end) asc,	    
-                    (case when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') > config.financialAidEndDate then to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
-                    (case when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') < config.financialAidEndDate then to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    FinancialAidENT.recordActivityDate desc
-            ) finAidRn
-        from CourseTypeCountsSTU course   
-        cross join (select first(financialAidEndDate) financialAidEndDate,
-                            first(repPeriodTag2) repPeriodTag2
-                    from ClientConfigMCR) config
-        inner join FinancialAid FinancialAidENT on course.personId = FinancialAidENT.personId
-	        and course.financialAidYear = FinancialAidENT.financialAidYear
-		    and FinancialAidENT.isIpedsReportable = 1
-            and FinancialAidENT.awardStatus not in ('Source Denied', 'Cancelled')
-            and ((to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-			        and to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') <= config.financialAidEndDate)
-                or (to_date(FinancialAidENT.awardStatusActionDate , 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
-                    and ((to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-                            and to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') <= config.financialAidEndDate)
-                        or to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))))            
-        ) finaid on course2.personId = finaid.personId
-	        and course2.financialAidYear = finaid.financialAidYear
-            and finaid.finAidRn = 1
-group by course2.personId, 
-        course2.yearType, 
-        course2.financialAidYear,
-        course2.isGroup2Ind,
-        course2.residency
+    select course2.personId personId,
+            course2.yearType yearType,
+            course2.financialAidYear financialAidYear,
+            course2.isGroup2Ind isGroup2Ind,
+            first(finaid.livingArrangement) livingArrangement,
+            course2.residency residency,
+            round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalLoan,
+            round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalGrantSchol,
+            round(sum(coalesce(case when finaid.fundType = 'Grant' and finaid.fundSource = 'Federal' and finaid.fundCode in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end, 0)), 0) caresFederalGrant,
+            round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource = 'Federal' then finaid.IPEDSFinancialAidAmount end, 0)), 0) federalWorkStudy,
+            round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalLoan,
+            round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalGrantSchol,
+            round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource in ('State', 'Local') then finaid.IPEDSFinancialAidAmount end, 0)), 0) stateLocalWorkStudy,
+            round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource = 'Institution' then finaid.IPEDSFinancialAidAmount end, 0)), 0) institutionLoan,
+            round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Institution' then finaid.IPEDSFinancialAidAmount end, 0)), 0) institutionGrantSchol,
+            round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource = 'Institution' then finaid.IPEDSFinancialAidAmount end, 0)), 0) institutionalWorkStudy,        
+            round(sum(coalesce(case when finaid.fundType = 'Loan' and finaid.fundSource = 'Other' then finaid.IPEDSFinancialAidAmount end, 0)), 0) otherLoan, 
+            round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Other' then finaid.IPEDSFinancialAidAmount end, 0)), 0) otherGrantSchol, 
+            round(sum(coalesce(case when finaid.fundType = 'Work Study' and finaid.fundSource = 'Other' then finaid.IPEDSFinancialAidAmount end, 0)), 0) otherWorkStudy, 
+            round(sum(coalesce(case when finaid.isPellGrant = 1 then finaid.IPEDSFinancialAidAmount end, 0)), 0) pellGrant, 
+            round(sum(coalesce(case when finaid.isTitleIV = 1 then finaid.IPEDSFinancialAidAmount end, 0)), 0) titleIV, 
+            round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') then finaid.IPEDSFinancialAidAmount end, 0)), 0) allGrantSchol, 
+            round(sum(coalesce(case when finaid.fundType = 'Loan' then finaid.IPEDSFinancialAidAmount end, 0)), 0) allLoan, 
+            round(sum(coalesce(case when finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource = 'Federal' and finaid.isPellGrant != 1 then finaid.IPEDSFinancialAidAmount end, 0)), 0) nonPellFederalGrantSchol, 
+            round(sum(finaid.IPEDSFinancialAidAmount), 0) totalAid,
+            round(sum(case when course2.isGroup2Ind = 1 then finaid.IPEDSFinancialAidAmount end)) group2aTotal,
+            round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Loan', 'Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group2bTotal,
+            --round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') then finaid.IPEDSFinancialAidAmount end)) group3Total, --Pre CARES Act (Revert after CARES Act phases out)
+            round(sum(case when course2.isGroup2Ind = 1 and finaid.fundType in ('Grant', 'Scholarship') and finaid.fundSource in ('Federal', 'State', 'Local', 'Institution') and finaid.fundCode not in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end)) group3Total,
+            --round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 then finaid.IPEDSFinancialAidAmount end)) group4Total, --Pre CARES Act (Revert after CARES Act phases out)
+            round(sum(case when course2.isGroup2Ind = 1 and finaid.isTitleIV = 1 and finaid.fundCode not in (course2.caresAct1, course2.caresAct2) then finaid.IPEDSFinancialAidAmount end)) group4Total,
+            (case when course2.isGroup2Ind = 1 then (case when first(finaid.familyIncome) <= 30000 then 1
+                                                        when first(finaid.familyIncome) between 30001 and 48000 then 2
+                                                        when first(finaid.familyIncome) between 48001 and 75000 then 3
+                                                        when first(finaid.familyIncome) between 75001 and 110000 then 4
+                                                        when first(finaid.familyIncome) > 110000 then 5
+                                                        else 1 end)
+               end) familyIncome
+    from CourseTypeCountsSTU course2
+        left join (
+            select DISTINCT
+                    course.personId personId,
+                    course.yearType yearType,
+                    course.financialAidYear financialAidYear,
+                    FinancialAidENT.fundType fundType,
+                    upper(FinancialAidENT.fundCode) fundCode,
+                    FinancialAidENT.fundSource fundSource,
+                    FinancialAidENT.recordActivityDate recordActivity,
+                    FinancialAidENT.awardStatusActionDate,
+                    config.financialAidEndDate,
+                    FinancialAidENT.termCode termCode,
+                    FinancialAidENT.awardStatus awardStatus,
+                    FinancialAidENT.isPellGrant isPellGrant,
+                    FinancialAidENT.isTitleIV isTitleIV,
+                    FinancialAidENT.isSubsidizedDirectLoan isSubsidizedDirectLoan,
+                    FinancialAidENT.acceptedAmount acceptedAmount,
+                    FinancialAidENT.offeredAmount offeredAmount,
+                    FinancialAidENT.paidAmount paidAmount,
+                    (case when FinancialAidENT.IPEDSFinancialAidAmount is not null and FinancialAidENT.IPEDSFinancialAidAmount > 0 then FinancialAidENT.IPEDSFinancialAidAmount
+                         else (case when FinancialAidENT.fundType = 'Loan' then FinancialAidENT.acceptedAmount
+                                when FinancialAidENT.fundType in ('Grant', 'Scholarship') then FinancialAidENT.offeredAmount
+                                when FinancialAidENT.fundType = 'Work Study' then FinancialAidENT.paidAmount
+                                else FinancialAidENT.IPEDSFinancialAidAmount end)
+                    end) IPEDSFinancialAidAmount, 
+                    FinancialAidENT.IPEDSOutcomeMeasuresAmount IPEDSOutcomeMeasuresAmount,
+                    round(regexp_replace(FinancialAidENT.familyIncome, ',', ''), 0) familyIncome,
+                    FinancialAidENT.livingArrangement livingArrangement,
+                    FinancialAidENT.isIPEDSReportable isIPEDSReportable,
+                    row_number() over (
+                        partition by
+                            course.yearType,
+                            FinancialAidENT.financialAidYear,
+                            FinancialAidENT.termCode,
+                            course.personId,
+                            FinancialAidENT.fundCode,
+                            FinancialAidENT.fundType,
+                            FinancialAidENT.fundSource
+                        order by 	
+                            (case when array_contains(FinancialAidENT.tags, config.repPeriodTag2) then 1 
+                                when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.financialAidEndDate, 30) and date_add(config.financialAidEndDate, 10) then 2 else 3 end) asc,	    
+                            (case when to_date(FinancialAidENT.snapshotDate,'YYYY-MM-DD') > config.financialAidEndDate then to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                            (case when to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') < config.financialAidEndDate then to_date(FinancialAidENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+                            FinancialAidENT.recordActivityDate desc
+                    ) finAidRn
+                from CourseTypeCountsSTU course   
+                cross join (select first(financialAidEndDate) financialAidEndDate,
+                                    first(repPeriodTag2) repPeriodTag2
+                            from ClientConfigMCR) config
+                inner join FinancialAid FinancialAidENT on course.personId = FinancialAidENT.personId
+                    and course.financialAidYear = FinancialAidENT.financialAidYear
+                    and FinancialAidENT.isIpedsReportable = 1
+                    and FinancialAidENT.awardStatus not in ('Source Denied', 'Cancelled')
+                   and ((to_date(FinancialAidENT.awardStatusActionDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+                            and to_date(FinancialAidENT.awardStatusActionDate, 'YYYY-MM-DD') <= config.financialAidEndDate)
+                        or (to_date(FinancialAidENT.awardStatusActionDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
+                            and ((to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+                                    and to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') <= config.financialAidEndDate)
+                                or to_date(FinancialAidENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))))   
+                        ) finaid on course2.personId = finaid.personId
+                            and course2.financialAidYear = finaid.financialAidYear
+                            and finaid.finAidRn = 1
+    group by course2.personId, 
+            course2.yearType, 
+            course2.financialAidYear,
+            course2.isGroup2Ind,
+            course2.residency
     )
 ),
 
@@ -1404,17 +1434,14 @@ from (
                             first(giBillEndDate) giBillEndDate
                     from ClientConfigMCR) config
     where MilitaryBenefitENT.isIPEDSReportable = 1 
+        and MilitaryBenefitENT.benefitType = 'GI Bill'
         and ((to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-            and (MilitaryBenefitENT.benefitType = 'GI Bill'
-                    and to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') between config.giBillStartDate and config.giBillEndDate
-                    and MilitaryBenefitENT.transactionDate between config.giBillStartDate and config.giBillEndDate
-                ))
+                and to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') between config.giBillStartDate and config.giBillEndDate
+                and MilitaryBenefitENT.transactionDate between config.giBillStartDate and config.giBillEndDate)
             or (to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
-                    and (MilitaryBenefitENT.benefitType = 'GI Bill'
-                        and MilitaryBenefitENT.transactionDate between config.giBillStartDate and config.giBillEndDate
-                      )))
-    )   
-    where militarybenefitRn = 1
+                and MilitaryBenefitENT.transactionDate between config.giBillStartDate and config.giBillEndDate))
+        )   
+where militarybenefitRn = 1
 group by personId, benefitType, termCode, snapshotDate, StartDate, EndDate --, recordActivityDate
 
 union
@@ -1459,16 +1486,13 @@ from (
         cross join (select first(dodStartDate) dodStartDate,
                             first(dodEndDate) dodEndDate
                     from ClientConfigMCR) config
-    where MilitaryBenefitENT.isIPEDSReportable = 1
+    where MilitaryBenefitENT.isIPEDSReportable = 1 
+        and MilitaryBenefitENT.benefitType = 'Dept of Defense'
         and ((to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-            and (MilitaryBenefitENT.benefitType = 'Dept of Defense'
-                    and to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') between config.dodStartDate and config.dodEndDate
-                    and MilitaryBenefitENT.transactionDate between config.dodStartDate and config.dodEndDate
-                ))
+                and to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') between config.dodStartDate and config.dodEndDate
+                and MilitaryBenefitENT.transactionDate between config.dodStartDate and config.dodEndDate)
             or (to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
-                    and (MilitaryBenefitENT.benefitType = 'Dept of Defense'
-                        and MilitaryBenefitENT.transactionDate between config.dodStartDate and config.dodEndDate
-                      )))
+                and MilitaryBenefitENT.transactionDate between config.dodStartDate and config.dodEndDate))
     )   
 where militarybenefitRn = 1
 group by personId, benefitType, termCode, snapshotDate, StartDate, EndDate --, recordActivityDate 
@@ -1487,28 +1511,14 @@ from (
     select stu.personId personId,
         sum((case when stu.benefitType = 'GI Bill' then stu.benefitAmount else 0 end)) giBillAmt,
         sum((case when stu.benefitType = 'Dept of Defense' then stu.benefitAmount else 0 end)) dodAmt,
-        max(stu.studentLevel) studentLevel,
+        stu.studentLevel studentLevel,
         (case when stu.benefitType = 'GI Bill' then 1 else 0 end) giCount,
         (case when stu.benefitType = 'Dept of Defense' then 1 else 0 end) dodCount
     from (
-        select stud.personId,
-            stud.termCode,
-            coalesce(stud.studentLevel, (case when config.icOfferUndergradAwardLevel = 'Y' then 'Undergrad' else 'Graduate' end)) studentLevel,
-            stud.benefitType,
-            stud.benefitAmount,
-            row_number() over (
-                    partition by
-                        stud.personId,
-                        stud.benefitType,
-                        stud.benefitAmount
-                    order by
-                        stud.termOrder desc
-                ) termRn
-        from (
             select distinct miliben.personId personId,
                 miliben.termCode termCode,
                 termorder.termOrder termOrder,
-                studentENT.studentLevel studentLevel,
+                (case when studentENT.studentLevel in ('Undergraduate', 'Continuing Education', 'Other') then 1 else 2 end) studentLevel,
                 miliben.benefitType,
                 miliben.benefitAmount benefitAmount,
                 row_number() over (
@@ -1530,14 +1540,11 @@ from (
                         and to_date(studentENT.recordActivityDate,'YYYY-MM-DD') <= miliben.EndDate)
                             or to_date(studentENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
                     and studentENT.isIpedsReportable = 1
-                    and studentENT.studentLevel in ('Undergrad', 'Graduate')
                 inner join AcademicTermOrder termorder on termorder.termCode = miliben.termCode
-            ) stud
-        cross join (select first(icOfferUndergradAwardLevel) icOfferUndergradAwardLevel
-                    from ClientConfigMCR) config
-        where stud.studRn = 1
-        ) stu 
-    group by personId, benefitType
+            --where miliben.personId in ('30624', '2293', '1476', '1277')
+            ) stu
+        where stu.studRn = 1 
+    group by stu.personId, stu.studentLevel, stu.benefitType
     )
 group by studentLevel
 ),
@@ -1990,7 +1997,55 @@ from (
        coalesce(mililevl.dodCount, 0) FIELD5_1, --Department of Defense Tuition Assistance Program - Number of students receiving benefits/assistance
        coalesce(mililevl.dodAmt, 0) FIELD6_1 --Department of Defense Tuition Assistance Program - Total dollar amount of benefits/assistance disbursed through the institution
     from MilitaryStuLevel mililevl
-    where mililevl.studentLevel = 'Undergrad'
+    where mililevl.studentLevel = 1
+        and (select first(icOfferUndergradAwardLevel)
+                    from ClientConfigMCR) = 'Y'
+        
+    union
+
+--if institution doesn't offer undergraduate level or no records exist in MilitaryBenefitMCR, output null values
+    select 1,
+        null,
+        null,
+        null,
+        null
+    )
+    
+union
+
+
+--Part G Section 2: Veteran's Benefits
+
+--Valid values
+--Student level: 1=Undergraduate, 2=Graduate, 3=Total (Total will be generated)
+--Number of students: 0 to 999999, -2 or blank = not-applicable
+--Total amount of aid: 0 to 999999999999, -2 or blank = not-applicable
+
+select 'G' PART,
+       max(FIELD2_1) FIELD2_1,
+       max(FIELD3_1) FIELD3_1,
+       round(max(FIELD4_1),0) FIELD4_1,
+       max(FIELD5_1) FIELD5_1,
+       round(max(FIELD6_1),0) FIELD6_1,
+       null FIELD7_1,
+       null FIELD8_1,
+       null FIELD9_1,
+       null FIELD10_1,
+       null FIELD11_1,
+       null FIELD12_1,
+       null FIELD13_1,
+       null FIELD14_1,
+       null FIELD15_1,
+       null FIELD16_1
+from (
+--if institution offers undergraduate level, count military benefits; if none, output 0
+    select 1 FIELD2_1, --Student Level 1=Undergraduate, 2=Graduate
+       coalesce(mililevl.giCount, 0) FIELD3_1, --Post-9/11 GI Bill Benefits - Number of students receiving benefits/assistance
+       coalesce(mililevl.giBillAmt, 0) FIELD4_1, --Post-9/11 GI Bill Benefits - Total dollar amount of benefits/assistance disbursed through the institution
+       coalesce(mililevl.dodCount, 0) FIELD5_1, --Department of Defense Tuition Assistance Program - Number of students receiving benefits/assistance
+       coalesce(mililevl.dodAmt, 0) FIELD6_1 --Department of Defense Tuition Assistance Program - Total dollar amount of benefits/assistance disbursed through the institution
+    from MilitaryStuLevel mililevl
+    where mililevl.studentLevel = 1
         and (select first(icOfferUndergradAwardLevel)
                     from ClientConfigMCR) = 'Y'
         
@@ -2030,7 +2085,7 @@ from (
        coalesce(mililevl.dodCount, 0) FIELD5_1, --Department of Defense Tuition Assistance Program - Number of students receiving benefits/assistance
        coalesce(mililevl.dodAmt, 0) FIELD6_1 --Department of Defense Tuition Assistance Program - Total dollar amount of benefits/assistance disbursed through the institution
     from MilitaryStuLevel mililevl
-    where mililevl.studentLevel = 'Graduate'
+    where mililevl.studentLevel = 2
         and (select first(icOfferGraduateAwardLevel)
                     from ClientConfigMCR) = 'Y'
         
@@ -2042,6 +2097,4 @@ from (
         null,
         null,
         null
-    ) 
-
---order by part, field2_1, field3_1
+    )
