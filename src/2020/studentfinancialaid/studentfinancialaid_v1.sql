@@ -68,7 +68,7 @@ WITH DefaultValues as (
 --				corrected dates in prod censusDates; added updated formatting
 
 --prod default blocks (2)
-/*select '2021' surveyYear, 
+select '2021' surveyYear, 
 	'SFA' surveyId,
 	'Fall Census' repPeriodTag1,
 	'Financial Aid Year End' repPeriodTag2,
@@ -128,7 +128,7 @@ select '2021' surveyYear,
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
 
-*/
+/*
 --testing default blocks (2)
 select '1415' surveyYear,  
 	'SFA' surveyId, 
@@ -189,7 +189,7 @@ select '1415' surveyYear,
     'N' sfaReportPriorYear, --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
     'N' sfaReportSecondPriorYear --'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
 --***** end survey-specific mods
-
+*/
 ),
 
 ReportingPeriodMCR as (
