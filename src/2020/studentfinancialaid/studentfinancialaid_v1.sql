@@ -1268,7 +1268,7 @@ FinancialAidMCR as (
 -- included to get student Financial aid information paid any time during the academic year.
 -- Report grant or scholarship aid that was awarded to students. 
 -- Report loans that were awarded to and accepted by the student.
--- For public institutions, include only those students paying the in-state or in-district tuition rate. For program reporters, include only those students enrolled in the institution‚Äôs largest program.
+-- For public institutions, include only those students paying the in-state or in-district tuition rate. For program reporters, include only those students enrolled in the institution's largest program.
 
 --jh 20201120 Extended valid recordActivityDate by using the financialAidEndDate (set in DefaultValues) in order to get full financial aid year records;
 --				prioritized using the snapshot for Dept of Defense in order to get full financial aid year records;
@@ -1752,7 +1752,7 @@ union
 --Number of students: 0-999999
 --Total amount of aid: 0-999999999999
 --       For public institutions, include only those students paying the in-state or in-district tuition rate.
---       For program reporters, include only those students enrolled in the institution‚Äôs largest program.
+--       For program reporters, include only those students enrolled in the institution's largest program.
 --****still need to add program reporter requirement of largest program
 
 select PART,
@@ -1837,7 +1837,7 @@ union
 --Academic Years: 1=academic year 2017-18, 2=academic year 2016-17, 3=academic year 2015-16. If you have previously reported prior year values to IPEDS, report only YEAR=1.
 --Number of students: 0-999999
 --       For public institutions, include only those students paying the in-state or in-district tuition rate.
---       For program reporters, include only those students enrolled in the institution‚Äôs largest program.
+--       For program reporters, include only those students enrolled in the institution's largest program.
 --****still need to add program reporter requirement of largest program
 
 select 'E' PART,
