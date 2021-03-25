@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
+20210325        jhanicak                                    Update Part G Formatting
 20210310        akhasawneh                                  PF-2060 Revised query per the data model changes in PF-1999. 
 20200122        akhasawneh                                  Adding support for CARES Act considerations. PF-1936
 20201228        akhasawneh                                  Fixes and inclusion of new field 'awardStatusActionDate'. PF-1906
@@ -1267,7 +1268,7 @@ FinancialAidMCR as (
 -- included to get student Financial aid information paid any time during the academic year.
 -- Report grant or scholarship aid that was awarded to students. 
 -- Report loans that were awarded to and accepted by the student.
--- For public institutions, include only those students paying the in-state or in-district tuition rate. For program reporters, include only those students enrolled in the institution’s largest program.
+-- For public institutions, include only those students paying the in-state or in-district tuition rate. For program reporters, include only those students enrolled in the institution‚Äôs largest program.
 
 --jh 20201120 Extended valid recordActivityDate by using the financialAidEndDate (set in DefaultValues) in order to get full financial aid year records;
 --				prioritized using the snapshot for Dept of Defense in order to get full financial aid year records;
@@ -1565,6 +1566,16 @@ from (
 		(4), -- 4=75,001-110,000
 		(5) -- 5=110,001 and more
 	) as studentIncome(ipedsIncome)
+),
+
+--Part G	
+FormatPartGLevel as (
+select *
+from (
+	VALUES
+		(1), -- Undergraduate
+		(2) -- Graduate
+	) as studentLevel(ipedsLevel)
 )
 
 /*****
@@ -1741,7 +1752,7 @@ union
 --Number of students: 0-999999
 --Total amount of aid: 0-999999999999
 --       For public institutions, include only those students paying the in-state or in-district tuition rate.
---       For program reporters, include only those students enrolled in the institution’s largest program.
+--       For program reporters, include only those students enrolled in the institution‚Äôs largest program.
 --****still need to add program reporter requirement of largest program
 
 select PART,
@@ -1826,7 +1837,7 @@ union
 --Academic Years: 1=academic year 2017-18, 2=academic year 2016-17, 3=academic year 2015-16. If you have previously reported prior year values to IPEDS, report only YEAR=1.
 --Number of students: 0-999999
 --       For public institutions, include only those students paying the in-state or in-district tuition rate.
---       For program reporters, include only those students enrolled in the institution’s largest program.
+--       For program reporters, include only those students enrolled in the institution‚Äôs largest program.
 --****still need to add program reporter requirement of largest program
 
 select 'E' PART,
@@ -1893,8 +1904,8 @@ select 'F' PART,
         end) FIELD2_1, --Acad Year, prior
        familyIncome FIELD3_1, --Income range of Group 4 students (values 1 - 5)
        sum(isGroup4) FIELD4_1, --Count of Group 4 students who were awarded any Title IV aid
--- Emergency grants funded through the CARES Act should be NOT included for Group 4 in Part E under “grant or scholarship aid from the following sources: 
---     the federal government, state/local government, or the institution,” as inclusion of these grants would skew net price calculations.
+-- Emergency grants funded through the CARES Act should be NOT included for Group 4 in Part E under ‚Äúgrant or scholarship aid from the following sources: 
+--     the federal government, state/local government, or the institution,‚Äù as inclusion of these grants would skew net price calculations.
        SUM(case when (allGrantSchol - caresFederalGrant) > 0 then isGroup4 else 0 end) FIELD5_1, --Count of Group 4 students who were awarded any grant or scholarship aid 
        SUM(allGrantSchol) - SUM(caresFederalGrant) FIELD6_1, --Total amount of grant or scholarship aid awarded to Group 4 students
        null FIELD7_1,
@@ -1966,7 +1977,7 @@ group by yearType, familyIncome
 
 union
 
---Part G Section 2: Veteran's Benefits
+--Part G Section 2: Veteran's Benefits --1m 31s
 
 --Valid values
 --Student level: 1=Undergraduate, 2=Graduate, 3=Total (Total will be generated)
@@ -1974,7 +1985,7 @@ union
 --Total amount of aid: 0 to 999999999999, -2 or blank = not-applicable
 
 select 'G' PART,
-       max(FIELD2_1) FIELD2_1,
+       FIELD2_1 FIELD2_1,
        max(FIELD3_1) FIELD3_1,
        round(max(FIELD4_1),0) FIELD4_1,
        max(FIELD5_1) FIELD5_1,
@@ -1991,110 +2002,26 @@ select 'G' PART,
        null FIELD16_1
 from (
 --if institution offers undergraduate level, count military benefits; if none, output 0
-    select 1 FIELD2_1, --Student Level 1=Undergraduate, 2=Graduate
+    select mililevl.studentLevel FIELD2_1, --Student Level 1=Undergraduate, 2=Graduate
        coalesce(mililevl.giCount, 0) FIELD3_1, --Post-9/11 GI Bill Benefits - Number of students receiving benefits/assistance
        coalesce(mililevl.giBillAmt, 0) FIELD4_1, --Post-9/11 GI Bill Benefits - Total dollar amount of benefits/assistance disbursed through the institution
        coalesce(mililevl.dodCount, 0) FIELD5_1, --Department of Defense Tuition Assistance Program - Number of students receiving benefits/assistance
        coalesce(mililevl.dodAmt, 0) FIELD6_1 --Department of Defense Tuition Assistance Program - Total dollar amount of benefits/assistance disbursed through the institution
     from MilitaryStuLevel mililevl
-    where mililevl.studentLevel = 1
-        and (select first(icOfferUndergradAwardLevel)
-                    from ClientConfigMCR) = 'Y'
+    where ((mililevl.studentLevel = 1
+            and (select first(icOfferUndergradAwardLevel)
+                    from ClientConfigMCR) = 'Y')
+        or (mililevl.studentLevel = 2
+            and (select first(icOfferGraduateAwardLevel)
+                    from ClientConfigMCR) = 'Y'))
         
-    union
+ union
 
---if institution doesn't offer undergraduate level or no records exist in MilitaryBenefitMCR, output null values
-    select 1,
+    select studentLevel.ipedsLevel,
         null,
         null,
         null,
         null
-    )
-    
-union
-
-
---Part G Section 2: Veteran's Benefits
-
---Valid values
---Student level: 1=Undergraduate, 2=Graduate, 3=Total (Total will be generated)
---Number of students: 0 to 999999, -2 or blank = not-applicable
---Total amount of aid: 0 to 999999999999, -2 or blank = not-applicable
-
-select 'G' PART,
-       max(FIELD2_1) FIELD2_1,
-       max(FIELD3_1) FIELD3_1,
-       round(max(FIELD4_1),0) FIELD4_1,
-       max(FIELD5_1) FIELD5_1,
-       round(max(FIELD6_1),0) FIELD6_1,
-       null FIELD7_1,
-       null FIELD8_1,
-       null FIELD9_1,
-       null FIELD10_1,
-       null FIELD11_1,
-       null FIELD12_1,
-       null FIELD13_1,
-       null FIELD14_1,
-       null FIELD15_1,
-       null FIELD16_1
-from (
---if institution offers undergraduate level, count military benefits; if none, output 0
-    select 1 FIELD2_1, --Student Level 1=Undergraduate, 2=Graduate
-       coalesce(mililevl.giCount, 0) FIELD3_1, --Post-9/11 GI Bill Benefits - Number of students receiving benefits/assistance
-       coalesce(mililevl.giBillAmt, 0) FIELD4_1, --Post-9/11 GI Bill Benefits - Total dollar amount of benefits/assistance disbursed through the institution
-       coalesce(mililevl.dodCount, 0) FIELD5_1, --Department of Defense Tuition Assistance Program - Number of students receiving benefits/assistance
-       coalesce(mililevl.dodAmt, 0) FIELD6_1 --Department of Defense Tuition Assistance Program - Total dollar amount of benefits/assistance disbursed through the institution
-    from MilitaryStuLevel mililevl
-    where mililevl.studentLevel = 1
-        and (select first(icOfferUndergradAwardLevel)
-                    from ClientConfigMCR) = 'Y'
-        
-    union
-
---if institution doesn't offer undergraduate level or no records exist in MilitaryBenefitMCR, output null values
-    select 1,
-        null,
-        null,
-        null,
-        null
-    )
-    
-union
-
-select 'G' PART,
-       max(FIELD2_1) FIELD2_1,
-       max(FIELD3_1) FIELD3_1,
-       round(max(FIELD4_1),0) FIELD4_1,
-       max(FIELD5_1) FIELD5_1,
-       round(max(FIELD6_1),0) FIELD6_1,
-       null FIELD7_1,
-       null FIELD8_1,
-       null FIELD9_1,
-       null FIELD10_1,
-       null FIELD11_1,
-       null FIELD12_1,
-       null FIELD13_1,
-       null FIELD14_1,
-       null FIELD15_1,
-       null FIELD16_1
-from (
---if institution offers graduate level, count military benefits; if none, output 0 
-    select 2 FIELD2_1, --Student Level 1=Undergraduate, 2=Graduate
-       coalesce(mililevl.giCount, 0) FIELD3_1, --Post-9/11 GI Bill Benefits - Number of students receiving benefits/assistance
-       coalesce(mililevl.giBillAmt, 0) FIELD4_1, --Post-9/11 GI Bill Benefits - Total dollar amount of benefits/assistance disbursed through the institution
-       coalesce(mililevl.dodCount, 0) FIELD5_1, --Department of Defense Tuition Assistance Program - Number of students receiving benefits/assistance
-       coalesce(mililevl.dodAmt, 0) FIELD6_1 --Department of Defense Tuition Assistance Program - Total dollar amount of benefits/assistance disbursed through the institution
-    from MilitaryStuLevel mililevl
-    where mililevl.studentLevel = 2
-        and (select first(icOfferGraduateAwardLevel)
-                    from ClientConfigMCR) = 'Y'
-        
-    union
-
---if institution doesn't offer graduate level or no records exist in MilitaryBenefitMCR, output null values
-    select 2,
-        null,
-        null,
-        null,
-        null
-    )
+    from FormatPartGLevel studentLevel
+)
+group by FIELD2_1
