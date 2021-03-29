@@ -16,8 +16,9 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
-20210326        jhanicak                                    PF-2096 Fix logic code Run time: test data 13m 40s, prod data 19m 16s
-20210326        jhanicak                                    PF-2095 Remove unused ClientConfig indicators: acadOrProgReporter,publicOrPrivateInstitution,sfaGradStudentsOnly
+20210329        ckeller                                     PF-2096 Fix logic code Run time: test data 12m 8s, prod data 11m 36s
+20210329        ckeller                                     PF-2095 Remove unused ClientConfig indicators: acadOrProgReporter,publicOrPrivateInstitution,sfaGradStudentsOnly
+20210329        ckeller                                     PF-2094 Fixed formatting in Part G
 20210310        akhasawneh                                  PF-2060 Revised query per the data model changes in PF-1999. 
 20200122        akhasawneh                                  Adding support for CARES Act considerations. PF-1936
 20201228        akhasawneh                                  Fixes and inclusion of new field 'awardStatusActionDate'. PF-1906
