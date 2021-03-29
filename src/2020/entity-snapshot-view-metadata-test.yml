@@ -1,5 +1,5 @@
 ---
-# ---2019 TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
+# ---2020 TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
 # DORIS Entity Snapshot View Properties IPEDS Survey TEST FILE
 #
 # This file defines the set of DORIS entities to be included in an IPEDS report for a specific survey type.  For each
@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20210329  jhanicak                                  Moved FacultyAppointment entity and added October End tags to HR entities
 # 20210201  akhasawneh                                Added GR 200
 # 20210108  jhanicak                                  Synced up to prod version
 # 20210104  jhanicak                                  Added new views for status points in OM and GR, modified dates and tags
@@ -461,6 +462,7 @@ ACADEMIC_LIBRARIES_1:
     entityName: Employee
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2012-01-01
       end: 2014-12-31
@@ -469,6 +471,7 @@ ACADEMIC_LIBRARIES_1:
     entityName: EmployeeAssignment
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2012-01-01
       end: 2014-12-31
@@ -477,6 +480,7 @@ ACADEMIC_LIBRARIES_1:
     entityName: EmployeePosition
     tagNames:
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2012-01-01
       end: 2014-12-31
@@ -485,6 +489,16 @@ ACADEMIC_LIBRARIES_1:
     entityName: Faculty
     tagNames:
       - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2012-01-01
+      end: 2014-12-31
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2012-01-01
       end: 2014-12-31
@@ -563,6 +577,7 @@ ACADEMIC_LIBRARIES_1:
       - Spring Census
       - Post-Spring Summer Census
       - HR Reporting End
+      - October End
     snapshotDateRange:
       start: 2012-01-01
       end: 2014-12-31
@@ -706,14 +721,6 @@ ACADEMIC_LIBRARIES_1:
       - August End
     snapshotDateRange:
       start: 2014-01-01
-      end: 2014-12-31
-
-  - viewName: FacultyAppointment
-    entityName: FacultyAppointment
-    tagNames:
-      - HR Reporting End
-    snapshotDateRange:
-      start: 2010-01-01
       end: 2014-12-31
 
 ADMISSIONS_1:
