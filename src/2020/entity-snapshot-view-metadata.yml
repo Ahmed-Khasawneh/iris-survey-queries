@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20210331  jhanicak                                  Increased snapshot date range for Finance 
 # 20210212  akhasawneh                                Updating HR v1 entry ('October End' tag and new 'FacultyAppointment' entity) 
 # 20200201  akhasawneh                                Added GR200 v1,2
 # 20210108  jhanicak                                  Added GR v1
@@ -1190,7 +1191,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: FiscalYear
@@ -1198,7 +1199,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1206,7 +1207,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSClientConfig
@@ -1214,7 +1215,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1222,7 +1223,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1230,7 +1231,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
 FINANCE_2:
@@ -1241,7 +1242,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: FiscalYear
@@ -1249,7 +1250,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1257,7 +1258,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSClientConfig
@@ -1265,7 +1266,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1273,7 +1274,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1281,7 +1282,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
 FINANCE_3:
@@ -1292,7 +1293,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: FiscalYear
@@ -1300,7 +1301,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1308,7 +1309,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSClientConfig
@@ -1316,7 +1317,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1324,7 +1325,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1332,7 +1333,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
 FINANCE_4:
@@ -1343,7 +1344,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: FiscalYear
@@ -1351,7 +1352,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1359,7 +1360,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSClientConfig
@@ -1367,7 +1368,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1375,7 +1376,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1383,7 +1384,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
 FINANCE_5:
@@ -1394,7 +1395,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: FiscalYear
@@ -1402,7 +1403,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1410,7 +1411,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSClientConfig
@@ -1418,7 +1419,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1426,7 +1427,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1434,7 +1435,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
 FINANCE_6:
@@ -1445,7 +1446,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: FiscalYear
@@ -1453,7 +1454,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1461,7 +1462,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSClientConfig
@@ -1469,7 +1470,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1477,7 +1478,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1485,7 +1486,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2020-01-01
+      start: 2019-10-02
       end: 2020-10-01
 
 GRADUATION_RATES_1:
