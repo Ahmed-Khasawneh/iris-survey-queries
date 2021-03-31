@@ -15,7 +15,7 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag              Comments
 -----------------   ----------------    -------------    ----------------------------------------------------------------------------------
-20210223			ckeller								 Modified Reporting Dates and MCR sections to accommodate multiple snapshots
+20210325			ckeller								 Modified Reporting Dates and MCR sections to accommodate multiple snapshots
 														 Added new rows in Survey Formatting section required for 2021 survey collection
 20200622			akhasawneh			ak 20200622		 Modify Finance report query with standardized view naming/aliasing convention (PF-1532) -Run time 8m 24s																			
 20200412			jhanicak			jh 20204012		 Added dummy date option for recordActivityDate in most current record queries PF-1374
@@ -47,16 +47,16 @@ Date(yyyymmdd)      Author              Tag              Comments
 20200106            jd.hysler                            Move original code to template 
 
 ********************/
- 
-/*****
-BEGIN SECTION - Reporting Dates/Terms
-The views below are used to determine the dates, academic terms, academic year, etc. needed for each survey
-*****/ 
 
---jh 20200412 Added DefaultValues query and rewrote other queries to use PF-1418
+/*
+add header back in --CHECK
+DefaultValues - add comments value for each field from IPEDSClientConfig that includes all possible values and default value
+Add 4 fields to each formatting section --CHECK
+
+*/
 WITH DefaultValues AS
 (
-/* select '2021' surveyYear,
+ select '2021' surveyYear, -- 'YYyy (1920 for 2019-2020)'
 	CAST('2020-09-30' AS DATE) asOfDate, 
 	'F1B' surveyId,
 	'Current' surveySection,
@@ -68,19 +68,20 @@ WITH DefaultValues AS
 	CAST('2019-10-01' AS DATE) reportingDateStart,
 	CAST('2020-09-30' AS DATE) reportingDateEnd,
 	'20' termCode, --Fiscal Year
-	'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
-	'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
-	'Y' finEndowmentAssets,  --Y = Yes -- all versions
-	'Y' finPensionBenefits,  --Y = Yes -- all versions
-	'B' finReportingModel,  --B = Business -- v1, v4
-	'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
-	'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
-	'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
-	'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
+	'U' finGPFSAuditOpinion,  -- all versions -- 'Valid values: Q = Qualified, UQ = Unqualified, U = Unknown/In Progress; Default value (if no record or null value): U'
+	'A' finAthleticExpenses,  -- all versions -- 'Valid values: A = Auxiliary Enterprises, S = Student Services, N = Does not participate, O = Other; Default value (if no record or null value): A'
+	'Y' finEndowmentAssets,  -- all versions -- 'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+	'Y' finPensionBenefits,  -- all versions -- 'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+	'B' finReportingModel,  -- v1, v4 -- 'Valid values: B = Business type, G = Government, GB = Government with Business; Default value (if no record or null value): B'
+	'P' finPellTransactions, -- v2, v3, v5, v6 -- 'Valid values: P = Pass through, F = Federal Grant Revenue, N = Does not award Pell grants; Default value (if no record or null value): P'
+	'LLC' finBusinessStructure, -- v3, v6 -- 'Valid values: SP = Sole Proprietorship, P = Partnership, C = C Corp, SC = S Corp, LLC = LLC; Default value (if no record or null value): LLC'
+	'M' finTaxExpensePaid, -- v6 -- 'Valid values: M = multi-institution or multi-campus organization indicated in IC Header, 
+	                             -- N = multi-institution or multi-campus organization NOT indicated in IC Header, I = reporting institution; Default value (if no record or null value): M' 
+	'P' finParentOrChildInstitution  -- v1, v2, v3 -- 'Valid values: P = Parent, C = Child; Default value (if no record or null value): P'
 	
 union
 
-select '2021' surveyYear,
+select '2021' surveyYear, -- 'YYyy (1920 for 2019-2020)'
 	CAST('2020-09-30' AS DATE) asOfDate, 
 	'F1B' surveyId,
 	'Prior' surveySection,
@@ -92,19 +93,20 @@ select '2021' surveyYear,
 	CAST('2019-10-01' AS DATE) reportingDateStart,
 	CAST('2020-09-30' AS DATE) reportingDateEnd,
 	'19' termCode, --Fiscal Year
-	'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
-	'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
-	'Y' finEndowmentAssets,  --Y = Yes -- all versions
-	'Y' finPensionBenefits,  --Y = Yes -- all versions
-	'B' finReportingModel,  --B = Business -- v1, v4
-	'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
-	'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
-	'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
-	'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
-*/
+	'U' finGPFSAuditOpinion,  -- all versions -- 'Valid values: Q = Qualified, UQ = Unqualified, U = Unknown/In Progress; Default value (if no record or null value): U'
+	'A' finAthleticExpenses,  -- all versions -- 'Valid values: A = Auxiliary Enterprises, S = Student Services, N = Does not participate, O = Other; Default value (if no record or null value): A'
+	'Y' finEndowmentAssets,  -- all versions -- 'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+	'Y' finPensionBenefits,  -- all versions -- 'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+	'B' finReportingModel,  -- v1, v4 -- 'Valid values: B = Business type, G = Government, GB = Government with Business; Default value (if no record or null value): B'
+	'P' finPellTransactions, -- v2, v3, v5, v6 -- 'Valid values: P = Pass through, F = Federal Grant Revenue, N = Does not award Pell grants; Default value (if no record or null value): P'
+	'LLC' finBusinessStructure, -- v3, v6 -- 'Valid values: SP = Sole Proprietorship, P = Partnership, C = C Corp, SC = S Corp, LLC = LLC; Default value (if no record or null value): LLC'
+	'M' finTaxExpensePaid, -- v6 -- 'Valid values: M = multi-institution or multi-campus organization indicated in IC Header, 
+	                             -- N = multi-institution or multi-campus organization NOT indicated in IC Header, I = reporting institution; Default value (if no record or null value): M' 
+	'P' finParentOrChildInstitution  -- v1, v2, v3 -- 'Valid values: P = Parent, C = Child; Default value (if no record or null value): P'
 
+/*
 --used for internal testing only
-select '1415' surveyYear,
+select '1415' surveyYear, -- 'YYyy (1920 for 2019-2020)'
 	CAST('2014-09-30' AS DATE) asOfDate, 
 	'F1B' surveyId,
 	'Current' surveySection,
@@ -116,19 +118,20 @@ select '1415' surveyYear,
 	CAST('2013-10-01' AS DATE) reportingDateStart,
 	CAST('2014-09-30' AS DATE) reportingDateEnd,
 	'14' termCode, --Fiscal Year
-	'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
-	'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
-	'Y' finEndowmentAssets,  --Y = Yes -- all versions
-	'Y' finPensionBenefits,  --Y = Yes -- all versions
-	'B' finReportingModel,  --B = Business -- v1, v4
-	'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
-	'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
-	'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
-	'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
+	'U' finGPFSAuditOpinion,  -- all versions --'Valid values: Q = Qualified, UQ = Unqualified, U = Unknown/In Progress; Default value (if no record or null value): U'
+	'A' finAthleticExpenses,  -- all versions -- 'Valid values: A = Auxiliary Enterprises, S = Student Services, N = Does not participate, O = Other; Default value (if no record or null value): A'
+	'Y' finEndowmentAssets,  -- all versions --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+	'Y' finPensionBenefits,  -- all versions --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+	'B' finReportingModel,  -- v1, v4 --'Valid values: B = Business type, G = Government, GB = Government with Business; Default value (if no record or null value): B'
+	'P' finPellTransactions, -- v2, v3, v5, v6 --'Valid values: P = Pass through, F = Federal Grant Revenue, N = Does not award Pell grants; Default value (if no record or null value): P'
+	'LLC' finBusinessStructure, -- v3, v6 --'Valid values: SP = Sole Proprietorship, P = Partnership, C = C Corp, SC = S Corp, LLC = LLC; Default value (if no record or null value): LLC'
+	'M' finTaxExpensePaid, -- v6 -- 'Valid values: M = multi-institution or multi-campus organization indicated in IC Header, 
+	                             -- N = multi-institution or multi-campus organization NOT indicated in IC Header, I = reporting institution; Default value (if no record or null value): M' 
+	'P' finParentOrChildInstitution  -- v1, v2, v3 -- 'Valid values: P = Parent, C = Child; Default value (if no record or null value): P'
 	
 union
 
-select '1415' surveyYear,
+select '1415' surveyYear, -- 'YYyy (1920 for 2019-2020)'
 	CAST('2014-09-30' AS DATE) asOfDate,  
 	'F1B' surveyId,
 	'Prior' surveySection,
@@ -140,19 +143,18 @@ select '1415' surveyYear,
 	CAST('2013-10-01' AS DATE) reportingDateStart,
 	CAST('2014-09-30' AS DATE) reportingDateEnd,
 	'13' termCode, --Fiscal Year
-	'U' finGPFSAuditOpinion,  --U = unknown/in progress -- all versions
-	'A' finAthleticExpenses,  --A = Auxiliary Enterprises -- all versions
-	'Y' finEndowmentAssets,  --Y = Yes -- all versions
-	'Y' finPensionBenefits,  --Y = Yes -- all versions
-	'B' finReportingModel,  --B = Business -- v1, v4
-	'P' finPellTransactions, --P = Pass through -- v2, v3, v5, v6
-	'LLC' finBusinessStructure, --LLC = Limited liability corp -- v3, v6
-	'M' finTaxExpensePaid, --M = multi-institution or multi-campus organization indicated in IC Header -- v6
-	'P' finParentOrChildInstitution  --P = Parent -- v1, v2, v3
+	'U' finGPFSAuditOpinion,  -- all versions --'Valid values: Q = Qualified, UQ = Unqualified, U = Unknown/In Progress; Default value (if no record or null value): U'
+	'A' finAthleticExpenses,  -- all versions -- 'Valid values: A = Auxiliary Enterprises, S = Student Services, N = Does not participate, O = Other; Default value (if no record or null value): A'
+	'Y' finEndowmentAssets,  -- all versions --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+	'Y' finPensionBenefits,  -- all versions --'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+	'B' finReportingModel,  -- v1, v4 --'Valid values: B = Business type, G = Government, GB = Government with Business; Default value (if no record or null value): B'
+	'P' finPellTransactions, -- v2, v3, v5, v6 --'Valid values: P = Pass through, F = Federal Grant Revenue, N = Does not award Pell grants; Default value (if no record or null value): P'
+	'LLC' finBusinessStructure, -- v3, v6 --'Valid values: SP = Sole Proprietorship, P = Partnership, C = C Corp, SC = S Corp, LLC = LLC; Default value (if no record or null value): LLC'
+	'M' finTaxExpensePaid, -- v6 -- 'Valid values: M = multi-institution or multi-campus organization indicated in IC Header, 
+	                             -- N = multi-institution or multi-campus organization NOT indicated in IC Header, I = reporting institution; Default value (if no record or null value): M' 
+	'P' finParentOrChildInstitution  -- v1, v2, v3 -- 'Valid values: P = Parent, C = Child; Default value (if no record or null value): P'
+*/
 ),
-
---jh 20200412 Added DefaultValues query and rewrote other queries to use PF-1418
-
 
 ReportingPeriodMCR as (
 --Returns applicable term/part of term codes for this survey submission year. 
@@ -180,7 +182,7 @@ from (
 	    'IPEDSReportingPeriod' source,
 		repperiodENT.snapshotDate snapshotDate,
 		repPeriodENT.surveyId surveyId,
-		coalesce(repPeriodENT.surveySection, defvalues.surveySection) surveySection,
+		coalesce(repperiodENT.surveySection, defvalues.surveySection) surveySection,
 		defvalues.reportingDateStart reportingDateStart,
 		defvalues.reportingDateEnd reportingDateEnd,
 	    defvalues.repPeriodTag1 repPeriodTag1,
@@ -199,10 +201,12 @@ from (
                 repperiodENT.recordActivityDate desc	
 		) reportPeriodRn	
 	from IPEDSReportingPeriod repperiodENT
-	    cross join DefaultValues defvalues 
+	    left join DefaultValues defvalues on repperiodENT.surveyId = defvalues.surveyId
+	            and repperiodENT.surveySection = defvalues.surveySection
 	where repperiodENT.termCode is not null --Finance does not use termCode, but fiscalYear in this field for F1B
 	   and repperiodENT.surveyCollectionYear = defvalues.surveyYear
-	   and repperiodENT.surveyId = defvalues.surveyId
+	   --and repperiodENT.surveyId = defvalues.surveyId
+	   --and repperiodENT.surveySection = defvalues.surveySection
 
     union 
  
@@ -282,8 +286,8 @@ from (
 				clientConfigENT.surveyCollectionYear
 			order by
 			    (case when to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
+			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
 			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
 				clientConfigENT.recordActivityDate desc
 		) configRn
 	from IPEDSClientConfig clientConfigENT
@@ -318,12 +322,15 @@ from (
 where ConfigLatest.configRn = 1	
 ),
 
---look at putting fiscal year first in order to pull last date of fiscal year for recordActivityDate filter
---only pull records where isIPEDSReportable is true - check ingestion query for this note and add status value
---look at parent and child instit indicator - don't we need to know which COA is for parent and which is for child - fields isParent and isChild
-
-ChartOfAccountsMCR AS ( -- write out each field 
-select *
+ChartOfAccountsMCR AS (
+select chartOfAccountsId,
+    case when isParent = 'True' then 'P'
+		when isChild = 'True' then 'C' end COASParentChild,
+    asOfDate,
+    fiscalYear,
+    surveyYear,
+    surveySection,
+    snapshotDate
 from (
 	select ROW_NUMBER() OVER (
 			PARTITION BY
@@ -336,34 +343,39 @@ from (
                 coasENT.startDate DESC,
 				coasENT.recordActivityDate DESC
 	) AS coasRn,
-	    coasENT.chartOfAccountsId,
-	    coasENT.recordActivityDate,
-	    coasENT.chartOfAccountsTitle,
-	    coasENT.statusCode,
-	    coasENT.startDate,
-	    coasENT.endDate,
-	    coasENT.isParent,
-	    coasENT.isChild,
-	    coasENT.isIPEDSReportable,
-	    repperiod.asOfDate asOfDate,
-	    repperiod.fiscalYear fiscalYear,
-	    repperiod.surveyYear surveyYear--,
-		
+    coasENT.chartOfAccountsId,
+    coasENT.chartOfAccountsTitle,
+    coasENT.statusCode,
+    coasENT.startDate,
+    coasENT.endDate,
+    coasENT.isParent,
+    coasENT.isChild,
+    coasENT.isIPEDSReportable,
+    to_date(coasENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
+    repperiod.snapshotDate snapshotDate,
+    repperiod.asOfDate asOfDate,
+    repperiod.fiscalYear fiscalYear,
+    repperiod.surveyYear surveyYear,
+    repperiod.surveySection surveySection
 	from ReportingPeriodMCR repperiod
 		left join ChartOfAccounts coasENT ON coasENT.startDate <= repperiod.asOfDate
 --jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-			and ((coasENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-				and coasENT.recordActivityDate <= repperiod.asOfDate)
-					or coasENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-			and (coasENT.endDate IS NULL or coasENT.endDate <= repperiod.asOfDate)
-			and coasENT.statusCode = 'Active'  
+			and ((to_date(coasENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS TIMESTAMP) 
+				and to_date(coasENT.recordActivityDate, 'YYYY-MM-DD') <= repperiod.asOfDate)
+					or to_date(coasENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS TIMESTAMP))
+			and (coasENT.endDate IS NULL or to_date(coasENT.endDate, 'YYYY-MM-DD') <= repperiod.asOfDate)
+			and to_date(coasENT.startDate, 'YYYY-MM-DD') <= repperiod.asOfDate 
 			and coasENT.isIPEDSReportable = 1
   )
 where coasRn = 1
+    and ((recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
+            and statusCode = 'Active')
+        or recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
 ),
 
 FiscalYearMCR AS (
 select FYData.asOfDate asOfDate,
+        FYData.surveySection surveySection,
 	CASE FYData.finGPFSAuditOpinion
 				when 'Q' then 1
 				when 'UQ' then 2
@@ -378,19 +390,14 @@ select FYData.asOfDate asOfDate,
 				WHEN 'G' THEN 2
 				WHEN 'GB' THEN 3 END finReportingModel, --1=Business Type Activities 2=Governmental Activities 3=Governmental Activities with Business-Type Activities
 	FYData.finParentOrChildInstitution institParentChild,
-	FYData.fiscalYear4Char fiscalYear4Char,
 	FYData.fiscalYear2Char fiscalYear2Char,
 	FYData.fiscalPeriodCode fiscalPeriodCode,
-	--case when FYData.fiscalPeriod = '1st Month' then 'Year Begin' else 'Year End' end fiscalPeriod, --test only
-	FYData.fiscalPeriod fiscalPeriod,
-	FYData.startDate startDate,
-	FYData.endDate endDate,
-	FYData.snapshotDate snapshotDate,
-	--FYData.chartOfAccountsId 
-	FYData.coasID chartOfAccountsId,
-	FYData.coasFY fiscalYear,
-    case when FYData.isParent = 'True' then 'P'
-		when FYData.isChild = 'True' then 'C' end COASParentChild
+	FYData.snapshotDate snapshotDate, 
+	FYData.chartOfAccountsId chartOfAccountsId,
+	FYData.fiscalYear fiscalYear,
+    FYData.COASParentChild COASParentChild,
+    FYData.startDate,
+    FYData.endDate
 from (
 	select ROW_NUMBER() OVER (
 			PARTITION BY
@@ -398,55 +405,57 @@ from (
 				coas.fiscalYear,
 				fiscalyearENT.fiscalPeriodCode
 			ORDER BY
-			    (case when to_date(fiscalyearENT.snapshotDate,'YYYY-MM-DD') = clientconfig.snapshotDate then 1 else 2 end) asc,
-			    (case when to_date(fiscalyearENT.snapshotDate, 'YYYY-MM-DD') > clientconfig.snapshotDate then to_date(fiscalyearENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
-			    (case when to_date(fiscalyearENT.snapshotDate, 'YYYY-MM-DD') < clientconfig.snapshotDate then to_date(fiscalyearENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+			    (case when to_date(fiscalyearENT.snapshotDate,'YYYY-MM-DD') = coas.snapshotDate then 1 else 2 end) asc,
+			    (case when to_date(fiscalyearENT.snapshotDate, 'YYYY-MM-DD') > coas.snapshotDate then to_date(fiscalyearENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+			    (case when to_date(fiscalyearENT.snapshotDate, 'YYYY-MM-DD') < coas.snapshotDate then to_date(fiscalyearENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+				fiscalyearENT.startDate DESC,
 				fiscalyearENT.recordActivityDate DESC
 		) AS fiscalyearRn,
-	    coas.chartOfAccountsId coasID,
-	    coas.fiscalYear coasFY,
-	    fiscalyearENT.chartOfAccountsId,
+	    coas.chartOfAccountsId chartOfAccountsId,
+	    coas.fiscalYear fiscalYear,
 	    fiscalyearENT.fiscalYear4Char,
 	    fiscalyearENT.fiscalYear2Char,
 	    fiscalyearENT.fiscalPeriodCode,
-	    fiscalyearENT.recordActivityDate,
+	    to_date(fiscalyearENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
 	    fiscalyearENT.fiscalPeriod,
 	    fiscalyearENT.startDate,
 	    fiscalyearENT.endDate,
 	    fiscalyearENT.isIPEDSReportable,
-	    to_date(fiscalyearENT.snapshotDate,'YYYY-MM-DD') snapshotDate,
+	    coas.snapshotDate snapshotDate,
 		coas.asOfDate asOfDate,
-		coas.isParent isParent,
-		coas.isChild isChild,
+		coas.COASParentChild COASParentChild,
+		coas.surveySection surveySection,
 		clientconfig.finGPFSAuditOpinion finGPFSAuditOpinion,
 		clientconfig.finAthleticExpenses finAthleticExpenses,
 		clientconfig.finReportingModel finReportingModel,
 		clientconfig.finParentOrChildInstitution finParentOrChildInstitution
-		
 	from  ChartOfAccountsMCR coas
-	    left join ClientConfigMCR clientconfig on coas.surveyYear = clientconfig.surveyYear
+	    inner join ClientConfigMCR clientconfig on coas.surveyYear = clientconfig.surveyYear
 	    left join FiscalYear fiscalyearENT on fiscalyearENT.fiscalYear2Char = coas.fiscalYear
 	        and fiscalyearENT.chartOfAccountsID = coas.chartOfAccountsID
-		    and fiscalyearENT.startDate <= coas.asOfDate
 			and fiscalyearENT.fiscalPeriod in ('Year Begin', 'Year End')
 		--jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-			and ((fiscalyearENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-				and fiscalyearENT.recordActivityDate <= coas.asOfDate)
-			or fiscalyearENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-			and (fiscalyearENT.endDate IS NULL or fiscalyearENT.endDate <= coas.asOfDate)
+		    and ((to_date(fiscalyearENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS TIMESTAMP) 
+				and to_date(fiscalyearENT.recordActivityDate, 'YYYY-MM-DD') <= coas.asOfDate)
+					or to_date(fiscalyearENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS TIMESTAMP))
+			and (fiscalyearENT.endDate IS NULL or to_date(fiscalyearENT.endDate, 'YYYY-MM-DD') <= coas.asOfDate)
+			and to_date(fiscalyearENT.startDate, 'YYYY-MM-DD') <= coas.asOfDate 
 			and fiscalyearENT.isIPEDSReportable = 1
-		
         ) FYData 
-           	
 where FYData.fiscalyearRn = 1
 ),
 
 GeneralLedgerMCR AS (
 select *
 from (
-    select genledgerENT.fiscalYear2Char isIPEDSReportable,
-        genledgerENT.fiscalPeriodCode fiscalPeriodCode,
-        genledgerENT.chartOfAccountsId chartOfAccountsId,
+    select fiscalyr.fiscalYear2Char fiscalYear2Char,
+		fiscalyr.institParentChild institParentChild, --is the institution a Parent or Child 
+		fiscalyr.COASParentChild COASParentChild,     --is the COAS a Parent or Child account
+		fiscalyr.asOfDate asOfDate,
+        fiscalyr.surveySection surveySection,
+        fiscalyr.fiscalPeriodCode fiscalPeriodCode,
+        fiscalyr.chartOfAccountsId chartOfAccountsId,
+        fiscalyr.snapshotDate snapshotDate,
         genledgerENT.accountingString accountingString,
         genledgerENT.recordActivityDate recordActivityDate,
         genledgerENT.accountType accountType,
@@ -481,14 +490,11 @@ from (
         genledgerENT.isNonBondFundGASB isNonBondFundGASB,
         genledgerENT.isCashOrSecurityAssetGASB isCashOrSecurityAssetGASB,
         genledgerENT.isIPEDSReportable isIPEDSReportable,
-		fiscalyr.fiscalPeriod fiscalPeriod,
-		fiscalyr.institParentChild institParentChild, --is the institution a Parent or Child 
-		fiscalyr.COASParentChild COASParentChild,     --is the COAS a Parent or Child account
 		ROW_NUMBER() OVER (
 			PARTITION BY
-				genledgerENT.chartOfAccountsId,
-				genledgerENT.fiscalYear2Char,
-				genledgerENT.fiscalPeriodCode,
+				fiscalyr.chartOfAccountsId,
+				fiscalyr.fiscalYear2Char,
+				fiscalyr.fiscalPeriodCode,
 				genledgerENT.accountingString
 			ORDER BY
 			    (case when to_date(genledgerENT.snapshotDate,'YYYY-MM-DD') = fiscalyr.snapshotDate then 1 else 2 end) asc,
@@ -501,9 +507,9 @@ from (
 				and genledgerENT.fiscalYear2Char = fiscalyr.fiscalYear2Char  
 				and genledgerENT.fiscalPeriodCode = fiscalyr.fiscalPeriodCode
 --jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-				and ((genledgerENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-				    and genledgerENT.recordActivityDate <= fiscalyr.asOfDate)
-				   or genledgerENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
+				and ((to_date(genledgerENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS TIMESTAMP) 
+				    and to_date(genledgerENT.recordActivityDate,'YYYY-MM-DD') <= fiscalyr.asOfDate)
+				   or to_date(genledgerENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS TIMESTAMP))
 				and genledgerENT.isIPEDSReportable = 1
   )
 where genledgerRn = 1 
@@ -512,9 +518,14 @@ where genledgerRn = 1
 OperatingLedgerMCR AS (
 select *
 from (
-    select oppledgerENT.fiscalYear2Char,
-        oppledgerENT.fiscalPeriodCode fiscalPeriodCode,
-        oppledgerENT.chartOfAccountsId chartOfAccountsId,
+    select fiscalyr.fiscalYear2Char fiscalYear2Char,
+		fiscalyr.institParentChild institParentChild, --is the institution a Parent or Child 
+		fiscalyr.COASParentChild COASParentChild,     --is the COAS a Parent or Child account
+		fiscalyr.asOfDate asOfDate,
+        fiscalyr.surveySection surveySection,
+        fiscalyr.fiscalPeriodCode fiscalPeriodCode,
+        fiscalyr.chartOfAccountsId chartOfAccountsId,
+        fiscalyr.snapshotDate snapshotDate,
         oppledgerENT.accountingString accountingString,
         oppledgerENT.recordActivityDate recordActivityDate,
         oppledgerENT.accountType accountType,
@@ -602,14 +613,11 @@ from (
         oppledgerENT.isRestrictedPermFASB isRestrictedPermFASB,
         oppledgerENT.isIPEDSReportable isIPEDSReportable,
         oppledgerENT.fiscalYear2Char,
-		fiscalyr.fiscalPeriod fiscalPeriod,
-		fiscalyr.institParentChild institParentChild,--is the institution a Parent or Child
-		fiscalyr.COASParentChild COASParentChild,    --is the COAS a Parent or Child account
 		ROW_NUMBER() OVER (
 			PARTITION BY
-				oppledgerENT.chartOfAccountsId,
-				oppledgerENT.fiscalYear2Char,
-				oppledgerENT.fiscalPeriodCode,
+				fiscalyr.chartOfAccountsId,
+				fiscalyr.fiscalYear2Char,
+				fiscalyr.fiscalPeriodCode,
 				oppledgerENT.accountingString
 			ORDER BY
 			    (case when to_date(oppledgerENT.snapshotDate,'YYYY-MM-DD') = fiscalyr.snapshotDate then 1 else 2 end) asc,
@@ -622,15 +630,14 @@ from (
 			and oppledgerENT.fiscalYear2Char = fiscalyr.fiscalYear2Char  
 			and oppledgerENT.fiscalPeriodCode = fiscalyr.fiscalPeriodCode
 --jh 20204012 Added dummy date option for recordActivityDate in most current record queries PF-1374
-			and ((oppledgerENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP) 
-				    and oppledgerENT.recordActivityDate <= fiscalyr.asOfDate)
-				   or oppledgerENT.recordActivityDate = CAST('9999-09-09' AS TIMESTAMP))
-			and oppledgerENT.isIPEDSReportable = 1
+			and ((to_date(oppledgerENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS TIMESTAMP) 
+				    and to_date(oppledgerENT.recordActivityDate,'YYYY-MM-DD') <= fiscalyr.asOfDate)
+				   or to_date(oppledgerENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS TIMESTAMP))
+				and oppledgerENT.isIPEDSReportable = 1
+		where fiscalyr.surveySection = 'Current'
   )
 where OLRn = 1
 ) 
-
-
 
 /*****
 BEGIN SECTION - Survey Formatting
@@ -659,22 +666,26 @@ PARTS:
 
 select DISTINCT '9' part,
 	1 sort,
-	--CAST(MONTH(NVL(coas.startDate, coas.priorAsOfDate))  as BIGINT) 
-    null	field1,
-	-- CAST(YEAR(NVL(coas.startDate, coas.priorAsOfDate)) as BIGINT) 
-	null field2,
-	CAST(MONTH(NVL(coas.endDate, coas.asOfDate)) as BIGINT) field3,
-	CAST(YEAR(NVL(coas.endDate, coas.asOfDate)) as BIGINT) field4,
-	coas.finGPFSAuditOpinion field5,  --1=Unqualified, 2=Qualified, 3=Don't know
-	coas.finReportingModel   field6,  --1=Business Type Activities 2=Governmental Activities 3=Governmental Activities with Business-Type Activities
-	coas.finAthleticExpenses field7   --1=Auxiliary enterprises 2=Student services 3=Does not participate in intercollegiate athletics 4=Other (specify in caveats box below)
-/*************************************************************************************************
+	CAST(MONTH(coalesce(first(coas.startDate), CAST('2020-01-01' AS DATE))) as string) field1, --Month of beginning date of fiscal year covered, 2-digit month between 1 and 12
+	CAST(YEAR(coalesce(first(coas.startDate), CAST('2020-01-01' AS DATE))) as string) field2, --Year of beginning date of fiscal year covered, 4-digit year between 2019 and 2020
+	CAST(MONTH(coalesce(first(coas.endDate), CAST('2020-10-01' AS DATE))) as string) field3, --Month of end date of fiscal year covered. Your fiscal year must end before October 1, 2020. 2-digit month between 1 and 12
+	CAST(YEAR(coalesce(first(coas.endDate), CAST('2020-10-01' AS DATE))) as string) field4, --Year of end date of fiscal year covered. Your fiscal year must end before October 1, 2020. 4-digit year between 2019 and 2020
+	first(coas.finGPFSAuditOpinion) field5,  --1=Unqualified, 2=Qualified, 3=Don't know
+	first(coas.finReportingModel) field6,  --1=Business Type Activities 2=Governmental Activities 3=Governmental Activities with Business-Type Activities
+	first(coas.finAthleticExpenses) field7,   --1=Auxiliary enterprises 2=Student services 3=Does not participate in intercollegiate athletics 4=Other (specify in caveats box below)
+	1 field8,  --Intercollegiate Athletics: b) If your institution participates in intercollegiate athletics, are these revenues included in: Sales and services of educational activities	1= Yes, 2=No
+	1 field9,  --Intercollegiate Athletics: b) If your institution participates in intercollegiate athletics, are these revenues included in: Sales and services of auxiliary enterprises	1= Yes, 2=No
+	1 field10,  --Intercollegiate Athletics: b) If your institution participates in intercollegiate athletics, are these revenues included in: Does not have intercollegiate athletics revenue	1= Yes, 2=No
+	1 field11,  --Intercollegiate Athletics: b) If your institution participates in intercollegiate athletics, are these revenues included in: Other (explain in caveat box)	1= Yes, 2=No
+	NULL field12
 
+--*************************************************************************************************
 
-2021 Imprt Spec looks for FOUR new athletics fields (ATH_REV_1, ATH_REV_2, ATH_REV_3, ATH_REV_4)
+--2021 Imprt Spec looks for FOUR new athletics fields (ATH_REV_1, ATH_REV_2, ATH_REV_3, ATH_REV_4)
 
-****************************************************************************************************/
+--****************************************************************************************************
 from FiscalYearMCR coas 
+where coas.surveySection = 'Current'
 
 union 
 
@@ -697,9 +708,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.assetCurrent = 'Y'
  
@@ -729,9 +745,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and (genledger.assetCapitalLand = 'Y' 
 		or genledger.assetCapitalInfrastructure = 'Y' 
@@ -755,9 +776,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and (genledger.assetCapitalLand = 'Y'
 		or genledger.assetCapitalInfrastructure = 'Y'
@@ -786,9 +812,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.deferredOutflow = 'Y' 
 
@@ -809,9 +840,14 @@ select  'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
     and genledger.institParentChild = 'P'
     and genledger.liabCurrentLongtermDebt = 'Y' 
 	
@@ -828,9 +864,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and (genledger.liabCurrentLongtermDebt = 'Y' 
 		or genledger.liabCurrentOther = 'Y') 
@@ -847,9 +888,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
     and genledger.institParentChild = 'P'
     and genledger.liabNoncurrentLongtermDebt = 'Y' 
 
@@ -863,9 +909,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
     and genledger.institParentChild = 'P'
     and (genledger.liabNoncurrentLongtermDebt = 'Y' 
 		or genledger.liabNoncurrentOther = 'Y') 
@@ -880,9 +931,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.deferredInflow = 'Y' 
 	
@@ -903,9 +959,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
     and genledger.institParentChild = 'P'
     and (genledger.assetCapitalLand = 'Y'
 		or genledger.assetCapitalInfrastructure = 'Y'
@@ -927,9 +988,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
     and genledger.institParentChild = 'P'
     and genledger.accountType = 'Asset' 
     and genledger.isRestrictedExpendOrTemp = 1 
@@ -944,9 +1010,14 @@ select 'A',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
     and genledger.institParentChild = 'P'
     and genledger.accountType = 'Asset' 
     and genledger.isRestrictedNonExpendOrPerm = 1 
@@ -961,9 +1032,14 @@ select 'P',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger    
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = genledger.COASParentChild
 	and genledger.assetCapitalLand = 'Y'
 
@@ -980,9 +1056,14 @@ select 'P',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger    
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
    and genledger.institParentChild = genledger.COASParentChild
    and genledger.assetCapitalInfrastructure = 'Y'
 
@@ -1001,9 +1082,14 @@ select 'P',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger    
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = genledger.COASParentChild
 	and genledger.assetCapitalBuildings = 'Y'
 
@@ -1023,9 +1109,14 @@ select 'P',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger    
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
    and genledger.institParentChild = genledger.COASParentChild
    and genledger.assetCapitalEquipment = 'Y'
 
@@ -1042,9 +1133,14 @@ select 'P',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger    
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
    and genledger.institParentChild = genledger.COASParentChild
    and genledger.assetCapitalConstruction = 'Y'
 
@@ -1061,9 +1157,14 @@ select 'P',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger    
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
    and genledger.institParentChild = genledger.COASParentChild
    and genledger.accumDepreciation = 'Y'
 
@@ -1083,9 +1184,14 @@ select 'P',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger    
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
    and genledger.institParentChild = genledger.COASParentChild
    and (genledger.assetCapitalIntangibleAsset = 'Y'
 		or genledger.accumAmmortization = 'Y')
@@ -1096,48 +1202,63 @@ union
 -- Report all other amounts for capital assets not reported in lines 21 through 28, and lines 32 and 33.
 
 select 'P',
-		21,
-		'34', --Other capital assets
-		CAST(NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) as BIGINT),
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL
+	21,
+	'34', --Other capital assets
+	CAST(NVL(ABS(ROUND(SUM(genledger.endBalance))), 0) as BIGINT),
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 from GeneralLedgerMCR genledger    
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
    and genledger.institParentChild = genledger.COASParentChild
    and genledger.assetCapitalOther = 'Y'
    
 union
 
 select 'D',
-		22,
-		'1', --Total revenues and other additions
-		CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) as BIGINT),
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL
+	22,
+	'1', --Total revenues and other additions
+	CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) as BIGINT),
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 from OperatingLedgerMCR oppledger  
-where oppledger.fiscalPeriod = 'Year End' 
+where oppledger.fiscalPeriodCode= 'Year End' 
     and oppledger.institParentChild = 'P'
     and oppledger.accountType = 'Revenue'
 
 union
 
 select 'D',
-        23,
-        '2', --Total expenses and deductions
-        CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) as BIGINT),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL
+    23,
+    '2', --Total expenses and deductions
+    CAST(NVL(ABS(ROUND(SUM(oppledger.endBalance))), 0) as BIGINT),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 from OperatingLedgerMCR oppledger  
-where oppledger.fiscalPeriod = 'Year End' 
+where oppledger.fiscalPeriodCode= 'Year End' 
     and oppledger.institParentChild = 'P'
     and oppledger.accountType = 'Expense'
 	
@@ -1152,9 +1273,14 @@ select 'D',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year Begin' 
+where genledger.fiscalPeriodCode = 'Year Begin' 
     and genledger.institParentChild = 'P'
     and (genledger.accountType = 'Asset' 
 		or genledger.accountType = 'Liability')
@@ -1185,9 +1311,14 @@ select 'E',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
    and oppledger.institParentChild = oppledger.COASParentChild
    and oppledger.expFAPellGrant = 'Y'
 	
@@ -1201,9 +1332,14 @@ select 'E',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.expFANonPellFedGrants = 'Y'
 	
@@ -1217,9 +1353,14 @@ select 'E',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.expFAStateGrants = 'Y'
     
@@ -1233,9 +1374,14 @@ select 'E',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.expFALocalGrants = 'Y'
 	
@@ -1249,9 +1395,14 @@ select 'E',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 
 union
@@ -1270,9 +1421,14 @@ select 'E',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.expFAPellGrant = 'Y'             --E1 Pell grants
 		or oppledger.expFANonPellFedGrants = 'Y'     --E2 Other federal grants
@@ -1291,9 +1447,14 @@ select 'E',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.discAllowTuitionFees = 'Y'
 
@@ -1307,9 +1468,14 @@ select 'E',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.discAllowAuxEnterprise = 'Y'
 	
@@ -1327,9 +1493,14 @@ select 'Q',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.expFAPellGrant = 'Y' 
  
@@ -1347,9 +1518,14 @@ select 'Q',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.expFANonPellFedGrants = 'Y'
  
@@ -1367,9 +1543,14 @@ CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.discAllowTuitionFees = 'Y'
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.expFAStateGrants = 'Y'
  
@@ -1387,9 +1568,14 @@ select 'Q',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.expFALocalGrants = 'Y'
  
@@ -1407,9 +1593,14 @@ CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.discAllowTuitionFees = 'Y'
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.discAllowAuxEnterprise = 'Y' 
 	
@@ -1442,9 +1633,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revTuitionAndFees = 'Y' 
 		or oppledger.discAllowTuitionFees = 'Y')
@@ -1459,9 +1655,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revFedGrantsContractsOper = 'Y'
 
@@ -1475,9 +1676,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revStateGrantsContractsOper = 'Y'
 
@@ -1491,9 +1697,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revLocalGrantsContractsOper = 'Y'
 
@@ -1507,9 +1718,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revPrivGrantsContractsOper = 'Y'
 
@@ -1524,9 +1740,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revAuxEnterprSalesServices = 'Y'
 		or oppledger.discAllowAuxEnterprise = 'Y')
@@ -1542,9 +1763,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revHospitalSalesServices = 'Y'
 		or oppledger.discAllowPatientContract = 'Y')
@@ -1559,9 +1785,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revEducActivSalesServices = 'Y'
 
@@ -1575,9 +1806,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revIndependentOperations = 'Y'
 
@@ -1610,9 +1846,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revTuitionAndFees = 'Y'  
 		or oppledger.revFedGrantsContractsOper = 'Y'  
@@ -1639,9 +1880,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revFedApproprations = 'Y'
 
@@ -1655,9 +1901,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revStateApproprations = 'Y'
 
@@ -1671,9 +1922,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revLocalApproprations = 'Y' 
 		or oppledger.revLocalTaxApproprations = 'Y')
@@ -1688,9 +1944,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revFedGrantsContractsNOper = 'Y'
 
@@ -1704,9 +1965,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revStateGrantsContractsNOper = 'Y'
 
@@ -1720,9 +1986,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revLocalGrantsContractsNOper = 'Y'
 
@@ -1736,9 +2007,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revPrivGifts = 'Y' 
 		or oppledger.revAffiliatedOrgnGifts = 'Y')
@@ -1753,9 +2029,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revInvestmentIncome = 'Y'
 
@@ -1770,9 +2051,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revFedApproprations = 'Y'               --B10 Federal appropriations
 		or oppledger.revStateApproprations = 'Y'         --B11 State appropriations
@@ -1797,9 +2083,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revStateCapitalAppropriations = 'Y' 
 		or oppledger.revLocalCapitalAppropriations = 'Y')
@@ -1814,9 +2105,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revCapitalGrantsGifts = 'Y'
 
@@ -1830,9 +2126,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revAddToPermEndowments = 'Y'
 
@@ -1847,9 +2148,14 @@ select 'B',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.accountType = 'Revenue'
 		or oppledger.accountType = 'Revenue Discount')
@@ -1873,9 +2179,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense'
 
@@ -1889,9 +2200,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isResearch = 1
@@ -1906,9 +2222,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isPublicService = 1
@@ -1923,9 +2244,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isAcademicSupport = 1
@@ -1940,9 +2266,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isStudentServices = 1
@@ -1957,9 +2288,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isInstitutionalSupport = 1
@@ -1974,9 +2310,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isAuxiliaryEnterprises = 1
@@ -1991,9 +2332,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isHospitalServices = 1
@@ -2008,9 +2354,14 @@ select 'C',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isIndependentOperations = 1
@@ -2025,9 +2376,14 @@ select 'C',
 	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expBenefits = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Benefits 19_3
 	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expOperMaintSalariesWages = 'Y' or oppledger.expOperMaintBenefits = 'Y' or oppledger.expOperMaintOther = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Oper and Maint of Plant 19_4
 	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expDepreciation = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Depreciation 19_5
-	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expInterest = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT)   --Interest 19
+	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.expInterest = 'Y' THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT),   --Interest 19,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.accountType = 'Expense'
 		or oppledger.expSalariesWages = 'Y'
@@ -2061,9 +2417,14 @@ select 'M',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = 'P'
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isPensionGASB = 1
@@ -2081,9 +2442,14 @@ select 'M',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL											
 from GeneralLedgerMCR genledger
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Liability' 
 	and genledger.isPensionGASB = 1
@@ -2101,9 +2467,14 @@ select 'M',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Liability' 
 	and genledger.deferredInflow = 'Y' 
@@ -2122,9 +2493,14 @@ select 'M',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Asset' 
 	and genledger.deferredOutflow = 'Y' 
@@ -2143,9 +2519,14 @@ select 'M',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = 'P'
 	and oppledger.accountType = 'Expense' 
 	and oppledger.isOPEBRelatedGASB = 1 
@@ -2163,9 +2544,14 @@ select 'M',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Liability' 
 	and genledger.isOPEBRelatedGASB = 1
@@ -2183,9 +2569,14 @@ select 'M',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Liability' 
 	and genledger.deferredInflow = 'Y' 
@@ -2204,9 +2595,14 @@ select 'M',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Asset' 
 	and genledger.deferredOutflow = 'Y' 
@@ -2237,9 +2633,14 @@ select 'H',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger
-where genledger.fiscalPeriod = 'Year Begin'
+where genledger.fiscalPeriodCode = 'Year Begin'
 	and genledger.institParentChild = genledger.COASParentChild
 	and genledger.accountType = 'Asset' 
 	and genledger.isEndowment = 1
@@ -2257,9 +2658,14 @@ select 'H',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = genledger.COASParentChild
 	and genledger.accountType = 'Asset' 
 	and genledger.isEndowment = 1
@@ -2269,7 +2675,7 @@ union
 select 'H',
 	81,
 	'3', --New gifts and additions
-	'a',
+	0,
 	/*CAST(case when (select clientconfig.finEndowmentAssets
 		from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(oppledger.endBalance - oppledger.beginBalance))), 0) 
 		 else 0
@@ -2278,18 +2684,23 @@ select 'H',
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	'a'
 /*from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild	
 	and oppledger.revAddToPermEndowments = 'Y' */
-	 
+
 union
 
 select 'H',
 	82,
 	'3', --Endowment net investment return
-	'b',
+	0,
 	/*CAST(case when (select clientconfig.finEndowmentAssets
 		from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(oppledger.endBalance - oppledger.beginBalance))), 0) 
 		 else 0
@@ -2298,9 +2709,14 @@ select 'H',
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	'b'
 /*from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revInvestmentIncome = 'Y' */
 	
@@ -2309,7 +2725,7 @@ union
 select 'H',
 	83,
 	'3', --"Spending Distribution for Current Use"
-	'c',
+	0,
 	/*CAST(case when (select clientconfig.finEndowmentAssets
 		from ClientConfigMCR clientconfig) = 'Y' then NVL(ABS(ROUND(SUM(oppledger.endBalance - oppledger.beginBalance))), 0) 
 		 else 0
@@ -2318,9 +2734,14 @@ select 'H',
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	'c'
 /*from OperatingLedgerMCR oppledger
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild */
 	
 union
@@ -2333,9 +2754,14 @@ select 'N',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger  
-where oppledger.fiscalPeriod = 'Year End' 
+where oppledger.fiscalPeriodCode= 'Year End' 
     and oppledger.institParentChild = 'P'
    -- and oppledger.accountType = 'Revenue'
 
@@ -2349,9 +2775,14 @@ select 'N',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger  
-where oppledger.fiscalPeriod = 'Year End' 
+where oppledger.fiscalPeriodCode= 'Year End' 
     and oppledger.institParentChild = 'P'
     and oppledger.accountType = 'Revenue'
 	
@@ -2369,9 +2800,14 @@ select 'N',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger  
-where oppledger.fiscalPeriod = 'Year End' 
+where oppledger.fiscalPeriodCode = 'Year End' 
     and oppledger.institParentChild = 'P'
    -- and oppledger.accountType = 'Revenue'
 	
@@ -2388,9 +2824,14 @@ select 'N',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year Begin' 
+where genledger.fiscalPeriodCode = 'Year Begin' 
     and genledger.institParentChild = 'P'
     and genledger.isPensionGASB <> 1
     and genledger.isOPEBRelatedGASB <> 1
@@ -2407,9 +2848,14 @@ select 'N',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
     and genledger.institParentChild = 'P'
     and genledger.accountType = 'Asset' 
     and genledger.isPensionGASB <> 1
@@ -2428,9 +2874,14 @@ select 'N',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
     and genledger.institParentChild = 'P'
     and genledger.accountType = 'Liability' 
     and genledger.isPensionGASB <> 1
@@ -2447,12 +2898,17 @@ select 'N',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger  
-where oppledger.fiscalPeriod = 'Year End' 
+where oppledger.fiscalPeriodCode= 'Year End' 
     and oppledger.institParentChild = 'P'
     and oppledger.accountType = 'Expense'
-	
+
 union
 
 --Part J   
@@ -2487,9 +2943,14 @@ select 'J',
 	CAST(NVL(ABS(ROUND(SUM(CASE WHEN oppledger.isAgricultureOrExperiment = 1 
 										and oppledger.revOtherSalesServices = 'Y' 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Agriculture extension/experiment services
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and ((oppledger.isAgricultureOrExperiment = 0 
 		and oppledger.isAuxiliaryEnterprises = 0 
@@ -2524,9 +2985,14 @@ select 'J',
 											or oppledger.revFedGrantsContractsNOper = 'Y')) 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT)  ,   --Hospitals  
 	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 and (oppledger.revFedGrantsContractsOper = 'Y' or oppledger.revFedGrantsContractsNOper = 'Y')) THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Agriculture extension/experiment services 
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (((oppledger.isAgricultureOrExperiment = 0 
 		and oppledger.isAuxiliaryEnterprises = 0 
@@ -2572,9 +3038,14 @@ select 'J',
 										and (oppledger.revStateApproprations = 'Y' 
 											or oppledger.revStateCapitalAppropriations = 'Y')) 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Agriculture extension/experiment services 2-7
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode= 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (((oppledger.isAgricultureOrExperiment = 0 
 			and oppledger.isAuxiliaryEnterprises = 0 
@@ -2618,9 +3089,14 @@ select 'J',
 											and (oppledger.revStateGrantsContractsOper = 'Y' 
 												or oppledger.revStateGrantsContractsNOper = 'Y')) 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT)  , --Agriculture extension/experiment services 2-7
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL   
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (((oppledger.isAgricultureOrExperiment = 0 
 				and oppledger.isAuxiliaryEnterprises = 0 
@@ -2666,9 +3142,14 @@ select 'J',
 											and (oppledger.revLocalApproprations = 'Y' 
 												or oppledger.revLocalCapitalAppropriations = 'Y')) 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Agriculture extension/experiment services 2-7
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL  
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (((oppledger.isAgricultureOrExperiment = 0 
 		and oppledger.isAuxiliaryEnterprises = 0 
@@ -2714,9 +3195,14 @@ select 'J',
 											and (oppledger.revLocalGrantsContractsOper = 'Y' 
 												or oppledger.revLocalGrantsContractsNOper = 'Y')) 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Agriculture extension/experiment services 2-7
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (((oppledger.isAgricultureOrExperiment = 0 
 			and oppledger.isAuxiliaryEnterprises = 0 	
@@ -2749,9 +3235,14 @@ select 'J',
 	NULL,
 	NULL,
 	NULL, 
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and oppledger.revPropAndNonPropTaxes = 'Y'
 
@@ -2770,9 +3261,14 @@ select 'J',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild
 	and (oppledger.revPrivGrantsContractsOper = 'Y' 
 		or oppledger.revPrivGrantsContractsNOper = 'Y' 
@@ -2792,9 +3288,14 @@ select 'J',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 	and oppledger.revInterestEarnings = 'Y'
 
@@ -2814,9 +3315,14 @@ select 'J',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild  
 	and oppledger.revDividendEarnings = 'Y'
 
@@ -2835,9 +3341,14 @@ select 'J',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 	and oppledger.revRealizedCapitalGains = 'Y'
 	
@@ -2873,9 +3384,14 @@ select 'K',
 										and (oppledger.expBenefits = 'Y' 
 											or oppledger.expOperMaintBenefits = 'Y')) 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Agriculture extension/experiment services  
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 	and (((oppledger.isAgricultureOrExperiment = 0 
 			and oppledger.isAuxiliaryEnterprises = 0 
@@ -2921,9 +3437,14 @@ select 'K',
 										and oppledger.accountType = 'Expense' 
 										and oppledger.isStateRetireFundGASB = 1) 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT)  , --Agriculture extension/experiment services  
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 	and (((oppledger.isAgricultureOrExperiment = 0 
 			and oppledger.isAuxiliaryEnterprises = 0 
@@ -2982,9 +3503,14 @@ select 'K',
 												or oppledger.expOther = 'Y') 
 											and oppledger.isStateRetireFundGASB = 1)) 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Agriculture extension/experiment services 2-7
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 		and (((oppledger.isAgricultureOrExperiment = 0 
 			and oppledger.isAuxiliaryEnterprises = 0 
@@ -3038,9 +3564,14 @@ select 'K',
 	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
 											and oppledger.expCapitalConstruction = 'Y') 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT)  , --Agriculture extension/experiment services  
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 		and (((oppledger.isAgricultureOrExperiment = 0 
 				and oppledger.isAuxiliaryEnterprises = 0 	
@@ -3076,9 +3607,14 @@ select 'K',
 	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
 										and oppledger.expCapitalEquipPurch = 'Y') 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT)  , --Agriculture extension/experiment services  
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 		and (((oppledger.isAgricultureOrExperiment = 0 
 			and oppledger.isAuxiliaryEnterprises = 0 
@@ -3114,9 +3650,14 @@ select 'K',
 	CAST(NVL(ABS(ROUND(SUM(CASE WHEN (oppledger.isAgricultureOrExperiment = 1 
 										and oppledger.expCapitalLandPurchOther = 'Y') 
 								THEN oppledger.endBalance ELSE 0 END))), 0) as BIGINT), --Agriculture extension/experiment services 
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 	and (((oppledger.isAgricultureOrExperiment = 0 
 			and oppledger.isAuxiliaryEnterprises = 0 
@@ -3147,9 +3688,14 @@ select 'K',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from OperatingLedgerMCR oppledger 
-where oppledger.fiscalPeriod = 'Year End'
+where oppledger.fiscalPeriodCode = 'Year End'
 	and oppledger.institParentChild = oppledger.COASParentChild 
 	and oppledger.expInterest = 'Y'
 
@@ -3176,9 +3722,14 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year Begin'
+where genledger.fiscalPeriodCode = 'Year Begin'
 	and genledger.institParentChild = 'P'
 --jh 20200107 added parenthesis for or clause
 	and (genledger.liabCurrentLongtermDebt = 'Y' 
@@ -3201,11 +3752,16 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger 
 	left Join GeneralLedgerMCR genledger1 on genledger.accountingString = genledger1.accountingString
-		and genledger1.fiscalPeriod = 'Year Begin'
-where genledger.fiscalPeriod = 'Year End' 
+		and genledger1.fiscalPeriodCode = 'Year Begin'
+where genledger.fiscalPeriodCode = 'Year End' 
 	and genledger.institParentChild = 'P'  
 	and (genledger.liabCurrentLongtermDebt = 'Y' 
 		or genledger.liabNoncurrentLongtermDebt = 'Y')
@@ -3229,11 +3785,16 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger 
 left Join GeneralLedgerMCR genledger1 on genledger.accountingString = genledger1.accountingString
-	and genledger1.fiscalPeriod = 'Year End'
-where genledger.fiscalPeriod = 'Year Begin' 
+	and genledger1.fiscalPeriodCode = 'Year End'
+where genledger.fiscalPeriodCode = 'Year Begin' 
 	and genledger.institParentChild = 'P'  
 	and (genledger.liabCurrentLongtermDebt = 'Y' 
 		or genledger.liabNoncurrentLongtermDebt = 'Y')
@@ -3253,9 +3814,14 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and (genledger.liabCurrentLongtermDebt = 'Y' 
 		or genledger.liabNoncurrentLongtermDebt = 'Y')
@@ -3270,9 +3836,14 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year Begin'
+where genledger.fiscalPeriodCode = 'Year Begin'
 	and genledger.institParentChild = 'P'
 --jh 20200107 added parenthesis for or clause
 	and (genledger.liabCurrentOther = 'Y' 
@@ -3290,9 +3861,14 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 --jh 20200107 added parenthesis for or clause
 	and (genledger.liabCurrentOther = 'Y' 
@@ -3318,9 +3894,14 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Asset'
 	and genledger.isSinkingOrDebtServFundGASB = 1 
@@ -3338,9 +3919,14 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Asset' 
 	and genledger.isBondFundGASB = 1 
@@ -3358,10 +3944,17 @@ select 'L',
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 from GeneralLedgerMCR genledger  
-where genledger.fiscalPeriod = 'Year End'
+where genledger.fiscalPeriodCode = 'Year End'
 	and genledger.institParentChild = 'P'
 	and genledger.accountType = 'Asset' 
 	and genledger.isNonBondFundGASB = 1 
 	and genledger.isCashOrSecurityAssetGASB = 1
+
+order by sort
