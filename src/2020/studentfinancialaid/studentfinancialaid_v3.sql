@@ -16,10 +16,10 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
-20210401        ckeller                                     Fixes to: Formatting of Part G, conditional record inclusion logic placement, 
-																	  registrationStatusActionDate.
-															Removed unused IPEDSClientConfig indications
-															Added logic to accommodate new reg.enrollmentHoursOverride field.
+20210401        ckeller                                     PF-2104: Fixes to: Formatting of Part G, conditional record inclusion logic placement, 
+																	registrationStatusActionDate.
+																	Removed unused IPEDSClientConfig indications
+																	Added logic to accommodate new reg.enrollmentHoursOverride field.
 20210310        akhasawneh                                  PF-2060 Revised query per the data model changes in PF-1999. 
 20200122        akhasawneh                                  Adding support for CARES Act considerations. PF-1936
 20201228        akhasawneh                                  Fixes and inclusion of new field 'awardStatusActionDate'. PF-1906
