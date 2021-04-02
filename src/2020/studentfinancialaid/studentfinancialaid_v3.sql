@@ -9,7 +9,7 @@ CREATED:        20201123
 SECTIONS:
 Reporting Dates/Terms
 Most Recent Records
-Cohort Creation
+Cohort Creation 
 Formatting Views
 Survey Formatting
 
