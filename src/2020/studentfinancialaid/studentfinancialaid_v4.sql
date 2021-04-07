@@ -18,7 +18,8 @@ Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
 20210406		ckeller										PF-2105 Fix part G formatting, Remove unused IPEDSClientConfig Indicators,
 															Fix Conditional logic error, Add enrollmentHoursOverride field, 
-															RegistrationStatusActionDate change, update IPEDSReportingPeriod surveySection values
+															RegistrationStatusActionDate change, update IPEDSReportingPeriod surveySection values,
+															Update IPEDSReportingPeriod.surveySection values
 20210310        akhasawneh                                  PF-2060 Revised query per the data model changes in PF-1999. 
 20200122        akhasawneh                                  Adding support for CARES Act considerations. PF-1936
 20201228        akhasawneh                                  Fixes and inclusion of new field 'awardStatusActionDate'. PF-1906
@@ -212,7 +213,7 @@ from (
 		from IPEDSReportingPeriod repperiodENT
 		    inner join DefaultValues defvalues on repperiodENT.surveyId = defvalues.surveyId
 	    and repperiodENT.surveyCollectionYear = defvalues.surveyYear
-	    and repPeriodENT.surveySection not in ('GI BILL', 'DEPT OF DEFENSE')
+	    and and repPeriodENT.surveySection not in ('GI BILL', 'DEPT OF DEFENSE')
 	    where repperiodENT.termCode is not null
 		and repperiodENT.partOfTermCode is not null
 	
@@ -459,8 +460,8 @@ select distinct repperiod.surveySection surveySection,
         repperiod.snapshotDate repPeriodSSDate,
         acadterm.tags tags,
         (case when repperiod.surveySection in ('COHORT', 'PRIOR SUMMER') then 'CY'
-              when repperiod.surveySection in ('PRIOR YEAR 1', 'PRIOR YEAR 1 PRIOR SUMMER') then 'PY1'
-              when repperiod.surveySection in ('PRIOR YEAR 2', 'PRIOR YEAR 2 PRIOR SUMMER') then 'PY2'
+              when repperiod.surveySection in ('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER') then 'PY1'
+              when repperiod.surveySection in ('PRIOR YEAR 2 COHORT', 'PRIOR YEAR 2 PRIOR SUMMER') then 'PY2'
               end) yearType,
         acadterm.censusDate censusDate,
         termorder.termOrder termOrder,
@@ -484,7 +485,7 @@ select distinct repperiod.surveySection surveySection,
             order by
                 (case when acadterm.snapshotDate <= to_date(date_add(acadterm.censusdate, 3), 'YYYY-MM-DD') 
                             and acadterm.snapshotDate >= to_date(date_sub(acadterm.censusDate, 1), 'YYYY-MM-DD') 
-                            and ((array_contains(acadterm.tags, 'Fall Census') and acadterm.termType = 'Fall' and repperiod.surveySection in ('COHORT', 'PRIOR YEAR 1', 'PRIOR YEAR 2'))
+                            and ((array_contains(acadterm.tags, 'Fall Census') and acadterm.termType = 'Fall' and repperiod.surveySection in ('COHORT', 'PRIOR YEAR 1 COHORT', 'PRIOR YEAR 2 COHORT'))
                                 or (array_contains(acadterm.tags, 'Pre-Fall Summer Census') and acadterm.termType = 'Summer' and repperiod.surveySection in ('PRIOR SUMMER', 'PRIOR YEAR 1 PRIOR SUMMER', 'PRIOR YEAR 2 PRIOR SUMMER'))) then 1
                       when acadterm.snapshotDate <= to_date(date_add(acadterm.censusdate, 3), 'YYYY-MM-DD') 
                             and acadterm.snapshotDate >= to_date(date_sub(acadterm.censusDate, 1), 'YYYY-MM-DD') then 2
@@ -500,11 +501,11 @@ select distinct repperiod.surveySection surveySection,
 where ((clientconfig.sfaReportPriorYear = 'N' and clientconfig.sfaReportSecondPriorYear = 'N'
 			            and upper(repperiod.surveySection) in ('COHORT', 'PRIOR SUMMER'))
 		    or (clientconfig.sfaReportPriorYear = 'Y' and clientconfig.sfaReportSecondPriorYear = 'N'
-			            and upper(repperiod.surveySection) in ('PRIOR YEAR 1', 'PRIOR YEAR 1 PRIOR SUMMER', 'COHORT', 'PRIOR SUMMER'))
+			            and upper(repperiod.surveySection) in ('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER', 'COHORT', 'PRIOR SUMMER'))
 			or (clientconfig.sfaReportPriorYear = 'N' and clientconfig.sfaReportSecondPriorYear = 'Y'
-			            and upper(repperiod.surveySection) in ('PRIOR YEAR 2', 'PRIOR YEAR 2 PRIOR SUMMER', 'COHORT', 'PRIOR SUMMER'))
+			            and upper(repperiod.surveySection) in ('PRIOR YEAR 2 COHORT', 'PRIOR YEAR 2 PRIOR SUMMER', 'COHORT', 'PRIOR SUMMER'))
 			or (clientconfig.sfaReportPriorYear = 'Y' and clientconfig.sfaReportSecondPriorYear = 'Y'
-			            and upper(repperiod.surveySection) in ('PRIOR YEAR 1', 'PRIOR YEAR 1 PRIOR SUMMER', 'PRIOR YEAR 2', 'PRIOR YEAR 2 PRIOR SUMMER', 'COHORT', 'PRIOR SUMMER')))
+			            and upper(repperiod.surveySection) in ('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER', 'PRIOR YEAR 2 COHORT', 'PRIOR YEAR 2 PRIOR SUMMER', 'COHORT', 'PRIOR SUMMER')))
 		) repPerTerms
 where repPerTerms.acadTermRnReg = 1 
 ),
