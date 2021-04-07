@@ -213,7 +213,7 @@ from (
 		from IPEDSReportingPeriod repperiodENT
 		    inner join DefaultValues defvalues on repperiodENT.surveyId = defvalues.surveyId
 	    and repperiodENT.surveyCollectionYear = defvalues.surveyYear
-	    and and repPeriodENT.surveySection not in ('GI BILL', 'DEPT OF DEFENSE')
+	    and repPeriodENT.surveySection not in ('GI BILL', 'DEPT OF DEFENSE')
 	    where repperiodENT.termCode is not null
 		and repperiodENT.partOfTermCode is not null
 	
