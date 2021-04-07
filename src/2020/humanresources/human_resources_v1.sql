@@ -1585,6 +1585,7 @@ from (
     from CohortRefactorEMP refactoremp
     where refactoremp.newHire = 1
         and refactoremp.fullPartInd = 'Full Time'
+	and refactoremp.occCat5 is not null
     group by refactoremp.occCat5,
             refactoremp.reg
     
