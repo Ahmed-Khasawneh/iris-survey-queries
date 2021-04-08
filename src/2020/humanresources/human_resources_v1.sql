@@ -657,7 +657,7 @@ select cohortemp.personId personId,
 		when cohortemp.nonTenureContractLength = 'Multi-year' then 3
 		when cohortemp.nonTenureContractLength = 'Less than Annual' then 4
 		when cohortemp.nonTenureContractLength = 'Annual' then 5
-		when cohortemp.isFaculty is null then 6
+		when cohortemp.isFaculty = 0 then 6
 		when cohortemp.nonTenureContractLength = 'Indefinite' then 7
 		else 7 
 	end) tenure,
@@ -667,8 +667,8 @@ select cohortemp.personId personId,
 		when cohortemp.facultyRank = 'Instructor' then 4
 		when cohortemp.facultyRank = 'Lecturer' then 5
 		when cohortemp.facultyRank = 'No Academic Rank' then 6
-        when cohortemp.facultyRank is null then 6
-		when cohortemp.isFaculty is null then 7
+        when cohortemp.facultyRank = 0 then 6
+		when cohortemp.isFaculty = 0 then 7
 		else 6 
 	end) rankCode,
 	cohortemp.totalSalary totalSalary,
@@ -1157,7 +1157,7 @@ from (
     from CohortRefactorEMP refactoremp
     where refactoremp.currentEmployee = 1
         and refactoremp.fullPartInd = 'Full Time'
-        and refactoremp.isInstructional is null
+        and refactoremp.isInstructional = 0
         and refactoremp.occCat1 > 1
     group by refactoremp.occCat1,
             refactoremp.reg
@@ -1199,7 +1199,7 @@ from (
 	from CohortRefactorEMP refactoremp
 	where refactoremp.currentEmployee = 1
 		and refactoremp.fullPartInd = 'Full Time'
-        and refactoremp.isInstructional is null
+        and refactoremp.isInstructional = 0
         and refactoremp.occCat1 BETWEEN 2 and 12
 	group by refactoremp.tenure, 
 		refactoremp.isMedical,
@@ -1244,7 +1244,7 @@ from (
 	from CohortRefactorEMP refactoremp
 	where refactoremp.currentEmployee = 1
 		and refactoremp.fullPartInd = 'Full Time'
-        and refactoremp.isInstructional is null
+        and refactoremp.isInstructional = 0
         and refactoremp.occCat1 BETWEEN 13 and 17
 	group by refactoremp.occCat1, refactoremp.isMedical
 
@@ -1407,7 +1407,7 @@ from (
 	from CohortRefactorEMP refactoremp
 	where refactoremp.currentEmployee = 1
 		and refactoremp.fullPartInd = 'Part Time'
-		and refactoremp.isInstructional is null
+		and refactoremp.isInstructional = 0
 		and refactoremp.occCat3 > 15
 	group by refactoremp.isMedical,
 		refactoremp.occCat3
@@ -1510,7 +1510,7 @@ from (
     where refactoremp.currentEmployee = 1
 		and refactoremp.isMedical = 2
 		and refactoremp.fullPartInd = 'Full Time'
-        and refactoremp.isInstructional is null
+        and refactoremp.isInstructional = 0
         and refactoremp.occCat2 is not null
     group by refactoremp.occCat2
     
