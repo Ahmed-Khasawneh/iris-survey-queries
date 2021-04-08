@@ -17,6 +17,8 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
+20210408            jhanicak                            PF-2140 Modify boolean filters to use 1 or 0 (no null, false, true)
+20210407            akhasawneh                 			PF-2137 Add OccCat5 is null to correct counts
 20210330            jhanicak                            PF-2099 Add new fields, modify logic in views
 20210203            akhasawneh                 			Initial version - 1m 58s (prod), 1m 49s (test)
 
@@ -43,8 +45,8 @@ select '2021' surveyYear,
     CAST('2020-11-01' AS DATE) asOfDate,
 	'N' hrIncludeSecondarySalary --Y = Yes, N = No
 --***** end survey-specific mods
-/*
 
+/*
 --Test Default (Begin)
 select '1415' surveyYear, 
 	'HR1' surveyId,
@@ -260,9 +262,9 @@ from (
 where jobRn = 1
     and ((recordActivityDate != CAST('9999-09-09' AS DATE) and assignmentStatus = 'Active')
                 or recordActivityDate = CAST('9999-09-09' AS DATE))
-    and isUndergradStudent = false
-    and isWorkStudy = false
-    and isTempOrSeasonal = false
+    and isUndergradStudent = 0
+    and isWorkStudy = 0
+    and isTempOrSeasonal = 0
 ),
 
 EmployeeAssignmentMCR_SEC AS (
@@ -310,9 +312,9 @@ from (
 where jobRn = 1
     and ((recordActivityDate != CAST('9999-09-09' AS DATE) and assignmentStatus = 'Active')
             or recordActivityDate = CAST('9999-09-09' AS DATE))
-    and isUndergradStudent = false
-    and isWorkStudy = false
-    and isTempOrSeasonal = false
+    and isUndergradStudent = 0
+    and isWorkStudy = 0
+    and isTempOrSeasonal = 0
 group by personId
 ),
 
@@ -540,8 +542,8 @@ select pers.personId personId,
     end) ipedsGender,
     (case when pers.isUSCitizen = 1 or ((pers.isInUSOnVisa = 1 or pers.asOfDate between pers.visaStartDate and pers.visaEndDate)
                             and pers.visaType in ('Employee Resident', 'Other Resident')) then 
-        (case when pers.isHispanic = true then '2' 
-            when pers.isMultipleRaces = true then '8' 
+        (case when pers.isHispanic = 1 then '2' 
+            when pers.isMultipleRaces = 1 then '8' 
             when pers.ethnicity != 'Unknown' and pers.ethnicity is not null then
                 (case when pers.ethnicity = 'Hispanic or Latino' then '2'
                     when pers.ethnicity = 'American Indian or Alaskan Native' then '3'
@@ -621,10 +623,10 @@ The view below reformats and configures the base cohort fields based on the IPED
 CohortRefactorEMP AS (
 
 select cohortemp.personId personId,
-	cohortemp.isCurrentEmployee currentEmployee, --1, null
-	cohortemp.isNewHire newHire, --1, null
+	cohortemp.isCurrentEmployee currentEmployee, --1, 0
+	cohortemp.isNewHire newHire, --1, 0
 	cohortemp.fullOrPartTimeStatus fullPartInd, --Full Time, Part Time, Other
-	(case when cohortemp.isIpedsMedicalOrDental = 1 then 1 else 2 end) isMedical, --1, null
+	(case when cohortemp.isIpedsMedicalOrDental = 1 then 1 else 2 end) isMedical, --1, 0
 	(case when cohortemp.ipedsGender = 'M' then cohortemp.ipedsEthnicity
 	   when cohortemp.ipedsGender = 'F'
 	        then (case when cohortemp.ipedsEthnicity = '1' then '10' -- 'nonresident alien'
@@ -641,7 +643,7 @@ select cohortemp.personId personId,
 	(case when cohortemp.ipedsGender = 'M' then 1 else 2 end) gender,
 	cohortemp.employeeFunction employeeFunction,
 	cohortemp.ESOC ESOC,
-	cohortemp.isFaculty isFaculty,
+	cohortemp.isFaculty isFaculty, --1, 0
 	(case when cohortemp.employeeFunction in (
 					'Instruction with Research/Public Service',
 					'Instruction - Credit',
@@ -657,7 +659,7 @@ select cohortemp.personId personId,
 		when cohortemp.nonTenureContractLength = 'Multi-year' then 3
 		when cohortemp.nonTenureContractLength = 'Less than Annual' then 4
 		when cohortemp.nonTenureContractLength = 'Annual' then 5
-		when cohortemp.isFaculty is null then 6
+		when cohortemp.isFaculty = 0 then 6
 		when cohortemp.nonTenureContractLength = 'Indefinite' then 7
 		else 7 
 	end) tenure,
@@ -668,7 +670,7 @@ select cohortemp.personId personId,
 		when cohortemp.facultyRank = 'Lecturer' then 5
 		when cohortemp.facultyRank = 'No Academic Rank' then 6
         when cohortemp.facultyRank is null then 6
-		when cohortemp.isFaculty is null then 7
+		when cohortemp.isFaculty = 0 then 7
 		else 6 
 	end) rankCode,
 	cohortemp.totalSalary totalSalary,
@@ -788,8 +790,10 @@ select cohortemp.personId personId,
 					when cohortemp.employeeFunction = 'Graduate Assistant - Teaching' then 1 -- Teaching Assistants, Postsecondary (25-9044) , '25-9000'
 					when cohortemp.employeeFunction = 'Graduate Assistant - Research' then 2 -- Research
 					when cohortemp.employeeFunction = 'Graduate Assistant - Other' then 3 -- Other
-				end)
-	end) occCat4,
+                    else null 
+                end)
+        else null
+    end) occCat4,
 --Occupational category(5) - new hires
 	(case when cohortemp.fullOrPartTimeStatus = 'Full Time' and cohortemp.isNewHire = 1 then
 		(case when cohortemp.employeeFunction = 'Research' then 2 --Research
@@ -1322,7 +1326,7 @@ from (
         COUNT(refactoremp.personId) totalCount
     from CohortRefactorEMP refactoremp
     where refactoremp.currentEmployee = 1
-        and refactoremp.occCat4 in (1,2,3)
+        and refactoremp.occCat4 is not null
     group by refactoremp.occCat4,
             refactoremp.reg
     
@@ -1333,7 +1337,7 @@ from (
            0
     from OccupationalCat4FMT occcat4
        cross join RaceEthnicityGenderFMT raceethngender
-    where occcat4.ipedsOccCat4 in (1,2,3)
+    where occcat4.ipedsOccCat4 is not null
 )
 group by occCat4, 
         reg
@@ -1585,7 +1589,7 @@ from (
     from CohortRefactorEMP refactoremp
     where refactoremp.newHire = 1
         and refactoremp.fullPartInd = 'Full Time'
-	and refactoremp.occCat5 is not null
+        and refactoremp.occCat5 is not null
     group by refactoremp.occCat5,
             refactoremp.reg
     
