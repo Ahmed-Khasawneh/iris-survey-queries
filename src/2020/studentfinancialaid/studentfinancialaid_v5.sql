@@ -16,6 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
+20210422        jhanicak                                    PF-2152 Add latest DM updates and more; runtimes: test 10s, prod 26s
 20210323        jhanicak                                    PF-2071 mods for new DM updates; removed all but views and formatting for military benefits
 20210310        akhasawneh                                  PF-2060 Revised query per the data model changes in PF-1999. 
 20200122        akhasawneh                                  Adding support for CARES Act considerations. PF-1936
@@ -49,49 +50,28 @@ WITH DefaultValues as (
  it may be by listing specific terms. 
  *******************************************************************/ 
 
---prod default blocks (2)
+--prod default block
 
 select '2021' surveyYear, 
 	'SFA' surveyId,
---***** start survey-specific mods
+	'GI Bill' repPeriodTag4,
+	'Department of Defense' repPeriodTag5,
+	'Dept of Defense' repPeriodTag7, --temporary: old enum value
 	CAST('2019-07-01' as DATE) giBillStartDate,
     CAST('2020-06-30' as DATE) giBillEndDate,
     CAST('2019-10-01' as DATE) dodStartDate,
     CAST('2020-09-30' as DATE) dodEndDate
---***** end survey-specific mods
-
-union
-
-select '2021' surveyYear, 
-	'SFA' surveyId,
---***** start survey-specific mods
-	CAST('2019-07-01' as DATE) giBillStartDate,
-    CAST('2020-06-30' as DATE) giBillEndDate,
-    CAST('2019-10-01' as DATE) dodStartDate,
-    CAST('2020-09-30' as DATE) dodEndDate
---***** end survey-specific mods
-
 /*
---testing default blocks (2)
+--testing default block
 select '1415' surveyYear,  
 	'SFA' surveyId,
---***** start survey-specific mods
+	'GI Bill' repPeriodTag4,
+	'Department of Defense' repPeriodTag5,
+	'Dept of Defense' repPeriodTag7, --temporary: old enum value
     CAST('2013-07-01' as DATE) giBillStartDate,
     CAST('2014-06-30' as DATE) giBillEndDate,
     CAST('2013-10-01' as DATE) dodStartDate,
     CAST('2014-09-30' as DATE) dodEndDate
---***** end survey-specific mods
-
-union
-
-select '1415' surveyYear,  
-	'SFA' surveyId,
---***** start survey-specific mods
-    CAST('2013-07-01' as DATE) giBillStartDate,
-    CAST('2014-06-30' as DATE) giBillEndDate,
-    CAST('2013-10-01' as DATE) dodStartDate,
-    CAST('2014-09-30' as DATE) dodEndDate
---***** end survey-specific mods
 */
 ),
 
@@ -113,18 +93,18 @@ select termCode,
 	requiredFTClockHoursUG,
     tags
 from ( 
-    select distinct acadtermENT.termCode, 
+    select distinct upper(acadtermENT.termCode) termCode, 
         row_number() over (
             partition by 
                 acadTermENT.snapshotDate,
                 acadTermENT.termCode,
                 acadTermENT.partOfTermCode
             order by
-               acadTermENT.recordActivityDate desc
+               coalesce(acadTermENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
         ) acadTermRn,
         acadTermENT.snapshotDate,
         acadTermENT.tags,
-		acadtermENT.partOfTermCode, 
+		coalesce(upper(acadtermENT.partOfTermCode), 1) partOfTermCode, 
 		acadtermENT.recordActivityDate, 
 		acadtermENT.termCodeDescription,       
 		acadtermENT.partOfTermCodeDescription, 
@@ -135,21 +115,17 @@ from (
 		acadtermENT.censusDate,
         acadtermENT.termType,
         acadtermENT.termClassification,
-		acadtermENT.requiredFTCreditHoursGR,
-	    acadtermENT.requiredFTCreditHoursUG,
-	    acadtermENT.requiredFTClockHoursUG,
-		acadtermENT.isIPEDSReportable
+		coalesce(acadtermENT.requiredFTCreditHoursGR, 9) requiredFTCreditHoursGR,
+	    coalesce(acadtermENT.requiredFTCreditHoursUG, 12) requiredFTCreditHoursUG,
+	    coalesce(acadtermENT.requiredFTClockHoursUG, 24) requiredFTClockHoursUG
 	from AcademicTerm acadtermENT 
-	where acadtermENT.isIPEDSReportable = 1
+	where coalesce(acadtermENT.isIPEDSReportable, true) = true
 	)
 where acadTermRn = 1
 ),
 
 AcademicTermOrder as (
 -- Orders term codes based on date span and keeps the numeric value of the greatest term/part of term record. 
-
---jh 20201120 Added new fields to capture min start and max end date for terms;
---				changed order by for row_number to censusDate
 
 select termCode termCode, 
     max(termOrder) termOrder,
@@ -188,19 +164,25 @@ select personId,
         termCode,
         sum(benefitAmount) benefitAmount,
         snapshotDate,
-        StartDate, 
-        EndDate
+        startDate, 
+        endDate,
+        repPeriodTag4, --'GI Bill'
+        repPeriodTag5, --'Department of Defense'
+        repPeriodTag7 --'Dept of Defense'
 from ( 
     select distinct MilitaryBenefitENT.personID personID,
-        MilitaryBenefitENT.termCode termCode,
+        upper(MilitaryBenefitENT.termCode) termCode,
         MilitaryBenefitENT.benefitType benefitType,
         abs(MilitaryBenefitENT.benefitAmount) benefitAmount,
 		to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') snapshotDate,
 		to_date(MilitaryBenefitENT.transactionDate, 'YYYY-MM-DD') transactionDate,
         MilitaryBenefitENT.tags tags,
-        config.giBillStartDate StartDate,
-        config.giBillEndDate EndDate,
-        to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
+        config.giBillStartDate startDate,
+        config.giBillEndDate endDate,
+        coalesce(to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
+        config.repPeriodTag4 repPeriodTag4, --'GI Bill'
+        config.repPeriodTag5 repPeriodTag5, --'Department of Defense'
+        config.repPeriodTag7 repPeriodTag7, --'Dept of Defense'
         row_number() over (
             partition by
                 MilitaryBenefitENT.personId,
@@ -209,51 +191,39 @@ from (
 			    MilitaryBenefitENT.transactionDate,
 			    MilitaryBenefitENT.benefitAmount
 		    order by
-				(case when array_contains(MilitaryBenefitENT.tags, 'GI Bill') and MilitaryBenefitENT.benefitType = 'GI Bill'
-				            and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.giBillStartDate, 1) and date_add(config.giBillEndDate, 3) then 1
-				      else 2 end) asc,
-				(case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.giBillStartDate, 1) and date_add(config.giBillEndDate, 3) then 3 
+				(case when array_contains(MilitaryBenefitENT.tags, config.repPeriodTag4) and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.giBillStartDate, 1) and date_add(config.giBillEndDate, 3) then 1 else 2 end) asc,
+				(case when to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.giBillStartDate, 1) and date_add(config.giBillEndDate, 3) then 3 
 				    else 4 end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.giBillEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'GI Bill' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.giBillStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+                (case when to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.giBillEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.giBillStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 MilitaryBenefitENT.recordActivityDate desc
 	    ) militarybenefitRn
     from MilitaryBenefit MilitaryBenefitENT
-        cross join (select first(giBillStartDate) giBillStartDate,
-                            first(giBillEndDate) giBillEndDate
-                    from DefaultValues) config
-    where MilitaryBenefitENT.isIPEDSReportable = 1 
-        and MilitaryBenefitENT.benefitType = 'GI Bill'
-        and ((to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+        cross join DefaultValues config
+    where coalesce(MilitaryBenefitENT.isIpedsReportable, true) = true 
+        and MilitaryBenefitENT.benefitType = config.repPeriodTag4
+        and ((coalesce(to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
                 and to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') between config.giBillStartDate and config.giBillEndDate
                 and MilitaryBenefitENT.transactionDate between config.giBillStartDate and config.giBillEndDate)
-            or (to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
+            or (coalesce(to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)
                 and MilitaryBenefitENT.transactionDate between config.giBillStartDate and config.giBillEndDate))
-        )    
-    where militarybenefitRn = 1
-group by personId, benefitType, termCode, snapshotDate, StartDate, EndDate
 
-union
+    union
 
 --Dept of Defense
-select personId, 
-        benefitType, 
-        termCode,
-        sum(benefitAmount) benefitAmount,
-        snapshotDate, 
-        StartDate, 
-        EndDate
-from (
     select distinct MilitaryBenefitENT.personID personID,
-        MilitaryBenefitENT.termCode termCode,
+        upper(MilitaryBenefitENT.termCode) termCode,
         MilitaryBenefitENT.benefitType benefitType,
         abs(MilitaryBenefitENT.benefitAmount) benefitAmount,
 		to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') snapshotDate,
 		to_date(MilitaryBenefitENT.transactionDate, 'YYYY-MM-DD') transactionDate,
         MilitaryBenefitENT.tags tags,
-        config.dodStartDate StartDate,
-        config.dodEndDate EndDate,
-        to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
+        config.dodStartDate startDate,
+        config.dodEndDate endDate,
+        coalesce(to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
+        config.repPeriodTag4 repPeriodTag4, --'GI Bill'
+        config.repPeriodTag5 repPeriodTag5, --'Department of Defense'
+        config.repPeriodTag7 repPeriodTag7, --'Dept of Defense'
         row_number() over (
             partition by
                 MilitaryBenefitENT.personId,
@@ -262,29 +232,27 @@ from (
 			    MilitaryBenefitENT.transactionDate,
 			    MilitaryBenefitENT.benefitAmount
 		    order by
-				(case when array_contains(MilitaryBenefitENT.tags, 'Department of Defense') and MilitaryBenefitENT.benefitType = 'Dept of Defense'
+				(case when array_contains(MilitaryBenefitENT.tags, config.repPeriodTag5)
 				            and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.dodStartDate, 1) and date_add(config.dodEndDate, 3) then 1
 				      else 2 end) asc,
-				(case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.dodStartDate, 1) and date_add(config.dodEndDate, 3) then 3 
+				(case when to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') between date_sub(config.dodStartDate, 1) and date_add(config.dodEndDate, 3) then 3 
 				    else 4 end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.dodEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
-                (case when MilitaryBenefitENT.benefitType = 'Dept of Defense' and to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.dodStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+                (case when to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') > config.dodEndDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                (case when to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') < config.dodStartDate then to_date(MilitaryBenefitENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                 MilitaryBenefitENT.recordActivityDate desc
 	    ) militarybenefitRn
     from MilitaryBenefit MilitaryBenefitENT
-        cross join (select first(dodStartDate) dodStartDate,
-                            first(dodEndDate) dodEndDate
-                    from DefaultValues) config
-    where MilitaryBenefitENT.isIPEDSReportable = 1 
-        and MilitaryBenefitENT.benefitType = 'Dept of Defense'
-        and ((to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+        cross join DefaultValues config
+    where coalesce(MilitaryBenefitENT.isIpedsReportable, true) = true 
+        and MilitaryBenefitENT.benefitType in (config.repPeriodTag5, config.repPeriodTag7)
+        and ((coalesce(to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
                 and to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') between config.dodStartDate and config.dodEndDate
                 and MilitaryBenefitENT.transactionDate between config.dodStartDate and config.dodEndDate)
-            or (to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
-                and MilitaryBenefitENT.transactionDate between config.dodStartDate and config.dodEndDate)) 
-    )  
+            or (coalesce(to_date(MilitaryBenefitENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)
+                and MilitaryBenefitENT.transactionDate between config.dodStartDate and config.dodEndDate))
+    )   
 where militarybenefitRn = 1
-group by personId, benefitType, termCode, snapshotDate, StartDate, EndDate
+group by personId, benefitType, termCode, snapshotDate, startDate, endDate, repPeriodTag4, repPeriodTag5, repPeriodTag7
 ),
 
 MilitaryStuLevel as (
@@ -294,23 +262,24 @@ select count(personId) recCount,
         sum(giCount) giCount,
         sum(giBillAmt) giBillAmt,
         sum(dodCount) dodCount,
-        sum(dodAmt) dodAmt,
-        studentLevel
+        sum(dodAmt) dodAmt
 from ( 
     select stu.personId personId,
-        sum((case when stu.benefitType = 'GI Bill' then stu.benefitAmount else 0 end)) giBillAmt,
-        sum((case when stu.benefitType = 'Dept of Defense' then stu.benefitAmount else 0 end)) dodAmt,
-        stu.studentLevel studentLevel,
-        (case when stu.benefitType = 'GI Bill' then 1 else 0 end) giCount,
-        (case when stu.benefitType = 'Dept of Defense' then 1 else 0 end) dodCount
+            sum((case when stu.benefitType = stu.repPeriodTag4 then stu.benefitAmount else 0 end)) giBillAmt,
+            sum((case when stu.benefitType in (stu.repPeriodTag5, stu.repPeriodTag7) then stu.benefitAmount else 0 end)) dodAmt,
+            stu.studentLevel studentLevel,
+            (case when stu.benefitType = stu.repPeriodTag4 then 1 else 0 end) giCount,
+            (case when stu.benefitType in (stu.repPeriodTag5, stu.repPeriodTag7) then 1 else 0 end) dodCount
     from (
-            select distinct miliben.personId personId,
+        select distinct miliben.personId personId,
                 miliben.termCode termCode,
-                termorder.termOrder termOrder,
-                (case when studentENT.studentLevel in ('Undergraduate', 'Continuing Education', 'Other') then 1 else 2 end) studentLevel,
+                (case when studentENT.studentLevel not in ('Undergraduate', 'Continuing Education', 'Other') then 2 else 1 end) studentLevel,
                 miliben.benefitType,
                 miliben.benefitAmount benefitAmount,
-                row_number() over (
+                miliben.repPeriodTag4,
+                miliben.repPeriodTag5,
+                miliben.repPeriodTag7,
+                coalesce(row_number() over (
                     partition by
                         miliben.personId,
                         miliben.termCode,
@@ -321,21 +290,19 @@ from (
                         (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') > miliben.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else miliben.snapshotDate end) asc,
                         (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < miliben.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                         studentENT.recordActivityDate desc
-                ) studRn
-            from MilitaryBenefitMCR miliben
-                left join Student studentENT on miliben.personId = studentENT.personId
-                    and miliben.termCode = studentENT.termCode
-                    and ((to_date(studentENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)  
-                        and to_date(studentENT.recordActivityDate,'YYYY-MM-DD') <= miliben.EndDate)
-                            or to_date(studentENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
-                    and studentENT.isIpedsReportable = 1
-                inner join AcademicTermOrder termorder on termorder.termCode = miliben.termCode
-            ) stu
-        where stu.studRn = 1 
-    group by stu.personId, stu.studentLevel, stu.benefitType
+                ), 1) studRn
+        from MilitaryBenefitMCR miliben
+            left join Student studentENT on miliben.personId = studentENT.personId
+                and miliben.termCode = upper(studentENT.termCode)
+                and ((coalesce(to_date(studentENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)  
+                    and to_date(studentENT.recordActivityDate,'YYYY-MM-DD') <= miliben.endDate)
+                        or coalesce(to_date(studentENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
+                and coalesce(studentENT.isIpedsReportable, true) = true
+        ) stu
+    where stu.studRn = 1 
+    group by stu.personId, stu.studentLevel, stu.benefitType, stu.repPeriodTag4, stu.repPeriodTag5, stu.repPeriodTag7
     )
-    where studentLevel = 2
-group by studentLevel
+where studentLevel = 2
 )
 
 /*****
@@ -368,13 +335,12 @@ select 'G' PART,
        null FIELD16_1
 from (
 --if institution offers graduate level, count military benefits; if none, output 0 
-    select mililevl.studentLevel FIELD2_1, --Student Level 1=Undergraduate, 2=Graduate
+    select 2 FIELD2_1, --Student Level 1=Undergraduate, 2=Graduate
        coalesce(mililevl.giCount, 0) FIELD3_1, --Post-9/11 GI Bill Benefits - Number of students receiving benefits/assistance
        coalesce(mililevl.giBillAmt, 0) FIELD4_1, --Post-9/11 GI Bill Benefits - Total dollar amount of benefits/assistance disbursed through the institution
        coalesce(mililevl.dodCount, 0) FIELD5_1, --Department of Defense Tuition Assistance Program - Number of students receiving benefits/assistance
        coalesce(mililevl.dodAmt, 0) FIELD6_1 --Department of Defense Tuition Assistance Program - Total dollar amount of benefits/assistance disbursed through the institution
     from MilitaryStuLevel mililevl
-    where mililevl.studentLevel = 2
         
     union
 
