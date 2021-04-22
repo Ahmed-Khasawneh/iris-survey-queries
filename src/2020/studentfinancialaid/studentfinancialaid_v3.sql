@@ -16,7 +16,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
-20210422        jhanicak                                    PF-2098 Add AcademicTrackMCR and DegreeProgramMCR, latest DM updates and more; runtimes: test 24m 11s, prod 24m 42s
+20210422        jhanicak                                    PF-2152 Add AcademicTrackMCR, DegreeProgramMCR and FieldOfStudyMCR, latest DM updates and more; runtimes: test 24m 11s, prod 24m 42s
 20210401        ckeller                                     PF-2104: Fixes to: Formatting of Part G, conditional record inclusion logic placement, 
 																	registrationStatusActionDate.
 																	Removed unused IPEDSClientConfig indications
