@@ -1783,7 +1783,7 @@ from (
            SUM(case when cohortstu.Residency = 'In District' then cohortstu.isGroup2 end) FIELD3_1, --Public reporters - Count of Group 2 paying in-district tuition rates, 0 to 999999, -2 or blank = not-applicable
            SUM(case when cohortstu.Residency = 'In State' then cohortstu.isGroup2 end) FIELD4_1, --Public reporters - Count of Group 2 paying in-state tuition rates, -2 or blank = not-applicable
            SUM(case when cohortstu.Residency in ('Out of State', 'Out of US') then cohortstu.isGroup2 end) FIELD5_1, --Public reporters  - Count of Group 2 paying out-of-state tuition rates, -2 or blank = not-applicable
-           null FIELD6_1, --Program reporters - Count of unduplicated Group 2, -2 or blank = not-applicable
+           sum(cohortstu.isGroup2) FIELD6_1, --Program reporters - Count of unduplicated Group 2, -2 or blank = not-applicable
            SUM(cohortstu.isGroup2a) FIELD7_1, --Count of Group 2a, -2 or blank = not-applicable ***have not figured out a scenario where this would be null/not applicable
            SUM(cohortstu.isGroup2b) FIELD8_1 --Count of Group 2b, -2 or blank = not-applicable ***have not figured out a scenario where this would be null/not applicable
     from FinancialAidMCR cohortstu
