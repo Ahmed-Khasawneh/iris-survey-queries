@@ -206,7 +206,7 @@ select distinct RepDates.surveyYear	surveyYear,
     coalesce(upper(RepDates.surveySection), 'COHORT') surveySection,
     to_date(RepDates.snapshotDate, 'YYYY-MM-DD') snapshotDate,
     RepDates.termCode termCode,	
-	RepDates.partOfTermCode partOfTermCode,
+	coalesce(RepDates.partOfTermCode, 1) partOfTermCode,
 	to_date(RepDates.reportingDateStart, 'YYYY-MM-DD') reportingDateStart,
     to_date(RepDates.reportingDateEnd, 'YYYY-MM-DD') reportingDateEnd,
     RepDates.repPeriodTag1 repPeriodTag1,
@@ -263,7 +263,6 @@ from (
 										  where repperiodENT.surveyCollectionYear = defvalues.surveyYear
 											and upper(repperiodENT.surveyId) = defvalues.surveyId 
 											and repperiodENT.termCode is not null
-											and repperiodENT.partOfTermCode is not null
 										) 
     ) RepDates
 where RepDates.reportPeriodRn = 1
@@ -287,13 +286,13 @@ select ConfigLatest.surveyYear surveyYear,
 	ConfigLatest.repPeriodTag2 repPeriodTag2,
     ConfigLatest.repPeriodTag3 repPeriodTag3,
 	case when mod(ConfigLatest.surveyYear,2) = 0 then 'Y' --then odd first year and age is required
-		else ConfigLatest.feIncludeOptSurveyData
+		else upper(ConfigLatest.feIncludeOptSurveyData)
 	end reportAge,
 	case when mod(ConfigLatest.surveyYear,2) != 0 then 'Y' --then even first year and resid is required
-		else ConfigLatest.feIncludeOptSurveyData
+		else upper(ConfigLatest.feIncludeOptSurveyData)
 	end reportResidency,
 	ConfigLatest.asOfDateHR asOfDateHR,
-    ConfigLatest.feincludeoptsurveydata feincludeoptsurveydata,
+    upper(ConfigLatest.feincludeoptsurveydata) feincludeoptsurveydata,
     ConfigLatest.surveyId surveyId
 from (
     select clientConfigENT.surveyCollectionYear surveyYear,
@@ -370,7 +369,7 @@ from (
                 acadTermENT.termCode,
                 acadTermENT.partOfTermCode
             order by
-               acadTermENT.recordActivityDate desc
+               coalesce(acadTermENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
         ) acadTermRn,
         acadTermENT.snapshotDate,
         acadTermENT.tags,
@@ -389,7 +388,7 @@ from (
 	    acadtermENT.requiredFTClockHoursUG,
 		acadtermENT.isIPEDSReportable
 	from AcademicTerm acadtermENT 
-	where acadtermENT.isIPEDSReportable = 1
+	where coalesce(acadtermENT.isIPEDSReportable, true) = true
 	)
 where acadTermRn = 1
 ),
@@ -557,7 +556,7 @@ select campus,
 from ( 
     select upper(campusENT.campus) campus,
 		campusENT.campusDescription,
-		campusENT.isInternational,
+		coalesce(campusENT.isInternational, false) isInternational,
 		to_date(campusENT.snapshotDate,'YYYY-MM-DD') snapshotDate,
 		row_number() over (
 			partition by
@@ -567,10 +566,10 @@ from (
 				campusENT.recordActivityDate desc
 		) campusRn
 	from Campus campusENT 
-    where campusENT.isIpedsReportable = 1 
-		and ((to_date(campusENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-			and to_date(campusENT.recordActivityDate, 'YYYY-MM-DD') <= to_date(campusENT.snapshotDate, 'YYYY-MM-DD'))
-				or to_date(campusENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
+    where coalesce(campusENT.isIpedsReportable, true) = true
+		and ((coalesce(to_date(campusENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+			and to_date(campusENT.recordActivityDate,'YYYY-MM-DD') <= to_date(campusENT.snapshotDate,'YYYY-MM-DD'))
+				or coalesce(to_date(campusENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
 	)
 where campusRn = 1
 ),
@@ -618,8 +617,8 @@ from (
             repperiod.snapshotDate snapshotDate,
             to_date(regENT.snapshotDate,'YYYY-MM-DD') regENTSSD,
             repperiod.snapshotDate repSSD,
-            regENT.termCode termCode,
-            regENT.partOfTermCode partOfTermCode, 
+			upper(regENT.termCode) termCode,
+			coalesce(upper(regENT.partOfTermCode), 1) partOfTermCode, 
             repperiod.surveySection surveySection,
             repperiod.termorder termorder,
             repperiod.genderForUnknown,
@@ -639,8 +638,8 @@ from (
             repperiod.equivCRHRFactor,
             repperiod.termStartDateFall termStartDateFall,
             upper(regENT.courseSectionCampusOverride) courseSectionCampusOverride,
-			regENT.isAudited isAudited,
-			regENT.isEnrolled isEnrolled,
+			coalesce(regENT.isAudited, false) isAudited,
+			coalesce(regENT.isEnrolled, true) isEnrolled,
 			regENT.courseSectionLevelOverride courseSectionLevelOverride,
             upper(regENT.courseSectionNumber) courseSectionNumber,
             regENT.enrollmentHoursOverride enrollmentHoursOverride,
@@ -660,20 +659,19 @@ from (
                     regENT.recordActivityDate desc,
                     regENT.registrationStatusActionDate desc
             ) regRn
-        from AcademicTermReportingRefactor repperiod   
-            inner join Registration regENT on regENT.termCode = repperiod.termCode
-                and repperiod.partOfTermCode = regENT.partOfTermCode
-                and ((to_date(regENT.registrationStatusActionDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-                            and to_date(regENT.registrationStatusActionDate, 'YYYY-MM-DD') <= repperiod.censusDate)
-                        or (to_date(regENT.registrationStatusActionDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE)
-                            and ((to_date(regENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-                                    and to_date(regENT.recordActivityDate, 'YYYY-MM-DD') <= repperiod.censusDate)
-                                or to_date(regENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))))
-                --and regENT.isEnrolled = 1
-                and regENT.isIpedsReportable = 1 
+		from AcademicTermReportingRefactor repperiod   
+			inner join Registration regENT on upper(regENT.termCode) = repperiod.termCode
+				and coalesce(upper(regENT.partOfTermCode), 1) = repperiod.partOfTermCode
+				and ((coalesce(to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' AS DATE)
+							and to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') <= repperiod.censusDate)
+						or (coalesce(to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' AS DATE)
+							and ((coalesce(to_date(regENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+									and to_date(regENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.censusDate)
+								or coalesce(to_date(regENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))))
+				and coalesce(regENT.isIpedsReportable, true) = true
                 ) regData
         where regData.regRn = 1
-            and regData.isEnrolled = 1
+			and regData.isEnrolled = true
     )
 ),
 
@@ -731,7 +729,6 @@ from (
             studentENT.homeCampus homeCampus,
 			studentENT.fullTimePartTimeStatus,
 			studentENT.studyAbroadStatus,
-			--studentENT.highSchoolGradDate,
             row_number() over (
                 partition by
                     reg.yearType,
@@ -746,11 +743,11 @@ from (
             ) studRn
 	from RegistrationMCR reg
 		inner join Student studentENT on reg.personId = studentENT.personId 
-			and reg.termCode = studentENT.termCode
-			and ((to_date(studentENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)  
-				and to_date(studentENT.recordActivityDate, 'YYYY-MM-DD') <= reg.censusDate)
-					or to_date(studentENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
-			and studentENT.isIpedsReportable = 1
+			and reg.termCode = upper(studentENT.termCode)
+			and ((coalesce(to_date(studentENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)  
+				and to_date(studentENT.recordActivityDate,'YYYY-MM-DD') <= reg.censusDate)
+					or coalesce(to_date(studentENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE))  = CAST('9999-09-09' AS DATE))
+			and coalesce(studentENT.isIpedsReportable, true) = true
 	) stuData
 where stuData.studRn = 1 
 ),
@@ -869,23 +866,23 @@ from (
 		stu.studyAbroadStatus,
         stu.genderForUnknown,
         stu.genderForNonBinary,
-        to_date(coursesectENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
+        coalesce(to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
         reg.courseSectionNumber,
         reg.isAudited,
         reg.enrollmentHoursOverride,
-        coalesce(reg.courseSectionLevelOverride, coursesectENT.courseSectionLevel) courseSectionLevel,
-        coursesectENT.subject,
-        coursesectENT.courseNumber,
-        coursesectENT.section,
-		coursesectENT.customDataValue,
-		coursesectENT.isESL, 
-		coursesectENT.isRemedial,
-		coursesectENT.college,
-		coursesectENT.division,
-		coursesectENT.department,
-        coalesce(reg.enrollmentHoursOverride, coursesectENT.enrollmentHours) enrollmentHours,
+        coalesce(reg.courseSectionLevelOverride, coursesectENT.courseSectionLevel) courseSectionLevel, --reg level prioritized over courseSection level 
+        upper(coursesectENT.subject) subject,
+        upper(coursesectENT.courseNumber) courseNumber,
+        upper(coursesectENT.section) section,
+		upper(coursesectENT.customDataValue) customDataValue,
+		coalesce(coursesectENT.isESL, false) isESL, 
+		coalesce(coursesectENT.isRemedial, false) isRemedial,
+		upper(coursesectENT.college) college,
+		upper(coursesectENT.division) division,
+		upper(coursesectENT.department) department,
+        coalesce(reg.enrollmentHoursOverride, coursesectENT.enrollmentHours) enrollmentHours, --reg enr hours prioritized over courseSection enr hours
         reg.equivCRHRFactor,
-        coursesectENT.isClockHours,
+        coalesce(coursesectENT.isClockHours, false) isClockHours,
 		reg.courseSectionCampusOverride,
         row_number() over (
                 partition by
@@ -910,14 +907,13 @@ from (
             and stu.termCode = reg.termCode
             and stu.yearType = reg.yearType
             and stu.surveySection = reg.surveySection
-        left join CourseSection coursesectENT on reg.termCode = coursesectENT.termCode
-            and reg.partOfTermCode = coursesectENT.partOfTermCode
+		left join CourseSection coursesectENT on reg.termCode = upper(coursesectENT.termCode)
+            and reg.partOfTermCode = coalesce(upper(coursesectENT.partOfTermCode), 1)
             and reg.courseSectionNumber = upper(coursesectENT.courseSectionNumber)
-            and coursesectENT.isIpedsReportable = 1
-            and ((to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-                    and to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD') <= reg.censusDate
-				    and coursesectENT.courseSectionStatus = 'Active')
-                or to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))  
+            and coalesce(coursesectENT.isIpedsReportable, true) = true
+            and ((coalesce(to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+                    and to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD') <= reg.censusDate)
+                or coalesce(to_date(coursesectENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE))   
 --AK mod add courseSectionStatus inclusion condition --and courseSectionStatus in ('Active', 'Pending', 'Renumbered')
     )
 where courseRn = 1
@@ -969,7 +965,7 @@ from (
             coursesect.genderForNonBinary,
             coursesect.genderForUnknown,
 			coursesect.residency,
-			to_date(coursesectschedENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
+			coalesce(to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
 			coursesect.courseSectionNumber courseSectionNumber,
 			coursesect.subject subject,
 			coursesect.courseNumber courseNumber,
@@ -988,7 +984,7 @@ from (
 			coursesect.enrollmentHours enrollmentHours,
 			coursesect.equivCRHRFactor equivCRHRFactor,
 			coursesect.isClockHours isClockHours,
-			coalesce(coursesect.courseSectionCampusOverride, coursesectschedENT.campus) campus,
+			coalesce(coursesect.courseSectionCampusOverride, upper(coursesectschedENT.campus)) campus, --reg campus prioritized over courseSection campus 
 			coursesectschedENT.instructionType,
 			coursesectschedENT.locationType,
 			coursesectschedENT.distanceEducationType,
@@ -1011,13 +1007,13 @@ from (
 					coursesectschedENT.recordActivityDate desc
 			) courseSectSchedRn
 		from CourseSectionMCR coursesect
-			left join CourseSectionSchedule coursesectschedENT ON coursesect.termCode = coursesectschedENT.termCode 
-							and coursesect.partOfTermCode = coursesectschedENT.partOfTermCode
-							and coursesect.courseSectionNumber = upper(coursesectschedENT.courseSectionNumber)
-							and coursesectschedENT.isIpedsReportable = 1 
-							and ((to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-								and to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD') <= coursesect.censusDate)
-									or to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))  
+			left join CourseSectionSchedule coursesectschedENT on coursesect.termCode = upper(coursesectschedENT.termCode) 
+				and coursesect.partOfTermCode = coalesce(upper(coursesectschedENT.partOfTermCode), 1)
+				and coursesect.courseSectionNumber = upper(coursesectschedENT.courseSectionNumber)
+				and coalesce(coursesectschedENT.isIpedsReportable, true) = true 
+				and ((coalesce(to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+					and to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD') <= coursesect.censusDate)
+						or coalesce(to_date(coursesectschedENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE))  
 		) CourseData
 	left join CampusMCR campus on campus.campus = CourseData.campus
 	where CourseData.courseSectSchedRn = 1
@@ -1075,8 +1071,8 @@ from (
 		coursesectsched.isInternational isInternational,
 		coursesectsched.isClockHours isClockHours,
 			(case when coursesectsched.instructionalActivityType = 'CR' then coursesectsched.enrollmentHours
-		      when coursesectsched.isClockHours = 0 then coursesectsched.enrollmentHours
-              when coursesectsched.isClockHours = 1 and coursesectsched.instructionalActivityType = 'B' then coursesectsched.equivCRHRFactor * coursesectsched.enrollmentHours
+		      when coursesectsched.isClockHours = false then coursesectsched.enrollmentHours
+              when coursesectsched.isClockHours = true and coursesectsched.instructionalActivityType = 'B' then coursesectsched.equivCRHRFactor * coursesectsched.enrollmentHours
               else coursesectsched.enrollmentHours end) enrollmentHours,
         coursesectsched.campus,
 		coursesectsched.instructionType,
@@ -1084,7 +1080,7 @@ from (
 		coursesectsched.distanceEducationType,
 		coursesectsched.onlineInstructionType,
 		coursesectsched.maxSeats,
-	    to_date(courseENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
+	    coalesce(to_date(courseENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) recordActivityDate,
 	    row_number() over (
 			partition by
 			    coursesectsched.yearType,
@@ -1104,14 +1100,13 @@ from (
 		) courseRn
 	from CourseSectionScheduleMCR coursesectsched
 	    left join Course courseENT on coursesectsched.subject = upper(courseENT.subject) 
-			        and coursesectsched.courseNumber = upper(courseENT.courseNumber) 
-			        and courseENT.isIpedsReportable = 1
-			        and ((to_date(courseENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-				        and to_date(courseENT.recordActivityDate, 'YYYY-MM-DD') <= coursesectsched.censusDate
-				        and courseENT.courseStatus = 'Active') 
-					        or to_date(courseENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
-		left join AcademicTermOrder termorder on termorder.termCode = courseENT.termCodeEffective
-            and termorder.termOrder <= coursesectsched.termOrder
+			and coursesectsched.courseNumber = upper(courseENT.courseNumber) 
+			and coalesce(courseENT.isIpedsReportable, true) = true
+			and ((coalesce(to_date(courseENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+				and to_date(courseENT.recordActivityDate, 'YYYY-MM-DD') <= coursesectsched.censusDate) 
+					or coalesce(to_date(courseENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
+		left join AcademicTermOrder termorder on termorder.termCode = upper(courseENT.termCodeEffective)
+			and termorder.termOrder <= coursesectsched.termOrder
 	)
 where courseRn = 1
 ),
@@ -1156,13 +1151,12 @@ from (
 			totalCreditHrs,
 			totalCourses,
 			totalDECourses,
-			termCode, --
-			termOrder, --
+			termCode, 
+			termOrder, 
 			termType,
-			requiredFTCreditHoursGR, --
-			studentLevelUGGR, --
-			studyAbroadStatus, --
-			--highSchoolGradDate,
+			requiredFTCreditHoursGR, 
+			studentLevelUGGR, 
+			studyAbroadStatus, 
 			(case when studyAbroadStatus != 'Study Abroad - Home Institution' then isNonDegreeSeeking
 				  when totalSAHomeCourses > 0 or totalCreditHrs > 0 or totalClockHrs > 0 then false 
 				  else isNonDegreeSeeking 
@@ -1199,15 +1193,15 @@ from (
 				course.termOrder, --FE
 				course.termType,
 				coalesce(count(course.courseSectionNumber), 0) totalCourses,
-				--coalesce(sum((case when course.enrollmentHours >= 0 then 1 else 0 end)), 0) totalCreditCourses,
-				coalesce(sum((case when coalesce(course.isClockHours, false) = 0 then course.enrollmentHours else 0 end)), 0) totalCreditHrs,
-				coalesce(sum((case when coalesce(course.isClockHours, false) = 1 and course.courseLevel = 'Undergraduate' then course.enrollmentHours else 0 end)), 0) totalClockHrs,
+				coalesce(sum((case when course.enrollmentHours >= 0 then 1 else 0 end)), 0) totalCreditCourses,
+				coalesce(sum((case when coalesce(course.isClockHours, false) = false then course.enrollmentHours else 0 end)), 0) totalCreditHrs,
+				coalesce(sum((case when coalesce(course.isClockHours, false) = true and course.courseLevel = 'Undergraduate' then course.enrollmentHours else 0 end)), 0) totalClockHrs,
 				coalesce(sum((case when course.courseLevel = 'Continuing Education' then 1 else 0 end)), 0) totalCECourses,
 				coalesce(sum((case when course.locationType = 'Foreign Country' then 1 else 0 end)), 0) totalSAHomeCourses, 
-				coalesce(sum((case when coalesce(course.isESL, false) = 1 then 1 else 0 end)), 0) totalESLCourses,
-				coalesce(sum((case when coalesce(course.isRemedial, false) = 1 then 1 else 0 end)), 0) totalRemCourses,
-				coalesce(sum((case when coalesce(course.isInternational, false) = 1 then 1 else 0 end)), 0) totalIntlCourses,
-				coalesce(sum((case when coalesce(course.isAudited, false) = 1 then 1 else 0 end)), 0) totalAuditCourses,
+				coalesce(sum((case when coalesce(course.isESL, false) = true then 1 else 0 end)), 0) totalESLCourses,
+				coalesce(sum((case when coalesce(course.isRemedial, false) = true then 1 else 0 end)), 0) totalRemCourses,
+				coalesce(sum((case when coalesce(course.isInternational, false) = true then 1 else 0 end)), 0) totalIntlCourses,
+				coalesce(sum((case when coalesce(course.isAudited, false) = true then 1 else 0 end)), 0) totalAuditCourses,
 				coalesce(sum((case when course.instructionType = 'Thesis/Capstone' then 1 else 0 end)), 0) totalThesisCourses,
 				coalesce(sum((case when course.instructionType in ('Residency', 'Internship', 'Practicum') and course.studentLevel = 'Professional Practice Doctorate' then 1 else 0 end)), 0) totalProfResidencyCourses,
 				coalesce(sum((case when course.distanceEducationType != 'Not distance education' then 1 else 0 end)), 0) totalDECourses
@@ -1268,9 +1262,8 @@ select --distinct
         state,
         nation,
         studyAbroadStatus,
-        --highSchoolGradDate,
         ipedsInclude,
-        (case when isUSCitizen = 1 or ((isInUSOnVisa = 1 or censusDate between visaStartDate and visaEndDate)
+        (case when isUSCitizen = true or ((isInUSOnVisa = true or censusDate between visaStartDate and visaEndDate)
                             and visaType in ('Employee Resident', 'Other Resident')) then 
             (case when isHispanic = true then '2' 
                 when isMultipleRaces = true then '8' 
@@ -1284,7 +1277,7 @@ select --distinct
                         else '9' 
                     end) 
                 else '9' end) -- 'race and ethnicity unknown'
-            when ((isInUSOnVisa = 1 or censusDate between visaStartDate and visaEndDate)
+            when ((isInUSOnVisa = true or censusDate between visaStartDate and visaEndDate)
                 and visaType in ('Student Non-resident', 'Employee Non-resident', 'Other Non-resident')) then '1' -- 'nonresident alien'
             else '9' -- 'race and ethnicity unknown'
         end) ipedsEthnicity
@@ -1300,13 +1293,13 @@ from (
             stu.genderForUnknown,
             stu.residency,
             personENT.ethnicity ethnicity,
-            personENT.isHispanic isHispanic,
-            personENT.isMultipleRaces isMultipleRaces,
-            personENT.isInUSOnVisa isInUSOnVisa,
+            coalesce(personENT.isHispanic, false) isHispanic,
+            coalesce(personENT.isMultipleRaces, false) isMultipleRaces,
+            coalesce(personENT.isInUSOnVisa, false) isInUSOnVisa,
             to_date(personENT.visaStartDate, 'YYYY-MM-DD') visaStartDate,
             to_date(personENT.visaEndDate, 'YYYY-MM-DD') visaEndDate,
             personENT.visaType visaType,
-            personENT.isUSCitizen isUSCitizen,
+            coalesce(personENT.isUSCitizen, true) isUSCitizen,
             personENT.gender gender,
             to_date(personENT.birthDate, 'YYYY-MM-DD') birthDate,
             upper(personENT.nation) nation,
@@ -1334,10 +1327,10 @@ from (
             ) personRn
     from CourseTypeCountsSTU stu 
         left join Person personENT on stu.personId = personENT.personId
-            and personENT.isIpedsReportable = 1
-            and ((to_date(personENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-               and to_date(personENT.recordActivityDate, 'YYYY-MM-DD') <= stu.censusDate) 
-                or to_date(personENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
+            and coalesce(personENT.isIpedsReportable = true, true)
+			and ((coalesce(to_date(personENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+				and to_date(personENT.recordActivityDate,'YYYY-MM-DD') <= stu.censusDate)
+				or coalesce(to_date(personENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
 where personRn <= 1
 ),
@@ -1436,22 +1429,23 @@ from (
             acadtrackENT.fieldOfStudyType fieldOfStudyType,
             acadtrackENT.academicTrackStatus academicTrackStatus,
             to_date(acadtrackENT.fieldOfStudyActionDate,'YYYY-MM-DD') fieldOfStudyActionDate,
-            to_date(acadtrackENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
+            coalesce(to_date(acadtrackENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
             termorder.termOrder acadTrackTermOrder
 		from PersonMCR person
             left join AcademicTrack acadtrackENT on acadtrackENT.personId = person.personId
-				and acadTrackENT.fieldOfStudyType = 'Major'
-				and acadTrackENT.fieldOfStudy is not null
-				and acadTrackENT.isIpedsReportable = 1
-				and acadTrackENT.isCurrentFieldOfStudy = 1
-				and ((to_date(acadtrackENT.fieldOfStudyActionDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-						and to_date(acadtrackENT.fieldOfStudyActionDate,'YYYY-MM-DD') <= person.censusDate)
-					or (to_date(acadtrackENT.fieldOfStudyActionDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE)					
-						and ((to_date(acadtrackENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-								and to_date(acadtrackENT.recordActivityDate,'YYYY-MM-DD') <= person.censusDate) 
-							or to_date(acadtrackENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE)))) 
+				and ((coalesce(to_date(acadtrackENT.fieldOfStudyActionDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+                        and to_date(acadtrackENT.fieldOfStudyActionDate,'YYYY-MM-DD') <= person.censusDate)
+                    or (coalesce(to_date(acadtrackENT.fieldOfStudyActionDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)
+                        and ((coalesce(to_date(acadtrackENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' as DATE)
+                                and to_date(acadtrackENT.recordActivityDate,'YYYY-MM-DD') <= person.censusDate)
+                            or coalesce(to_date(acadtrackENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' as DATE)))) 
+				and acadTrackENT.fieldOfStudyType = 'Major' 
+				and coalesce(acadTrackENT.isIpedsReportable, true) = true
+				and coalesce(acadTrackENT.isCurrentFieldOfStudy, true) = true
+				and acadTrackENT.isCurrentFieldOfStudy = true
 			left join AcademicTermOrder termorder on termorder.termCode = acadtrackENT.termCodeEffective
 				and termorder.termOrder <= person.termOrder
+				
 			)
 		where acadtrackRn <= 1
     )
@@ -1502,8 +1496,8 @@ from (
 		programENT.termCodeEffective,
 		termorder.termOrder DegreeProgramOrder,
 		programENT.distanceEducationType,
-		programENT.isESL, 
-		to_date(programENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
+		coalesce(programENT.isESL, false) isESL,
+		coalesce(to_date(programENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
 		row_number() over (
 			partition by
 			    acadtrack.personId,
@@ -1523,24 +1517,23 @@ from (
 				programENT.recordActivityDate desc
 		) programRN
 	from AcademicTrackMCR acadtrack 
-	    left join DegreeProgram programENT on programENT.degreeProgram = acadtrack.degreeProgram 
+	    left join DegreeProgram programENT on upper(programENT.degreeProgram) = acadtrack.degreeProgram 
 	        and programENT.lengthInMonths is not null
-            and programENT.isIPEDSReportable = 1
-		    and programENT.isForStudentAcadTrack = 1
-		    and programENT.isForDegreeAcadHistory = 1
-		    and ((to_date(programENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-				    and to_date(programENT.recordActivityDate, 'YYYY-MM-DD') <= to_date(programENT.snapshotDate, 'YYYY-MM-DD'))
-					    or to_date(programENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE)) 
+            and coalesce(programENT.isIpedsReportable, true) = true
+		    and programENT.isForStudentAcadTrack = true
+		    and programENT.isForDegreeAcadHistory = true
 		    and ((to_date(programENT.startDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-				    and to_date(programENT.startDate, 'YYYY-MM-DD') <= to_date(programENT.snapshotDate, 'YYYY-MM-DD'))
+				    and to_date(programENT.startDate, 'YYYY-MM-DD') <= acadtrack.censusDate)
 					    or to_date(programENT.startDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE)) 
+			and ((coalesce(to_date(programENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+			   and to_date(programENT.recordActivityDate,'YYYY-MM-DD') <= acadtrack.censusDate)
+				or coalesce(to_date(programENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
 	    left join AcademicTermOrder termorder on programENT.termCodeEffective = termorder.termCode
 	where ((termorder.termOrder is not null and acadtrack.acadTrackTermOrder >= termOrder.termOrder) --DegreeProgramOrder
 	    or termorder.termOrder is null)
     )
 where programRN <= 1
-    and ((isESL is not null and isESL != 1 )
-        or isESL is null)--EXCLUDE Students enrolled only in ESL programs (programs comprised exclusively of ESL courses)
+    and isESL != 1 --EXCLUDE Students enrolled only in ESL programs (programs comprised exclusively of ESL courses)
 ),
 
 FieldOfStudyMCR as ( --4m 34s
@@ -1611,10 +1604,10 @@ from (
 		) majorRn
 	from DegreeProgramMCR program
 		left join fieldOfStudy fieldofstudyENT ON fieldofstudyENT.fieldOfStudy = program.fieldOfStudy
-			and fieldofstudyENT.isIpedsReportable = 1
-			and ((fieldofstudyENT.recordActivityDate != CAST('9999-09-09' AS TIMESTAMP)
-			and fieldofstudyENT.recordActivityDate  <= program.censusDate)
-			or fieldofstudyENT.recordActivityDate  = CAST('9999-09-09' AS TIMESTAMP))
+            and coalesce(fieldofstudyENT.isIpedsReportable, true) = true
+			and ((coalesce(to_date(fieldofstudyENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+			   and to_date(fieldofstudyENT.recordActivityDate,'YYYY-MM-DD') <= program.censusDate)
+				or coalesce(to_date(fieldofstudyENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
 	)
 where majorRn <= 1
 ),
@@ -1638,7 +1631,6 @@ from (
         fieldofstudy.state state,
         fieldofstudy.nation nation,
         fieldofstudy.studyAbroadStatus studyAbroadStatus,
-        --fieldofstudy.highSchoolGradDate highSchoolGradDate,
         fieldofstudy.ipedsInclude ipedsInclude,
         fieldofstudy.timeStatus timeStatus,
         fieldofstudy.studentLevel studentLevel,
@@ -1667,7 +1659,7 @@ from (
 		fieldofstudy.partACipCode,
 		degreeENT.degreeLevel,
 		degreeENT.awardLevel,
-		degreeENT.isNonDegreeSeeking isNonDegreeSeekingDegree,
+		coalesce(degreeENT.isNonDegreeSeeking, false) isNonDegreeSeekingDegree,
 		row_number() over (
 			partition by
 			    fieldofstudy.personId,
@@ -1686,10 +1678,11 @@ from (
 	from FieldOfStudyMCR fieldofstudy
 		--inner join ClientConfigMCR clientconfig ON acadTrack.cohortInd = clientconfig.sectionRetFall
 		left join Degree degreeENT ON degreeENT.degree = fieldofstudy.degree
-			and degreeENT.isIpedsReportable = 1
-            and ((to_date(degreeENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-                and to_date(degreeENT.recordActivityDate, 'YYYY-MM-DD') <= to_date(degreeENT.snapshotDate, 'YYYY-MM-DD'))
-                    or to_date(degreeENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
+			and coalesce(degreeENT.isIpedsReportable, true) = true
+			and ((coalesce(to_date(degreeENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+			   and to_date(degreeENT.recordActivityDate,'YYYY-MM-DD') <= fieldofstudy.censusDate)
+				or coalesce(to_date(degreeENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
+					
 	)
 where degreeRn = 1
 --**    and ((degreeLevel is not null and degreeLevel != 'Professional Practice Doctorate') --EXCLUDE Residents or interns in doctor's - professional practice programs, since they have already received their doctor's degree
@@ -1722,19 +1715,18 @@ select degree.*,
     ) appRn 
 from DegreeMCR degree
     left join Admission admENT on admENT.personId = degree.personId
---        and admENT.admissionType = 'New Applicant'
-        and admENT.studentLevel = 'Undergraduate'
---        and admENT.studentType = 'First Time'
-        and admENT.admissionDecision is not null
-        and admENT.applicationStatus is not null
-        and admENT.isIpedsReportable = 1
-		and ((to_date(admENT.applicationStatusActionDate, 'YYYY-MM-DD') <= degree.censusDate)
-	        or (to_date(admENT.applicationStatusActionDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE)
-		        and ((to_date(admENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-				    and to_date(admENT.recordActivityDate, 'YYYY-MM-DD') <= degree.censusDate)
-			    or to_date(admENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' as DATE))))
-        and to_date(admENT.applicationDate, 'YYYY-MM-DD') <= degree.censusDate 
-
+            and ((coalesce(to_date(admENT.applicationStatusActionDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' AS DATE)
+                        and to_date(admENT.applicationStatusActionDate,'YYYY-MM-DD') <= degree.censusDate)
+                    or (coalesce(to_date(admENT.applicationStatusActionDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' AS DATE)
+                        and ((coalesce(to_date(admENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+                                and to_date(admENT.recordActivityDate,'YYYY-MM-DD') <= degree.censusDate)
+                            or coalesce(to_date(admENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))))
+			and admENT.studentLevel = 'Undergraduate'
+			-- and admENT.admissionType = 'New Applicant'
+			-- and admENT.studentType = 'First Time'
+			and admENT.admissionDecision is not null
+			and admENT.applicationStatus is not null
+			and coalesce(admENT.isIpedsReportable, true) = true
 )
 where appRn <= 1
 ),
@@ -1780,21 +1772,21 @@ CohortSTU as ( --4m 33s
 			----admission.timeStatus timeStatus,
 			case when admission.timeStatus = 'FT'
 						and admission.studentType = 'First Time'
-						and admission.isNonDegreeSeeking = 'false'
+						and admission.isNonDegreeSeeking = false
 						and admission.studentLevelUGGR = 'UG'  
 				then 1 -- 1 - Full-time, first-time degree/certificate-seeking undergraduate
 				when admission.timeStatus = 'FT'
 						and admission.studentType = 'Transfer'
-						and admission.isNonDegreeSeeking = 'false'
+						and admission.isNonDegreeSeeking = false
 						and admission.studentLevelUGGR = 'UG'
 				then 2 -- 2 - Full-time, transfer-IN degree/certificate-seeking undergraduate
 				when admission.timeStatus = 'FT'
 						and admission.studentType = 'Continuing'
-						and admission.isNonDegreeSeeking = 'false'
+						and admission.isNonDegreeSeeking = false
 						and admission.studentLevelUGGR = 'UG'
 				then 3 -- 3 - Full-time, continuing degree/certificate-seeking undergraduate
 				when admission.timeStatus = 'FT'
-						and admission.isNonDegreeSeeking = 'true'
+						and admission.isNonDegreeSeeking = true
 						and admission.studentLevelUGGR = 'UG'
 				then 7 -- 7 - Full-time, non-degree/certificate-seeking undergraduate
 				when admission.timeStatus = 'FT'
@@ -1802,21 +1794,21 @@ CohortSTU as ( --4m 33s
 				then 11 -- 11 - Full-time graduate
 				when admission.timeStatus = 'PT'
 						and admission.studentType = 'First Time'
-						and admission.isNonDegreeSeeking = 'false'
+						and admission.isNonDegreeSeeking = false
 						and admission.studentLevelUGGR = 'UG'
 				then 15 -- 15 - Part-time, first-time degree/certificate-seeking undergraduate
 				when admission.timeStatus = 'PT'
 						and admission.studentType = 'Transfer'
-						and admission.isNonDegreeSeeking = 'false'
+						and admission.isNonDegreeSeeking = false
 						and admission.studentLevelUGGR = 'UG'
 				then 16 -- 16 - Part-time, transfer-IN degree/certificate-seeking undergraduate
 				when admission.timeStatus = 'PT'
 						and admission.studentType = 'Continuing'
-						and admission.isNonDegreeSeeking = 'false'
+						and admission.isNonDegreeSeeking = false
 						and admission.studentLevelUGGR = 'UG'
 				then 17 -- 17 - Part-time, continuing degree/certificate-seeking undergraduate
 				when admission.timeStatus = 'PT'
-						and admission.isNonDegreeSeeking = 'true'
+						and admission.isNonDegreeSeeking = true
 						and admission.studentLevelUGGR = 'UG'
 				then 21 -- 21 - Part-time, non-degree/certificate-seeking undergraduate
 				when admission.timeStatus = 'PT'
@@ -1938,7 +1930,6 @@ from AdmissionMCR admission
 where admission.yearType = 'CY'
     and admission.ipedsInclude = 1
 -- NO LONGER NEEDED?			and admission.studentLevel in ('Undergrad', 'Graduate')
-		--filters out CE when client does not want to count CE taking a credit course as Undergrad
 ),
 
 /*****
@@ -1980,7 +1971,7 @@ where degree.yearType = 'PY'
 )
 where ipedsInclude = 1
     --?? specs don't state that the retention cohort is degree seeking only. Rather, that only degree seeking inclusions are allowed. This filter is an assumption
-    and isNonDegreeSeeking != 1 
+    and isNonDegreeSeeking = false 
 ),
 
 CohortExclusionMCR_RET as ( -- 6m 47s
@@ -2004,7 +1995,7 @@ from (
 	from CohortSTU_RET cohort
 		left join cohortExclusion exclusionENT on exclusionENT.personId = cohort.personId
 		    and exclusionENT.exclusionReason in ('Died', 'Medical Leave', 'Military Leave', 'Foreign Aid Service', 'Religious Leave')
-		    and exclusionENT.isIPEDSReportable = 1	
+		    and coalesce(exclusionENT.isIPEDSReportable, true) = true
 		left join AcademicTermOrder termorder
 			on termorder.termCode = exclusionENT.termCodeEffective
     where ((termorder.termOrder is not null
@@ -2027,7 +2018,11 @@ EmployeeMCR as (
 
 select *
 from (
-	select empENT.*,
+	select --empENT.*,
+	    empENT.personId,
+	    empENT.primaryFunction,
+	    coalesce(empENT.isIpedsMedicalOrDental, false) isIpedsMedicalOrDental,
+	    to_date(empENT.snapshotDate, 'YYYY-MM-DD') snapshotDate,
 		config.asOfDateHR asOfDate,
 		--config.termCodeFall termCodeFall,
 		row_number() over (
@@ -2044,13 +2039,12 @@ from (
 	where ((empENT.terminationDate IS NULL)
 		or (to_date(empENT.terminationDate, 'YYYY-MM-DD') > config.asOfDateHR
 		and to_date(empENT.hireDate, 'YYYY-MM-DD') <= config.asOfDateHR))
-		and empENT.isIpedsReportable = 1
-		-- ak 20200707 Adding employee status filter (PF-1552)
+		and coalesce(empENT.isIpedsReportable, true) = true
 		and empENT.employeeStatus = 'Active'
-		--jh 20200422 Including dummy date changes. (PF-1368)
-		and ((to_date(empENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-		and to_date(empENT.recordActivityDate, 'YYYY-MM-DD') <= config.asOfDateHR)
-		or to_date(empENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))
+		and ((coalesce(to_date(empENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+			and to_date(empENT.recordActivityDate, 'YYYY-MM-DD') <=  config.asOfDateHR)
+				or coalesce(to_date(empENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE))  
+		
 	)
 where employeeRn = 1
 ),
@@ -2060,8 +2054,14 @@ EmployeeAssignmentMCR as (
 
 select *
 from (
-	select empassignENT.*,
+	select --empassignENT.*,
+	    empassignENT.personId,
+	    empassignENT.position,
+	    empassignENT.fullOrPartTimeStatus,
+	    emp.primaryFunction,
+	    emp.isIpedsMedicalOrDental,
 		emp.asOfDate asOfDate,
+		emp.snapshotDate snapshotDate,
 		row_number() over (
 			partition by
 				empassignENT.personId,
@@ -2078,15 +2078,16 @@ from (
 			and to_date(empassignENT.assignmentStartDate, 'YYYY-MM-DD') <= emp.asOfDate
 			and (to_date(empassignENT.assignmentEndDate, 'YYYY-MM-DD') IS NULL
 			or to_date(empassignENT.assignmentEndDate, 'YYYY-MM-DD') >= emp.asOfDate)
-			and empassignENT.isUndergradStudent = 0
-			and empassignENT.isWorkStudy = 0
-			and empassignENT.isTempOrSeasonal = 0
-			and empassignENT.isIpedsReportable = 1
+			and coalesce(empassignENT.isUndergradStudent, false) = false
+			and coalesce(empassignENT.isWorkStudy, false) = false
+			and coalesce(empassignENT.isTempOrSeasonal, false) = false
+			and coalesce(empassignENT.isIpedsReportable, true) = true
 			and empassignENT.assignmentType = 'Primary'
 			and empassignENT.assignmentStatus = 'Active'
-			and ((to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS TIMESTAMP)
-			and to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') <= emp.asOfDate)
-			or to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS TIMESTAMP)) 
+			and ((coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+				and to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') <=  emp.asOfDate)
+					or coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
+				
 	)
 where jobRn = 1
 ),
@@ -2096,7 +2097,15 @@ EmployeePositionMCR as (
 
 select *
 from (
-	select empposENT.*,
+	select --empposENT.*,
+	    empposENT.position,
+	    empposENT.standardOccupationalCategory,
+	    empassign.personId,
+	    empassign.fullOrPartTimeStatus,
+	    empassign.primaryFunction,
+	    empassign.isIpedsMedicalOrDental,
+		empassign.asOfDate asOfDate,
+		empassign.snapshotDate,
 		row_number() over (
 			partition by
 				empposENT.position
@@ -2112,11 +2121,11 @@ from (
 			and to_date(empposENT.startDate, 'YYYY-MM-DD') <= empassign.asOfDate
 			and (empposENT.endDate IS NULL
 			or to_date(empposENT.endDate, 'YYYY-MM-DD') >= empassign.asOfDate)
-			and empposENT.isIpedsReportable = 1
+			and coalesce(empposENT.isIpedsReportable, true) = true
 			and empposENT.positionStatus != 'Cancelled'
-			and ((to_date(empposENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS TIMESTAMP)
-			and to_date(empposENT.recordActivityDate, 'YYYY-MM-DD') <= empassign.asOfDate)
-			or to_date(empposENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS TIMESTAMP)) 	
+			and ((coalesce(to_date(empposENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+				and to_date(empposENT.recordActivityDate, 'YYYY-MM-DD') <=  empassign.asOfDate)
+					or coalesce(to_date(empposENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE))
 	)
 where positionRn = 1
 ),
@@ -2126,7 +2135,13 @@ InstructionalAssignmentMCR as (
 
 select *
 from (
-	select instructassignENT.*,
+	select --instructassignENT.*,
+	    instructassignENT.personId,
+	    instructassignENT.termCode, 
+	    instructassignENT.partOfTermCode,
+	    instructassignENT.courseSectionNumber,
+		emp.asOfDate asOfDate,
+		emp.snapshotDate snapshotDate,
 		emp.asOfDate asOfDate,
 		row_number() over (
 			partition by
@@ -2141,14 +2156,15 @@ from (
                 (case when to_date(instructassignENT.snapshotDate, 'YYYY-MM-DD') < emp.snapshotDate then to_date(instructassignENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) asc,
 				instructassignENT.recordActivityDate desc
 		) jobRn
-	from EmployeeMCR emp
-	    cross join AcademicTermReportingRefactor rep on rep.surveySection = 'COHORT'
-		inner join InstructionalAssignment instructassignENT on instructassignENT.personId = emp.personId
-			and instructassignENT.termCode = rep.termCode
-			and instructassignENT.isIpedsReportable = 1 --true
-			and ((to_date(instructassignENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS TIMESTAMP)
-			and to_date(instructassignENT.recordActivityDate, 'YYYY-MM-DD') <= emp.asOfDate)
-			or to_date(instructassignENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS TIMESTAMP)) 
+    from AcademicTermReportingRefactor rep
+        inner join InstructionalAssignment instructassignENT on instructassignENT.termCode = rep.termCode
+			and instructassignENT.partOfTermCode = rep.partOfTermCode
+            and coalesce(instructassignENT.isIpedsReportable, true) = true
+        inner join EmployeeMCR emp on emp.personId = instructassignENT.personId
+    where rep.surveySection = 'COHORT'
+        and ((coalesce(to_date(instructassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+            and to_date(instructassignENT.recordActivityDate, 'YYYY-MM-DD') <=  emp.asOfDate)
+                or coalesce(to_date(instructassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE))
 	)
 where jobRn = 1
 ),
@@ -2160,7 +2176,6 @@ select instructassign.personId personId,
 	SUM(case when course.courseSectionNumber is not null then 1 else 0 end) totalCourses,
 	SUM(case when course.enrollmentHours = 0 then 1 else 0 end) totalNonCredCourses,
 	SUM(case when course.enrollmentHours > 0 then 1 else 0 end) totalCredCourses,
-	--SUM(case when course.courseLevel = 'Continuing Education' then 1 else 0 end) totalCECourses
 	SUM(case when course.courseLevel = 'Continuing Education' then 1 else 0 end) totalCECourses
 from instructionalAssignmentMCR instructassign
 	left join CourseMCR course on instructassign.termCode = course.termCode
@@ -2212,7 +2227,7 @@ from(
 			left join EmployeeAssignmentMCR empassign on emp.personId = empassign.personId
 			left join EmployeePositionMCR emppos on empassign.position = emppos.position
 			left join CourseTypeCountsEMP coursetypecnt on emp.personId = coursetypecnt.personId
-		where emp.isIpedsMedicalOrDental = 0
+		where emp.isIpedsMedicalOrDental = false
 		)
 	)
 ),
@@ -2763,4 +2778,4 @@ select 'F', -- part,
 -- field20
 from FTE_STU ftestu
 cross join CohortFTE_EMP fteemp
-
+--order by 1,2,3,4
