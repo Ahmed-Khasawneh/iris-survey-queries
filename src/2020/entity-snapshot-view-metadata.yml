@@ -2793,6 +2793,17 @@ STUDENT_FINANCIAL_AID_1:
       start: 2017-05-01
       end: 2019-12-31
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2019-12-31
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -2828,6 +2839,17 @@ STUDENT_FINANCIAL_AID_1:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2019-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -2922,6 +2944,17 @@ STUDENT_FINANCIAL_AID_2:
       start: 2017-05-01
       end: 2019-12-31
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2019-12-31
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -2957,6 +2990,17 @@ STUDENT_FINANCIAL_AID_2:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2019-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3048,6 +3092,17 @@ STUDENT_FINANCIAL_AID_3:
       start: 2017-05-01
       end: 2020-12-31
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-12-31
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3075,6 +3130,17 @@ STUDENT_FINANCIAL_AID_3:
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
       - June End
     snapshotDateRange:
       start: 2017-05-01
@@ -3148,6 +3214,17 @@ STUDENT_FINANCIAL_AID_4:
       start: 2017-05-01
       end: 2020-12-31
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-12-31
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3175,6 +3252,17 @@ STUDENT_FINANCIAL_AID_4:
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
       - June End
     snapshotDateRange:
       start: 2017-05-01
@@ -3248,6 +3336,17 @@ STUDENT_FINANCIAL_AID_5:
       start: 2017-05-01
       end: 2020-12-31
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-12-31
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3275,6 +3374,17 @@ STUDENT_FINANCIAL_AID_5:
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
     tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
       - June End
     snapshotDateRange:
       start: 2017-05-01
