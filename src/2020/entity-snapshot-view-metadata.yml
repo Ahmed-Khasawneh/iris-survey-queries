@@ -210,7 +210,7 @@ ADMISSIONS_1:
       start: 2020-05-01
       end: 2020-12-31
 
- - viewName: IPEDSClientConfig
+  - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Pre-Fall Summer Census
