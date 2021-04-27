@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20210427  jhanicak                                  Added AcademicTrack and DegreeProgram to enrollment surveys, FieldOfStudy to SFA
 # 20210331  jhanicak                                  Increased snapshot date range for Finance 
 # 20210212  akhasawneh                                Updating HR v1 entry ('October End' tag and new 'FacultyAppointment' entity) 
 # 20200201  akhasawneh                                Added GR200 v1,2
@@ -139,6 +140,16 @@ ADMISSIONS_1:
       start: 2020-05-01
       end: 2020-12-31
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
   - viewName: Admission
     entityName: Admission
     tagNames:
@@ -189,7 +200,17 @@ ADMISSIONS_1:
       start: 2020-05-01
       end: 2020-12-31
 
-  - viewName: IPEDSClientConfig
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2020-12-31
+
+ - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
       - Pre-Fall Summer Census
@@ -417,7 +438,17 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Campus
@@ -438,7 +469,7 @@ FALL_ENROLLMENT_1:
       - October End
     snapshotDateRange:
       start: 2019-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Course
     entityName: Course
@@ -447,7 +478,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: CourseSection
@@ -457,7 +488,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: CourseSectionSchedule
@@ -467,7 +498,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Degree
@@ -477,7 +508,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: DegreeProgram
@@ -487,7 +518,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Employee
@@ -521,7 +552,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: InstructionalAssignment
@@ -569,7 +600,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Registration
@@ -579,7 +610,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Student
@@ -589,7 +620,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
 FALL_ENROLLMENT_2:
@@ -614,7 +645,17 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Campus
@@ -635,7 +676,7 @@ FALL_ENROLLMENT_2:
       - October End
     snapshotDateRange:
       start: 2019-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Course
     entityName: Course
@@ -644,7 +685,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: CourseSection
@@ -654,7 +695,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: CourseSectionSchedule
@@ -664,7 +705,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Degree
@@ -674,7 +715,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: DegreeProgram
@@ -684,7 +725,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Employee
@@ -718,7 +759,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: InstructionalAssignment
@@ -766,7 +807,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Registration
@@ -776,7 +817,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Student
@@ -786,7 +827,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
 FALL_ENROLLMENT_3:
@@ -811,7 +852,17 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Campus
@@ -832,7 +883,7 @@ FALL_ENROLLMENT_3:
       - October End
     snapshotDateRange:
       start: 2019-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Course
     entityName: Course
@@ -841,7 +892,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: CourseSection
@@ -851,7 +902,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: CourseSectionSchedule
@@ -861,7 +912,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Degree
@@ -871,7 +922,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: DegreeProgram
@@ -881,7 +932,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Employee
@@ -915,7 +966,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: InstructionalAssignment
@@ -963,7 +1014,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Registration
@@ -973,7 +1024,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Student
@@ -983,7 +1034,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
 FALL_ENROLLMENT_4:
@@ -1008,7 +1059,17 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Campus
@@ -1029,7 +1090,7 @@ FALL_ENROLLMENT_4:
       - October End
     snapshotDateRange:
       start: 2019-05-01
-      end: 2019-12-31
+      end: 2020-12-31
 
   - viewName: Course
     entityName: Course
@@ -1038,7 +1099,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: CourseSection
@@ -1048,7 +1109,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: CourseSectionSchedule
@@ -1058,7 +1119,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Degree
@@ -1068,7 +1129,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: DegreeProgram
@@ -1078,7 +1139,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Employee
@@ -1112,7 +1173,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: InstructionalAssignment
@@ -1160,7 +1221,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Registration
@@ -1170,7 +1231,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
   - viewName: Student
@@ -1180,7 +1241,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2019-05-01
+      start: 2018-05-01
       end: 2020-12-31
 
 FINANCE_1:
@@ -2637,6 +2698,18 @@ OUTCOME_MEASURES_1:
       start: 2012-05-01
       end: 2020-10-01
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
   - viewName: Award
     entityName: Award
     tagNames:
@@ -2705,6 +2778,18 @@ OUTCOME_MEASURES_1:
     entityName: Degree
     tagNames:
       - August End
+    snapshotDateRange:
+      start: 2016-08-01
+      end: 2020-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
     snapshotDateRange:
       start: 2016-08-01
       end: 2020-10-01
@@ -3146,6 +3231,17 @@ STUDENT_FINANCIAL_AID_3:
       start: 2017-05-01
       end: 2020-12-31
 
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-12-31
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -3268,6 +3364,17 @@ STUDENT_FINANCIAL_AID_4:
       start: 2017-05-01
       end: 2020-12-31
 
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2020-12-31
+
   - viewName: FinancialAid
     entityName: FinancialAid
     tagNames:
@@ -3336,84 +3443,6 @@ STUDENT_FINANCIAL_AID_5:
       start: 2017-05-01
       end: 2020-12-31
 
-  - viewName: AcademicTrack
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - October End
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
-  - viewName: Campus
-    entityName: Campus
-    tagNames:
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
-  - viewName: Course
-    entityName: Course
-    tagNames:
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
-  - viewName: CourseSection
-    entityName: CourseSection
-    tagNames:
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
-  - viewName: CourseSectionSchedule
-    entityName: CourseSectionSchedule
-    tagNames:
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
-  - viewName: DegreeProgram
-    entityName: DegreeProgram
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - October End
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
-  - viewName: FinancialAid
-    entityName: FinancialAid
-    tagNames:
-      - Financial Aid Year End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
-  - viewName: IPEDSClientConfig
-    entityName: IPEDSClientConfig
-    tagNames:
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
-      end: 2020-12-31
-
   - viewName: MilitaryBenefit
     entityName: MilitaryBenefit
     tagNames:
@@ -3422,14 +3451,6 @@ STUDENT_FINANCIAL_AID_5:
       - GI Bill
     snapshotDateRange:
       start: 2020-05-01
-      end: 2020-12-31
-
-  - viewName: Registration
-    entityName: Registration
-    tagNames:
-      - June End
-    snapshotDateRange:
-      start: 2017-05-01
       end: 2020-12-31
 
   - viewName: Student
@@ -3537,6 +3558,19 @@ TWELVE_MONTH_ENROLLMENT_1:
       start: 2019-05-01
       end: 2020-08-01
 
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -3618,6 +3652,19 @@ TWELVE_MONTH_ENROLLMENT_2:
       start: 2019-05-01
       end: 2020-08-01
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3659,6 +3706,19 @@ TWELVE_MONTH_ENROLLMENT_2:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3751,6 +3811,19 @@ TWELVE_MONTH_ENROLLMENT_3:
       start: 2019-05-01
       end: 2020-08-01
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3792,6 +3865,19 @@ TWELVE_MONTH_ENROLLMENT_3:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3884,6 +3970,19 @@ TWELVE_MONTH_ENROLLMENT_4:
       start: 2019-05-01
       end: 2020-08-01
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3925,6 +4024,19 @@ TWELVE_MONTH_ENROLLMENT_4:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
