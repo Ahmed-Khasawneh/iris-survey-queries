@@ -113,12 +113,10 @@ from (
 		defvalues.genderForUnknown genderForUnknown,
 		defvalues.genderForNonBinary genderForNonBinary,
 		defvalues.repPeriodTag1 repPeriodTag1,
---***** start survey-specific mods
         defvalues.reportingDateStart reportingDateStart,
         defvalues.reportingDateEnd reportingDateEnd,
         defvalues.asOfDate asOfDate,
         defvalues.hrIncludeSecondarySalary hrIncludeSecondarySalary,
---***** end survey-specific mods
 		1 configRn
     from DefaultValues defvalues
     where defvalues.surveyYear not in (select max(configENT.surveyCollectionYear)
