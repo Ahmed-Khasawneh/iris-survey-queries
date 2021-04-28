@@ -17,6 +17,7 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
+20210428            jhanicak                            PF-2161 Add coalesce, upper and default values
 20210408            jhanicak                            PF-2140 Modify boolean filters to use 1 or 0 (no null, false, true)
 20210407            akhasawneh                 			PF-2137 Add OccCat5 is null to correct counts
 20210330            jhanicak                            PF-2099 Add new fields, modify logic in views
@@ -41,14 +42,12 @@ select '2021' surveyYear,
 	CAST('2020-10-31' AS DATE) reportingDateEnd, --newHireendDate
 	'M' genderForUnknown, --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
---***** start survey-specific mods
     CAST('2020-11-01' AS DATE) asOfDate,
 	'N' hrIncludeSecondarySalary --Y = Yes, N = No
---***** end survey-specific mods
 
 /*
 --Test Default (Begin)
-select '1415' surveyYear, 
+select '1415' surveyYear, --'1415' surveyYear, 
 	'HR1' surveyId,
 	'HR Reporting End' repPeriodTag1, --used for all status updates and IPEDS tables
 	CAST('9999-09-09' as DATE) snapshotDate,  
@@ -56,10 +55,8 @@ select '1415' surveyYear,
 	CAST('2014-10-31' AS DATE) reportingDateEnd, --newHireendDate
 	'M' genderForUnknown, --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
---***** start survey-specific mods
     CAST('2014-11-01' AS DATE) asOfDate,
 	'N' hrIncludeSecondarySalary --Y = Yes, N = No
---***** end survey-specific mods
 */
 ),
 
@@ -82,13 +79,11 @@ select ConfigLatest.surveyYear surveyYear,
 	upper(ConfigLatest.genderForUnknown) genderForUnknown,
 	upper(ConfigLatest.genderForNonBinary) genderForNonBinary,
     ConfigLatest.repPeriodTag1 repPeriodTag1,
---***** start survey-specific mods
     ConfigLatest.reportingDateStart reportingDateStart,
     ConfigLatest.reportingDateEnd reportingDateEnd,
     ConfigLatest.asOfDate asOfDate,
-    ConfigLatest.hrIncludeSecondarySalary hrIncludeSecondarySalary
+    upper(ConfigLatest.hrIncludeSecondarySalary) hrIncludeSecondarySalary
     --'N' hrIncludeSecondarySalary
---***** end survey-specific mods
 from (
     select clientConfigENT.surveyCollectionYear surveyYear,
         'configFullYearTag' source,
@@ -96,12 +91,10 @@ from (
 		coalesce(clientConfigENT.genderForUnknown, defvalues.genderForUnknown) genderForUnknown,
 		coalesce(clientConfigENT.genderForNonBinary, defvalues.genderForNonBinary) genderForNonBinary,
 		defvalues.repPeriodTag1 repPeriodTag1,
---***** start survey-specific mods
         defvalues.reportingDateStart reportingDateStart,
         defvalues.reportingDateEnd reportingDateEnd,
         defvalues.asOfDate asOfDate,
         coalesce(clientConfigENT.hrIncludeSecondarySalary, defvalues.hrIncludeSecondarySalary) hrIncludeSecondarySalary,
---***** end survey-specific mods
 		row_number() over (
 			partition by
 				clientConfigENT.surveyCollectionYear
@@ -121,12 +114,10 @@ from (
 		defvalues.genderForUnknown genderForUnknown,
 		defvalues.genderForNonBinary genderForNonBinary,
 		defvalues.repPeriodTag1 repPeriodTag1,
---***** start survey-specific mods
         defvalues.reportingDateStart reportingDateStart,
         defvalues.reportingDateEnd reportingDateEnd,
         defvalues.asOfDate asOfDate,
         defvalues.hrIncludeSecondarySalary hrIncludeSecondarySalary,
---***** end survey-specific mods
 		1 configRn
     from DefaultValues defvalues
     where defvalues.surveyYear not in (select max(configENT.surveyCollectionYear)
@@ -157,19 +148,18 @@ select *,
          else 0 
     end isCurrentEmployee
 from (
---Current employees as-of 11/01/2020
     select empENT.personId personId,
-	    empENT.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+	    coalesce(empENT.isIpedsMedicalOrDental, false) isIpedsMedicalOrDental,
 	    empENT.primaryFunction primaryFunction,
 	    empENT.employeeGroup employeeGroup,
         to_date(empENT.snapshotDate,'YYYY-MM-DD') snapshotDate,
         empENT.employeeStatus employeeStatus, 
-        to_date(empENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
+        coalesce(to_date(empENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
         to_date(empENT.hireDate,'YYYY-MM-DD') hireDate,
         to_date(empENT.terminationDate,'YYYY-MM-DD') terminationDate,
         to_date(empENT.leaveStartDate,'YYYY-MM-DD') leaveStartDate,
         to_date(empENT.leaveEndDate,'YYYY-MM-DD') leaveEndDate,
-		ROW_NUMBER() OVER (
+		coalesce(ROW_NUMBER() OVER (
 			PARTITION BY
 				empENT.personId
 			ORDER BY
@@ -177,26 +167,24 @@ from (
 			    (case when to_date(empENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(empENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                 (case when to_date(empENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(empENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 				empENT.recordActivityDate desc
-		) empRn,
---***** start survey-specific mods
+		), 1) empRn,
         repperiod.asOfDate asOfDate,
         repperiod.reportingDateStart reportingDateStart,
 		repperiod.reportingDateEnd reportingDateEnd,
 		repperiod.hrIncludeSecondarySalary hrIncludeSecondarySalary,
 		repperiod.genderForUnknown genderForUnknown,
 		repperiod.genderForNonBinary genderForNonBinary
---***** end survey-specific mods
     from Employee empENT 
         cross join ClientConfigMCR repperiod
-			on ((to_date(empENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+			on ((coalesce(to_date(empENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
 				and to_date(empENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.asOfDate)
-			        or to_date(empENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
+			        or coalesce(to_date(empENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
     where ((empENT.terminationDate is null) -- all non-terminated employees
 			or (to_date(empENT.hireDate,'YYYY-MM-DD') BETWEEN to_date(repperiod.reportingDateStart,'YYYY-MM-DD') 
 				and to_date(repperiod.reportingDateEnd,'YYYY-MM-DD')) -- new hires between Nov 1 and Oct 31
 			or (to_date(empENT.terminationDate,'YYYY-MM-DD') > repperiod.asOfDate
 				and to_date(empENT.hireDate,'YYYY-MM-DD') <= repperiod.asOfDate)) -- employees terminated after the as-of date
-			and empENT.isIpedsReportable = 1
+			and coalesce(empENT.isIpedsReportable, true) = true
 	)
 where empRn = 1
 ),
@@ -213,26 +201,24 @@ from (
         emp.employeeGroup employeeGroup,
         emp.isNewHire isNewHire,
         emp.isCurrentEmployee isCurrentEmployee,
---***** start survey-specific mods
         emp.asOfDate asOfDate,
         emp.reportingDateStart reportingDateStart,
         emp.reportingDateEnd reportingDateEnd,
         emp.hrIncludeSecondarySalary hrIncludeSecondarySalary,
 		emp.genderForUnknown genderForUnknown,
 		emp.genderForNonBinary genderForNonBinary,
---***** start survey-specific mods
         empassignENT.fullOrPartTimeStatus fullOrPartTimeStatus,
-        empassignENT.isFaculty isFaculty,
+        coalesce(empassignENT.isFaculty, false) isFaculty,
 	    empassignENT.position position,
 	    empassignENT.assignmentDescription assignmentDescription,
         empassignENT.employeeClass employeeClass,
         empassignENT.annualSalary annualSalary,
         to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
         empassignENT.assignmentStatus assignmentStatus,
-        empassignENT.isUndergradStudent isUndergradStudent,
-		empassignENT.isWorkStudy isWorkStudy,
-		empassignENT.isTempOrSeasonal isTempOrSeasonal,
-        ROW_NUMBER() OVER (
+        coalesce(empassignENT.isUndergradStudent, false) isUndergradStudent,
+		coalesce(empassignENT.isWorkStudy, false) isWorkStudy,
+		coalesce(empassignENT.isTempOrSeasonal, false) isTempOrSeasonal,
+        coalesce(ROW_NUMBER() OVER (
 			PARTITION BY
 				emp.personId,
 				empassignENT.personId,
@@ -244,16 +230,16 @@ from (
                 (case when to_date(empassignENT.snapshotDate, 'YYYY-MM-DD') < emp.snapshotDate then to_date(empassignENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 				empassignENT.assignmentStartDate desc,
                 empassignENT.recordActivityDate desc
-         ) jobRn
+         ), 1) jobRn
     from EmployeeMCR emp
 		left join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
-			and ((to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+			and ((coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
 				and to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') <= emp.asOfDate)
-			        or to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
+			        or coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
 			and to_date(empassignENT.assignmentStartDate, 'YYYY-MM-DD') <= emp.asOfDate
 			and (empassignENT.assignmentendDate is null 
 				or to_date(empassignENT.assignmentendDate, 'YYYY-MM-DD') >= emp.asOfDate)
-			and empassignENT.isIpedsReportable = 1
+			and coalesce(empassignENT.isIpedsReportable, true) = true
 			and empassignENT.assignmentType = 'Primary'
 			and empassignENT.position is not null
     where emp.isCurrentEmployee = 1
@@ -262,9 +248,9 @@ from (
 where jobRn = 1
     and ((recordActivityDate != CAST('9999-09-09' AS DATE) and assignmentStatus = 'Active')
                 or recordActivityDate = CAST('9999-09-09' AS DATE))
-    and isUndergradStudent = 0
-    and isWorkStudy = 0
-    and isTempOrSeasonal = 0
+    and isUndergradStudent = false
+    and isWorkStudy = false
+    and isTempOrSeasonal = false
 ),
 
 EmployeeAssignmentMCR_SEC AS (
@@ -273,15 +259,31 @@ EmployeeAssignmentMCR_SEC AS (
 select personId personId,
 	SUM(annualSalary) annualSalary2
 from (
-	select emp.personId personId,
+	select emp.personId personId, 
+        emp.snapshotDate snapshotDate,
+        emp.isIpedsMedicalOrDental isIpedsMedicalOrDental,
+        emp.primaryFunction primaryFunction,
+        emp.employeeGroup employeeGroup,
+        emp.isNewHire isNewHire,
+        emp.isCurrentEmployee isCurrentEmployee,
+        emp.asOfDate asOfDate,
+        emp.reportingDateStart reportingDateStart,
+        emp.reportingDateEnd reportingDateEnd,
         emp.hrIncludeSecondarySalary hrIncludeSecondarySalary,
+		emp.genderForUnknown genderForUnknown,
+		emp.genderForNonBinary genderForNonBinary,
+        empassignENT.fullOrPartTimeStatus fullOrPartTimeStatus,
+        coalesce(empassignENT.isFaculty, false) isFaculty,
+	    upper(empassignENT.position) position,
+	    empassignENT.assignmentDescription assignmentDescription,
+        empassignENT.employeeClass employeeClass,
         empassignENT.annualSalary annualSalary,
         to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
         empassignENT.assignmentStatus assignmentStatus,
-        empassignENT.isUndergradStudent isUndergradStudent,
-		empassignENT.isWorkStudy isWorkStudy,
-		empassignENT.isTempOrSeasonal isTempOrSeasonal,
-        ROW_NUMBER() OVER (
+        coalesce(empassignENT.isUndergradStudent, false) isUndergradStudent,
+		coalesce(empassignENT.isWorkStudy, false) isWorkStudy,
+		coalesce(empassignENT.isTempOrSeasonal, false) isTempOrSeasonal,
+        coalesce(ROW_NUMBER() OVER (
 			PARTITION BY
 				emp.personId,
 				empassignENT.personId,
@@ -293,16 +295,16 @@ from (
                 (case when to_date(empassignENT.snapshotDate, 'YYYY-MM-DD') < emp.snapshotDate then to_date(empassignENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 				empassignENT.assignmentStartDate desc,
                 empassignENT.recordActivityDate desc
-         ) jobRn
+         ), 1) jobRn
     from EmployeeMCR emp
 		left join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
-			and ((to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+			and ((coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
 				and to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') <= emp.asOfDate)
-			        or to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
+			        or coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
 			and to_date(empassignENT.assignmentStartDate, 'YYYY-MM-DD') <= emp.asOfDate
 			and (empassignENT.assignmentendDate is null 
 				or to_date(empassignENT.assignmentendDate, 'YYYY-MM-DD') >= emp.asOfDate)
-			and empassignENT.isIpedsReportable = 1
+			and coalesce(empassignENT.isIpedsReportable, true) = true
 			and empassignENT.assignmentType = 'Secondary'
 			and empassignENT.position is not null
     where (emp.isCurrentEmployee = 1
@@ -312,9 +314,9 @@ from (
 where jobRn = 1
     and ((recordActivityDate != CAST('9999-09-09' AS DATE) and assignmentStatus = 'Active')
             or recordActivityDate = CAST('9999-09-09' AS DATE))
-    and isUndergradStudent = 0
-    and isWorkStudy = 0
-    and isTempOrSeasonal = 0
+    and isUndergradStudent = false
+    and isWorkStudy = false
+    and isTempOrSeasonal = false
 group by personId
 ),
 
@@ -334,15 +336,13 @@ from (
 	    empassign.position position,
 	    empassign.assignmentDescription assignmentDescription,
         empassign.employeeClass employeeClass,
-        empassign.annualSalary annualSalary, 
---***** start survey-specific mods
+        empassign.annualSalary annualSalary,
         empassign.asOfDate asOfDate,
         empassign.reportingDateStart reportingDateStart,
         empassign.reportingDateEnd reportingDateEnd,
 		empassign.genderForUnknown genderForUnknown,
 		empassign.genderForNonBinary genderForNonBinary,
---***** end survey-specific mods
-        to_date(empposENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
+        coalesce(to_date(empposENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
 	    empposENT.positionDescription positionDescription,
         empposENT.positionStatus positionStatus,
 	    empposENT.standardOccupationalCategory standardOccupationalCategory,
@@ -350,7 +350,7 @@ from (
 	    empposENT.positionGroup positionGroup,
 	    empposENT.positionClass positionClass,
 	    empposENT.federalEmploymentCategory federalEmploymentCategory,
-		ROW_NUMBER() OVER (
+		coalesce(ROW_NUMBER() OVER (
 			PARTITION BY
 			    empassign.personId,
 			    empassign.position,
@@ -361,18 +361,18 @@ from (
                 (case when to_date(empposENT.snapshotDate, 'YYYY-MM-DD') < empassign.snapshotDate then to_date(empposENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 				empposENT.startDate DESC,
 				empposENT.recordActivityDate DESC
-        ) empposRn
+        ), 1) empposRn
     from EmployeeAssignmentMCR empassign 
-		left join EmployeePosition empposENT on empassign.position = empposENT.position
-			and ((to_date(empposENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+		left join EmployeePosition empposENT on empassign.position = upper(empposENT.position)
+			and ((coalesce(to_date(empposENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
 				and to_date(empposENT.recordActivityDate, 'YYYY-MM-DD') <= empassign.asOfDate)
-			        or to_date(empposENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
+			        or coalesce(to_date(empposENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
 		and to_date(empposENT.startDate, 'YYYY-MM-DD') <= empassign.asOfDate
 			and (empposENT.endDate is null 
 				or to_date(empposENT.endDate, 'YYYY-MM-DD') >= empassign.asOfDate)
-			and empposENT.isIpedsReportable = 1
+			and coalesce(empposENT.isIpedsReportable, true) = true
 	)
-where empposRn <= 1
+where empposRn = 1
     and ((recordActivityDate != CAST('9999-09-09' AS DATE) and positionStatus = 'Active')
             or recordActivityDate = CAST('9999-09-09' AS DATE))
 ),
@@ -404,16 +404,14 @@ from (
     	emppos.skillClass skillClass,
 	    emppos.positionGroup positionGroup,
 	    emppos.positionClass positionClass,
-	    emppos.federalEmploymentCategory ECIP, 
---***** start survey-specific mods
+	    emppos.federalEmploymentCategory ECIP,
         emppos.asOfDate asOfDate,
         emppos.reportingDateStart reportingDateStart,
         emppos.reportingDateEnd reportingDateEnd,
 		emppos.genderForUnknown genderForUnknown,
 		emppos.genderForNonBinary genderForNonBinary,
---***** start survey-specific mods
     	facultyENT.facultyRank facultyRank,
-		ROW_NUMBER() OVER (
+		coalesce(ROW_NUMBER() OVER (
 			PARTITION BY
 				emppos.personId
             ORDER BY
@@ -422,23 +420,19 @@ from (
                 (case when to_date(facultyENT.snapshotDate, 'YYYY-MM-DD') < emppos.snapshotDate then to_date(facultyENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 				facultyENT.recordActivityDate desc,
 				facultyENT.facultyRankActionDate desc
-          ) facultyRn
+          ), 1) facultyRn
     from EmployeePositionMCR emppos
 		left join Faculty facultyENT on emppos.personId = facultyENT.personId
-			and ((to_date(facultyENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-				and to_date(facultyENT.recordActivityDate,'YYYY-MM-DD') <= emppos.asOfDate)
-			        or to_date(facultyENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))
-            and to_date(facultyENT.facultyRankStartDate,'YYYY-MM-DD') <= emppos.asOfDate
-            and ((to_date(facultyENT.facultyRankActionDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+            and ((coalesce(to_date(facultyENT.facultyRankActionDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
                             and to_date(facultyENT.facultyRankActionDate,'YYYY-MM-DD') <= emppos.asOfDate)
-                        or (to_date(facultyENT.facultyRankActionDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
-                            and ((to_date(facultyENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
+                        or (coalesce(to_date(facultyENT.facultyRankActionDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)
+                            and ((coalesce(to_date(facultyENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' as DATE)
                                     and to_date(facultyENT.recordActivityDate,'YYYY-MM-DD') <= emppos.asOfDate)
-                                or to_date(facultyENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE))))
-			and facultyENT.isIpedsReportable = 1
+                                or coalesce(to_date(facultyENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' as DATE))))
+			and coalesce(facultyENT.isIpedsReportable, true) = true
 		left join EmployeeAssignmentMCR_SEC empassignsec on empassignsec.personId = emppos.personId
   )
-where facultyRn <= 1
+where facultyRn = 1
 ),
 
 FacultyAppointmentMCR as (
@@ -474,13 +468,11 @@ from (
 	        fac.positionGroup positionGroup,
 	        fac.positionClass positionClass,
 	        fac.ECIP ECIP, 
---***** start survey-specific mods
             fac.asOfDate asOfDate,
             to_date(fac.reportingDateStart,'YYYY-MM-DD') reportingDateStart,
             to_date(fac.reportingDateEnd,'YYYY-MM-DD') reportingDateEnd,
             fac.genderForUnknown genderForUnknown,
             fac.genderForNonBinary genderForNonBinary,
---***** end survey-specific mods
             facappENT.appointmentDecision appointmentDecision,
 			facappENT.appointmentPosition appointmentPosition,
 			facappENT.tenureStatus tenureStatus,
@@ -488,31 +480,31 @@ from (
 			to_date(facappENT.tenureTrackStartDate,'YYYY-MM-DD') tenureTrackStartDate,
 			facappENT.nonTenureContractLength nonTenureContractLength,
 			facappENT.snapshotDate snapshotDateFacapp,
-			to_date(facappENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
-            ROW_NUMBER() OVER (
-			PARTITION BY
-				fac.personId
-            ORDER BY
-                (case when to_date(facappENT.snapshotDate,'YYYY-MM-DD') = fac.snapshotDate then 1 else 2 end) asc,
-                (case when to_date(facappENT.snapshotDate, 'YYYY-MM-DD') > fac.snapshotDate then to_date(facappENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
-                (case when to_date(facappENT.snapshotDate, 'YYYY-MM-DD') < fac.snapshotDate then to_date(facappENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-				facappENT.appointmentStartDate desc,
-				facappENT.recordActivityDate desc
-          ) facappRn
+			coalesce(to_date(facappENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
+            coalesce(ROW_NUMBER() OVER (
+                PARTITION BY
+                    fac.personId
+                ORDER BY
+                    (case when to_date(facappENT.snapshotDate,'YYYY-MM-DD') = fac.snapshotDate then 1 else 2 end) asc,
+                    (case when to_date(facappENT.snapshotDate, 'YYYY-MM-DD') > fac.snapshotDate then to_date(facappENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
+                    (case when to_date(facappENT.snapshotDate, 'YYYY-MM-DD') < fac.snapshotDate then to_date(facappENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
+                    facappENT.appointmentStartDate desc,
+                    facappENT.recordActivityDate desc
+          ), 1) facappRn
 		from FacultyMCR fac
 		    left join FacultyAppointment facappENT on facappENT.personId = fac.personId
-                and ((to_date(facappENT.recordActivityDate, 'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
-				and to_date(facappENT.recordActivityDate, 'YYYY-MM-DD') <= fac.asOfDate)
-			        or to_date(facappENT.recordActivityDate, 'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
+                and ((coalesce(to_date(facappENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+                        and to_date(facappENT.recordActivityDate, 'YYYY-MM-DD') <= fac.asOfDate)
+			        or coalesce(to_date(facappENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
 		        and (facappENT.appointmentPosition is null
-		            or facappENT.appointmentPosition = fac.position)
+		            or upper(facappENT.appointmentPosition) = fac.position)
     		    and to_date(facappENT.appointmentStartDate, 'YYYY-MM-DD') <= fac.asOfDate
 			    and (facappENT.appointmentEndDate is null 
 				    or to_date(facappENT.appointmentEndDate, 'YYYY-MM-DD') >= fac.asOfDate)			    
-			    and facappENT.isIPEDSReportable = 1
+			    and coalesce(facappENT.isIpedsReportable, true) = true
 	)
 ) 
-where facappRn <= 1
+where facappRn = 1
 and ((recordActivityDate is null 
         or (recordActivityDate != CAST('9999-09-09' AS DATE) and appointmentDecision = 'Accepted')
             or recordActivityDate = CAST('9999-09-09' AS DATE)))
@@ -540,10 +532,10 @@ select pers.personId personId,
             when pers.gender = 'Non-Binary' then pers.genderForNonBinary
             else pers.genderForUnknown
     end) ipedsGender,
-    (case when pers.isUSCitizen = 1 or ((pers.isInUSOnVisa = 1 or pers.asOfDate between pers.visaStartDate and pers.visaEndDate)
+    (case when pers.isUSCitizen = true or ((pers.isInUSOnVisa = true or pers.asOfDate between pers.visaStartDate and pers.visaEndDate)
                             and pers.visaType in ('Employee Resident', 'Other Resident')) then 
-        (case when pers.isHispanic = 1 then '2' 
-            when pers.isMultipleRaces = 1 then '8' 
+        (case when pers.isHispanic = true then '2' 
+            when pers.isMultipleRaces = true then '8' 
             when pers.ethnicity != 'Unknown' and pers.ethnicity is not null then
                 (case when pers.ethnicity = 'Hispanic or Latino' then '2'
                     when pers.ethnicity = 'American Indian or Alaskan Native' then '3'
@@ -553,15 +545,13 @@ select pers.personId personId,
                     when pers.ethnicity = 'Caucasian' then '7'
                 else '9' end) 
             else '9' end) -- 'race and ethnicity unknown'
-        when ((pers.isInUSOnVisa = 1 or pers.asOfDate between pers.visaStartDate and pers.visaEndDate)
+        when ((pers.isInUSOnVisa = true or pers.asOfDate between pers.visaStartDate and pers.visaEndDate)
                 and pers.visaType in ('Student Non-resident', 'Employee Non-resident', 'Other Non-resident')) then '1' -- 'nonresident alien'
         else '9' -- 'race and ethnicity unknown'
     end) ipedsEthnicity,
---***** start survey-specific mods
     pers.asOfDate asOfDate,
     pers.reportingDateStart reportingDateStart,
     pers.reportingDateEnd reportingDateEnd
---***** start survey-specific mods
 from ( 
     select distinct fac.personId personId, 
             fac.snapshotDate snapshotDate,
@@ -577,25 +567,23 @@ from (
             fac.facultyRank facultyRank,
             fac.totalSalary totalSalary,
 	        fac.ECIP ECIP,
---***** start survey-specific mods
             fac.asOfDate asOfDate,
             fac.reportingDateStart reportingDateStart,
             fac.reportingDateEnd reportingDateEnd,
             fac.genderForNonBinary genderForNonBinary,
             fac.genderForUnknown genderForUnknown,
---***** start survey-specific mods
             personENT.ethnicity ethnicity,
-            personENT.isHispanic isHispanic,
-            personENT.isMultipleRaces isMultipleRaces,
-            personENT.isInUSOnVisa isInUSOnVisa,
+            coalesce(personENT.isHispanic, false) isHispanic,
+            coalesce(personENT.isMultipleRaces, false) isMultipleRaces,
+            coalesce(personENT.isInUSOnVisa, false) isInUSOnVisa,
             to_date(personENT.visaStartDate,'YYYY-MM-DD') visaStartDate,
             to_date(personENT.visaEndDate,'YYYY-MM-DD') visaEndDate,
             personENT.visaType visaType,
-            personENT.isUSCitizen isUSCitizen,
+            coalesce(personENT.isUSCitizen, true) isUSCitizen,
             personENT.gender gender,
             upper(personENT.nation) nation,
             upper(personENT.state) state,
-            row_number() over (
+            coalesce(row_number() over (
                 partition by
                     fac.personId,
                     personENT.personId
@@ -604,13 +592,13 @@ from (
 			        (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') > fac.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') < fac.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                     personENT.recordActivityDate desc
-            ) personRn
+            ), 1) personRn
     from FacultyAppointmentMCR fac 
         left join Person personENT on fac.personId = personENT.personId
-            and personENT.isIpedsReportable = 1
-            and ((to_date(personENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+            and coalesce(personENT.isIpedsReportable, true) = true
+            and ((coalesce(to_date(personENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
                and to_date(personENT.recordActivityDate,'YYYY-MM-DD') <= fac.asOfDate) 
-                or to_date(personENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE))
+                or coalesce(to_date(personENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE))
     ) pers
 where pers.personRn = 1
 ),
@@ -626,7 +614,7 @@ select cohortemp.personId personId,
 	cohortemp.isCurrentEmployee currentEmployee, --1, 0
 	cohortemp.isNewHire newHire, --1, 0
 	cohortemp.fullOrPartTimeStatus fullPartInd, --Full Time, Part Time, Other
-	(case when cohortemp.isIpedsMedicalOrDental = 1 then 1 else 2 end) isMedical, --1, 0
+	(case when cohortemp.isIpedsMedicalOrDental = true then 1 else 2 end) isMedical, --1, 0
 	(case when cohortemp.ipedsGender = 'M' then cohortemp.ipedsEthnicity
 	   when cohortemp.ipedsGender = 'F'
 	        then (case when cohortemp.ipedsEthnicity = '1' then '10' -- 'nonresident alien'
@@ -643,7 +631,7 @@ select cohortemp.personId personId,
 	(case when cohortemp.ipedsGender = 'M' then 1 else 2 end) gender,
 	cohortemp.employeeFunction employeeFunction,
 	cohortemp.ESOC ESOC,
-	cohortemp.isFaculty isFaculty, --1, 0
+	(case when cohortemp.isFaculty = true then 1 else 0 end) isFaculty, --1, 0
 	(case when cohortemp.employeeFunction in (
 					'Instruction with Research/Public Service',
 					'Instruction - Credit',
@@ -659,7 +647,7 @@ select cohortemp.personId personId,
 		when cohortemp.nonTenureContractLength = 'Multi-year' then 3
 		when cohortemp.nonTenureContractLength = 'Less than Annual' then 4
 		when cohortemp.nonTenureContractLength = 'Annual' then 5
-		when cohortemp.isFaculty = 0 then 6
+		when cohortemp.isFaculty = false then 6
 		when cohortemp.nonTenureContractLength = 'Indefinite' then 7
 		else 7 
 	end) tenure,
@@ -670,7 +658,7 @@ select cohortemp.personId personId,
 		when cohortemp.facultyRank = 'Lecturer' then 5
 		when cohortemp.facultyRank = 'No Academic Rank' then 6
         when cohortemp.facultyRank is null then 6
-		when cohortemp.isFaculty = 0 then 7
+		when cohortemp.isFaculty = false then 7
 		else 6 
 	end) rankCode,
 	cohortemp.totalSalary totalSalary,
@@ -1603,3 +1591,5 @@ from (
     )
 group by occcat5,
         reg
+
+order by 1, 2, 3 asc
