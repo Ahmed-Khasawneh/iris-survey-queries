@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20200503  akhasawneh                                Updating AcademicLibraries entity list. PF-1960
 # 20210427  jhanicak                                  Added AcademicTrack and DegreeProgram to enrollment surveys, FieldOfStudy to SFA
 # 20210331  jhanicak                                  Increased snapshot date range for Finance 
 # 20210212  akhasawneh                                Updating HR v1 entry ('October End' tag and new 'FacultyAppointment' entity) 
@@ -47,34 +48,20 @@
 ACADEMIC_LIBRARIES_1:
   # reporting period: fiscal year ending prior to 2020-10-01
 
+  - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2020-01-01
+      end: 2020-10-01
+
   - viewName: FiscalYear
     entityName: FiscalYear
     tagNames:
       - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2020-01-01
-      end: 2020-10-01
-
-  - viewName: IPEDSClientConfig
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2020-01-01
-      end: 2020-10-01
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2020-01-01
-      end: 2020-10-01
-
-  - viewName: InterlibraryLoanStatistic
-    entityName: InterlibraryLoanStatistic
-    tagNames:
-      - Fiscal Year Lockdown
+      - August End
     snapshotDateRange:
       start: 2020-01-01
       end: 2020-10-01
@@ -83,30 +70,7 @@ ACADEMIC_LIBRARIES_1:
     entityName: LibraryBranch
     tagNames:
       - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2020-01-01
-      end: 2020-10-01
-
-  - viewName: LibraryCirculationStatistic
-    entityName: LibraryCirculationStatistic
-    tagNames:
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2020-01-01
-      end: 2020-10-01
-
-  - viewName: LibraryCollectionStatistic
-    entityName: LibraryCollectionStatistic
-    tagNames:
-      - Fiscal Year Lockdown
-    snapshotDateRange:
-      start: 2020-01-01
-      end: 2020-10-01
-
-  - viewName: LibraryExpenses
-    entityName: LibraryExpenses
-    tagNames:
-      - Fiscal Year Lockdown
+      - August End
     snapshotDateRange:
       start: 2020-01-01
       end: 2020-10-01
@@ -115,14 +79,43 @@ ACADEMIC_LIBRARIES_1:
     entityName: LibraryInventory
     tagNames:
       - Fiscal Year Lockdown
+      - August End
     snapshotDateRange:
       start: 2020-01-01
       end: 2020-10-01
 
-  - viewName: LibraryItemTransaction
-    entityName: LibraryItemTransaction
+  - viewName: LibraryCollectionStatistic
+    entityName: LibraryCollectionStatistic
     tagNames:
       - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2020-01-01
+      end: 2020-10-01
+
+  - viewName: LibraryCirculationStatistic
+    entityName: LibraryCirculationStatistic
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2020-01-01
+      end: 2020-10-01
+
+  - viewName: LibraryExpenses
+    entityName: LibraryExpenses
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2020-01-01
+      end: 2020-10-01
+
+  - viewName: InterlibraryLoanStatistic
+    entityName: InterlibraryLoanStatistic
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
     snapshotDateRange:
       start: 2020-01-01
       end: 2020-10-01
