@@ -1,7 +1,7 @@
 /********************
 
 EVI PRODUCT:	DORIS 2020-21 IPEDS Survey  
-FILE NAME: 		Academic Libraries (AL1)
+FILE NAME:	Academic Libraries (AL1)
 FILE DESC:      Academic Libraries: Degree-granting institutions that have library expenses
 AUTHOR:         akhasawneh
 CREATED:        20210311
@@ -13,7 +13,7 @@ Survey Formatting
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
-20210504	        akhasawneh				             Initial version
+20210504	    akhasawneh				Initial version
 
 ********************/ 
 
@@ -456,11 +456,11 @@ The views below are used to ensure that records exist for all IPEDS expected val
 select
     'A' part,
     1 field1, -- Library collections type 1=Physical, 2=Digital/Electronic
-    round(sum(bookCount), 2) field2, -- books 0 to 999999999999, -2 or blank = not-applicable
+    sum(bookCount) field2, -- books 0 to 999999999999, -2 or blank = not-applicable
     null field3, -- Databases (Applicable only to Digital/Electronic) 0 to 999999999999, -2 or blank = not-applicable
-    round(sum(mediaCount), 2) field4, -- Media 0 to 999999999999, -2 or blank = not-applicable
-    round(sum(serialCount), 2) field5, -- Serials 0 to 999999999999, -2 or blank = not-applicable
-    round(sum(circulationCountPhysical), 2) field6, -- Circulation 0 to 999999999999, -2 or blank = not-applicable
+    sum(mediaCount) field4, -- Media 0 to 999999999999, -2 or blank = not-applicable
+    sum(serialCount) field5, -- Serials 0 to 999999999999, -2 or blank = not-applicable
+    sum(circulationCountPhysical) field6, -- Circulation 0 to 999999999999, -2 or blank = not-applicable
     null field7,
     null field8
 from (
@@ -485,11 +485,11 @@ union
 select
     'A' part,
     2 field1, -- Library collections type 1=Physical, 2=Digital/Electronic
-    round(sum(bookCount), 2) field2, -- books 0 to 999999999999, -2 or blank = not-applicable
-    round(sum(databaseCount), 2) field3, -- Databases (Applicable only to Digital/Electronic) 0 to 999999999999, -2 or blank = not-applicable
-    round(sum(mediaCount), 2) field4, -- Media 0 to 999999999999, -2 or blank = not-applicable
-    round(sum(serialCount), 2) field5, -- Serials 0 to 999999999999, -2 or blank = not-applicable
-    round(sum(circulationCountDigital), 2) field6, -- Circulation 0 to 999999999999, -2 or blank = not-applicable
+    sum(bookCount) field2, -- books 0 to 999999999999, -2 or blank = not-applicable
+    sum(databaseCount) field3, -- Databases (Applicable only to Digital/Electronic) 0 to 999999999999, -2 or blank = not-applicable
+    sum(mediaCount) field4, -- Media 0 to 999999999999, -2 or blank = not-applicable
+    sum(serialCount) field5, -- Serials 0 to 999999999999, -2 or blank = not-applicable
+    sum(circulationCountDigital) field6, -- Circulation 0 to 999999999999, -2 or blank = not-applicable
     null field7,
     null field8
 from (
@@ -519,13 +519,13 @@ select *
 from (
 select 'B' part, --part
     coalesce(sum(case when isChild_COA = 'Y' then 1 end), 0) field1, --The number of branch and independent libraries (exclude the main or central library) -0 to 999999
-    sum(libSalariesAndWages) field2, --Total salaries and wages -0 to 999999999999, -2 or blank = not-applicable
-    sum(LibFringeBenefits) field3, --Fringe benefits (if paid by the library budget) -0 to 999999999999, -2 or blank = not-applicable
-    sum(LibOneTimeMaterials) field4, --Materials/services cost - One-time purchases of books, serial backfiles, and other materials -0 to 999999999999, -2 or blank = not-applicable
-    sum(LibServicesSubscriptions) field5, --Materials/services cost - Ongoing commitments to subscriptions -0 to 999999999999, -2 or blank = not-applicable
-    sum(LibOtherMaterialsServices) field6, --Materials/services cost - Other materials/service cost -0 to 999999999999, -2 or blank = not-applicable
-    sum(LibPreservationOps) field7, --Operations and maintenance expenses - Preservation services -0 to 999999999999, -2 or blank = not-applicable
-    sum(LibOtherOpsMaintenance) field8 --Operations and maintenance expenses - All other operations and maintenance expenses -0 to 999999999999, -2 or blank = not-applicable
+    round(sum(libSalariesAndWages)) field2, --Total salaries and wages -0 to 999999999999, -2 or blank = not-applicable
+    round(sum(LibFringeBenefits)) field3, --Fringe benefits (if paid by the library budget) -0 to 999999999999, -2 or blank = not-applicable
+    round(sum(LibOneTimeMaterials)) field4, --Materials/services cost - One-time purchases of books, serial backfiles, and other materials -0 to 999999999999, -2 or blank = not-applicable
+    round(sum(LibServicesSubscriptions)) field5, --Materials/services cost - Ongoing commitments to subscriptions -0 to 999999999999, -2 or blank = not-applicable
+    round(sum(LibOtherMaterialsServices)) field6, --Materials/services cost - Other materials/service cost -0 to 999999999999, -2 or blank = not-applicable
+    round(sum(LibPreservationOps)) field7, --Operations and maintenance expenses - Preservation services -0 to 999999999999, -2 or blank = not-applicable
+    round(sum(LibOtherOpsMaintenance)) field8 --Operations and maintenance expenses - All other operations and maintenance expenses -0 to 999999999999, -2 or blank = not-applicable
 from LibraryExpensesMCR expenses
 --where expenses.isParent_COA = 'Y' --Report on all branches
 --    and expenses.isCentralOrMainBranch = true
@@ -541,10 +541,10 @@ union
 select 'C' part,
     sum(loansDocumentsProvided) field1, --Total interlibrary loans and documents provided to other libraries -0 to 999999999999, -2 or blank = not-applicable
     sum(loansDocumentsReceived) field2, --Total interlibrary loans and documents received	0 to 999999999999, -2 or blank = not-applicable
-    sum(libSalariesAndWagesLibrarians) field3,  --Librarians - Number of FTEs	0 to 999999.00, -2 or blank = not-applicable
-    sum(libSalariesAndWagesProfessionals) field4,  --Other Professional Staff - Number of FTEs	0 to 999999.00, -2 or blank = not-applicable
-    sum(libSalariesAndWagesOther) field5, --All Other Paid Staff (Except Student Assistants) - Number of FTEs	0 to 999999.00, -2 or blank = not-applicable
-    sum(libSalariesAndWagesStudents) field6, --Student Assistants - Number of FTEs	0 to 999999.00, -2 or blank = not-applicable
+    round(sum(libSalariesAndWagesLibrarians), 2) field3,  --Librarians - Number of FTEs	0 to 999999.00, -2 or blank = not-applicable
+    round(sum(libSalariesAndWagesProfessionals), 2) field4,  --Other Professional Staff - Number of FTEs	0 to 999999.00, -2 or blank = not-applicable
+    round(sum(libSalariesAndWagesOther), 2) field5, --All Other Paid Staff (Except Student Assistants) - Number of FTEs	0 to 999999.00, -2 or blank = not-applicable
+    round(sum(libSalariesAndWagesStudents), 2) field6, --Student Assistants - Number of FTEs	0 to 999999.00, -2 or blank = not-applicable
     null field7,
     null field8
 from (
