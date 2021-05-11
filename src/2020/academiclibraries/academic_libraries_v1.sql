@@ -151,7 +151,7 @@ from (
                 FiscalYearENT.recordActivityDate desc
         ), 1) FY_RN
     from ChartOfAccountsMCR chartofaccounts
-        inner join FiscalYear FiscalYearENT on FiscalYearENT.chartOfAccountsId = chartofaccounts.chartOfAccountsId_COA --upper(FiscalYearENT.chartOfAccountsId) = chartofaccounts.chartOfAccountsId_COA
+        inner join FiscalYear FiscalYearENT on upper(FiscalYearENT.chartOfAccountsId) = chartofaccounts.chartOfAccountsId_COA
     where coalesce(fiscalYearENT.isIPEDSReportable, true) = true
         --and fiscalYearENT.fiscalPeriod in ('Year Begin', 'Year End')
         and fiscalYearENT.fiscalPeriod = 'Year End'
