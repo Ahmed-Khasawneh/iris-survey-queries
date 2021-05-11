@@ -1,7 +1,7 @@
 /********************
 
 EVI PRODUCT:	DORIS 2020-21 IPEDS Survey  
-FILE NAME:	Academic Libraries (AL1)
+FILE NAME:	    Academic Libraries (AL1)
 FILE DESC:      Academic Libraries: Degree-granting institutions that have library expenses
 AUTHOR:         akhasawneh
 CREATED:        20210311
@@ -13,7 +13,11 @@ Survey Formatting
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
-20210504	    akhasawneh				Initial version
+20210504	        akhasawneh				            Initial version
+
+Diagnostic Notes:
+If issues arise in the future where reporting values look low, check that the LibraryBranch.isCentralOrMainBranch value is not null. 
+We filtering records out where this field is not given a value so it may be dropped during reporting. 
 
 ********************/ 
 
@@ -25,7 +29,7 @@ The views below are used to determine the dates, academic terms, academic year, 
 WITH DefaultValues as (
 
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
-/*
+
 --Production Default (Begin)
 select '2021' surveyYear, 
 	'AL1' surveyId,
@@ -36,8 +40,8 @@ select '2021' surveyYear,
 	CAST('2019-09-30' AS DATE) reportingDateStart,
 	CAST('2020-10-01' AS DATE) reportingDateEnd
 --Production Default (End)
-*/
 
+/*
 --Test Default (Begin)
 select '1415' surveyYear, 
 	'AL1' surveyId,
@@ -48,7 +52,7 @@ select '1415' surveyYear,
 	CAST('2013-09-30' AS DATE) reportingDateStart,
 	CAST('2014-10-01' AS DATE) reportingDateEnd
 --Test Default (End)
-
+*/
 ),
 
 --No longer needed
@@ -92,15 +96,14 @@ from (
 --  level. For example, if 20,000 e-book titles were purchased by two institutions in a parent/child relationship to be shared, the parent
 --  institution will report 20,000 e-book titles and not 40,000 e-book titles. Institutions wishing to establish a parent/child relationship
 --  must contact the Help Desk. See the resource guide for more details on parent/child reporting. 
-        upper(chartofaccountsENT.isParent) isParent_COA,
-        upper(chartofaccountsENT.isChild) isChild_COA,
-        chartofaccountsENT.snapshotDate snapshotDate_COA,
+        coalesce(chartofaccountsENT.isParent, true) isParent_COA,
+        coalesce(chartofaccountsENT.isChild, false) isChild_COA,
+        to_date(chartofaccountsENT.snapshotDate, 'YYYY-MM-DD') snapshotDate_COA,
         defvalues.reportingDateEnd reportingDateEnd,
         defvalues.reportingDateStart reportingDateStart,
         coalesce(row_number() OVER (
             PARTITION BY
-                chartofaccountsENT.chartOfAccountsId,
-                chartofaccountsENT.statusCode
+                chartofaccountsENT.chartOfAccountsId
             ORDER BY
                 (case when array_contains(chartofaccountsENT.tags, defvalues.repPeriodTag2) then 1 else 2 end) asc, --If client's 'Fiscal Year Lockdown' is in snapshot range use their fiscal end snapshot...
 				(case when array_contains(chartofaccountsENT.tags, defvalues.repPeriodTag1) then 1 else 2 end) asc, --...otherwise, use the survey end date snapshot 'August End'
@@ -114,9 +117,13 @@ from (
         and (chartofaccountsENT.endDate is null 
             or to_date(chartofaccountsENT.endDate, 'YYYY-MM-DD') >= defvalues.reportingDateStart)
         and chartofaccountsENT.statusCode = 'Active' --We want the most relevant active COA codes, not necessarily the most recent.
+		and ((coalesce(to_date(chartofaccountsENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+			and to_date(chartofaccountsENT.recordActivityDate,'YYYY-MM-DD') <= defvalues.reportingDateEnd)
+				or coalesce(to_date(chartofaccountsENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
 where COA_RN = 1
 ),
+
 
 FiscalYearMCR as (
 
@@ -129,20 +136,22 @@ from (
         chartofaccounts.snapshotDate_COA snapshotDate_COA,
         chartofaccounts.reportingDateEnd reportingDateEnd,
         chartofaccounts.reportingDateStart reportingDateStart,
-        cast(FiscalYearENT.fiscalYear2Char as string) fiscalYear2Char,
+        cast(FiscalYearENT.fiscalYear2Char as int) fiscalYear2Char,
         coalesce(row_number() OVER (
             PARTITION BY
                 FiscalYearENT.chartOfAccountsId
             ORDER BY
                 --report on latest fiscal year before the IPEDS defined date (October 1).
-                FiscalYearENT.fiscalYear4Char desc,
                 (case when FiscalYearENT.snapshotDate = chartofaccounts.snapshotDate_COA then 1 else 2 end) asc,
 			    (case when FiscalYearENT.snapshotDate > chartofaccounts.snapshotDate_COA then FiscalYearENT.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
                 (case when FiscalYearENT.snapshotDate < chartofaccounts.snapshotDate_COA then FiscalYearENT.snapshotDate else CAST('1900-09-09' as DATE) end) desc,
+                FiscalYearENT.fiscalYear4Char desc,
+                fiscalYearENT.endDate desc,
+	            fiscalYearENT.startDate desc,
                 FiscalYearENT.recordActivityDate desc
         ), 1) FY_RN
     from ChartOfAccountsMCR chartofaccounts
-        inner join FiscalYear FiscalYearENT on upper(FiscalYearENT.chartOfAccountsId) = chartofaccounts.chartOfAccountsId_COA
+        inner join FiscalYear FiscalYearENT on FiscalYearENT.chartOfAccountsId = chartofaccounts.chartOfAccountsId_COA --upper(FiscalYearENT.chartOfAccountsId) = chartofaccounts.chartOfAccountsId_COA
     where coalesce(fiscalYearENT.isIPEDSReportable, true) = true
         --and fiscalYearENT.fiscalPeriod in ('Year Begin', 'Year End')
         and fiscalYearENT.fiscalPeriod = 'Year End'
@@ -150,9 +159,10 @@ from (
 --?? COMMENT OUT FOR TESTING. NO RECORDS EXIST IN SAMPLE DATA
         and to_date(FiscalYearENT.startDate, 'YYYY-MM-DD') < chartofaccounts.reportingDateEnd
         and ((to_date(FiscalYearENT.endDate, 'YYYY-MM-DD') <= chartofaccounts.reportingDateEnd
-            and to_date(FiscalYearENT.endDate, 'YYYY-MM-DD') >= chartofaccounts.reportingDateStart)
-            or FiscalYearENT.endDate is null)
-        
+            and to_date(FiscalYearENT.endDate, 'YYYY-MM-DD') >= chartofaccounts.reportingDateStart))
+		and ((coalesce(to_date(FiscalYearENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+			and to_date(FiscalYearENT.recordActivityDate,'YYYY-MM-DD') <= chartofaccounts.reportingDateEnd)
+				or coalesce(to_date(FiscalYearENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
 where FY_RN = 1
 ),
@@ -166,8 +176,8 @@ LibraryBranchMCR as (
 
 select *
 from (
-    select libraryBranchENT.branchId,
-        coalesce(libraryBranchENT.isCentralOrMainBranch, false) isCentralOrMainBranch,
+    select upper(libraryBranchENT.branchId) branchId,
+        libraryBranchENT.isCentralOrMainBranch isCentralOrMainBranch,
         coalesce(row_number() OVER (
             PARTITION BY
                 libraryBranchENT.branchId
@@ -184,6 +194,7 @@ from (
         and ((to_date(libraryBranchENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
             and to_date(libraryBranchENT.recordActivityDate,'YYYY-MM-DD') <= defvalues.reportingDateEnd)
                 or to_date(libraryBranchENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)) 
+        and libraryBranchENT.isCentralOrMainBranch is not null
         and coalesce(libraryBranchENT.isIPEDSReportable, true) = true
     )
 where LB_RN = 1
@@ -217,7 +228,7 @@ from (
         fiscalyear.reportingDateEnd reportingDateEnd,
         fiscalyear.reportingDateStart reportingDateStart,
         fiscalyear.fiscalYear2Char fiscalYear2Char,
-        LibraryInventoryENT.branchId branchId,
+        upper(LibraryInventoryENT.branchId) branchId,
         LibraryInventoryENT.itemId itemId,
         LibraryInventoryENT.itemType itemType,
         LibraryInventoryENT.isDigital isDigital,
@@ -235,12 +246,15 @@ from (
         ), 0) LCS_RN
     from FiscalYearMCR fiscalyear
         left join LibraryInventory LibraryInventoryENT 
-            on LibraryInventoryENT.fiscalYear2Char = fiscalyear.fiscalYear2Char
+            on cast(LibraryInventoryENT.fiscalYear2Char as int) = fiscalyear.fiscalYear2Char
             --and upper(LibraryInventoryENT.branchId) = librarycollections.branchId
             and coalesce(LibraryInventoryENT.isIPEDSReportable, true) = true
             and to_date(LibraryInventoryENT.inCirculationDate, 'YYYY-MM-DD') <= fiscalyear.reportingDateEnd
             and (LibraryInventoryENT.outOfCirculationDate is null
                 or to_date(LibraryInventoryENT.outOfCirculationDate, 'YYYY-MM-DD') > fiscalyear.reportingDateEnd)
+		    and ((coalesce(to_date(LibraryInventoryENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+			    and to_date(LibraryInventoryENT.recordActivityDate,'YYYY-MM-DD') <= fiscalyear.reportingDateEnd)
+				    or coalesce(to_date(LibraryInventoryENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
 where LCS_RN = 1
 group by chartOfAccountsId_COA,
@@ -293,10 +307,13 @@ from (
     --from LibraryInventoryMCR inventory
     from LibraryBranchMCR branch
         inner join LibraryCollectionStatistic LibraryCollectionStatisticENT 
-            on LibraryCollectionStatisticENT.branchId = branch.branchId
+            on cast(LibraryCollectionStatisticENT.branchId as string) = branch.branchId
             and coalesce(LibraryCollectionStatisticENT.isIPEDSReportable, true) = true
         inner join FiscalYearMCR fiscalyear
-            on cast(LibraryCollectionStatisticENT.fiscalYear2Char as string) = fiscalyear.fiscalYear2Char
+            on cast(LibraryCollectionStatisticENT.fiscalYear2Char as int) = fiscalyear.fiscalYear2Char
+    where ((coalesce(to_date(LibraryCollectionStatisticENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+		and to_date(LibraryCollectionStatisticENT.recordActivityDate,'YYYY-MM-DD') <= fiscalyear.reportingDateEnd)
+		    or coalesce(to_date(LibraryCollectionStatisticENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
 where LCS_RN = 1
 ),
@@ -329,11 +346,13 @@ from (
         ), 1) LCS_RN
     from LibraryBranchMCR branch
         inner join LibraryCirculationStatistic LibraryCirculationStatisticENT 
-            on LibraryCirculationStatisticENT.branchId = branch.branchId
+            on upper(LibraryCirculationStatisticENT.branchId) = branch.branchId
             and coalesce(LibraryCirculationStatisticENT.isIPEDSReportable, true) = true
         inner join FiscalYearMCR fiscalyear
-            on cast(LibraryCirculationStatisticENT.fiscalYear2Char as string) = fiscalyear.fiscalYear2Char
-
+            on cast(LibraryCirculationStatisticENT.fiscalYear2Char as int) = fiscalyear.fiscalYear2Char
+    where ((coalesce(to_date(LibraryCirculationStatisticENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+		and to_date(LibraryCirculationStatisticENT.recordActivityDate,'YYYY-MM-DD') <= fiscalyear.reportingDateEnd)
+		    or coalesce(to_date(LibraryCirculationStatisticENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
 where LCS_RN = 1
 ),
@@ -366,10 +385,13 @@ from (
         ),1) ILL_RN
     from LibraryBranchMCR branch
         inner join InterlibraryLoanStatistic InterlibraryLoanStatisticENT
-            on InterlibraryLoanStatisticENT.branchId = branch.branchId
+            on upper(InterlibraryLoanStatisticENT.branchId) = branch.branchId
             and coalesce(InterlibraryLoanStatisticENT.isIPEDSReportable, true) = true
         inner join FiscalYearMCR fiscalyear
-            on cast(InterlibraryLoanStatisticENT.fiscalYear2Char as string) = fiscalyear.fiscalYear2Char
+            on cast(InterlibraryLoanStatisticENT.fiscalYear2Char as int) = fiscalyear.fiscalYear2Char
+    where ((coalesce(to_date(InterlibraryLoanStatisticENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+		and to_date(InterlibraryLoanStatisticENT.recordActivityDate,'YYYY-MM-DD') <= fiscalyear.reportingDateEnd)
+		    or coalesce(to_date(InterlibraryLoanStatisticENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
 where ILL_RN = 1
 ),
@@ -430,10 +452,13 @@ from (
         ),1) LE_RN
     from LibraryBranchMCR branch
         inner join LibraryExpenses LibraryExpensesENT 
-            on cast(LibraryExpensesENT.branchId as string) = cast(branch.branchId as string)
+            on upper(LibraryExpensesENT.branchId) = branch.branchId
             and coalesce(LibraryExpensesENT.isIPEDSReportable, true) = true
         inner join FiscalYearMCR fiscalyear
-            on cast(LibraryExpensesENT.fiscalYear2Char as string) = cast(fiscalyear.fiscalYear2Char as string)
+            on cast(LibraryExpensesENT.fiscalYear2Char as int) = cast(fiscalyear.fiscalYear2Char as int)
+    where ((coalesce(to_date(LibraryExpensesENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+		and to_date(LibraryExpensesENT.recordActivityDate,'YYYY-MM-DD') <= fiscalyear.reportingDateEnd)
+		    or coalesce(to_date(LibraryExpensesENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
 where LE_RN = 1
 group by chartOfAccountsId_COA,
@@ -478,8 +503,19 @@ from (
             on circulation.branchId = branch.branchId
 --            and circulation.isParent_COA = 'Y'
 --    where branch.isCentralOrMainBranch = true
-    )
 
+    union
+    
+-- If no records are returned, force nulls.
+
+    select *
+    from (
+        VALUES
+            (null, null, null, null, null) 
+        ) as dummySet(bookCount, databaseCount, mediaCount, serialCount, circulationCountPhysical)
+    where not exists (select a.branchId from LibraryBranchMCR a) 
+    )
+    
 union
 
 select
@@ -507,6 +543,17 @@ from (
             on circulation.branchId = branch.branchId
 --            and circulation.isParent_COA = 'Y'
 --    where branch.isCentralOrMainBranch = true
+
+    union
+    
+-- If no records are returned, force nulls.
+
+    select *
+    from (
+        VALUES
+            (null, null, null, null, null) 
+        ) as dummySet(bookCount, databaseCount, mediaCount, serialCount, circulationCountPhysical)
+    where not exists (select a.branchId from LibraryBranchMCR a) 
     )
     
 union
@@ -529,9 +576,19 @@ select 'B' part, --part
 from LibraryExpensesMCR expenses
 --where expenses.isParent_COA = 'Y' --Report on all branches
 --    and expenses.isCentralOrMainBranch = true
+
+union
+    
+-- If no records are returned, force nulls.
+
+select *
+from (
+    VALUES
+        ('B', 0, null, null, null, null, null, null, null) 
+    ) as dummySet(part, field1, field2, field3, field4, field5, field6, field7, field8)
+where not exists (select a.branchId from LibraryExpensesMCR a) 
 ) 
 
-       
 union
 
 --Part C: Interlibrary Loan Services and Library Staff
@@ -562,4 +619,15 @@ from (
             on loan.branchId = branch.branchId
 --            and loan.isParent_COA = 'Y'
 --    where branch.isCentralOrMainBranch = true
+
+union
+
+-- If no records are returned, force nulls.
+
+    select *
+    from (
+        VALUES
+            (null, null, null, null, null, null) 
+        ) as dummySet(loansDocumentsProvided, loansDocumentsReceived, libSalariesAndWagesLibrarians, libSalariesAndWagesProfessionals, libSalariesAndWagesOther, libSalariesAndWagesStudents)
+    where not exists (select a.branchId from LibraryBranchMCR a) 
     )
