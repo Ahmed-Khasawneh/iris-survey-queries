@@ -31,7 +31,7 @@ WITH DefaultValues as (
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
 
 --Production Default (Begin)
-select '1920' surveyYear, 
+select '2021' surveyYear, 
 	'ADM' surveyId,
 	'Fall Census' repPeriodTag1,
 	'Pre-Fall Summer Census' repPeriodTag2,
