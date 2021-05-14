@@ -1621,7 +1621,7 @@ from ClientConfigMCR clientconfig
 union 
 
 -- Part B: Selection Process - A/A/E
---Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2020. Include early decision, early action, and students 
+--Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2019. Include early decision, early action, and students 
 --who began studies during the summer prior to Fall 2019.
 -- Valid values: - 0 to 999999, -2 or blank = not-applicable
 
@@ -1659,7 +1659,7 @@ where studentType = 'First Time'
 union 
 
 -- Part C: Selection Process - Test Scores
---Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2020. Include early decision, early action, and students 
+--Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2019. Include early decision, early action, and students 
 --who began studies during the summer prior to Fall 2019.
  
 select 'C', -- part
@@ -1718,7 +1718,7 @@ where config.admAdmissionTestScores in ('R', 'C')
 union 
 
 -- Part C: Selection Process - Test Scores
---Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2020. Include early decision, early action, and students 
+--Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2019. Include early decision, early action, and students 
 --who began studies during the summer prior to Fall 2019.
  
 select 'C', -- part
