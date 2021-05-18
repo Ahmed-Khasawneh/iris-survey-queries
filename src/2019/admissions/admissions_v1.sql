@@ -1,11 +1,9 @@
 /********************
-
 EVI PRODUCT:    DORIS 2019-20 IPEDS Survey Winter Collection
 FILE NAME:      Admissions v1 (ADM)
 FILE DESC:      Admissions for all institutions
 AUTHOR:         Janet Hanicak
 CREATED:        202000708
-
 SECTIONS:
 Reporting Dates/Terms
 Most Recent Records
@@ -14,9 +12,7 @@ Retention Cohort Creation
 Student-to-Faculty Ratio Calculation  
 Formatting Views
 Survey Formatting
-
 SUMMARY OF CHANGES
-
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
 20210513    	akhasawneh 									Query refactor, data type casting and null value handling. PF-2184 (runtime test data 21m 13s prod data 20m 15s)
@@ -106,7 +102,6 @@ select '1415' surveyYear,
 	24 requiredFTClockHoursUG, --IPEDS-defined clock hours for full-time undergrad students
     9 requiredFTCreditHoursGR --IPEDS-defined credit hours for full-time graduate students
 --Test Default (End)
-
 --Test values to return workable TestScore data
 --Test Default (Begin)
 select '1314' surveyYear, 
@@ -191,8 +186,8 @@ from (
                      when array_contains(repperiodENT.tags, defvalues.repPeriodTag3) then 2
                      when array_contains(repperiodENT.tags, defvalues.repPeriodTag2) then 3
 			         else 4 end) asc,
-			     repperiodENT.snapshotDate desc,
-                repperiodENT.recordActivityDate desc	
+			    repperiodENT.snapshotDate desc,
+                coalesce(repperiodENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 		) reportPeriodRn	
 		from IPEDSReportingPeriod repperiodENT
 		    cross join DefaultValues defvalues
@@ -299,7 +294,7 @@ from (
 			    (case when to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
 			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                 (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-				clientConfigENT.recordActivityDate desc
+				coalesce(clientConfigENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 		), 1) configRn
 	from IPEDSClientConfig clientConfigENT
 		inner join ReportingPeriodMCR repperiod on clientConfigENT.surveyCollectionYear = repperiod.surveyYear
@@ -361,7 +356,7 @@ from (
         to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') snapshotDate,
         acadTermENT.tags,
 		coalesce(upper(acadtermENT.partOfTermCode), 1) partOfTermCode, 
-		acadtermENT.recordActivityDate, 
+		coalesce(to_date(acadtermENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) recordActivityDate, 
 		acadtermENT.termCodeDescription,       
 		acadtermENT.partOfTermCodeDescription, 
 		to_date(acadtermENT.startDate, 'YYYY-MM-DD') startDate,
@@ -572,7 +567,7 @@ from (
 			    campusENT.snapshotDate, 
 				campusENT.campus
 			order by
-				campusENT.recordActivityDate desc
+				coalesce(campusENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 		), 1) campusRn
 	from Campus campusENT 
     where coalesce(campusENT.isIpedsReportable, true) = true
@@ -651,7 +646,7 @@ from (
                 to_date(admENT.admissionDecisionActionDate, 'YYYY-MM-DD') admissionDecisionActionDate,
                 admENT.admissionDecision admissionDecision,
                 upper(admENT.termCodeAdmitted) termCodeAdmitted,
-                to_date(admENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
+                coalesce(to_date(admENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) recordActivityDate,
                 coalesce(row_number() over (
                     partition by
                         repperiod.yearType,
@@ -667,7 +662,7 @@ from (
                         (case when to_date(admENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(admENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                         admENT.applicationNumber desc,
                         admENT.applicationStatusActionDate desc,
-                        admENT.recordActivityDate desc,
+                        coalesce(admENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc,
                         (case when admENT.applicationStatus in ('Complete', 'Decision Made') then 1 else 2 end) asc
                 ), 1) appRn 
         from AcademicTermReportingRefactor repperiod
@@ -768,7 +763,7 @@ from AdmissionMCR adm
             regENT.personId personId,
             regENT.registrationStatus,
             to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') registrationStatusActionDate,
-            to_date(regENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
+            coalesce(to_date(regENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) recordActivityDate,
             upper(regENT.courseSectionCampusOverride) courseSectionCampusOverride,
             coalesce(regENT.isAudited, false) isAudited,
             coalesce(regENT.isEnrolled, true) isEnrolled,
@@ -788,7 +783,7 @@ from AdmissionMCR adm
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    regENT.recordActivityDate desc,
+                    coalesce(regENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc,
                     regENT.registrationStatusActionDate desc
             ), 1) regRn
         from AcademicTermReportingRefactor repperiod   
@@ -864,7 +859,7 @@ from (
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') = reg.snapshotDate then 1 else 2 end) asc,
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') > reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    studentENT.recordActivityDate desc
+                    coalesce(studentENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
             ), 1) studRn
     from RegistrationMCR reg
         inner join Student studentENT on reg.personId = studentENT.personId 
@@ -1000,7 +995,7 @@ from (
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') = reg.snapshotDate then 1 else 2 end) asc,
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') > reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    coursesectENT.recordActivityDate desc
+                    coalesce(coursesectENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
             ), 1) courseRn
     from RegistrationMCR reg 
         left join StudentRefactor stu on stu.personId = reg.personId
@@ -1096,7 +1091,7 @@ from (
 					(case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') = coursesect.snapshotDate then 1 else 2 end) asc,
 					(case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') > coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
 					(case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') < coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-					coursesectschedENT.recordActivityDate desc
+					coalesce(coursesectschedENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 			), 1) courseSectSchedRn
 		from CourseSectionMCR coursesect
 			left join CourseSectionSchedule coursesectschedENT on coursesect.termCode = upper(coursesectschedENT.termCode) 
@@ -1183,7 +1178,7 @@ from (
                 (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') > coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                 (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') < coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 			    termorder.termOrder desc,
-			    courseENT.recordActivityDate desc
+			    coalesce(courseENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 		), 1) courseRn
 	from CourseSectionScheduleMCR coursesectsched
 	    left join Course courseENT on coursesectsched.subject = upper(courseENT.subject) 
@@ -1390,7 +1385,7 @@ from (
                     (case when to_date(personENT.snapshotDate,'YYYY-MM-DD') = crsecnt.snapshotDate then 1 else 2 end) asc,
 			        (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') > crsecnt.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc, 
                     (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') < crsecnt.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    personENT.recordActivityDate desc
+                    coalesce(personENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
             ), 1) personRn
     from CourseTypeCountsSTU crsecnt 
         left join Person personENT on crsecnt.personId = personENT.personId
@@ -1447,7 +1442,7 @@ from (
                     (case when to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') = pers.snapshotDate then 1 else 2 end) asc,
                     (case when to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') > pers.snapshotDate then to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') < pers.snapshotDate then to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    testscoreENT.recordActivityDate desc
+                    coalesce(testscoreENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
             ), 1) tstRn
         from PersonMCR pers
             left join TestScore testscoreENT on pers.personId = testscoreENT.personId
