@@ -189,8 +189,8 @@ from (
                      when array_contains(repperiodENT.tags, defvalues.repPeriodTag3) then 2
                      when array_contains(repperiodENT.tags, defvalues.repPeriodTag2) then 3
 			         else 4 end) asc,
-			     repperiodENT.snapshotDate desc,
-                repperiodENT.recordActivityDate desc	
+			    repperiodENT.snapshotDate desc,
+                coalesce(repperiodENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 		) reportPeriodRn	
 		from IPEDSReportingPeriod repperiodENT
 		    cross join DefaultValues defvalues
@@ -297,7 +297,7 @@ from (
 			    (case when to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
 			    (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                 (case when to_date(clientConfigENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(clientConfigENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-				clientConfigENT.recordActivityDate desc
+				coalesce(clientConfigENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 		), 1) configRn
 	from IPEDSClientConfig clientConfigENT
 		inner join ReportingPeriodMCR repperiod on clientConfigENT.surveyCollectionYear = repperiod.surveyYear
@@ -359,7 +359,7 @@ from (
         to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') snapshotDate,
         acadTermENT.tags,
 		coalesce(upper(acadtermENT.partOfTermCode), 1) partOfTermCode, 
-		acadtermENT.recordActivityDate, 
+		coalesce(to_date(acadtermENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) recordActivityDate, 
 		acadtermENT.termCodeDescription,       
 		acadtermENT.partOfTermCodeDescription, 
 		to_date(acadtermENT.startDate, 'YYYY-MM-DD') startDate,
@@ -570,7 +570,7 @@ from (
 			    campusENT.snapshotDate, 
 				campusENT.campus
 			order by
-				campusENT.recordActivityDate desc
+				coalesce(campusENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 		), 1) campusRn
 	from Campus campusENT 
     where coalesce(campusENT.isIpedsReportable, true) = true
@@ -593,7 +593,7 @@ AdmissionMCR as (
 --Include all students who were offered admission to your institution. This would include:
 --early decision students who were notified of an admissions decision prior to the regular notification date and who agreed to accept **not sure about this one
 --early action students who were notified of an admission decision prior to the regular notification date with no commitment to accept **not sure about this one
---admitted students who began studies during the summer prior to Fall 2020.
+--admitted students who began studies during the summer prior to Fall 2019.
 
 select *
 from (
@@ -649,7 +649,7 @@ from (
                 to_date(admENT.admissionDecisionActionDate, 'YYYY-MM-DD') admissionDecisionActionDate,
                 admENT.admissionDecision admissionDecision,
                 upper(admENT.termCodeAdmitted) termCodeAdmitted,
-                to_date(admENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
+                coalesce(to_date(admENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) recordActivityDate,
                 coalesce(row_number() over (
                     partition by
                         repperiod.yearType,
@@ -665,7 +665,7 @@ from (
                         (case when to_date(admENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(admENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
                         admENT.applicationNumber desc,
                         admENT.applicationStatusActionDate desc,
-                        admENT.recordActivityDate desc,
+                        coalesce(admENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc,
                         (case when admENT.applicationStatus in ('Complete', 'Decision Made') then 1 else 2 end) asc
                 ), 1) appRn 
         from AcademicTermReportingRefactor repperiod
@@ -766,7 +766,7 @@ from AdmissionMCR adm
             regENT.personId personId,
             regENT.registrationStatus,
             to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') registrationStatusActionDate,
-            to_date(regENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
+            coalesce(to_date(regENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) recordActivityDate,
             upper(regENT.courseSectionCampusOverride) courseSectionCampusOverride,
             coalesce(regENT.isAudited, false) isAudited,
             coalesce(regENT.isEnrolled, true) isEnrolled,
@@ -786,7 +786,7 @@ from AdmissionMCR adm
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') = repperiod.snapshotDate then 1 else 2 end) asc,
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') > repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(regENT.snapshotDate, 'YYYY-MM-DD') < repperiod.snapshotDate then to_date(regENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    regENT.recordActivityDate desc,
+                    coalesce(regENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc,
                     regENT.registrationStatusActionDate desc
             ), 1) regRn
         from AcademicTermReportingRefactor repperiod   
@@ -862,7 +862,7 @@ from (
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') = reg.snapshotDate then 1 else 2 end) asc,
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') > reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(studentENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(studentENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    studentENT.recordActivityDate desc
+                    coalesce(studentENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
             ), 1) studRn
     from RegistrationMCR reg
         inner join Student studentENT on reg.personId = studentENT.personId 
@@ -998,7 +998,7 @@ from (
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') = reg.snapshotDate then 1 else 2 end) asc,
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') > reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') < reg.snapshotDate then to_date(coursesectENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    coursesectENT.recordActivityDate desc
+                    coalesce(coursesectENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
             ), 1) courseRn
     from RegistrationMCR reg 
         left join StudentRefactor stu on stu.personId = reg.personId
@@ -1094,7 +1094,7 @@ from (
 					(case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') = coursesect.snapshotDate then 1 else 2 end) asc,
 					(case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') > coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
 					(case when to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') < coursesect.snapshotDate then to_date(coursesectschedENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-					coursesectschedENT.recordActivityDate desc
+					coalesce(coursesectschedENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 			), 1) courseSectSchedRn
 		from CourseSectionMCR coursesect
 			left join CourseSectionSchedule coursesectschedENT on coursesect.termCode = upper(coursesectschedENT.termCode) 
@@ -1181,7 +1181,7 @@ from (
                 (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') > coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                 (case when to_date(courseENT.snapshotDate, 'YYYY-MM-DD') < coursesectsched.snapshotDate then to_date(courseENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
 			    termorder.termOrder desc,
-			    courseENT.recordActivityDate desc
+			    coalesce(courseENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
 		), 1) courseRn
 	from CourseSectionScheduleMCR coursesectsched
 	    left join Course courseENT on coursesectsched.subject = upper(courseENT.subject) 
@@ -1388,7 +1388,7 @@ from (
                     (case when to_date(personENT.snapshotDate,'YYYY-MM-DD') = crsecnt.snapshotDate then 1 else 2 end) asc,
 			        (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') > crsecnt.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc, 
                     (case when to_date(personENT.snapshotDate, 'YYYY-MM-DD') < crsecnt.snapshotDate then to_date(personENT.snapshotDate,'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    personENT.recordActivityDate desc
+                    coalesce(personENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
             ), 1) personRn
     from CourseTypeCountsSTU crsecnt 
         left join Person personENT on crsecnt.personId = personENT.personId
@@ -1445,7 +1445,7 @@ from (
                     (case when to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') = pers.snapshotDate then 1 else 2 end) asc,
                     (case when to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') > pers.snapshotDate then to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') else CAST('9999-09-09' as DATE) end) asc,
                     (case when to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') < pers.snapshotDate then to_date(testscoreENT.snapshotDate, 'YYYY-MM-DD') else CAST('1900-09-09' as DATE) end) desc,
-                    testscoreENT.recordActivityDate desc
+                    coalesce(testscoreENT.recordActivityDate, CAST('9999-09-09' as DATE)) desc
             ), 1) tstRn
         from PersonMCR pers
             left join TestScore testscoreENT on pers.personId = testscoreENT.personId
@@ -1619,8 +1619,8 @@ from ClientConfigMCR clientconfig
 union 
 
 -- Part B: Selection Process - A/A/E
---Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2020. Include early decision, early action, and students 
---who began studies during the summer prior to Fall 2020.
+--Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2019. Include early decision, early action, and students 
+--who began studies during the summer prior to Fall 2019.
 -- Valid values: - 0 to 999999, -2 or blank = not-applicable
 
 select 'B', -- part
@@ -1657,8 +1657,8 @@ where studentType = 'First Time'
 union 
 
 -- Part C: Selection Process - Test Scores
---Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2020. Include early decision, early action, and students 
---who began studies during the summer prior to Fall 2020.
+--Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2019. Include early decision, early action, and students 
+--who began studies during the summer prior to Fall 2019.
  
 select 'C', -- part
 --Number of enrolled students that submitted SAT scores
@@ -1716,8 +1716,8 @@ where config.admAdmissionTestScores in ('R', 'C')
 union 
 
 -- Part C: Selection Process - Test Scores
---Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2020. Include early decision, early action, and students 
---who began studies during the summer prior to Fall 2020.
+--Provide the number of first-time, degree/certificate-seeking undergraduate students who applied, who were admitted, and who enrolled (either full- or part-time) for Fall 2019. Include early decision, early action, and students 
+--who began studies during the summer prior to Fall 2019.
  
 select 'C', -- part
 --Number of enrolled students that submitted SAT scores
