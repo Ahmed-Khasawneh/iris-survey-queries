@@ -73,7 +73,7 @@ WITH DefaultValues as (
  For some schools, it could be based on dates or academic year and for others,
  it may be by listing specific terms. 
  *******************************************************************/ 
-/*
+
 --Prod blocks (2)
 select '2021' surveyYear, 
 	'E1D' surveyId,  
@@ -98,8 +98,8 @@ select '2021' surveyYear,
 --***** start survey-specific mods
 	 12 tmAnnualDPPCreditHoursFTE --1 to 99
 --***** end survey-specific mods
-*/
 
+/*
 --Testing blocks (2 min)
 select '1415' surveyYear,  
 	'E1D' surveyId,  
@@ -124,7 +124,7 @@ select '1415' surveyYear,
 --***** start survey-specific mods
 	 12 tmAnnualDPPCreditHoursFTE --1 to 99
 --***** end survey-specific mods
-
+*/
 ),
 
 ReportingPeriodMCR as (
