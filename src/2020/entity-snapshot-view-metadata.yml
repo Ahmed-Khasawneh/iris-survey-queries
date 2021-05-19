@@ -23,6 +23,7 @@
 #
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
+# 20210519  akhasawneh                                Updating 12-Mo Enrollment v2-4 entity list. PF-2192
 # 20200503  akhasawneh                                Updating AcademicLibraries entity list. PF-1960
 # 20210427  jhanicak                                  Added AcademicTrack and DegreeProgram to enrollment surveys, FieldOfStudy to SFA
 # 20210331  jhanicak                                  Increased snapshot date range for Finance 
@@ -3645,19 +3646,6 @@ TWELVE_MONTH_ENROLLMENT_2:
       start: 2019-05-01
       end: 2020-08-01
 
-  - viewName: AcademicTrack
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2019-05-01
-      end: 2020-08-01
-
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3699,19 +3687,6 @@ TWELVE_MONTH_ENROLLMENT_2:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2019-05-01
-      end: 2020-08-01
-
-  - viewName: DegreeProgram
-    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3804,19 +3779,6 @@ TWELVE_MONTH_ENROLLMENT_3:
       start: 2019-05-01
       end: 2020-08-01
 
-  - viewName: AcademicTrack
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2019-05-01
-      end: 2020-08-01
-
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3858,19 +3820,6 @@ TWELVE_MONTH_ENROLLMENT_3:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2019-05-01
-      end: 2020-08-01
-
-  - viewName: DegreeProgram
-    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3963,19 +3912,6 @@ TWELVE_MONTH_ENROLLMENT_4:
       start: 2019-05-01
       end: 2020-08-01
 
-  - viewName: AcademicTrack
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2019-05-01
-      end: 2020-08-01
-
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -4017,19 +3953,6 @@ TWELVE_MONTH_ENROLLMENT_4:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2019-05-01
-      end: 2020-08-01
-
-  - viewName: DegreeProgram
-    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
