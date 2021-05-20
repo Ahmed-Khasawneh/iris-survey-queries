@@ -3925,7 +3925,7 @@ STUDENT_FINANCIAL_AID_5:
       end: 2014-12-31
 
 TWELVE_MONTH_ENROLLMENT_1:
-  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
+  # reporting period: terms within 2019-07-01 to 2020-06-30; as-of date 2020-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -4005,6 +4005,32 @@ TWELVE_MONTH_ENROLLMENT_1:
       start: 2013-05-01
       end: 2014-08-01
 
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
     tagNames:
@@ -4071,23 +4097,10 @@ TWELVE_MONTH_ENROLLMENT_1:
       end: 2014-08-01
 
 TWELVE_MONTH_ENROLLMENT_2:
-  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
+  # reporting period: terms within 2019-07-01 to 2020-06-30; as-of date 2020-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2013-05-01
-      end: 2014-08-01
-
-  - viewName: AcademicTrack
-    entityName: AcademicTrack
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -4217,23 +4230,10 @@ TWELVE_MONTH_ENROLLMENT_2:
       end: 2014-08-01
 
 TWELVE_MONTH_ENROLLMENT_3:
-  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
+  # reporting period: terms within 2019-07-01 to 2020-06-30; as-of date 2020-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2013-05-01
-      end: 2014-08-01
-
-  - viewName: AcademicTrack
-    entityName: AcademicTrack
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -4363,23 +4363,10 @@ TWELVE_MONTH_ENROLLMENT_3:
       end: 2014-08-01
 
 TWELVE_MONTH_ENROLLMENT_4:
-  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
+  # reporting period: terms within 2019-07-01 to 2020-06-30; as-of date 2020-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - Academic Year End
-      - June End
-    snapshotDateRange:
-      start: 2013-05-01
-      end: 2014-08-01
-
-  - viewName: AcademicTrack
-    entityName: AcademicTrack
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
