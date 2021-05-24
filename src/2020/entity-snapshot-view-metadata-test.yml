@@ -993,9 +993,9 @@ COMPLETIONS_1:
       end: 2014-08-01
 
 FALL_ENROLLMENT_1:
-  # reporting period for Cohort: Fall Census 2020 and prior summer
-  # reporting period for Retention: Fall Census 2019 and prior summer
-  # reporting period for HR: as of 10/31/19
+  # reporting period for Cohort: Fall Census 2014 and prior summer
+  # reporting period for Retention: Fall Census 2013 and prior summer
+  # reporting period for HR: as of 10/31/13
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
