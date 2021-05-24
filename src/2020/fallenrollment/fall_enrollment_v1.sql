@@ -38,7 +38,7 @@ select '2021' surveyYear,
 	'HR Reporting End' repPeriodTag3, --Student to Faculty Ratio, use 20-21 HR
 	--'October End' repPeriodTag4, --Program Reporters
 	CAST('9999-09-09' as DATE) snapshotDate,
-	CAST('2019-11-01' AS DATE) reportingDateStart, --Program Reporters
+	CAST('2020-08-01' AS DATE) reportingDateStart, --Program Reporters
 	CAST('2020-10-31' AS DATE) reportingDateEnd, --Program Reporters
 	'202010' termCode, --Fall 2020
 	'1' partOfTermCode,
@@ -58,7 +58,7 @@ select '1415' surveyYear,
 	'HR Reporting End' repPeriodTag3, --Student to Faculty Ratio, use 20-21 HR
 	--'October End' repPeriodTag4, --Program Reporters
 	CAST('9999-09-09' as DATE) snapshotDate,
-	CAST('2013-11-01' AS DATE) reportingDateStart, --Program Reporters
+	CAST('2014-08-01' AS DATE) reportingDateStart, --Program Reporters
 	CAST('2014-10-31' AS DATE) reportingDateEnd, --Program Reporters
 	'201510' termCode, --Fall 2014
 	'1' partOfTermCode,
