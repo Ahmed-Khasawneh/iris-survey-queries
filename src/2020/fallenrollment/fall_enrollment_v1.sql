@@ -18,7 +18,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
-20210524    	akhasawneh/jhanicak 						PF-1944 Initial version prod run: 30m 21s
+20210524    	akhasawneh/jhanicak 						PF-1944 Initial version prod run: 30m 21s test run: 31s 28s
 	
 ********************/
 
