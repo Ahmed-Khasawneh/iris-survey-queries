@@ -995,16 +995,16 @@ COMPLETIONS_1:
 FALL_ENROLLMENT_1:
   # reporting period for Cohort: Fall Census 2014 and prior summer
   # reporting period for Retention: Fall Census 2013 and prior summer
-  # reporting period for HR: as of 10/31/19
+  # reporting period for HR: as of 10/31/13
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2014-12-31
 
   - viewName: AcademicTrack
@@ -1012,9 +1012,19 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
+      end: 2014-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: Campus
@@ -1022,9 +1032,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2014-12-31
 
   - viewName: CohortExclusion
@@ -1032,19 +1042,19 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2013-05-01
-      end: 2013-12-31
+      start: 2012-05-01
+      end: 2014-12-31
 
   - viewName: Course
     entityName: Course
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: CourseSection
@@ -1052,9 +1062,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: CourseSectionSchedule
@@ -1062,9 +1072,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: Degree
@@ -1072,9 +1082,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: DegreeProgram
@@ -1082,9 +1092,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: Employee
@@ -1116,9 +1126,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: InstructionalAssignment
@@ -1134,9 +1144,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2014-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -1144,9 +1154,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2014-12-31
 
   - viewName: Major
@@ -1154,9 +1164,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2014-12-31
 
   - viewName: Person
@@ -1164,9 +1174,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: Registration
@@ -1174,9 +1184,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
   - viewName: Student
@@ -1184,9 +1194,9 @@ FALL_ENROLLMENT_1:
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
-      - Post-Spring Summer Census
+      - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2012-05-01
       end: 2014-12-31
 
 FALL_ENROLLMENT_2:
