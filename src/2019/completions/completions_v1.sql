@@ -16,6 +16,8 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
+20210524			ckeller/jhanicak							Updates to accommodate data model changes, various logic changes outlined 
+                                                                    in PF-2114 prod 15m 0s test 15m 8s
 20201215            akhasawneh									Updating tag values ('June End' & 'Academic Year End')
 20201123			ckeller										Modified query to accomodate new DM changes, specifically relating to new visaType field
 																In Survey Formatting section, part C, replaced all "SUM(COALESCE(..." with "COALESCE(SUM(..."
@@ -39,8 +41,20 @@ Date(yyyymmdd)      	Author             	Tag             	Comments
 20200611            akhasawneh              ak 20200611         Modified to not reference term code as a numeric indicator of term ordering (PF-1494) -Run time 6m 42s (Prod default) 9m 26s (test defaults)
 20200605            akhasawneh          			    		Initial version (Run time 12m 30s)
 	
-	
-Implementation Notes:
+SNAPSHOT REQUIREMENTS
+One of the following is required:
+
+Academic Year End - end date of last term used for reporting; this option is best for clients with
+					IPEDSClientConfig.compGradDateOrTerm = 'T'
+June End - survey official end of reporting - June 30; this option is best for clients with
+					IPEDSClientConfig.compGradDateOrTerm = 'D'
+
+IMPLEMENTATION NOTES
+The following changes were implemented for the 2020-21 data collection period:
+
+	- There is a new distance education question on the CIP Data screen.
+	- Subbaccalaureate certificates that are less than one year in length have been segmented into two subcategories based on duration.
+	- There is a new FAQ elaborating on certificates that should be included in this component.  	
 
 What to Include:
 
@@ -66,1250 +80,982 @@ What to Exclude:
     with the CIP code and award level with zeroes for CRACE01, CRACE02, CRACE13, CRACE14 and CRACE25 through CRACE38.
                      
 ********************/
+/********************
+SNAPSHOT REQUIREMENTS
+One of the following is required:
+
+Academic Year End - end date of last term used for reporting; this option is best for clients with
+					IPEDSClientConfig.compGradDateOrTerm = 'T'
+June End - survey official end of reporting - June 30; this option is best for clients with
+					IPEDSClientConfig.compGradDateOrTerm = 'D'
+
+IMPLEMENTATION NOTES
+The following changes were implemented for the 2020-21 data collection period:
+
+	- There is a new distance education question on the CIP Data screen.
+	- Subbaccalaureate certificates that are less than one year in length have been segmented into two subcategories based on duration.
+	- There is a new FAQ elaborating on certificates that should be included in this component.                   
+
+********************/
 
 WITH DefaultValues as (
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
 --IPEDS specs define reporting period as July 1, 2018 and June 30, 2019.
-/*
 
+--jh 20201130 Changed to match fields and formatting of other surveys
+
+--prod default block
 select '1920' surveyYear,
-	'COM' surveyId,
-	CAST('2018-07-01' AS DATE) reportingDateStart,
-	CAST('2019-06-30' AS DATE) reportingDateEnd,
-	'202010' termCode, 
-	'1' partOfTermCode, 
-	CAST('2018-10-15' AS DATE) censusDate,
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
+    'COM' surveyId,
+    'Academic Year End' repPeriodTag1,
+    'June End' repPeriodTag2,
+    CAST('2018-07-01' AS DATE) reportingDateStart,
+    CAST('2019-06-30' AS DATE) reportingDateEnd,
+    '201910' termCode, --Fall 2018
+    '1' partOfTermCode,
+    'M' genderForUnknown, --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
+    'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'T' compGradDateOrTerm --D = Date, T = Term
-	
+ /*
+--test default block
+select '1314' surveyYear,  
+	'COM' surveyId,  
+	'Academic Year End' repPeriodTag1,
+	'June End' repPeriodTag2,
+	CAST('2012-07-01' as DATE) reportingDateStart,
+    CAST('2013-06-30' as DATE) reportingDateEnd, 
+	'201310' termCode,
+	'1' partOfTermCode,
+	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
+	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
+	'T' compGradDateOrTerm --D = Date, T = Term
 */
-select '1415' surveyYear,
-	'COM' surveyId,
-	CAST('2013-07-01' AS DATE) reportingDateStart,
-	CAST('2014-06-30' AS DATE) reportingDateEnd, 
-	'201430' termCode,
-	'1' partOfTermCode,
-	CAST('2014-06-01' AS DATE) censusDate,
-												
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-    
-union
-
-select '1415' surveyYear,  
-	'COM' surveyId,  
-				   
-					
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, 
-	'201430' termCode,
-	'A' partOfTermCode, 
-	CAST('2014-06-01' AS DATE) censusDate, 
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-
-union
-
-select '1415' surveyYear,  
-	'COM' surveyId,  
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, 
-	'201430' termCode,
-	'B' partOfTermCode, 
-	CAST('2014-07-10' AS DATE) censusDate,
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-
-union
-
-select '1415' surveyYear,  
-	'COM' surveyId,  
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, 
-	'201330' termCode,
-	'1' partOfTermCode,
-	CAST('2013-06-10' AS DATE) censusDate,
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-
-union
-
-select '1415' surveyYear,  
-	'COM' surveyId,  
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, 
-	'201330' termCode,
-	'A' partOfTermCode, 
-	CAST('2013-06-10' AS DATE) censusDate,
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-
-union
-
-select '1415' surveyYear,  
-	'COM' surveyId,  
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, 
-	'201330' termCode,
-	'B' partOfTermCode, 
-	CAST('2013-07-10' AS DATE) censusDate,
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-    
-union
-
-select '1415' surveyYear,
-	'COM' surveyId,
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, 
-	'201410' termCode,
-	'1' partOfTermCode,
-	CAST('2013-09-13' AS DATE) censusDate,
-												
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-    
-union
-
-select '1415' surveyYear,
-	'COM' surveyId,
-				   
-					
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd,
-	'201410' termCode,
-	'A' partOfTermCode, 
-	CAST('2013-09-13' AS DATE) censusDate,
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-    
-union
-
-select '1415' surveyYear,
-	'COM' surveyId,
-				   
-					
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd, 
-	'201410' termCode,
-	'B' partOfTermCode, 
-	CAST('2013-11-08' AS DATE) censusDate,
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-    
-union
-
-select '1415' surveyYear,
-	'COM' surveyId,
-	CAST('2013-07-01' AS DATE) reportingDateStart,
-	CAST('2014-06-30' AS DATE) reportingDateEnd, 
-	'201420' termCode,
-	'1' partOfTermCode, 
-	CAST('2014-01-13' AS DATE) censusDate,
-												
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term    
-    
-union 
-
-select '1415' surveyYear,
-	'COM' surveyId,
-				   
-					
-	CAST('2013-07-01' as DATE) reportingDateStart,
-    CAST('2014-06-30' as DATE) reportingDateEnd,
-	'201420' termCode,
-	'A' partOfTermCode,
-	CAST('2014-01-10' AS DATE) censusDate,
-    'A' acadOrProgReporter, --A = Academic, P = Program
-    'M' genderForUnknown, --M = Male, F = Female
-    'F' genderForNonBinary,  --M = Male, F = Female
-    'T' compGradDateOrTerm --D = Date, T = Term
-
 ),
 
 ClientConfigMCR as (
 -- Pulls client reporting preferences from the IPEDSClientConfig entity. 
 
--- jh 20200826 Removed filter in first union for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
---          1st union 1st order - pull snapshot for 'Academic Year End' where compGradDateOrTerm = 'T' or 'June End' where compGradDateOrTerm = 'D' 
---          1st union 2nd order - pull snapshot for 'Academic Year End' or 'June End'
---          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
---          3rd union - pull default values if no record in IPEDSClientConfig
--- ak 20200728 Adding snapshotDate reference
+--  1st union 1st order - pull snapshot where same as ReportingPeriodMCR snapshotDate
+--  1st union 2nd order - pull closet snapshot before ReportingPeriodMCR snapshotDate
+--  1st union 3rd order - pull closet snapshot after ReportingPeriodMCR snapshotDate
+--  2nd union - pull default values if no record in IPEDSClientConfig
 
-select DISTINCT
-    ConfigLatest.surveyYear surveyYear,
-    upper(ConfigLatest.surveyId) surveyId,
-    ConfigLatest.termCode termCode,
-    ConfigLatest.partOfTermCode partOfTermCode,
+select ConfigLatest.surveyYear surveyYear,
+    ConfigLatest.surveyId surveyId,
+    ConfigLatest.source source,
+    ConfigLatest.snapshotDate snapshotDate,
     ConfigLatest.reportingDateStart reportingDateStart,
     ConfigLatest.reportingDateEnd reportingDateEnd,
-    upper(ConfigLatest.acadOrProgReporter) acadOrProgReporter,
-    upper(ConfigLatest.genderForUnknown) genderForUnknown,
-	upper(ConfigLatest.genderForNonBinary) genderForNonBinary,
-    upper(ConfigLatest.compGradDateOrTerm) compGradDateOrTerm,
-
-    ConfigLatest.snapshotDate snapshotDate--,
-    --ConfigLatest.tags
+    ConfigLatest.genderForUnknown genderForUnknown,
+    ConfigLatest.genderForNonBinary genderForNonBinary,
+    ConfigLatest.repPeriodTag1 repPeriodTag1,
+    ConfigLatest.repPeriodTag2 repPeriodTag2,
+    ConfigLatest.compGradDateOrTerm compGradDateOrTerm
 from (
-	select clientConfigENT.surveyCollectionYear surveyYear,
-		clientConfigENT.snapshotDate snapshotDate, 
-		--clientConfigENT.tags tags,
-		defvalues.surveyId surveyId,
-		defvalues.termCode termCode,
-		defvalues.partOfTermCode partOfTermCode,
-		defvalues.reportingDateStart reportingDateStart,
-		defvalues.reportingDateEnd reportingDateEnd,
-		coalesce(clientConfigENT.acadOrProgReporter, defvalues.acadOrProgReporter) acadOrProgReporter,
-		coalesce(clientConfigENT.genderForUnknown, defvalues.genderForUnknown) genderForUnknown,
-		coalesce(clientConfigENT.genderForNonBinary, defvalues.genderForNonBinary) genderForNonBinary,
-		coalesce(clientConfigENT.compGradDateOrTerm, defvalues.compGradDateOrTerm) compGradDateOrTerm,
-        row_number() over (
-			partition by
-				clientConfigENT.surveyCollectionYear
-			order by
-			    (case when clientConfigENT.compGradDateOrTerm = 'T' 
-						and array_contains(clientConfigENT.tags, 'Academic Year End') then 1
-			         when clientConfigENT.compGradDateOrTerm = 'D' 
-						and array_contains(clientConfigENT.tags, 'June End') then 1
-			         when array_contains(clientConfigENT.tags, 'June End') 
-						or array_contains(clientConfigENT.tags, 'Academic Year End') then 2
-				 else 3 end) asc,
-			    clientConfigENT.snapshotDate desc,
-				clientConfigENT.recordActivityDate desc
-		) configRn
-	from IPEDSClientConfig clientConfigENT
-		cross join DefaultValues defvalues
-	where clientConfigENT.surveyCollectionYear = defvalues.surveyYear
+     select clientConfigENT.surveyCollectionYear surveyYear,
+            defvalues.surveyId surveyId,
+            'configFullYearTag' source,
+            clientConfigENT.snapshotDate snapshotDate,
+            defvalues.reportingDateStart reportingDateStart,
+            defvalues.reportingDateEnd reportingDateEnd,
+            coalesce(upper(clientConfigENT.genderForUnknown), defvalues.genderForUnknown) genderForUnknown,
+            coalesce(upper(clientConfigENT.genderForNonBinary), defvalues.genderForNonBinary) genderForNonBinary,
+            defvalues.repPeriodTag1 repPeriodTag1,
+            defvalues.repPeriodTag2 repPeriodTag2,
+            coalesce(upper(clientConfigENT.compGradDateOrTerm), defvalues.compGradDateOrTerm) compGradDateOrTerm,
+            coalesce(row_number() over (
+                partition by
+                    clientConfigENT.surveyCollectionYear
+                order by
+                (case when coalesce(upper(clientConfigENT.compGradDateOrTerm), defvalues.compGradDateOrTerm) = 'T' and array_contains(clientConfigENT.tags, defvalues.repPeriodTag1) then 1
+                     when coalesce(upper(clientConfigENT.compGradDateOrTerm), defvalues.compGradDateOrTerm) = 'D' and array_contains(clientConfigENT.tags, defvalues.repPeriodTag2) then 1
+                     else 2 end) asc,
+                    clientConfigENT.recordActivityDate desc
+            ), 1) configRn
+        from IPEDSClientConfig clientConfigENT
+            cross join DefaultValues defvalues on clientConfigENT.surveyCollectionYear = defvalues.surveyYear
 
-	union
+    union
 
--- Defaults config information to avoid IRIS validator errors if an applicable 'IPEDSClientConfig' record is not present. 
-	select defvalues.surveyYear surveyYear,
-	    CAST('9999-09-09' as DATE) snapshotDate,
-	    --array() tags,
-		defvalues.surveyId surveyId,
-		defvalues.termCode termCode,
-		defvalues.partOfTermCode partOfTermCode,
-		defvalues.reportingDateStart reportingDateStart,
-		defvalues.reportingDateEnd reportingDateEnd,
-		defvalues.acadOrProgReporter acadOrProgReporter,
-		defvalues.genderForUnknown genderForUnknown,
-		defvalues.genderForNonBinary genderForNonBinary,
-		defvalues.compGradDateOrTerm compGradDateOrTerm,
-		1 configRn
-	from DefaultValues defvalues
-	where defvalues.surveyYear not in (select MAX(configENT.surveyCollectionYear)
-										from IPEDSClientConfig configENT
-										where configENT.surveyCollectionYear = defvalues.surveyYear)
-    ) ConfigLatest
-where ConfigLatest.configRn = 1
+        select defvalues.surveyYear surveyYear,
+            defvalues.surveyId surveyId,
+            'default' source,
+            CAST('9999-09-09' as DATE) snapshotDate,
+            defvalues.reportingDateStart reportingDateStart,
+            defvalues.reportingDateEnd reportingDateEnd,
+            defvalues.genderForUnknown genderForUnknown,
+            defvalues.genderForNonBinary genderForNonBinary,
+            defvalues.repPeriodTag1 repPeriodTag1,
+            defvalues.repPeriodTag2 repPeriodTag2,
+            defvalues.compGradDateOrTerm compGradDateOrTerm,
+            1 configRn
+        from DefaultValues defvalues
+        where defvalues.surveyYear not in (select max(configENT.surveyCollectionYear)
+                                            from IPEDSClientConfig configENT
+                                            where configENT.surveyCollectionYear = defvalues.surveyYear)
+) ConfigLatest
+    where ConfigLatest.configRn = 1
 ),
 
 ReportingPeriodMCR as (
---Returns applicable term/part of term codes for this survey submission year. 
+    --Returns applicable term/part of term codes for this survey submission year. 
 
--- jh 20200826 Removed filter in first union for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
---          1st union 1st order - pull snapshot for 'Academic Year End' where compGradDateOrTerm = 'T' or 'June End' where compGradDateOrTerm = 'D' 
---          1st union 2nd order - pull snapshot for 'Academic Year End' or 'June End'
---          1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
---          3rd union - pull default values if no record in IPEDSReportingPeriod
--- ak 20200728 Adding snapshotDate reference
+    --  1st union 1st order - pull snapshot for defvalues.repPeriodTag1 
+    --  1st union 2nd order - pull snapshot for defvalues.repPeriodTag2
+    --  1st union 3rd order - pull other snapshot, ordered by snapshotDate desc
+    --  2nd union - pull default values if no record in IPEDSReportingPeriod
 
-select DISTINCT
-    RepDates.surveyYear surveyYear,
-    to_date(RepDates.snapshotDate,'YYYY-MM-DD') snapshotDate,
-    --RepDates.tags tags,
-    RepDates.termCode termCode,	
-    RepDates.partOfTermCode partOfTermCode,
-    RepDates.compGradDateOrTerm compGradDateOrTerm,
-    RepDates.genderForUnknown genderForUnknown,
-    RepDates.genderForNonBinary genderForNonBinary,
-    to_date(RepDates.reportingDateStart,'YYYY-MM-DD') reportingDateStart,
-    to_date(RepDates.reportingDateEnd,'YYYY-MM-DD') reportingDateEnd
-from (
-    select repPeriodENT.surveyCollectionYear surveyYear,
-        'repperiod' source,
-		repPeriodENT.snapshotDate snapshotDate,
-		--repPeriodENT.tags tags,
-        clientconfig.surveyId surveyId,
-        coalesce(repPeriodENT.termCode, clientconfig.termCode) termCode,
-        coalesce(repPeriodENT.partOfTermCode, clientconfig.partOfTermCode) partOfTermCode,
-        coalesce(repPeriodENT.reportingDateStart, clientconfig.reportingDateStart) reportingDateStart,
-        coalesce(repPeriodENT.reportingDateEnd, clientconfig.reportingDateEnd) reportingDateEnd,
-        clientconfig.acadOrProgReporter acadOrProgReporter,
-        clientconfig.genderForUnknown genderForUnknown,
-        clientconfig.genderForNonBinary genderForNonBinary,
-        clientconfig.compGradDateOrTerm compGradDateOrTerm,
-        row_number() over (	
-            partition by 
-                repPeriodENT.surveyCollectionYear,
-                repPeriodENT.surveyId,
-                repPeriodENT.surveySection,
-                repPeriodENT.termCode,
-                repPeriodENT.partOfTermCode	
-            order by
-                (case when clientconfig.compGradDateOrTerm = 'T' 
-						and array_contains(repPeriodENT.tags, 'Academic Year End') then 1
-			         when clientconfig.compGradDateOrTerm = 'D' 
-						and array_contains(repPeriodENT.tags, 'June End') then 1
-			         when array_contains(repPeriodENT.tags, 'June End') 
-						or array_contains(repPeriodENT.tags, 'Academic Year End') then 2
-				 else 3 end) asc,
-			    repPeriodENT.snapshotDate desc,
-				repPeriodENT.recordActivityDate desc
-        ) reportPeriodRn	
-    from IPEDSReportingPeriod repPeriodENT
-        inner join ClientConfigMCR clientconfig on repperiodENT.surveyCollectionYear = clientconfig.surveyYear
-            and upper(repperiodENT.surveyId) = clientconfig.surveyId
-            and repperiodENT.termCode is not null
-            and repperiodENT.partOfTermCode is not null
+select distinct RepDates.surveyYear	surveyYear,
+        RepDates.source source,
+        RepDates.surveySection surveySection,
+        RepDates.snapshotDate snapshotDate,
+        RepDates.reportingDateStart reportingDateStart,
+        RepDates.reportingDateEnd reportingDateEnd,
+        RepDates.termCode termCode,
+        RepDates.partOfTermCode partOfTermCode,
+        RepDates.repPeriodTag1 repPeriodTag1,
+        RepDates.repPeriodTag2 repPeriodTag2
+from ( 
+    select config.surveyYear surveyYear,
+        'IPEDSReportingPeriod' source,
+        config.snapshotDate snapshotDate,
+        config.surveyId surveyId,
+        coalesce(upper(repPeriodENT.surveySection), 'COHORT') surveySection,
+        config.reportingDateStart reportingDateStart,
+        config.reportingDateEnd reportingDateEnd,
+        upper(repperiodENT.termCode) termCode,
+        coalesce(upper(repperiodENT.partOfTermCode), 1) partOfTermCode,
+        config.repPeriodTag1 repPeriodTag1,
+        config.repPeriodTag2 repPeriodTag2,
+        coalesce(row_number() over (	
+        partition by 
+            config.surveyYear, --repPeriodENT.surveyCollectionYear,
+            config.surveyId, --repPeriodENT.surveyId,
+            repPeriodENT.surveySection, 
+            repperiodENT.termCode,
+            repperiodENT.partOfTermCode	
+        order by
+            (case when repperiodENT.snapshotDate = config.snapshotDate then 1 else 2 end) asc,
+            (case when repperiodENT.snapshotDate > config.snapshotDate then repperiodENT.snapshotDate else CAST('9999-09-09' as DATE) end) asc,
+            (case when repperiodENT.snapshotDate < config.snapshotDate then repperiodENT.snapshotDate else CAST('1900-09-09' as DATE) end) desc, 
+            repperiodENT.recordActivityDate desc	
+        ),1) reportPeriodRn
+    from ClientConfigMCR config
+        inner join IPEDSReportingPeriod repperiodENT on repperiodENT.surveyCollectionYear = config.surveyYear
+            and upper(repperiodENT.surveyId) = config.surveyId
+            and repperiodENT.termCode is not null 
 
-	union
-	
---Pulls default values when IPEDSReportingPeriod record doesn't exist
-	select clientconfig.surveyYear surveyYear,
-		'default' source, 
-		clientconfig.snapshotDate snapshotDate,
-		--clientconfig.tags tags,
-        clientconfig.surveyId surveyId,
-        clientconfig.termCode termCode,
-        clientconfig.partOfTermCode partOfTermCode,
-        clientconfig.reportingDateStart reportingDateStart,
-        clientconfig.reportingDateEnd reportingDateEnd,
-        clientconfig.acadOrProgReporter acadOrProgReporter,
-        clientconfig.genderForUnknown genderForUnknown,
-        clientconfig.genderForNonBinary genderForNonBinary,
-        clientconfig.compGradDateOrTerm compGradDateOrTerm,
-        1 reportPeriodRn
-	from ClientConfigMCR clientconfig
-	where clientconfig.surveyYear not in (select repperiodENT.surveyCollectionYear
-										  from IPEDSReportingPeriod repperiodENT
-										  where repperiodENT.surveyCollectionYear = clientconfig.surveyYear
-											and upper(repperiodENT.surveyId) = clientconfig.surveyId 
-											and repperiodENT.termCode is not null
-											and repperiodENT.partOfTermCode is not null)
+    union
 
-	)  RepDates
+    select defvalues.surveyYear surveyYear,
+        'DefaultValues' source,
+        CAST('9999-09-09' as DATE) snapshotDate,
+        defvalues.surveyId surveyId,
+        null surveySection,
+        defvalues.reportingDateStart reportingDateStart,
+        defvalues.reportingDateEnd reportingDateEnd,
+        defvalues.termCode termCode,
+        defvalues.partOfTermCode partOfTermCode,
+        defvalues.repPeriodTag1 repPeriodTag1,
+        defvalues.repPeriodTag2 repPeriodTag2,
+        1
+    from DefaultValues defvalues
+    where defvalues.surveyYear not in (select repperiodENT.surveyCollectionYear
+                                        from IPEDSReportingPeriod repperiodENT
+                                         where repperiodENT.surveyCollectionYear = defvalues.surveyYear
+                                            and upper(repperiodENT.surveyId) = defvalues.surveyId
+                                            and repperiodENT.termCode is not null) 
+    ) RepDates
 where RepDates.reportPeriodRn = 1
 ),
 
 AcademicTermMCR as (
---Returns most recent (recordActivityDate) term code record for each term and part of term code. 
---PartOfTerm code defines a subcategory of a termCode that may have different start, end and census dates. 
--- ak 20200728 Move to after the ReportingPeriodMCR and create a 3rd view to join the ReportingPeriodMCR and AcademicTermMCR
-    
-select termCode, 
-	partOfTermCode, 
-	to_date(startDate, 'YYYY-MM-DD') startDate,
-	to_date(endDate, 'YYYY-MM-DD') endDate,
-	academicYear,
-	to_date(censusDate, 'YYYY-MM-DD') censusDate,
--- ak 20200728 Adding snapshotDate reference and determining termCode tied to the snapshotDate
-    snapshotTermCode,
-    to_date(snapshotDate, 'YYYY-MM-DD') snapshotDate,
-    --tags,
-    snapshotPartTermCode
+--Returns most recent (recordActivityDate) term code record for all term codes and parts of term code for all snapshots. 
+
+select termCode,
+        partOfTermCode,
+        financialAidYear,
+        snapshotDate,
+        startDate,
+        endDate,
+        academicYear,
+        censusDate,
+        termType,
+        termClassification,
+        requiredFTCreditHoursGR,
+        requiredFTCreditHoursUG,
+        requiredFTClockHoursUG,
+        tags
 from (
-    select distinct acadtermENT.termCode, 
--- ak 20200728 Adding snapshotDate reference and determining termCode tied to the snapshotDate
-        (case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
-                and to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadTermENT.censusDate, 1), 'YYYY-MM-DD') 
-            then acadTermENT.termCode 
-            else null end) snapshotTermCode,
-        (case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD') 
-                and to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadTermENT.censusDate, 1), 'YYYY-MM-DD') 
-            then acadTermENT.partOfTermCode 
-            else null end) snapshotPartTermCode,
-        row_number() over (
-            partition by
-                acadTermENT.termCode,
-                acadTermENT.partOfTermCode
-            order by
-                (case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD')
-					and to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadTermENT.censusDate, 1), 'YYYY-MM-DD')
-				then acadTermENT.termCode end) desc,
-                (case when to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') <= to_date(date_add(acadTermENT.censusdate, 3), 'YYYY-MM-DD')
-					and to_date(acadTermENT.snapshotDate, 'YYYY-MM-DD') >= to_date(date_sub(acadTermENT.censusDate, 1), 'YYYY-MM-DD')
-				then acadTermENT.partOfTermCode end) desc,
-                acadTermENT.snapshotDate desc,
-                acadTermENT.recordActivityDate desc
-        ) acadTermRn,
-        acadTermENT.snapshotDate,
-        --acadTermENT.tags,
-		acadtermENT.partOfTermCode, 
-		acadtermENT.recordActivityDate, 
-		acadtermENT.termCodeDescription,       
-		acadtermENT.partOfTermCodeDescription, 
-		acadtermENT.startDate,
-		acadtermENT.endDate,
-		acadtermENT.academicYear,
-		acadtermENT.censusDate,
-		acadtermENT.isIPEDSReportable
-	from AcademicTerm acadtermENT 
-	where acadtermENT.isIPEDSReportable = 1
-	)
+    select distinct upper(acadtermENT.termCode) termCode,
+            coalesce(row_number() over (
+                partition by 
+                    acadTermENT.termCode,
+                    acadTermENT.partOfTermCode
+                order by						
+                    acadTermENT.recordActivityDate desc
+            ), 1) acadTermRn,
+            config.snapshotDate snapshotDate,
+            acadTermENT.tags,
+            coalesce(upper(acadtermENT.partOfTermCode), 1) partOfTermCode,
+            acadtermENT.termCodeDescription,
+            acadtermENT.partOfTermCodeDescription,
+            to_date(acadtermENT.startDate, 'YYYY-MM-DD') startDate,
+            to_date(acadtermENT.endDate, 'YYYY-MM-DD') endDate,
+            acadtermENT.academicYear,
+            acadtermENT.financialAidYear,
+            to_date(acadtermENT.censusDate, 'YYYY-MM-DD') censusDate,
+            acadtermENT.termType,
+            acadtermENT.termClassification,
+            coalesce(acadtermENT.requiredFTCreditHoursGR, 9) requiredFTCreditHoursGR, 
+            coalesce(acadtermENT.requiredFTCreditHoursUG, 12) requiredFTCreditHoursUG,
+            coalesce(acadtermENT.requiredFTClockHoursUG, 24) requiredFTClockHoursUG,
+            coalesce(acadtermENT.isIPEDSReportable, true) isIPEDSReportable
+        from ClientConfigMCR config
+            inner join AcademicTerm acadtermENT on config.snapshotDate = acadTermENT.snapshotDate
+                and coalesce(acadtermENT.isIPEDSReportable, true) = true 
+    )
 where acadTermRn = 1
-
-union 
-
-select defvalues.termCode termCode, 
-	'1' partOfTermCode,
-	to_date(defvalues.reportingDateStart, 'YYYY-MM-DD') startDate,
-	to_date(defvalues.reportingDateEnd, 'YYYY-MM-DD') endDate,
-	null academicYear,
-	null censusDate,
-    defvalues.termCode snapshotTermCode,
-    null snapshotDate,
-    --null tags,
-    1 snapshotPartTermCode
-from DefaultValues defvalues
-where not exists (select trm.termCode 
-                  from academicTerm trm
-                  inner join ReportingPeriodMCR repper
-                    on repper.termCode = trm.termCode
-                    and trm.termCode is not null)											 
 ),
 
 AcademicTermOrder as (
 -- Orders term codes based on date span and keeps the numeric value of the greatest term/part of term record. 
---ak 20200616 Adding term order indicator (PF-1494)
 
-select termCode termCode, 
-    max(termOrder) termOrder
+select termCode termCode,
+        max(termOrder) termOrder,
+        max(censusDate) maxCensus,
+        min(startDate) minStart,
+        max(endDate) maxEnd,
+        termType termType
 from (
-	select acadterm.termCode termCode,
-		row_number() over (
-			order by  
-				acadterm.startDate asc,
-				acadterm.endDate asc
-        ) termOrder    
-	from AcademicTermMCR acadterm
-	)
-group by termCode
+    select acadterm.termCode termCode,
+            acadterm.partOfTermCode partOfTermCode,
+            acadterm.termType termType,
+            acadterm.censusDate censusDate,
+            acadterm.startDate startDate,
+            acadterm.endDate endDate,
+            coalesce(row_number() over (
+                order by  
+                acadterm.censusDate asc
+            ), 1) termOrder
+        from AcademicTermMCR acadterm
+    )
+group by termCode, termType
 ),
 
 AcademicTermReporting as (
--- Combines ReportingPeriodMCR and AcademicTermMCR to get termCode info only for terms in reporting period
--- ak 20200728 Added AcademicTermReporting view
+--Combines ReportingPeriodMCR and AcademicTermMCR in order to use the correct snapshot dates for the reporting terms
 
--- ak 20200728 Added AcademicTermReporting view
--- ak 20200728 Adding snapshotTermCode reference
- --ak 20200616 Adding term order indicator (PF-1494)					
-select *,
-    (case when compGradDateOrTerm = 'D'
-        then surveyDateStart
-        else termMinStartDate
-	end) reportingDateStart,  --minimum start date of reporting for either date or term option for client
-    (case when compGradDateOrTerm = 'D'
-        then surveyDateEnd
-        else termMaxEndDate --termMaxEndDate
-	end) reportingDateEnd --maximum end date of reporting for either date or term option for client
-from (
-    select repperiod.termCode termCode,
+--	first order field: assign 1 if acadterm.snapshotDate falls within the acadterm.census range and the acadterm.tags value matches with the acadterm.termType
+--  first order field: assign 2 if acadterm.snapshotDate falls within the acadterm.census range but acadterm.tags/acadterm.termType values don't match
+--  first order field: assign 3 if acadterm.snapshotDate doesn't fall within the acadterm.census range and acadterm.tags/acadterm.termType values don't match
+--  second order field: acadterm.snapshotDates before the acadterm.census range ordered so the snapshotDate closest to the censusDate is first - ascending
+--  third order field: acadterm.snapshotDates after the acadterm.census range ordered so the snapshotDate closest to the censusDate is first - descending
+--  if none of the above, order by repperiod.snapshotDate
+
+select 'CY' yearType,
+        repperiod.surveySection surveySection,
+        repperiod.termCode termCode,
         repperiod.partOfTermCode partOfTermCode,
-        termorder.termOrder termOrder,
--- ak 20200728 Adding snapshotTermCode reference
-        acadterm.snapshotTermCode snapshotTermCode,
-        to_date(acadterm.snapshotDate, 'YYYY-MM-DD') snapshotDate,
+        acadterm.tags tags,
+        acadterm.snapshotDate snapshotDate,
+        repperiod.snapshotDate repPeriodSSDate,
+        acadterm.financialAidYear financialAidYear,
+        acadterm.censusDate censusDate,
+        repperiod.reportingDateStart reportingDateStart,
+        repperiod.reportingDateEnd reportingDateEnd,
+        acadterm.termClassification termClassification,
+        acadterm.termType termType,
         acadterm.startDate startDate,
         acadterm.endDate endDate,
-        minTermStart.startDateMin termMinStartDate,
-        maxTermEnd.endDateMax termMaxEndDate,
-        repperiod.compGradDateOrTerm compGradDateOrTerm,
-        repperiod.reportingDateStart surveyDateStart,
-        repperiod.reportingDateEnd surveyDateEnd,
-        repperiod.genderForUnknown genderForUnknown,
-        repperiod.genderForNonBinary genderForNonBinary
-    from ReportingPeriodMCR repperiod  
- --ak 20200616 Adding term order indicator (PF-1494)
-		left join AcademicTermOrder termorder
-			on termOrder.termCode = repperiod.termCode
-        left join AcademicTermMCR acadterm on repperiod.termCode = acadterm.termCode
-	            and repperiod.partOfTermCode = acadterm.partOfTermCode
-		left join (select min(acadterm1.startDate) startDateMin,
-		            acadterm1.termCode termCode
-                    from ReportingPeriodMCR repperiod1
-		            inner join AcademicTermMCR acadterm1 on repperiod1.termCode = acadterm1.termCode
-		                and repperiod1.partOfTermCode = acadterm1.partOfTermCode
-			         group by acadterm1.termCode
-			         ) minTermStart on repperiod.termCode = minTermStart.termCode
-		left join (select max(acadterm1.endDate) endDateMax,
-		            acadterm1.termCode termCode
-                    from ReportingPeriodMCR repperiod1
-		            inner join AcademicTermMCR acadterm1 on repperiod1.termCode = acadterm1.termCode
-		                and repperiod1.partOfTermCode = acadterm1.partOfTermCode
-			         group by acadterm1.termCode
-			         ) maxTermEnd on repperiod.termCode = maxTermEnd.termCode
-	)
+        termorder.termOrder termOrder,
+        termorder.minStart minStart,
+        termorder.maxEnd maxEnd,
+        termorder.maxCensus maxCensus,
+        (case when acadterm.termClassification = 'Standard Length' then 1
+            when acadterm.termClassification is null then (case when acadterm.termType in ('Fall', 'Spring') then 1 else 2 end)
+            else 2
+        end) fullTermOrder,
+        acadterm.requiredFTCreditHoursGR requiredFTCreditHoursGR,
+        acadterm.requiredFTCreditHoursUG requiredFTCreditHoursUG,
+        acadterm.requiredFTClockHoursUG requiredFTClockHoursUG,
+        clientconfig.genderForUnknown genderForUnknown,
+        clientconfig.genderForNonBinary genderForNonBinary,
+        coalesce(acadterm.requiredFTCreditHoursUG/
+        coalesce(acadterm.requiredFTClockHoursUG, acadterm.requiredFTCreditHoursUG), 1) equivCRHRFactor,
+        clientconfig.repPeriodTag1 repPeriodTag1,
+        clientconfig.repPeriodTag2 repPeriodTag2,
+        clientconfig.compGradDateOrTerm compGradDateOrTerm,
+        (case when clientconfig.compGradDateOrTerm = 'D' then repperiod.reportingDateStart
+          else termorder.minStart
+          end) compReportingDateStart, --minimum start date of reporting for either date or term option for client
+        (case when clientconfig.compGradDateOrTerm = 'D' then repperiod.reportingDateEnd
+          else termorder.maxEnd --termMaxEndDate
+          end) compReportingDateEnd --maximum end date of reporting for either date or term option for client
+from ReportingPeriodMCR repperiod
+    left join AcademicTermMCR acadterm on repperiod.termCode = acadterm.termCode
+        and repperiod.partOfTermCode = acadterm.partOfTermCode
+    left join AcademicTermOrder termorder on termOrder.termCode = repperiod.termCode
+    inner join ClientConfigMCR clientconfig on repperiod.surveyYear = clientconfig.surveyYear
 ),
 
-/*****
+AcademicTermReportingRefactor as (
+--Returns all records from AcademicTermReporting, converts Summer terms to Pre-Fall or Post-Spring and creates reportingDateStart/End
+
+select rep.*,
+        (case when rep.termType = 'Summer' and rep.termClassification != 'Standard Length' then 
+                case when (select max(rep2.termOrder)
+                            from AcademicTermReporting rep2
+                            where rep2.termType = 'Summer') < (select max(rep2.termOrder)
+                                                                from AcademicTermReporting rep2
+                                                                where rep2.termType = 'Fall') then 'Pre-Fall Summer'
+                else 'Post-Spring Summer' end
+            else rep.termType end) termTypeNew,
+        potMax.partOfTermCode maxPOT,
+        (select max(rep3.termOrder)
+        from AcademicTermReporting rep3) maxTermOrder
+from AcademicTermReporting rep
+        inner join (select rep3.termCode,
+            rep3.partOfTermCode,
+            coalesce(row_number() over (
+                        partition by
+                            rep3.termCode
+                        order by
+                            rep3.censusDate desc,
+                            rep3.endDate desc), 1
+                    ) potRn
+    from AcademicTermReporting rep3) potMax on rep.termCode = potMax.termCode
+            and potMax.potRn = 1
+),
+
+    /*****
 BEGIN SECTION - Most Recent Records
 The views below pull the most recent records based on activity date and other fields, as required
 *****/
 
-AwardMCR as (
---Pulls all distinct student awards obtained withing the reporting terms/dates.
+--jh 20201130 Reordered fields for consistency and accuracy; other minor mods
 
--- jh 20200826 Removed filter for compGradDateOrTerm and added a case stmt to the row_number() function to handle no snapshots that match tags 
---          1st order - pull snapshot for 'Academic Year End' where compGradDateOrTerm = 'T' or 'June End' where compGradDateOrTerm = 'D' 
---          2nd order - pull snapshot for 'Academic Year End' or 'June End'
---          3rd order - pull other snapshot, ordered by snapshotDate desc
--- ak 20200728 Adding snapshotDate/snapshotTerm reference
---ak 20200611 Adding term order indicator (PF-1494)
+CampusMCR as (
+-- Returns most recent campus record for all snapshots in the ReportingPeriod
+-- We only use campus for international status. We are maintaining the ability to look at a campus at different points in time through relevant snapshots. 
+-- Will there ever be a case where a campus changes international status? 
+-- Otherwise, we could just get all unique campus codes and forget about when the record was made.
 
-select DISTINCT *
-from (
-    select awardENT.personId personId, 
-        upper(awardENT.degree) degree, 
-        awardENT.degreeLevel degreeLevel, 
-        to_date(awardENT.awardedDate, 'YYYY-MM-DD') awardedDate, 
-        awardENT.awardedTermCode awardedTermCode, 
-        awardENT.awardStatus awardStatus, 
-        upper(awardENT.college) college, 
-        upper(awardENT.campus) campus, 
-        repperiod.termOrder termOrder, 
-        repperiod.genderForUnknown genderForUnknown,
-        repperiod.genderForNonBinary genderForNonBinary,
-        to_date(awardENT.snapshotDate,'YYYY-MM-DD') snapshotDate,
-		repperiod.reportingDateEnd reportingDateEnd,
-        --awardENT.tags tags,
-        repperiod.compGradDateOrTerm compGradDateOrTerm,
-        row_number() over (
-            partition by     
-                awardENT.personId,
-                (case when repperiod.compGradDateOrTerm = 'D' 
-                    then awardENT.awardedDate
-                    else awardENT.awardedTermCode
-                end),
-                awardENT.degreeLevel,
-                awardENT.degree
-            order by
-                (case when repperiod.compGradDateOrTerm = 'T' and array_contains(awardENT.tags, 'Academic Year End') then 1
-			         when repperiod.compGradDateOrTerm = 'D' and array_contains(awardENT.tags, 'June End') then 1
-			         when array_contains(awardENT.tags, 'June End') or array_contains(awardENT.tags, 'Academic Year End') then 2
-			         else 3 end) asc,
-			    awardENT.snapshotDate desc,
-                repperiod.termOrder desc,
-                awardENT.recordActivityDate desc
-        ) as AwardRn 
-	from AcademicTermReporting repperiod
-	    cross join Award awardENT on ((repperiod.compGradDateOrTerm = 'D'
-			and (awardENT.awardedDate >= repperiod.reportingDateStart 
-				and awardENT.awardedDate <= repperiod.reportingDateEnd)) 
-			or (repperiod.compGradDateOrTerm = 'T'
-				and awardENT.awardedTermCode = repperiod.termCode))
-            and awardENT.isIpedsReportable = 1
-		    and awardENT.awardStatus = 'Awarded'
-		    and awardENT.degreeLevel is not null
-		    and awardENT.degreeLevel != 'Continuing Ed'
--- Remove for testing...
---ak 20200406 Including dummy date changes.(PF-1368)
-		and ((to_date(awardENT.recordActivityDate,'YYYY-MM-DD') != to_date('9999-09-09','YYYY-MM-DD')
-		and to_date(awardENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.reportingDateEnd)
-				or to_date(awardENT.recordActivityDate,'YYYY-MM-DD') = to_date('9999-09-09','YYYY-MM-DD'))
--- ...Remove for testing
+select campus,
+        isInternational
+from ( 
+    select upper(campusENT.campus) campus,
+            campusENT.campusDescription,
+            coalesce(campusENT.isInternational, false) isInternational,
+            coalesce(row_number() over (
+                partition by
+                    campusENT.campus
+                order by
+                    campusENT.recordActivityDate desc
+            ), 1) campusRn
+        from Campus campusENT
+            inner join AcademicTermReportingRefactor acadterm on acadterm.snapshotDate = campusENT.snapshotDate
+        where coalesce(campusENT.isIpedsReportable, true) = true
+            and ((coalesce(to_date(campusENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' as DATE)
+                and to_date(campusENT.recordActivityDate,'YYYY-MM-DD') <= acadterm.snapshotDate)
+            or coalesce(to_date(campusENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' as DATE))
     )
-where AwardRn = 1
+where campusRn = 1
 ),
 
-AwardRefactor as (
---Returns all award data with the most current snapshotDate
+DegreeProgramMCR as (
 
--- ak 20200728 Added AwardRefactor view
-
-select award.personId personId,
-    to_date(award.awardedDate, 'YYYY-MM-DD') awardedDate,
-    award.awardedTermCode awardedTermCode,
-    award.degreeLevel degreeLevel,
-    award.degree degree,
-    award.college college,
-    award.campus campus,
-    award.termOrder termOrder,
-    award.genderForUnknown genderForUnknown,
-    award.genderForNonBinary genderForNonBinary,
-    award.compGradDateOrTerm compGradDateOrTerm,
-    award.reportingDateEnd reportingDateEnd,
-    MAX(repperiod.snapshotDate) snapshotDate
-from AwardMCR award
-    left join AcademicTermReporting repperiod
-    on repperiod.termCode = award.awardedTermCode
-where award.awardedDate is not null
-group by award.personId, 
-    award.awardedDate, 
-    award.awardedTermCode, 
-    award.degreeLevel, 
-    award.degree, 
-    award.college, 
-    award.campus, 
-    award.termOrder, 
-    award.genderForUnknown, 
-    award.genderForNonBinary, 
-    award.compGradDateOrTerm,
-    award.reportingDateEnd		  
+select *
+    from (
+    select distinct upper(programENT.degreeProgram) degreeProgram,
+            upper(programENT.degree) degree,
+            upper(programENT.major) major,
+            upper(programENT.college) college,
+            upper(programENT.campus) campus,
+            coalesce(campus.isInternational, false) isInternationalDegProg,
+            upper(programENT.department) department,
+            coalesce(programENT.isESL, false) isESL,
+            programENT.startDate startDate,
+            upper(programENT.termCodeEffective) termCodeEffective,
+            termorder.termOrder termorder,
+            coalesce(programENT.distanceEducationType, 'Not distance education') distanceEducationType,
+            repperiod.snapshotDate snapshotDate,
+            repperiod.compReportingDateEnd compReportingDateEnd,
+            coalesce(row_number() over (
+                partition by
+                    programENT.degreeProgram,
+                    --programENT.degree,
+                    programENT.major,
+                    programENT.distanceEducationType,
+                    programENT.campus
+                order by
+                    termorder.termOrder desc,
+                    programENT.startDate desc,
+                    programENT.recordActivityDate desc
+            ), 1) programRN
+        from AcademicTermReportingRefactor repperiod
+            inner join DegreeProgram programENT on repperiod.snapshotDate = programENT.snapshotDate
+                and (to_date(programENT.startDate,'YYYY-MM-DD') <= repperiod.compReportingDateEnd
+                    or programENT.startDate is null)
+                and coalesce(programENT.isIPEDSReportable, true) = true
+                --and programENT.isForStudentAcadTrack = true
+                --and programENT.isForDegreeAcadHistory = true
+                and ((coalesce(to_date(programENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+                        and to_date(programENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.compReportingDateEnd)
+                    or coalesce(to_date(programENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE))
+            left join AcademicTermOrder termorder on termorder.termCode = upper(programENT.termCodeEffective)
+                and termorder.termOrder <= repperiod.maxTermOrder
+            left join CampusMCR campus on upper(programENT.campus) = campus.campus
+    )
+    where programRn = 1
+        and isESL = false
+        and major is not null
 ),
 
-CampusMCR as ( 
--- Returns most recent campus record for each campus available per the ReportingPeriod.
+DegreeMCR as (
+-- Pulls degree information as of the reporting period
+
+select degreeProgram,
+        degreeLevel,
+        degree,
+        awardLevel,
+        major,
+        campus,
+        isInternationalDegProg,
+        snapshotDate,
+        compReportingDateEnd,
+        (case when distanceEducationType = 'Not distance education' then 1 else 0 end) DENotDistanceEd,
+        (case when distanceEducationType in ('Distance education with no onsite component', 'Distance education with mandatory onsite component', 'Distance education with non-mandatory onsite component') then 1 else 0 end) DEisDistanceEd,
+        (case when distanceEducationType = 'Distance education with no onsite component' then 1 else 0 end) DEEntirelyDistanceEd,
+        (case when distanceEducationType = 'Distance education with mandatory onsite component' then 1 else 0 end) DEMandatoryOnsite,
+        (case when distanceEducationType = 'Distance education with non-mandatory onsite component' then 1 else 0 end) DEMOptionalOnsite
+    from (
+    select degprog.degreeProgram degreeProgram,
+            degreeENT.degreeLevel degreeLevel,
+            degprog.degree degree,
+            degprog.major major,
+            --removed college and department - these could possibly be needed for certain clients
+            degprog.campus campus,
+            degprog.isInternationalDegProg isInternationalDegProg,
+            degprog.distanceEducationType distanceEducationType,
+            degprog.snapshotDate snapshotDate,
+            degprog.compReportingDateEnd compReportingDateEnd,
+            degreeENT.awardLevel awardLevel,
+            coalesce(row_number() over (
+                partition by
+                    degprog.degreeProgram,
+                    degprog.campus,
+                    degprog.distanceEducationType
+                order by
+                    degreeENT.recordActivityDate desc
+            ), 1) as degreeRn
+        from DegreeProgramMCR degprog
+            left join Degree degreeENT on degprog.snapshotDate = degreeENT.snapshotDate
+                and degprog.degree = upper(degreeENT.degree)
+                and coalesce(degreeENT.isIpedsReportable, true) = true
+                and coalesce(degreeENT.isNonDegreeSeeking, false) = false
+                and ((coalesce(to_date(degreeENT.recordActivityDate,'YYYY-MM-DD'),CAST('9999-09-09' AS DATE))  != CAST('9999-09-09' as DATE)
+                        and to_date(degreeENT.recordActivityDate,'YYYY-MM-DD') <= degprog.compReportingDateEnd)
+                    or coalesce(to_date(degreeENT.recordActivityDate,'YYYY-MM-DD'),CAST('9999-09-09' AS DATE))  = CAST('9999-09-09' as DATE))
+    )
+where degreeRn = 1
+    and awardLevel is not null
+),
+
+FieldOfStudyMCR as (
+-- Pulls major information as of the reporting period and joins to the degrees on curriculumRule
 
 select *
 from (
-    select award2.personId personId,
-		award2.degree degree,
-		award2.awardedDate awardedDate,
-		award2.awardedTermCode awardedTermCode,
-		award2.termOrder termOrder,
-		award2.genderForUnknown genderForUnknown,
-		award2.genderForNonBinary genderForNonBinary,
-		award2.degreeLevel degreeLevel,
-		award2.college college, 
-		award2.campus campus,
-		award2.reportingDateEnd reportingDateEnd,
-		campusRec.isInternational isInternational,
-		campusRec.snapshotDate snapshotDate,
-        row_number() over (
-            partition by
-                award2.personId,
-                award2.awardedDate,
-                award2.degreeLevel,
-                award2.degree,
-                award2.campus
-            order by
-                campusRec.recordActivityDate desc
-        ) campusRn
-    from AwardRefactor award2
-		left join (select to_date(award.awardedDate,'YYYY-MM-DD') awardedDate,
-		                upper(campusENT.campus) campus,
-                        campusENT.isInternational isInternational,
-                        to_date(campusENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
--- ak 20200728 Adding snapshotDate reference.
-                        to_date(campusENT.snapshotDate,'YYYY-MM-DD') snapshotDate
-                    from AwardRefactor award
-                        inner join Campus campusENT on upper(campusENT.campus) = award.campus
--- ak 20200728 Adding snapshotDate reference to return Campus information from the award record's snapshot
-                            and to_date(campusENT.snapshotDate,'YYYY-MM-DD') = award.snapshotDate
-                            and campusENT.isIpedsReportable = 1
-                            and award.awardedDate is not null
-                            and campusENT.campus is not null
-                            and campusENT.snapshotDate is not null
-        ) CampusRec on award2.campus = CampusRec.campus 
-            and to_date(award2.awardedDate,'YYYY-MM-DD') = to_date(CampusRec.awardedDate,'YYYY-MM-DD')
--- ak 20200728 Adding snapshotDate reference to return Campus information from the award record's snapshot
-            and award2.snapshotDate = CampusRec.snapshotDate
--- Remove for testing... 
---ak 20200406 Including dummy date changes.(PF-1368)
-		    and ((CampusRec.recordActivityDate != CAST('9999-09-09' as DATE)
-			    and CampusRec.recordActivityDate <= award2.awardedDate)
-				    or CampusRec.recordActivityDate = CAST('9999-09-09' as DATE))
--- Remove for testing...
-	        and award2.awardedDate is not null
-	        and CampusRec.campus is not null
-	        and CampusRec.snapshotDate is not null
--- ...Remove for testing
-	)
-where campusRn = 1
+    select degprog.degreeProgram degreeProgram,
+            degprog.degreeLevel degreeLevel,
+            degprog.degree degree,
+            degprog.major major,
+            degprog.campus campus,
+            degprog.isInternationalDegProg isInternationalDegProg,
+            degprog.snapshotDate snapshotDate,
+            degprog.compReportingDateEnd compReportingDateEnd,
+            degprog.awardLevel awardLevel,
+            degprog.DENotDistanceEd,
+            degprog.DEisDistanceEd,
+            degprog.DEEntirelyDistanceEd,
+            degprog.DEMandatoryOnsite,
+            degprog.DEMOptionalOnsite,
+            CONCAT(LPAD(SUBSTR(CAST(fosENT.cipCode as STRING), 1, 2), 2, '0'), '.', RPAD(SUBSTR(CAST(fosENT.cipCode as STRING), 3, 6), 4, '0')) cipCode,
+            coalesce(row_number() over (
+                partition by
+                    degprog.degreeProgram,
+                    degprog.degreeLevel,
+                    degprog.awardLevel,
+                    degprog.degree,
+                    fosENT.fieldOfStudy,
+                    degprog.major,
+                    fosENT.cipCode,
+                    degprog.campus
+                order by
+                    fosENT.recordActivityDate desc
+            ), 1) as fosRn
+    from DegreeMCR degprog
+        left join FieldOfStudy fosENT on degprog.snapshotDate = fosENT.snapshotDate
+            and degprog.major = upper(fosENT.fieldOfStudy)
+            and fosENT.fieldOfStudyType = 'Major'
+            --and fosENT.cipCode is not null
+            and ((coalesce(to_date(fosENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' as DATE)
+            and to_date(fosENT.recordActivityDate,'YYYY-MM-DD') <= degprog.compReportingDateEnd)
+            or coalesce(to_date(fosENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' as DATE))
+         --   and SUBSTR(CAST(fosENT.cipCodeVersion as STRING), 3, 2) >= 20 -- Current CIPCode standard was released 2020. new specs introduced per decade.
+    )
+where fosRn = 1
+    and cipCode is not null
+),
+
+AwardMCR as (
+--Pulls all distinct student awards obtained withing the reporting terms/dates.
+
+select *
+from (
+    select awardENT.personId personId,
+            repperiod.yearType yearType,
+            upper(awardENT.degreeProgram) degreeProgram,
+            repperiod.surveySection surveySection,
+            repperiod.snapshotDate termSSD,
+            repperiod.genderForUnknown genderForUnknown,
+            repperiod.genderForNonBinary genderForNonBinary,
+            repperiod.reportingDateStart reportingDateStart,
+            repperiod.reportingDateEnd reportingDateEnd,
+            repperiod.compReportingDateStart compReportingDateStart,
+            repperiod.compReportingDateEnd compReportingDateEnd,
+            repperiod.termCode termCode,
+            repperiod.maxTermOrder maxTermOrder,
+            termorder.termOrder termOrder,
+            repperiod.maxCensus maxCensus,
+            repperiod.compGradDateOrTerm compGradDateOrTerm,
+            awardENT.snapshotDate snapshotDate,
+            to_date(awardENT.awardedDate, 'YYYY-MM-DD') awardedDate,
+            coalesce(to_date(awardENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
+            upper(awardENT.awardedTermCode) awardedTermCode,
+            awardENT.awardStatus awardStatus,
+            upper(awardENT.collegeOverride) collegeOverride,
+            upper(awardENT.divisionOverride) divisionOverride,
+            upper(awardENT.departmentOverride) departmentOverride,
+            upper(awardENT.campusOverride) campusOverride,
+            coalesce(campus.isInternational, false) isInternationalAward,
+            coalesce(row_number() over (
+                partition by
+                    awardENT.personId,
+                    awardENT.awardedDate,
+                    awardENT.degreeProgram
+                order by
+                    awardENT.recordActivityDate desc
+            ), 1) as awardRn
+    from AcademicTermReportingRefactor repperiod
+        inner join Award awardENT on repperiod.snapshotDate = awardENT.snapshotDate
+            and ((repperiod.compGradDateOrTerm = 'D' and to_date(awardENT.awardedDate,'YYYY-MM-DD') between 
+                repperiod.compReportingDateStart and repperiod.compReportingDateEnd)
+            or (repperiod.compGradDateOrTerm = 'T' and upper(awardENT.awardedTermCode) = repperiod.termCode))
+            and coalesce(awardENT.isIpedsReportable, true) = true
+            and awardENT.awardedDate is not null
+            and ((coalesce(to_date(awardENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE))  != CAST('9999-09-09' as DATE)
+                    and to_date(awardENT.recordActivityDate,'YYYY-MM-DD')  <= repperiod.reportingDateEnd)
+                or coalesce(to_date(awardENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE))  = CAST('9999-09-09' as DATE))
+       inner join AcademicTermOrder termorder on termorder.termCode = upper(awardENT.awardedTermCode)
+                            and termorder.termOrder <= repperiod.maxTermOrder
+        left join CampusMCR campus on upper(awardENT.campus) = campus.campus
+    ) awardData
+where awardData.awardRn = 1
+    and awardData.awardStatus = 'Awarded'
 ),
 
 PersonMCR as (
 --Returns most up to date student personal information as of the reporting term codes and part of term census periods. 
 
-select *
+select pers.personId personId,
+        pers.yearType yearType,
+        pers.degreeProgram degreeProgram,
+        pers.awardedTermCode awardedTermCode,
+        pers.awardedDate awardedDate,
+        pers.collegeOverride collegeOverride,
+        pers.campusOverride campusOverride,
+        pers.isInternationalAward isInternationalAward,
+        pers.snapshotDate snapshotDate,
+        pers.surveySection surveySection,
+        pers.reportingDateEnd reportingDateEnd,
+        pers.maxTermOrder maxTermOrder,
+        (case when pers.gender = 'Male' then 'M'
+            when pers.gender = 'Female' then 'F' 
+            when pers.gender = 'Non-Binary' then pers.genderForNonBinary
+            else pers.genderForUnknown
+        end) ipedsGender,
+        (case when pers.isUSCitizen = true or ((pers.isInUSOnVisa = true or pers.awardedDate between pers.visaStartDate and pers.visaEndDate)
+            and pers.visaType in ('Employee Resident', 'Other Resident')) then 
+            (case when pers.isHispanic = true then '2' 
+                when pers.isMultipleRaces = true then '8' 
+                when pers.ethnicity != 'Unknown' and pers.ethnicity is not null then
+                    (case when pers.ethnicity = 'Hispanic or Latino' then '2'
+                        when pers.ethnicity = 'American Indian or Alaskan Native' then '3'
+                        when pers.ethnicity = 'Asian' then '4'
+                        when pers.ethnicity = 'Black or African American' then '5'
+                        when pers.ethnicity = 'Native Hawaiian or Other Pacific Islander' then '6'
+                        when pers.ethnicity = 'Caucasian' then '7'
+                        else '9' 
+                    end) 
+                    else '9' end) -- 'race and ethnicity unknown'
+            when ((pers.isInUSOnVisa = true or pers.awardedDate between pers.visaStartDate and pers.visaEndDate)
+                and pers.visaType in ('Student Non-resident', 'Employee Non-resident', 'Other Non-resident')) then '1' -- 'nonresident alien'
+            else '9' -- 'race and ethnicity unknown'
+        end) ipedsEthnicity,
+        (case when pers.asOfAge < 18 then 'AGE1' 
+            when pers.asOfAge >= 18 and pers.asOfAge <= 24 then 'AGE2' 
+            when pers.asOfAge >= 25 and pers.asOfAge <= 39 then 'AGE3' 
+            when pers.asOfAge >= 40 then 'AGE4' 
+            else 'AGE5' --Age unknown
+        end) ipedsAgeGroup
 from (
-   select campus2.personId personId,
-		campus2.degree degree,
-		campus2.awardedDate awardedDate,
-		campus2.awardedTermCode awardedTermCode,
-		campus2.termOrder termOrder,
-		campus2.genderForUnknown genderForUnknown,
-		campus2.genderForNonBinary genderForNonBinary,
-		campus2.isInternational isInternational,
-		campus2.snapshotDate snapshotDate,
-		campus2.degreeLevel degreeLevel,
-		campus2.college college, 
-		campus2.campus campus,
-		campus2.reportingDateEnd reportingDateEnd,
-		PersonRec.snapshotDate perSnapshotDate,
-		PersonRec.gender gender,
-		PersonRec.isHispanic isHispanic,
-		PersonRec.isMultipleRaces isMultipleRaces,
-		PersonRec.ethnicity ethnicity,
-		PersonRec.isInUSOnVisa isInUSOnVisa,
-		PersonRec.visaStartDate visaStartDate,
-		PersonRec.visaEndDate visaEndDate,
-		PersonRec.visaType visaType,
-		PersonRec.isUSCitizen isUSCitizen,
-		PersonRec.birthDate birthDate,
-        row_number() over (
-			partition by
-				campus2.personId,
-				PersonRec.personId,
-				campus2.awardedDate,
-				campus2.degreeLevel,
-				campus2.degree
-			order by
-				PersonRec.recordActivityDate desc
-		) personRn 
-    from CampusMCR campus2
-        left join (  
-                select distinct personENT.personId personId,
-                        to_date(personENT.recordActivityDate,'YYYY-MM-DD') recordActivityDate,
-                        to_date(personENT.birthDate,'YYYY-MM-DD') birthDate,
-                        personENT.ethnicity ethnicity,
-                        personENT.isHispanic isHispanic,
-                        personENT.isMultipleRaces isMultipleRaces,
-                        personENT.isInUSOnVisa isInUSOnVisa,
-                        to_date(personENT.visaStartDate,'YYYY-MM-DD') visaStartDate,
-                        to_date(personENT.visaEndDate,'YYYY-MM-DD') visaEndDate,
-                        personENT.visaType visaType,
-                        personENT.isUSCitizen isUSCitizen,
-                        personENT.gender gender,
--- ak 20200728 Adding snapshotDate reference.
-                        to_date(personENT.snapshotDate,'YYYY-MM-DD') snapshotDate
-                from CampusMCR campus
-                    inner join Person personENT on campus.personId = personENT.personId 
--- ak 20200728 Adding snapshotDate reference to return Person information from the award record's snapshot
-                        and to_date(personENT.snapshotDate,'YYYY-MM-DD') = campus.snapshotDate
-                        and personENT.isIpedsReportable = 1
-                where campus.awardedDate is not null
-                    and campus.snapshotDate is not null
-                ) PersonRec on campus2.personId = PersonRec.personId 
--- ak 20200728 Adding snapshotDate reference to return Person information from the award record's snapshot
-                and campus2.snapshotDate = PersonRec.snapshotDate
--- Remove for testing... 
---ak 20200406 Including dummy date changes.(PF-1368)
-                and ((PersonRec.recordActivityDate != CAST('9999-09-09' AS DATE)
-                    and PersonRec.recordActivityDate <= campus2.awardedDate) 
-                        or PersonRec.recordActivityDate = CAST('9999-09-09' AS DATE))
--- ...Remove for testing
-    where campus2.awardedDate is not null
-        and campus2.snapshotDate is not null
-    )
-where personRn = 1
+    select distinct award.personId personId,
+            award.yearType yearType,
+            award.degreeProgram degreeProgram,
+            award.awardedTermCode awardedTermCode,
+            award.awardedDate awardedDate,
+            award.collegeOverride collegeOverride,
+            award.campusOverride campusOverride,
+            award.isInternationalAward isInternationalAward,
+            award.snapshotDate snapshotDate,
+            award.surveySection surveySection,
+            award.maxTermOrder maxTermOrder,
+            award.genderForUnknown genderForUnknown,
+            award.genderForNonBinary genderForNonBinary,
+            award.reportingDateEnd reportingDateEnd,
+            award.compGradDateOrTerm compGradDateOrTerm,
+            floor(DATEDIFF(award.awardedDate, to_date(personENT.birthDate,'YYYY-MM-DD')) / 365) asOfAge,
+            to_date(personENT.birthDate,'YYYY-MM-DD') birthDate,
+            personENT.ethnicity ethnicity,
+            coalesce(personENT.isHispanic, false) isHispanic,
+            coalesce(personENT.isMultipleRaces, false) isMultipleRaces,
+            coalesce(personENT.isInUSOnVisa, false) isInUSOnVisa,
+            to_date(personENT.visaStartDate,'YYYY-MM-DD') visaStartDate,
+            to_date(personENT.visaEndDate,'YYYY-MM-DD') visaEndDate,
+            personENT.visaType visaType,
+            coalesce(personENT.isUSCitizen, true) isUSCitizen,
+            personENT.gender gender,
+            upper(personENT.nation) nation,
+            upper(personENT.state) state,
+            coalesce(row_number() over (
+                partition by
+                    award.personId,
+                    personENT.personId,
+                    award.awardedDate
+                order by
+                     personENT.recordActivityDate desc
+                ), 1) personRn
+        from AwardMCR award
+            left join Person personENT on award.personId = personENT.personId
+                and award.snapshotDate = personENT.snapshotDate
+                and coalesce(personENT.isIpedsReportable, true) = true
+                and ((coalesce(to_date(personENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE))  != CAST('9999-09-09' AS DATE)
+                        and to_date(personENT.recordActivityDate,'YYYY-MM-DD')  <= award.awardedDate)
+                or coalesce(to_date(personENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE))  = CAST('9999-09-09' AS DATE))
+) pers
+    where pers.personRn = 1
 ),
 
 AcademicTrackMCR as (
 --Returns most up to date student academic track information as of their award date and term. 
 
-select personId personId,
-    fieldOfStudyActionDate fieldOfStudyActionDate,
-    perSnapshotDate perSnapshotDate,			
-	degree degree,
-	college college,
-	snapshotDate snapshotDate,
-	degreeLevel degreeLevel,
-	awardedDate awardedDate,
-	awardedTermCode awardedTermCode,
-	genderForUnknown genderForUnknown,
-	genderForNonBinary genderForNonBinary,
-	isInternational isInternational,
-	snapshotDate snapshotDate,
-	gender gender,
-	isHispanic isHispanic,
-	isMultipleRaces isMultipleRaces,
-	ethnicity ethnicity,
-	isInUSOnVisa isInUSOnVisa,
-	visaStartDate visaStartDate,
-	visaEndDate visaEndDate,
-	visaType visaType,
-	isUSCitizen isUSCitizen,
-	birthDate birthDate,	
-	termCodeEffective termCodeEffective,
-	degreeProgram degreeProgram,
-	academicTrackLevel academicTrackLevel,
-	fieldOfStudy fieldOfStudy,
-	fieldOfStudyType fieldOfStudyType,
-	fieldOfStudyPriority fieldOfStudyPriority,
-	termOrder termOrder,
-	row_number() over (
-		partition by
-			personId
-		order by
-			fieldOfStudyPriority asc
-	) fosRn
-from ( 
-    select person2.personId personId,
-        AcadTrackRec.fieldOfStudyActionDate fieldOfStudyActionDate,
-        person2.perSnapshotDate perSnapshotDate,			
-		person2.degree degree,
-		person2.college college,
-        person2.degreeLevel degreeLevel,
-		person2.awardedDate awardedDate,
-		person2.awardedTermCode awardedTermCode,
-		person2.genderForUnknown genderForUnknown,
-		person2.genderForNonBinary genderForNonBinary,
-		person2.isInternational isInternational,
-		person2.snapshotDate snapshotDate,
-		person2.gender gender,
-		person2.isHispanic isHispanic,
-		person2.isMultipleRaces isMultipleRaces,
-		person2.ethnicity ethnicity,
-		person2.isInUSOnVisa isInUSOnVisa,
-		person2.visaStartDate visaStartDate,
-		person2.visaEndDate visaEndDate,
-		person2.visaType visaType,
-		person2.isUSCitizen isUSCitizen,
-		person2.birthDate birthDate,	
-		AcadTrackRec.termCodeEffective termCodeEffective,
-		AcadTrackRec.degreeProgram degreeProgram,
-		AcadTrackRec.academicTrackLevel academicTrackLevel,
+select person2.personId personId,
+        person2.yearType yearType,
+        person2.awardedDate awardedDate,
+        person2.awardedTermCode awardedTermCode,
+        person2.maxTermOrder maxTermOrder,
+        person2.snapshotDate snapshotDate,
+        person2.ipedsGender ipedsGender,
+        person2.ipedsEthnicity ipedsEthnicity,
+        person2.ipedsAgeGroup ipedsAgeGroup,
+        person2.collegeOverride collegeOverride,
+        person2.campusOverride campusOverride,
+        person2.isInternationalAward isInternationalAward,
+        AcadTrackRec.isInternational isInternationalAcadTrack,
+        AcadTrackRec.termCodeEffective termCodeEffective,
+        AcadTrackRec.degreeProgram degreeProgram,
         AcadTrackRec.fieldOfStudy fieldOfStudy,
-		AcadTrackRec.fieldOfStudyType fieldOfStudyType,
-		AcadTrackRec.fieldOfStudyPriority fieldOfStudyPriority,
-		AcadTrackRec.academicTrackStatus academicTrackStatus,
-		AcadTrackRec.termOrder termOrder,						   
-		row_number() over (
-			partition by
-			    person2.personId,
-				AcadTrackRec.personId,
-				person2.awardedDate,
-                person2.degreeLevel,
-                person2.degree,
-				AcadTrackRec.degreeProgram,
-												
-				AcadTrackRec.fieldOfStudyPriority
-			order by
-															 
-				AcadTrackRec.termOrder desc,
-				AcadTrackRec.recordActivityDate desc
-		) acadtrackRn
-	from PersonMCR person2
-	    left join ( 
-                select distinct acadtrackENT.personId personId,
-                        acadtrackENT.termCodeEffective termCodeEffective,
-						to_date(acadtrackENT.fieldOfStudyActionDate, 'YYYY-MM-DD') fieldOfStudyActionDate,
-                        termorder.termOrder termOrder,
-                        to_date(acadtrackENT.recordActivityDate, 'YYYY-MM-DD') recordActivityDate,
-                        acadtrackENT.academicTrackLevel academicTrackLevel,
-						upper(acadtrackENT.degreeProgram) degreeProgram, 
-						upper(acadtrackENT.fieldOfStudy) fieldOfStudy,
-                        acadtrackENT.fieldOfStudyType fieldOfStudyType,
-						acadtrackENT.fieldOfStudyPriority fieldOfStudyPriority,
-                        upper(acadtrackENT.degree) degree,
-                        upper(acadtrackENT.college) college,
-                        upper(acadtrackENT.campus) campus,
-                        acadtrackENT.academicTrackStatus academicTrackStatus,
--- ak 20200728 Adding snapshotDate reference.
-                        to_date(acadtrackENT.snapshotDate, 'YYYY-MM-DD') snapshotDate
-            from PersonMCR person
-                inner join AcademicTrack acadtrackENT ON person.personId = acadTrackENT.personId
-                    and person.degree = upper(acadTrackENT.degree)
-                    and (person.college = upper(acadTrackENT.college)
-                        or acadTrackENT.college is null)
-                    and (person.campus = upper(acadTrackENT.campus)
-                        or acadTrackENT.campus is null)
-                    and person.degreeLevel = acadTrackENT.academicTrackLevel
+        AcadTrackRec.fieldOfStudyType fieldOfStudyType,
+        AcadTrackRec.fieldOfStudyPriority fieldOfStudyPriority,
+        AcadTrackRec.academicTrackStatus academicTrackStatus,
+        AcadTrackRec.fieldOfStudyActionDate fieldOfStudyActionDate,
+        AcadTrackRec.recordActivityDate recordActivityDate,
+        AcadTrackRec.termOrder acadTrackTermOrder,
+        coalesce(row_number() over (
+            partition by
+                person2.personId,
+                person2.awardedDate,
+                person2.degreeProgram
+        order by
+            AcadTrackRec.fieldOfStudyPriority asc), 1
+        ) fosRn
+from PersonMCR person2
+    left join (
+        select * from ( 
+            select distinct acadtrackENT.personId personId,
+                    person1.yearType yearType,
+                    person1.awardedDate awardedDate,
+                    upper(acadtrackENT.termCodeEffective) termCodeEffective,
+                    coalesce(to_date(acadtrackENT.fieldOfStudyActionDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) fieldOfStudyActionDate,
+                    termorder.termOrder termOrder,
+                    coalesce(to_date(acadtrackENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) recordActivityDate,
+                    upper(acadtrackENT.degreeProgram) degreeProgram,
+                    upper(acadtrackENT.fieldOfStudy) fieldOfStudy,
+                    acadtrackENT.fieldOfStudyType fieldOfStudyType,
+                    acadtrackENT.fieldOfStudyPriority fieldOfStudyPriority,
+                    upper(acadtrackENT.collegeOverride) collegeOverride,
+                    upper(acadtrackENT.campusOverride) campusOverride,
+                    coalesce(campus.isInternational, false) isInternational,
+                    acadtrackENT.academicTrackStatus academicTrackStatus,
+                    coalesce(row_number() over (
+                        partition by
+                            person1.personId,
+                            acadtrackENT.personId,
+                            person1.awardedDate,
+                            acadtrackENT.degreeProgram,
+                            acadtrackENT.fieldOfStudyPriority
+                        order by
+                             termorder.termOrder desc,
+                             acadtrackENT.fieldOfStudyActionDate desc,
+                             acadtrackENT.recordActivityDate desc,
+                             (case when acadtrackENT.academicTrackStatus = 'Completed' then 1 else 2 end) asc
+                       ), 1) acadtrackRn 
+            from PersonMCR person1
+                inner join AcademicTrack acadtrackENT ON person1.personId = acadtrackENT.personId
+                    and person1.snapshotDate = acadtrackENT.snapshotDate
+                    and person1.degreeProgram = upper(acadTrackENT.degreeProgram)
+                    and ((coalesce(to_date(acadtrackENT.fieldOfStudyActionDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
+                             and to_date(acadtrackENT.fieldOfStudyActionDate, 'YYYY-MM-DD') <= person1.awardedDate)
+                            or (coalesce(to_date(acadtrackENT.fieldOfStudyActionDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)
+                                and ((coalesce(to_date(acadtrackENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE))!= CAST('9999-09-09' as DATE)
+                                        and to_date(acadtrackENT.recordActivityDate, 'YYYY-MM-DD') <= person1.awardedDate)
+                                    or coalesce(to_date(acadtrackENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' as DATE))))
                     and acadTrackENT.fieldOfStudyType = 'Major'
-															   
---This causes null values in the academicTrack sourced fields because this field is null in the source data. 
-                    and acadTrackENT.academicTrackStatus = 'Completed'
--- ak 20200728 Adding snapshotDate reference to return AcademicTrack information from the award record's snapshot
-                    and to_date(acadTrackENT.snapshotDate, 'YYYY-MM-DD') = person.snapshotDate
-                    and acadTrackENT.isIpedsReportable = 1
-					and acadTrackENT.isCurrentFieldOfStudy = 1
-                inner join AcademicTermOrder termorder on termorder.termCode = acadtrackENT.termCodeEffective
-			where person.awardedDate is not null
-			    and person.snapshotDate is not null
-            ) AcadTrackRec 
-				ON person2.personId = AcadTrackRec.personId 
-                                and person2.degree = AcadTrackRec.degree
-			    and (person2.college = AcadTrackRec.college
-                        or AcadTrackRec.college is null)
-                and (person2.campus = upper(AcadTrackRec.campus)
-                        or AcadTrackRec.campus is null)
-			    and person2.degreeLevel = AcadTrackRec.academicTrackLevel
--- Added to use check the date for when the academicTrack record was made active. Use termCodeEffective if
--- the dummy date is being used. 
-                and ((AcadTrackRec.fieldOfStudyActionDate != CAST('9999-09-09' AS DATE)
-					and AcadTrackRec.fieldOfStudyActionDate <= person2.reportingDateEnd)
-                    or AcadTrackRec.fieldOfStudyActionDate = CAST('9999-09-09' AS DATE)) 
--- and to use the termCodeEffective...
-				and ((AcadTrackRec.fieldOfStudyActionDate = CAST('9999-09-09' AS DATE)
-				and  AcadTrackRec.termOrder <= person2.termOrder)
-					or AcadTrackRec.fieldOfStudyActionDate != CAST('9999-09-09' AS DATE))
--- Maintaining activityDate filtering from prior versions.					
-                and ((AcadTrackRec.recordActivityDate != CAST('9999-09-09' AS DATE)
-				and AcadTrackRec.recordActivityDate <= person2.reportingDateEnd)
-                    or AcadTrackRec.recordActivityDate = CAST('9999-09-09' AS DATE)) 
-                and person2.snapshotDate = AcadTrackRec.snapshotDate
-        where person2.awardedDate is not null
-            and person2.snapshotDate is not null
-				
-	)
-where acadtrackRn = 1
+                    and coalesce(acadTrackENT.isIpedsReportable, true) = true
+                --and coalesce(acadTrackENT.isCurrentFieldOfStudy, true) = true
+                inner join AcademicTermOrder termorder on termorder.termCode = upper(acadtrackENT.termCodeEffective)
+                                and termorder.termOrder <= person1.maxTermOrder
+                left join CampusMCR campus on campus.campus = upper(acadtrackENT.campusOverride)
+        )
+        where acadtrackRn = 1
+    ) AcadTrackRec on person2.personID = AcadTrackRec.personID
+            and person2.awardedDate = AcadTrackRec.awardedDate
+            and person2.degreeProgram = AcadTrackRec.degreeProgram   
 ),
 
-/*****
-BEGIN SECTION - Cohort Creation
-This set of views is used to pull current cohort information based on the most current record views above.
-*****/
-
-CohortSTU as (
---Builds out the reporting population with relevant reporting fields.
+Completer as (
+--Returns all completer records to use for Parts C & D
 
 select *,
-       (case when IPEDSethnicity = '1' and IPEDSGender = 'M' then 1 else 0 end) reg1, --(CRACE01) - Nonresident Alien, M, (0 to 999999)
-       (case when IPEDSethnicity = '1' and IPEDSGender = 'F' then 1 else 0 end) reg2, --(CRACE02) - Nonresident Alien, F, (0 to 999999)
-       (case when IPEDSethnicity = '2' and IPEDSGender = 'M' then 1 else 0 end) reg3, --(CRACE25) - Hispanic/Latino, M, (0 to 999999)
-       (case when IPEDSethnicity = '2' and IPEDSGender = 'F' then 1 else 0 end) reg4, --(CRACE26) - Hispanic/Latino, F, (0 to 999999)
-       (case when IPEDSethnicity = '3' and IPEDSGender = 'M' then 1 else 0 end) reg5, --(CRACE27) - American Indian or Alaska Native, M, (0 to 999999)
-       (case when IPEDSethnicity = '3' and IPEDSGender = 'F' then 1 else 0 end) reg6, --(CRACE28) - American Indian or Alaska Native, F, (0 to 999999)
-       (case when IPEDSethnicity = '4' and IPEDSGender = 'M' then 1 else 0 end) reg7, --(CRACE29) - Asian, M, (0 to 999999)
-       (case when IPEDSethnicity = '4' and IPEDSGender = 'F' then 1 else 0 end) reg8, --(CRACE30) - Asian, F, (0 to 999999)
-       (case when IPEDSethnicity = '5' and IPEDSGender = 'M' then 1 else 0 end) reg9, --(CRACE31) - Black or African American, M, (0 to 999999)
-       (case when IPEDSethnicity = '5' and IPEDSGender = 'F' then 1 else 0 end) reg10, --(CRACE32) - Black or African American, F, (0 to 999999)
-       (case when IPEDSethnicity = '6' and IPEDSGender = 'M' then 1 else 0 end) reg11, --(CRACE33) - Native Hawaiian or Other Pacific Islander, M, (0 to 999999)
-       (case when IPEDSethnicity = '6' and IPEDSGender = 'F' then 1 else 0 end) reg12, --(CRACE34) - Native Hawaiian or Other Pacific Islander, F, (0 to 999999)
-       (case when IPEDSethnicity = '7' and IPEDSGender = 'M' then 1 else 0 end) reg13, --(CRACE35) - White, M, (0 to 999999)
-       (case when IPEDSethnicity = '7' and IPEDSGender = 'F' then 1 else 0 end) reg14, --(CRACE36) - White, F, (0 to 999999)
-       (case when IPEDSethnicity = '8' and IPEDSGender = 'M' then 1 else 0 end) reg15, --(CRACE37) - Two or more races, M, (0 to 999999)
-       (case when IPEDSethnicity = '8' and IPEDSGender = 'F' then 1 else 0 end) reg16, --(CRACE38) - Two or more races, M, (0 to 999999)
-       (case when IPEDSethnicity = '9' and IPEDSGender = 'M' then 1 else 0 end) reg17, --(CRACE13) - Race and ethnicity unknown, M, (0 to 999999)
-       (case when IPEDSethnicity = '9' and IPEDSGender = 'F' then 1 else 0 end) reg18  --(CRACE14) - Race and ethnicity unknown, F, (0 to 999999)
+    (case when IPEDSethnicity = '1' and IPEDSGender = 'M' then 1 else 0 end) reg1, --(CRACE01) - Nonresident Alien, M, (0 to 999999)
+    (case when IPEDSethnicity = '1' and IPEDSGender = 'F' then 1 else 0 end) reg2, --(CRACE02) - Nonresident Alien, F, (0 to 999999)
+    (case when IPEDSethnicity = '2' and IPEDSGender = 'M' then 1 else 0 end) reg3, --(CRACE25) - Hispanic/Latino, M, (0 to 999999)
+    (case when IPEDSethnicity = '2' and IPEDSGender = 'F' then 1 else 0 end) reg4, --(CRACE26) - Hispanic/Latino, F, (0 to 999999)
+    (case when IPEDSethnicity = '3' and IPEDSGender = 'M' then 1 else 0 end) reg5, --(CRACE27) - American Indian or Alaska Native, M, (0 to 999999)
+    (case when IPEDSethnicity = '3' and IPEDSGender = 'F' then 1 else 0 end) reg6, --(CRACE28) - American Indian or Alaska Native, F, (0 to 999999)
+    (case when IPEDSethnicity = '4' and IPEDSGender = 'M' then 1 else 0 end) reg7, --(CRACE29) - Asian, M, (0 to 999999)
+    (case when IPEDSethnicity = '4' and IPEDSGender = 'F' then 1 else 0 end) reg8, --(CRACE30) - Asian, F, (0 to 999999)
+    (case when IPEDSethnicity = '5' and IPEDSGender = 'M' then 1 else 0 end) reg9, --(CRACE31) - Black or African American, M, (0 to 999999)
+    (case when IPEDSethnicity = '5' and IPEDSGender = 'F' then 1 else 0 end) reg10, --(CRACE32) - Black or African American, F, (0 to 999999)
+    (case when IPEDSethnicity = '6' and IPEDSGender = 'M' then 1 else 0 end) reg11, --(CRACE33) - Native Hawaiian or Other Pacific Islander, M, (0 to 999999)
+    (case when IPEDSethnicity = '6' and IPEDSGender = 'F' then 1 else 0 end) reg12, --(CRACE34) - Native Hawaiian or Other Pacific Islander, F, (0 to 999999)
+    (case when IPEDSethnicity = '7' and IPEDSGender = 'M' then 1 else 0 end) reg13, --(CRACE35) - White, M, (0 to 999999)
+    (case when IPEDSethnicity = '7' and IPEDSGender = 'F' then 1 else 0 end) reg14, --(CRACE36) - White, F, (0 to 999999)
+    (case when IPEDSethnicity = '8' and IPEDSGender = 'M' then 1 else 0 end) reg15, --(CRACE37) - Two or more races, M, (0 to 999999)
+    (case when IPEDSethnicity = '8' and IPEDSGender = 'F' then 1 else 0 end) reg16, --(CRACE38) - Two or more races, M, (0 to 999999)
+    (case when IPEDSethnicity = '9' and IPEDSGender = 'M' then 1 else 0 end) reg17, --(CRACE13) - Race and ethnicity unknown, M, (0 to 999999)
+    (case when IPEDSethnicity = '9' and IPEDSGender = 'F' then 1 else 0 end) reg18, --(CRACE14) - Race and ethnicity unknown, F, (0 to 999999)
+    (case when awardLevel = 'Associates Degree' then '3' 
+        when awardLevel = 'Bachelors Degree' then '4'  
+        when awardLevel = 'Masters Degree' then '5' 
+        when awardLevel in ('Doctors Degree (Research/Scholarship)',
+                                    'Doctors Degree (Professional Practice)',
+                                    'Doctors Degree (Other)') then '6'	 
+        when awardLevel in ('Post-baccalaureate Certificate',
+                                    'Post-Masters Certificate') then '7'				
+        when awardLevel = 'Postsecondary (<300 clock/<9 semester credit/<13 quarter credit hours)' then '8' 
+        when awardLevel = 'Postsecondary (300-899 clock/9-29 semester credit/13-44 quarter credit hours)' then '9' 
+        when awardLevel in ('Postsecondary (900-1800 clock/30-60 semester credit/45-90 quarter credit hours)',
+                                    'Postsecondary (>1800 clock/>60 semester credit/>90 quarter credit hours)') then '2' 
+    end) ACATPartD
 from (
-    select DISTINCT 
-        personId personId,
-        (case when gender = 'Male' then 'M'
-            when gender = 'Female' then 'F'
-            when gender = 'Non-Binary' then genderForNonBinary
-            else genderForUnknown
-        end) IPEDSGender,
-        (case when isUSCitizen = 1 or ((isInUSOnVisa = 1 or awardedDate between visaStartDate and visaEndDate)
-                            and visaType in ('Employee Resident', 'Other Resident')) then
-            (case when isHispanic = true then '2' -- 'hispanic/latino'
-                  when isMultipleRaces = true then '8' -- 'two or more races'
-                  when ethnicity != 'Unknown' and ethnicity is not null
-                    then (case when ethnicity = 'Hispanic or Latino' then '2'
-                               when ethnicity = 'American Indian or Alaskan Native' then '3'
-                               when ethnicity = 'Asian' then '4'
-                               when ethnicity = 'Black or African American' then '5'
-                               when ethnicity = 'Native Hawaiian or Other Pacific Islander' then '6'
-                               when ethnicity = 'Caucasian' then '7'
-                        else '9' end) 
-                    else '9' end) -- 'race and ethnicity unknown'
-                else (case when ((isInUSOnVisa = 1 or awardedDate between visaStartDate and visaEndDate)
-                            and visaType in ('Student Non-resident', 'Employee Non-resident', 'Other Non-resident')) then '1' -- 'nonresident alien'
-                        else '9' end) -- 'race and ethnicity unknown'
-        end) IPEDSethnicity,
-        (case when asOfAge < 18 then 'AGE1' --Under 18
-            when asOfAge >= 18 and asOfAge <= 24 then 'AGE2' --18-24
-            when asOfAge >= 25 and asOfAge <= 39 then 'AGE3' --25-39
-            when asOfAge >= 40 then 'AGE4' --40 and above
-            else 'AGE5' --Age unknown
-        end) IPEDSAgeGroup,
-        awardedDate awardedDate,
-        awardedTermCode awardedTermCode,
-        fosRn FOSPriority,
-        isInternational isInternational,
-        degree degree,
-        degreeLevel degreeLevel,
-        academicTrackLevel academicTrackLevel,
-        degreeProgram degreeProgram,
-        fieldOfStudy fieldOfStudy, 
-        fieldOfStudyType fieldOfStudyType,
-        fieldOfStudyPriority fieldOfStudyPriority
-    from (
-		select DISTINCT 
-			acadtrack.personId personId,
-			acadtrack.gender gender,
-			acadtrack.isHispanic isHispanic,
-			acadtrack.isMultipleRaces isMultipleRaces,
-			acadtrack.ethnicity ethnicity,
-			acadtrack.isInUSOnVisa isInUSOnVisa,
-			acadtrack.visaStartDate visaStartDate,
-			acadtrack.visaEndDate visaEndDate,
-			acadtrack.visaType visaType,
-			acadtrack.isUSCitizen isUSCitizen,
-			floor(DATEDIFF(acadtrack.awardedDate, acadtrack.birthDate) / 365) asOfAge,
-			acadtrack.awardedDate awardedDate,
-			acadtrack.awardedTermCode awardedTermCode,
-			acadtrack.genderForUnknown genderForUnknown,
-			acadtrack.genderForNonBinary genderForNonBinary,
-			acadtrack.isInternational,
-			acadtrack.degree degree,
-			acadtrack.degreeLevel degreeLevel,
-		    acadtrack.academicTrackLevel academicTrackLevel,
-			acadtrack.fosRn fosRn,
-			acadtrack.degreeProgram degreeProgram,
-            acadtrack.fieldOfStudy fieldOfStudy, 
-            acadtrack.fieldOfStudyType fieldOfStudyType,
-            acadtrack.fieldOfStudyPriority fieldOfStudyPriority
-		from AcademicTrackMCR acadtrack
-		where fosRn < 3
-		)
-    where personId is not null
+    select acadtrack.fosRn majorNum,
+            acadtrack.degreeProgram degreeProgram,
+            degprog.degree degree,
+            acadtrack.fieldOfStudy fieldOfStudy,
+            acadtrack.personId personId,
+            acadtrack.ipedsGender ipedsGender,
+            acadtrack.ipedsEthnicity ipedsEthnicity,
+            acadtrack.ipedsAgeGroup ipedsAgeGroup,
+            degprog.awardLevel awardLevel,
+            degprog.cipCode cipCode
+    from AcademicTrackMCR acadtrack
+        inner join FieldOfStudyMCR degprog on degprog.degreeProgram = acadtrack.degreeProgram
+            and degprog.major = acadtrack.fieldOfStudy
+    where acadtrack.fosRn < 3
+        and coalesce(acadtrack.isInternationalAward, acadtrack.isInternationalAcadTrack, degprog.isInternationalDegProg, false) = false
     )
-where personId is not null
-),
-
-/*****
-BEGIN SECTION - Award Level Offerings
-This set of views pulls all degree/major combinations
-*****/
-
-DegreeACAT as (
--- Pulls degree information as of the reporting period
-
-select * 
-from (
-    select upper(degreeENT.degree) degree,
-        degreeENT.degreeLevel,
-        degreeENT.awardLevel,
-        to_date(degreeENT.snapshotDate,'YYYY-MM-DD') snapshotDate,
-		row_number() over (
-			partition by
-				degreeENT.degree,
-				degreeENT.degreeLevel,
-				degreeENT.awardLevel
-			order by
--- ak 20200728 Adding snapshotDate to return most recent snapshot. Not tied to awardedDate.
-			    degreeENT.snapshotDate desc,
-				degreeENT.recordActivityDate desc
-		) as degreeRn
-	from Degree degreeENT
-        cross join (select max(repperiod1.reportingDateEnd) reportingDateEnd
-                    from ReportingPeriodMCR repperiod1
-                    where repperiod1.reportingDateEnd is not null) repperiod
-    where degreeENT.awardLevel is not null
-        and degreeENT.isIpedsReportable = 1
-		and  degreeENT.isNonDegreeSeeking = 0
--- Remove for testing...
-		and ((to_date(degreeENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-			and to_date(degreeENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.reportingDateEnd)
-				or to_date(degreeENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
--- ...Remove for testing
-   )
-where degreeRn = 1
-),
-
-FOScipc as ( 
--- Pulls major information as of the reporting period and joins to the degrees on curriculumRule
-
-select * 
-from (			
-    select upper(fosENT.fieldOfStudy) fieldOfStudy,
-        fosENT.fieldOfStudyType fieldOfStudyType,
-        fosENT.cipCode cipCode,
-        fosENT.cipCodeVersion cipCodeVersion,
-        to_date(fosENT.snapshotDate,'YYYY-MM-DD') snapshotDate,
-        row_number() over (
-            partition by
-                fosENT.cipCode,
-                fosENT.fieldOfStudy,
-                fosENT.fieldOfStudyType
-            order by
-                fosENT.snapshotDate desc,
-                fosENT.recordActivityDate desc
-        ) as fosRn
-    from FieldOfStudy fosENT 
-        cross join (select max(repperiod1.reportingDateEnd) reportingDateEnd
-                    from ReportingPeriodMCR repperiod1
-                    where repperiod1.reportingDateEnd is not null) repperiod
--- Remove for testing...
-    where ((to_date(fosENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
-        and to_date(fosENT.recordActivityDate,'YYYY-MM-DD') <= repperiod.reportingDateEnd)
-            or to_date(fosENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE))
-		and SUBSTR(CAST(fosENT.cipCodeVersion as STRING), 3, 2) >= 10 -- Current CIPCode standard was released 2010. new specs introduced per decade. 
--- ...Remove for testing
-    )
-    where fosRn = 1
-),
-
-DegreeFOSProgram as (
--- Should pull back DegreeMajor and DegreeACAT and give a program distanceEducationOption. This will we used to replace DegreeMajor in DegreeMajorSTU below.
-select *
-from (
-    select upper(programENT.degreeProgram) degreeProgram,
-		programENT.degreeLevel degreeLevel,
-		upper(programENT.degree) degree,
-		upper(programENT.major) fieldOfStudy,
-		upper(programENT.college) college,
-		upper(programENT.campus) campus,
-		upper(programENT.department) department,
-		to_date(programENT.startDate, 'YYYY-MM-DD') startDate,
-		programENT.termCodeEffective termCodeEffective,
-		coalesce(programENT.distanceEducationOption, 'No DE option') distanceEducationOption,
-		to_date(programENT.snapshotDate, 'YYYY-MM-DD') snapshotDate,
-		--foscipc.cipcode cipCode,
-		CONCAT(LPAD(SUBSTR(CAST(foscipc.cipCode as STRING), 1, 2), 2, '0'), '.', RPAD(SUBSTR(CAST(foscipc.cipCode as STRING), 3, 6), 4, '0')) cipCode,
-		degacat.awardLevel awardLevel,
-		case when degacat.awardLevel in ('Postsecondary < 1 year Award',
-											'Postsecondary (<300 clock/<9 semester credit/<13 quarter credit hours)',
-											'Postsecondary (300-899 clock/9-29 semester credit/13-44 quarter credit hours)') 
-				then 1		-- 1 - Postsecondary award, certificate, or diploma of (less than 1 academic year)
-			when degacat.awardLevel in ('Postsecondary > 1 year < 2 years Award',
-											'Postsecondary (900-1800 clock/30-60 semester credit/45-90 quarter credit hours)')
-				then 2   	-- 2 - Postsecondary award, certificate, or diploma of (at least 1 but less than 2 academic years)
-			when degacat.awardLevel = 'Associates Degree' then 3                        	-- 3 - Associate's degree
-			when degacat.awardLevel in ('Postsecondary > 2 years < 4 years Award',
-											'Postsecondary (>1800 clock/>60 semester credit/>90 quarter credit hours)')
-				then 4  	-- 4 - Postsecondary award, certificate, or diploma of (at least 2 but less than 4 academic years)
-															   
-			when degacat.awardLevel = 'Bachelors Degree' then 5                        	-- 5 - Bachelor's degree
-			when degacat.awardLevel = 'Post-baccalaureate Certificate' then 6           	-- 6 - Postbaccalaureate certificate
-																						
-																		
-					   
-			when degacat.awardLevel = 'Masters Degree' then 7                          	-- 7 - Master's degree
-															 
-			when degacat.awardLevel = 'Post-Masters Certificate' then 8                	-- 8 - Post-master's certificate
-			when degacat.awardLevel = 'Doctors Degree (Research/Scholarship)' then 17		-- 17 - Doctor's degree - research/scholarship
-			when degacat.awardLevel = 'Doctors Degree (Professional Practice)' then 18	-- 18 - Doctor's degree - professional practice
-			when degacat.awardLevel = 'Doctors Degree (Other)' then 19					-- 19 - Doctor's degree - other
-		end ACAT,
-		row_number() over (
-			partition by
-			    programENT.degreeProgram,
-			    programENT.degreeLevel,
-                programENT.degree,
-                programENT.major,
-                programENT.campus,
-				programENT.distanceEducationOption
-			order by
-			    programENT.snapshotDate desc,
-				programENT.recordActivityDate desc
-		) programRN
-	from DegreeProgram programENT 
-		left join AcademicTermOrder termorder on termorder.termCode = programENT.termCodeEffective
-		    and programENT.termCodeEffective is not null
-		left join DegreeACAT degacat on degacat.degree = programENT.degree
-		    and degacat.degreeLevel = programENT.degreeLevel
-		    and to_date(degacat.snapshotDate, 'YYYY-MM-DD') = to_date(programENT.snapshotDate, 'YYYY-MM-DD')
-		left join FOScipc foscipc on foscipc.fieldOfStudy = programENT.major
-		    and to_date(foscipc.snapshotDate, 'YYYY-MM-DD') = to_date(programENT.snapshotDate, 'YYYY-MM-DD')
-		    and foscipc.fieldOfStudyType = 'Major'
-        cross join (select max(repperiod1.reportingDateEnd) reportingDateEnd
-                    from ReportingPeriodMCR repperiod1
-                    where repperiod1.reportingDateEnd is not null) repdateend
-	where programENT.isIPEDSReportable = 1
-	    and programENT.isForStudentAcadTrack = 1
-	    and programENT.isForDegreeAcadHistory = 1
-	    and ((programENT.recordActivityDate != CAST('9999-09-09' AS DATE)
-		    and programENT.recordActivityDate <= repdateend.reportingDateEnd)
-			    or programENT.recordActivityDate = CAST('9999-09-09' AS DATE)) 
-    	and ((programENT.startDate != CAST('9999-09-09' AS DATE)
-		    and programENT.startDate <= repdateend.reportingDateEnd)
-			or programENT.startDate = CAST('9999-09-09' AS DATE)) 
-		and ((programENT.termCodeEffective is not null
-			and  termorder.termOrder <= (select max(repperiod.termOrder)
-										  from AcademicTermReporting repperiod))
-				or programENT.termCodeEffective is null)
-	    and foscipc.cipCode is not null
-	    and degacat.awardLevel is not null
-    )
-where programRn = 1
-),
-
-DistanceEdCountsSTU as (
-
-select cipCode cipCode,
-	awardLevel awardLevel,
-    sum(isDistanceEd) isDistanceEd
-from (			   
-	select distinct program.awardLevel awardLevel,
-		program.cipcode cipCode,
-		(case when coalesce(program.distanceEducationOption, 'No DE option') = 'No DE option'				  
-	        then 0
-        else 1 end) isDistanceEd
-	from DegreeFOSProgram program
-	)
-	group by cipCode, awardLevel
 ),
 
 DegreeFOSProgramSTU as (
--- Pulls all CIPCodes and ACAT levels including student awarded levels.
+-- Pulls all CIPCodes and ACAT levels including student awarded levels to use for Parts A & B
 
-select distinct coalesce(stuCIP.MajorNum, 1) majorNum,
-	degfosprog.cipCode cipCode,
-	degfosprog.ACAT ACAT,
-	(case when decounts.isDistanceEd > 0 
-		then 1
-	else 2 end) isDistanceEd,				
-	coalesce(stuCIP.FIELD1, 0) FIELD1,
-	coalesce(stuCIP.FIELD2, 0) FIELD2,
-	coalesce(stuCIP.FIELD3, 0) FIELD3,
-	coalesce(stuCIP.FIELD4, 0) FIELD4,
-	coalesce(stuCIP.FIELD5, 0) FIELD5,
-	coalesce(stuCIP.FIELD6, 0) FIELD6,
-	coalesce(stuCIP.FIELD7, 0) FIELD7,
-	coalesce(stuCIP.FIELD8, 0) FIELD8,
-	coalesce(stuCIP.FIELD9, 0) FIELD9,
-	coalesce(stuCIP.FIELD10, 0) FIELD10,
-	coalesce(stuCIP.FIELD11, 0) FIELD11,
-	coalesce(stuCIP.FIELD12, 0) FIELD12,
-	coalesce(stuCIP.FIELD13, 0) FIELD13,
-	coalesce(stuCIP.FIELD14, 0) FIELD14,
-	coalesce(stuCIP.FIELD15, 0) FIELD15,
-	coalesce(stuCIP.FIELD16, 0) FIELD16,
-	coalesce(stuCIP.FIELD17, 0) FIELD17,
-	coalesce(stuCIP.FIELD18, 0) FIELD18
-from DegreeFOSProgram degfosprog
-	inner join DistanceEdCountsSTU decounts on degfosprog.CIPCode = decounts.CIPCode	
-		and degfosprog.awardLevel = decounts.awardLevel
-    left join (
-            select distinct cohortstu.FOSPriority MajorNum, 
-                            --cohortstu.cipCode CIPCode,
-							--cohortstu.awardLevel awardLevel,
-							cohortstu.academicTrackLevel academicTrackLevel,
-							cohortstu.degreeProgram degreeProgram,
-							cohortstu.degree degree,
-							cohortstu.fieldOfStudy fieldOfStudy,
-							--cohortstu.fieldOfStudyPriority fieldOfStudyPriority,
-                            SUM(cohortstu.reg1) FIELD1, --Nonresident Alien
-                            SUM(cohortstu.reg2) FIELD2,
-                            SUM(cohortstu.reg3) FIELD3, -- Hispanic/Latino
-                            SUM(cohortstu.reg4) FIELD4,
-                            SUM(cohortstu.reg5) FIELD5, -- American Indian or Alaska Native
-                            SUM(cohortstu.reg6) FIELD6,
-                            SUM(cohortstu.reg7) FIELD7, -- Asian
-                            SUM(cohortstu.reg8) FIELD8,
-                            SUM(cohortstu.reg9) FIELD9, -- Black or African American
-                            SUM(cohortstu.reg10) FIELD10,
-                            SUM(cohortstu.reg11) FIELD11, -- Native Hawaiian or Other Pacific Islander
-                            SUM(cohortstu.reg12) FIELD12,
-                            SUM(cohortstu.reg13) FIELD13, -- White
-                            SUM(cohortstu.reg14) FIELD14,
-                            SUM(cohortstu.reg15) FIELD15, -- Two or more races
-                            SUM(cohortstu.reg16) FIELD16,
-                            SUM(cohortstu.reg17) FIELD17, -- Race and ethnicity unknown
-                            SUM(cohortstu.reg18) FIELD18                    
-            from CohortSTU cohortstu
-											  
-            group by cohortstu.FOSPriority, 
-                      --          cohortstu.cipCode,
-                        --        cohortstu.awardLevel
-                cohortstu.academicTrackLevel,
-                cohortstu.degreeProgram,
-                cohortstu.degree,
-                cohortstu.fieldOfStudy
-            ) stuCIP on degfosprog.degreeLevel = stuCIP.academicTrackLevel
-				and degfosprog.degreeProgram = stuCIP.degreeProgram
-				and degfosprog.degree = stuCIP.degree
-				and degfosprog.fieldOfStudy = stuCIP.fieldOfStudy
-)	
+select majorNum majorNum,
+    cipCode cipCode,
+    awardLevel awardLevel,
+    (case when awardLevel in ('Postsecondary < 1 year Award', 'Postsecondary (<300 clock/<9 semester credit/<13 quarter credit hours)','Postsecondary (300-899 clock/9-29 semester credit/13-44 quarter credit hours)') then 1
+        when awardLevel = 'Postsecondary (900-1800 clock/30-60 semester credit/45-90 quarter credit hours)' then '2'
+        when awardLevel = 'Associates Degree' then '3' 
+        when awardLevel = 'Postsecondary (>1800 clock/>60 semester credit/>90 quarter credit hours)' then '4'
+        when awardLevel = 'Bachelors Degree' then '5'
+        when awardLevel = 'Post-baccalaureate Certificate' then '6'
+        when awardLevel = 'Masters Degree' then '7'
+        when awardLevel = 'Post-Masters Certificate' then '8'
+        when awardLevel = 'Doctors Degree (Research/Scholarship)' then '17'
+        when awardLevel = 'Doctors Degree (Professional Practice)' then '18'
+        when awardLevel = 'Doctors Degree (Other)' then '19'
+    end) ACATPartAB,
+    (case when awardLevel = 'Associates Degree' then '3' 
+        when awardLevel = 'Bachelors Degree' then '4'  
+        when awardLevel = 'Masters Degree' then '5' 
+        when awardLevel in ('Doctors Degree (Research/Scholarship)',
+                                    'Doctors Degree (Professional Practice)',
+                                    'Doctors Degree (Other)') then '6'	 
+        when awardLevel in ('Post-baccalaureate Certificate',
+                                    'Post-Masters Certificate') then '7'				
+        when awardLevel = 'Postsecondary (<300 clock/<9 semester credit/<13 quarter credit hours)' then '8' 
+        when awardLevel = 'Postsecondary (300-899 clock/9-29 semester credit/13-44 quarter credit hours)' then '9' 
+        when awardLevel in ('Postsecondary (900-1800 clock/30-60 semester credit/45-90 quarter credit hours)',
+                                    'Postsecondary (>1800 clock/>60 semester credit/>90 quarter credit hours)') then '2' 
+    end) ACATPartD,
+    (case when DEisDistanceEd = totalPrograms then 1 -- All programs in this CIP code in this award level can be completed entirely via distance education.
+     when DEisDistanceEd = 0 then 2 -- None of the programs in this CIP code in this award level can be completed entirely via distance education.
+     when totalPrograms > DEisDistanceEd and DEisDistanceEd > 0 then 3 -- Some programs in this CIP code in this award level can be completed entirely via distance education.
+    end) DEAvailability,
+    (case when totalPrograms > DEisDistanceEd
+        and DEisDistanceEd > 0   
+        then (case when DEMandatoryOnsite > 0 then 1 else 0 end)
+    else null
+    end) DESomeRequiredOnsite,
+    (case when totalPrograms > DEisDistanceEd
+        and DEisDistanceEd > 0   
+        then (case when DEMOptionalOnsite > 0 then 1 else 0 end)
+    else null
+    end) DESomeOptionalOnsite,
+    FIELD1, --Nonresident Alien
+    FIELD2,
+    FIELD3, -- Hispanic/Latino
+    FIELD4,
+    FIELD5, -- American Indian or Alaska Native
+    FIELD6,
+    FIELD7, -- Asian
+    FIELD8,
+    FIELD9, -- Black or African American
+    FIELD10,
+    FIELD11, -- Native Hawaiian or Other Pacific Islander
+    FIELD12,
+    FIELD13, -- White
+    FIELD14,
+    FIELD15, -- Two or more races
+    FIELD16,
+    FIELD17, -- Race and ethnicity unknown
+    FIELD18
+from ( 
+    select majorNum majorNum,
+            cipCode cipCode,
+            awardLevel awardLevel,
+            count(*) totalPrograms,
+            SUM(DENotDistanceEd) DENotDistanceEd,
+            SUM(DEisDistanceEd) DEisDistanceEd,
+            SUM(DEEntirelyDistanceEd) DEEntirelyDistanceEd,
+            SUM(DEMandatoryOnsite) DEMandatoryOnsite,
+            SUM(DEMOptionalOnsite) DEMOptionalOnsite,
+            SUM(FIELD1) FIELD1, --Nonresident Alien
+            SUM(FIELD2) FIELD2,
+            SUM(FIELD3) FIELD3, -- Hispanic/Latino
+            SUM(FIELD4) FIELD4,
+            SUM(FIELD5) FIELD5, -- American Indian or Alaska Native
+            SUM(FIELD6) FIELD6,
+            SUM(FIELD7) FIELD7, -- Asian
+            SUM(FIELD8) FIELD8,
+            SUM(FIELD9) FIELD9, -- Black or African American
+            SUM(FIELD10) FIELD10,
+            SUM(FIELD11) FIELD11, -- Native Hawaiian or Other Pacific Islander
+            SUM(FIELD12) FIELD12,
+            SUM(FIELD13) FIELD13, -- White
+            SUM(FIELD14) FIELD14,
+            SUM(FIELD15) FIELD15, -- Two or more races
+            SUM(FIELD16) FIELD16,
+            SUM(FIELD17) FIELD17, -- Race and ethnicity unknown
+            SUM(FIELD18) FIELD18
+    from (
+        select distinct coalesce(stuCIP.MajorNum, 1) majorNum,
+                degfosprog.cipCode cipCode,
+                degfosprog.awardLevel awardLevel,
+                degfosprog.degreeProgram degreeProgram,
+                degfosprog.DENotDistanceEd DENotDistanceEd,
+                degfosprog.DEisDistanceEd DEisDistanceEd,
+                degfosprog.DEEntirelyDistanceEd DEEntirelyDistanceEd,
+                degfosprog.DEMandatoryOnsite DEMandatoryOnsite,
+                degfosprog.DEMOptionalOnsite DEMOptionalOnsite,
+                coalesce(stuCIP.FIELD1, 0) FIELD1,
+                coalesce(stuCIP.FIELD2, 0) FIELD2,
+                coalesce(stuCIP.FIELD3, 0) FIELD3,
+                coalesce(stuCIP.FIELD4, 0) FIELD4,
+                coalesce(stuCIP.FIELD5, 0) FIELD5,
+                coalesce(stuCIP.FIELD6, 0) FIELD6,
+                coalesce(stuCIP.FIELD7, 0) FIELD7,
+                coalesce(stuCIP.FIELD8, 0) FIELD8,
+                coalesce(stuCIP.FIELD9, 0) FIELD9,
+                coalesce(stuCIP.FIELD10, 0) FIELD10,
+                coalesce(stuCIP.FIELD11, 0) FIELD11,
+                coalesce(stuCIP.FIELD12, 0) FIELD12,
+                coalesce(stuCIP.FIELD13, 0) FIELD13,
+                coalesce(stuCIP.FIELD14, 0) FIELD14,
+                coalesce(stuCIP.FIELD15, 0) FIELD15,
+                coalesce(stuCIP.FIELD16, 0) FIELD16,
+                coalesce(stuCIP.FIELD17, 0) FIELD17,
+                coalesce(stuCIP.FIELD18, 0) FIELD18
+        from FieldOfStudyMCR degfosprog
+            left join (
+            select acadtrack.majorNum majorNum,
+                    acadtrack.cipCode cipCode,
+                    acadtrack.awardLevel awardLevel,
+                    acadtrack.degreeProgram degreeProgram,
+                    SUM(acadtrack.reg1) FIELD1, --Nonresident Alien
+                    SUM(acadtrack.reg2) FIELD2,
+                    SUM(acadtrack.reg3) FIELD3, -- Hispanic/Latino
+                    SUM(acadtrack.reg4) FIELD4,
+                    SUM(acadtrack.reg5) FIELD5, -- American Indian or Alaska Native
+                    SUM(acadtrack.reg6) FIELD6,
+                    SUM(acadtrack.reg7) FIELD7, -- Asian
+                    SUM(acadtrack.reg8) FIELD8,
+                    SUM(acadtrack.reg9) FIELD9, -- Black or African American
+                    SUM(acadtrack.reg10) FIELD10,
+                    SUM(acadtrack.reg11) FIELD11, -- Native Hawaiian or Other Pacific Islander
+                    SUM(acadtrack.reg12) FIELD12,
+                    SUM(acadtrack.reg13) FIELD13, -- White
+                    SUM(acadtrack.reg14) FIELD14,
+                    SUM(acadtrack.reg15) FIELD15, -- Two or more races
+                    SUM(acadtrack.reg16) FIELD16,
+                    SUM(acadtrack.reg17) FIELD17, -- Race and ethnicity unknown
+                    SUM(acadtrack.reg18) FIELD18
+                from Completer acadtrack
+                group by acadtrack.majorNum, 
+                    acadtrack.cipCode,
+                    acadtrack.awardLevel,
+                    acadtrack.degreeProgram
+            ) stuCIP on degfosprog.awardLevel = stuCIP.awardLevel
+                    and degfosprog.cipCode = stuCIP.cipCode
+                    and degfosprog.degreeProgram = stuCIP.degreeProgram
+        )
+    group by majorNum,
+            cipCode,
+            awardLevel
+    )
+)
 
 /*****
 BEGIN SECTION - Survey Formatting
@@ -1328,10 +1074,10 @@ Field1 - Field18          - Used for numeric values. Specifically, counts of gen
 --Report based on award. If a student obtains more than one award, they may be counted more than once.
 --If a program has a traditional offering and a distance education option, completions should be reported regardless of whether or not the program was completed through distance education.
 
-select 'A'                      part ,       	--(PART)	- "A"
-       majorNum                 majornum,   --(MAJORNUM)	- 1 = First Major, 2 = Second Major
-       cipCode                  cipcode,    --(CIPCODE)		- xx.xxxx, valid CIP codes, (must have leading zero if applicable)
-       ACAT                     awlevel,    --(AWLEVEL)		- 1 to 8 and 17 to 19 for MAJORNUM=1 & 3,5,7,17,18,19 for MAJORNUM=2
+select 'A'                     part,       	--(PART)	- "A"
+       majorNum                majornum,   --(MAJORNUM)	- 1 = First Major, 2 = Second Major
+       cipCode                 cipcode,    --(CIPCODE)		- xx.xxxx, valid CIP codes, (must have leading zero if applicable)
+       ACATPartAB              awlevel,    --(AWLEVEL)		- 1 to 8 and 17 to 19 for MAJORNUM=1 & 3,5,7,17,18,19 for MAJORNUM=2
        null                    distanceed, --(DistanceED)  ***NOT USED IN PART A***
        FIELD1                  field1,     --(CRACE01) 	- Nonresident Alien, M, (0 to 999999)
        FIELD2                  field2,     --(CRACE02) 	- Nonresident Alien, F, (0 to 999999)
@@ -1354,7 +1100,7 @@ select 'A'                      part ,       	--(PART)	- "A"
 from DegreeFOSProgramSTU
 where (majorNum = 1
 	or (majorNum = 2
-		and ACAT IN ('3', '5', '7', '17', '18', '19'))) --1a, 1b, 2 to 8 and 17 to 19 for MAJORNUM=1; 3, 5, 7, 17, 18, 19 for MAJORNUM=2																													
+		and ACATPartAB IN ('3', '5', '7', '17', '18', '19'))) --1a, 1b, 2 to 8 and 17 to 19 for MAJORNUM=1; 3, 5, 7, 17, 18, 19 for MAJORNUM=2																													
 													  
     and cipcode not in ('06.0101','06.0201','15.3402','18.1101',
                         '23.0200','23.0102','42.0102')
@@ -1368,8 +1114,8 @@ union
 select 'B',             --(PART)		- "B"
        majorNum,        --(MAJORNUM)	- 1 = First Major, 2 = Second Major
        cipCode,         --(CIPCODE)		- xx.xxxx, valid CIP codes, (must have leading zero if applicable)
-       ACAT,            --(AWLEVEL)		- 1 to 8 and 17 to 19 for MAJORNUM=1 & 3,5,7,17,18,19 for MAJORNUM=2
-       isDistanceEd,    --(DistanceED)	- 1= Yes, 2=No
+       ACATPartAB,            --(AWLEVEL)		- 1 to 8 and 17 to 19 for MAJORNUM=1 & 3,5,7,17,18,19 for MAJORNUM=2
+       case when DEAvailability in (1, 3) then 1 else 2 end,    --(DistanceED)	- 1= Yes, 2=No
        null,
        null,
        null,
@@ -1391,7 +1137,7 @@ select 'B',             --(PART)		- "B"
 from DegreeFOSProgramSTU
 where (majorNum = 1
 	or (majorNum = 2
-		and ACAT IN ('3', '5', '7', '17', '18', '19'))) --1a, 1b, 2 to 8 and 17 to 19 for MAJORNUM=1; 3, 5, 7, 17, 18, 19 for MAJORNUM=2																													
+		and ACATPartAB IN ('3', '5', '7', '17', '18', '19'))) --1a, 1b, 2 to 8 and 17 to 19 for MAJORNUM=1; 3, 5, 7, 17, 18, 19 for MAJORNUM=2																													
 													  
     and cipcode not in ('06.0101','06.0201','15.3402','18.1101',
                         '23.0200','23.0102','42.0102')
@@ -1402,30 +1148,53 @@ union
 --Count each student only once, regardless of how many awards he/she earned. The intent of this screen is to collect an unduplicated count 
 --of total numbers of completers.
 
-select 'C' ,    --PART 	 - "C"
-        null,
-        null,
-        null,
-        null,
-        coalesce(SUM(cohortstu.reg1), 0), --Nonresident Alien
-	    coalesce(SUM(cohortstu.reg2), 0),
-		coalesce(SUM(cohortstu.reg3), 0), -- Hispanic/Latino
-        coalesce(SUM(cohortstu.reg4), 0),
-        coalesce(SUM(cohortstu.reg5), 0), -- American Indian or Alaska Native
-        coalesce(SUM(cohortstu.reg6), 0),
-        coalesce(SUM(cohortstu.reg7), 0), -- Asian
-        coalesce(SUM(cohortstu.reg8), 0),
-        coalesce(SUM(cohortstu.reg9), 0), -- Black or African American
-        coalesce(SUM(cohortstu.reg10), 0),
-        coalesce(SUM(cohortstu.reg11), 0), -- Native Hawaiian or Other Pacific Islander
-        coalesce(SUM(cohortstu.reg12), 0),
-        coalesce(SUM(cohortstu.reg13), 0), -- White
-        coalesce(SUM(cohortstu.reg14), 0),
-        coalesce(SUM(cohortstu.reg15), 0), -- Two or more races
-        coalesce(SUM(cohortstu.reg16), 0),
-        coalesce(SUM(cohortstu.reg17), 0), -- Race and ethnicity unknown
-        coalesce(SUM(cohortstu.reg18), 0) 
-from CohortSTU cohortstu
+select 'C' ,
+    null,
+    null,
+    null,
+    null,
+    coalesce(sum(field1), 0) field1, --Nonresident Alien
+    coalesce(sum(field2), 0) field2,
+    coalesce(sum(field3), 0) field3, -- Hispanic/Latino
+    coalesce(sum(field4), 0) field4,
+    coalesce(sum(field5), 0) field5, -- American Indian or Alaska Native
+    coalesce(sum(field6), 0) field6,
+    coalesce(sum(field7), 0) field7, -- Asian
+    coalesce(sum(field8), 0) field8,
+    coalesce(sum(field9), 0) field9, -- Black or African American
+    coalesce(sum(field10), 0) field10,
+    coalesce(sum(field11), 0) field11, -- Native Hawaiian or Other Pacific Islander
+    coalesce(sum(field12), 0) field12,
+    coalesce(sum(field13), 0) field13, -- White
+    coalesce(sum(field14), 0) field14,
+    coalesce(sum(field15), 0) field15, -- Two or more races
+    coalesce(sum(field16), 0) field16,
+    coalesce(sum(field17), 0) field17, -- Race and ethnicity unknown
+    coalesce(sum(field18), 0) field18
+from (
+select distinct personId,
+        first(reg1) field1, --(CRACE01) 	- Nonresident Alien, M, (0 to 999999)
+        first(reg2) field2, --(CRACE02) 	- Nonresident Alien, F, (0 to 999999)
+        first(reg3) field3, --(CRACE25) 	- Hispanic/Latino, M, (0 to 999999)					
+        first(reg4) field4, --(CRACE26) 	- Hispanic/Latino, F, (0 to 999999) 
+        first(reg5) field5, --(CRACE27) 	- American Indian or Alaska Native, M, (0 to 999999)
+        first(reg6) field6, --(CRACE28) 	- American Indian or Alaska Native, F, (0 to 999999)
+        first(reg7) field7, --(CRACE29) 	- Asian, M, (0 to 999999)
+        first(reg8) field8, --(CRACE30) 	- Asian, F, (0 to 999999)
+        first(reg9) field9, --(CRACE31) 	- Black or African American, M, (0 to 999999)
+        first(reg10) field10, --(CRACE32) 	- Black or African American, F, (0 to 999999)
+        first(reg11) field11, --(CRACE33) 	- Native Hawaiian or Other Pacific Islander, M, (0 to 999999)
+        first(reg12) field12, --(CRACE34) 	- Native Hawaiian or Other Pacific Islander, F, (0 to 999999)
+        first(reg13) field13, --(CRACE35) 	- White, M, (0 to 999999)
+        first(reg14) field14, --(CRACE36) 	- White, F, (0 to 999999)
+        first(reg15) field15, --(CRACE37) 	- Two or more races, M, (0 to 999999)
+        first(reg16) field16, --(CRACE38) 	- Two or more races, F, (0 to 999999)
+        first(reg17) field17, --(CRACE13) 	- Race and ethnicity unknown, M, (0 to 999999)		
+        first(reg18) field18
+    --(CRACE14) 	- Race and ethnicity unknown, F, (0 to 999999) 
+    from Completer
+    group by personId
+  )
 
 union
 
@@ -1434,36 +1203,77 @@ union
 --Each student should be counted once per award level. For example, if a student earned a master's degree and a doctor's degree, he/she 
 --should be counted once in master's and once in doctor's. A student earning two master's degrees should be counted only once.
 
-select 'D',                                                              --PART      - "D"
-       null,
-       null,
-       ACAT,                                                    --CTLEVEL - 1 to 7
-       null,
-       coalesce(SUM(case when IPEDSGender = 'M' then 1 else 0 end), 0),      --(CRACE15)	- Men, 0 to 999999
-       coalesce(SUM(case when IPEDSGender = 'F' then 1 else 0 end), 0),      --(CRACE16) - Women, 0 to 999999 
-       coalesce(SUM(case when IPEDSethnicity = '1' then 1 else 0 end), 0),   --(CRACE17) - Nonresident Alien, 0 to 999999
-       coalesce(SUM(case when IPEDSethnicity = '2' then 1 else 0 end), 0),   --(CRACE41) - Hispanic/Latino, 0 to 999999
-       coalesce(SUM(case when IPEDSethnicity = '3' then 1 else 0 end), 0),   --(CRACE42) - American Indian or Alaska Native, 0 to 999999
-       coalesce(SUM(case when IPEDSethnicity = '4' then 1 else 0 end), 0),   --(CRACE43) - Asian, 0 to 999999
-       coalesce(SUM(case when IPEDSethnicity = '5' then 1 else 0 end), 0),   --(CRACE44) - Black or African American, 0 to 999999
-       coalesce(SUM(case when IPEDSethnicity = '6' then 1 else 0 end), 0),   --(CRACE45) - Native Hawaiian or Other Pacific Islander, 0 to 999999
-       coalesce(SUM(case when IPEDSethnicity = '7' then 1 else 0 end), 0),   --(CRACE46) - White, 0 to 999999
-       coalesce(SUM(case when IPEDSethnicity = '8' then 1 else 0 end), 0),   --(CRACE47) - Two or more races, 0 to 999999
-       coalesce(SUM(case when IPEDSethnicity = '9' then 1 else 0 end), 0),   --(CRACE23) - Race and ethnicity unknown, 0 to 999999
-       coalesce(SUM(case when IPEDSAgeGroup = 'AGE1' then 1 else 0 end), 0), --(AGE1) - Under 18, 0 to 999999
-       coalesce(SUM(case when IPEDSAgeGroup = 'AGE2' then 1 else 0 end), 0), --(AGE2) - 18-24, 0 to 999999
-       coalesce(SUM(case when IPEDSAgeGroup = 'AGE3' then 1 else 0 end), 0), --(AGE3) - 25-39, 0 to 999999
-       coalesce(SUM(case when IPEDSAgeGroup = 'AGE4' then 1 else 0 end), 0), --(AGE4) - 40 and above, 0 to 999999
-       coalesce(SUM(case when IPEDSAgeGroup = 'AGE5' then 1 else 0 end), 0), --(AGE5) - Age unknown, 0 to 999999
-       null,
-       null
-from CohortSTU cohortstu
-    inner join DegreeFOSProgram deg on deg.degree = cohortstu.degree
-        and deg.degreeLevel = cohortstu.degreeLevel
-where deg.degree is not null
-    and deg.degreeLevel is not null		   
-												   
-group by ACAT
+select 'D',
+    null,
+    null,
+    ACATPartD ACATPartD, --CTLEVEL - 2 to 9.
+    null,
+    coalesce(SUM(field_1), 0), --(CRACE15)	- Men, 0 to 999999
+    coalesce(SUM(field_2), 0), --(CRACE16) - Women, 0 to 999999 
+    coalesce(SUM(field_3), 0), --(CRACE17) - Nonresident Alien, 0 to 999999
+    coalesce(SUM(field_4), 0), --(CRACE41) - Hispanic/Latino, 0 to 999999
+    coalesce(SUM(field_5), 0), --(CRACE42) - American Indian or Alaska Native, 0 to 999999
+    coalesce(SUM(field_6), 0), --(CRACE43) - Asian, 0 to 999999
+    coalesce(SUM(field_7), 0), --(CRACE44) - Black or African American, 0 to 999999
+    coalesce(SUM(field_8), 0), --(CRACE45) - Native Hawaiian or Other Pacific Islander, 0 to 999999
+    coalesce(SUM(field_9), 0), --(CRACE46) - White, 0 to 999999
+    coalesce(SUM(field_10), 0), --(CRACE47) - Two or more races, 0 to 999999
+    coalesce(SUM(field_11), 0), --(CRACE23) - Race and ethnicity unknown, 0 to 999999
+    coalesce(SUM(field_12), 0), --(AGE1) - Under 18, 0 to 999999
+    coalesce(SUM(field_13), 0), --(AGE2) - 18-24, 0 to 999999
+    coalesce(SUM(field_14), 0), --(AGE3) - 25-39, 0 to 999999
+    coalesce(SUM(field_15), 0), --(AGE4) - 40 and above, 0 to 999999
+    coalesce(SUM(field_16), 0), --(AGE5) - Age unknown, 0 to 999999
+    null,
+    null
+from ( 
+       select distinct ACATPartD,
+            personId personId,
+            (case when IPEDSGender = 'M' then 1 else 0 end) field_1, --(CRACE15)	-- Men, 0 to 999999
+            (case when IPEDSGender = 'F' then 1 else 0 end) field_2, --(CRACE16) - Women, 0 to 999999 
+            (case when IPEDSethnicity = '1' then 1 else 0 end) field_3, --(CRACE17) - Nonresident Alien, 0 to 999999
+            (case when IPEDSethnicity = '2' then 1 else 0 end) field_4, --(CRACE41) - Hispanic/Latino, 0 to 999999
+            (case when IPEDSethnicity = '3' then 1 else 0 end) field_5, --(CRACE42) - American Indian or Alaska Native, 0 to 999999
+            (case when IPEDSethnicity = '4' then 1 else 0 end) field_6, --(CRACE43) - Asian, 0 to 999999
+            (case when IPEDSethnicity = '5' then 1 else 0 end) field_7, --(CRACE44) - Black or African American, 0 to 999999
+            (case when IPEDSethnicity = '6' then 1 else 0 end) field_8, --(CRACE45) - Native Hawaiian or Other Pacific Islander, 0 to 999999
+            (case when IPEDSethnicity = '7' then 1 else 0 end) field_9, --(CRACE46) - White, 0 to 999999
+            (case when IPEDSethnicity = '8' then 1 else 0 end) field_10, --(CRACE47) - Two or more races, 0 to 999999
+            (case when IPEDSethnicity = '9' then 1 else 0 end) field_11, --(CRACE23) - Race and ethnicity unknown, 0 to 999999
+            (case when IPEDSAgeGroup = 'AGE1' then 1 else 0 end) field_12, --(AGE1) - Under 18, 0 to 999999
+            (case when IPEDSAgeGroup = 'AGE2' then 1 else 0 end) field_13, --(AGE2) - 18-24, 0 to 999999
+            (case when IPEDSAgeGroup = 'AGE3' then 1 else 0 end) field_14, --(AGE3) - 25-39, 0 to 999999
+            (case when IPEDSAgeGroup = 'AGE4' then 1 else 0 end) field_15, --(AGE4) - 40 and above, 0 to 999999
+            (case when IPEDSAgeGroup = 'AGE5' then 1 else 0 end) field_16
+        --(AGE5) - Age unknown, 0 to 999999 
+        from Completer
+        --cohortstu 
+        --left join DegreeMCR deg on deg.degree = cohortstu.degree
+        --    and deg.degreeLevel = cohortstu.degreeLevel
+
+    union
+
+        select distinct deg2.ACATPartD,
+            null,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        from DegreeFOSProgramSTU deg2
+)
+group by ACATPartD
 
 union
 
@@ -1477,4 +1287,4 @@ from (
         ('D', null, null, 1, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null, null)
     ) as dummySet(PART, MAJORNUM, CIPC_LEVL, AWLEVEL, isDistanceED, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, FIELD6, FIELD7, FIELD8, FIELD9, 
                   FIELD10, FIELD11, FIELD12, FIELD13, FIELD14, FIELD15, FIELD16, FIELD17, FIELD18)
-where not exists (select a.personId from CohortSTU a) 
+where not exists (select a.personId from Completer a) 
