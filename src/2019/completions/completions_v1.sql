@@ -103,9 +103,9 @@ WITH DefaultValues as (
 --IPEDS specs define reporting period as July 1, 2018 and June 30, 2019.
 
 --jh 20201130 Changed to match fields and formatting of other surveys
-/*
+
 --prod default block
-select '2020' surveyYear,
+select '1920' surveyYear,
     'COM' surveyId,
     'Academic Year End' repPeriodTag1,
     'June End' repPeriodTag2,
@@ -116,7 +116,7 @@ select '2020' surveyYear,
     'M' genderForUnknown, --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
     'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
     'T' compGradDateOrTerm --D = Date, T = Term
- */
+ /*
 --test default block
 select '1314' surveyYear,  
 	'COM' surveyId,  
@@ -129,7 +129,7 @@ select '1314' surveyYear,
 	'M' genderForUnknown,   --'Valid values: M = Male, F = Female; Default value (if no record or null value): M'
 	'F' genderForNonBinary, --'Valid values: M = Male, F = Female; Default value (if no record or null value): F'
 	'T' compGradDateOrTerm --D = Date, T = Term
-
+*/
 ),
 
 ClientConfigMCR as (
