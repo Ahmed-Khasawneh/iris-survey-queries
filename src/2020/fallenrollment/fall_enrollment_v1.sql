@@ -18,7 +18,7 @@ Survey Formatting
 SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
-20210524    	akhasawneh/jhanicak 						PF-1944 Initial version prod run: 30m 21s test run: 31s 28s
+20210524    	akhasawneh/jhanicak 						PF-1944 Initial version prod run: 30m 21s
 	
 ********************/
 
@@ -2075,9 +2075,7 @@ from (
 		cohort.ipedsGender ipedsGender,
 		cohort.ipedsEthnicity ipedsEthnicity
 	from CohortSTU cohort
-	where cohort.ipedsPartAStudentLevel is not null
-	--EF2 mod testing - no Graduate level
-	--		and cohort.studentLevel = 'Undergraduate' 
+	where cohort.ipedsPartAStudentLevel is not null 
 
 	union
 
@@ -2086,9 +2084,6 @@ from (
 		NULL, -- ipedsGender,
 		NULL  -- ipedsEthnicity
 	from FormatPartAStudentLevel StudentLevel
---EF2 mod testing - no Graduate level values 11 and 25
---	where StudentLevel.ipedsLevel != 11 
---		and StudentLevel.ipedsLevel != 25
 	)
 group by ipedsLevel
 
@@ -2125,7 +2120,8 @@ from (
 		cohort.ipedsPartAStudentLevel ipedsLevel,
 		cohort.partACipCode partACipCode,
 		cohort.ipedsGender ipedsGender,
-		cohort.ipedsEthnicity ipedsEthnicity
+		cohort.ipedsEthnicity ipedsEthnicity,
+		cohort.reportCIP
 	from CohortSTU cohort
 	where cohort.ipedsPartAStudentLevel is not null
 	    and cohort.partACipCode is not null
@@ -2137,12 +2133,16 @@ from (
 		StudentLevel.ipedsLevel, -- ipedsLevel,
 		cipGroup.ipedsCipCodeGroup, -- partACipCode,
 		NULL, -- ipedsGender,
-		NULL -- ipedsEthnicity
+		NULL, -- ipedsEthnicity
+		'Y'  --reportCIP
 	from FormatPartAStudentLevel StudentLevel
 	    cross join FormatFallEnrlCipCodeGroup cipGroup
+	where (select clientconfig.reportCIP
+        from ClientConfigMCR clientconfig) = 'Y'
 	)
 where ((ipedsLevel in ('1', '2', '3', '7', '15', '16', '17') and partACipCode in ('13.0000', '14.0000', '26.0000', '27.0000', '40.0000', '52.0000'))
         or (ipedsLevel in ('11', '25') and partACipCode in ('22.0101', '51.0401', '51.1201')))
+    and reportCIP = 'Y'
 group by ipedsLevel,
     partACipCode
 
@@ -2197,7 +2197,7 @@ group by ipedsLevel
 union
 
 --Part B - Fall Enrollment by Age and Gender 
---**(Part B is mandatory in this collection)**
+--**(Part B is optional in 20-21)**
 --undergraduate and graduate
 
 select 'B', -- part,
@@ -2226,7 +2226,8 @@ from (
 	select cohort.personId personId,
 		cohort.ipedsPartBStudentLevel ipedsLevel,
 		cohort.ipedsAgeGroup ipedsAgeGroup,
-		cohort.ipedsGender
+		cohort.ipedsGender,
+		cohort.reportAge
 	from CohortSTU cohort
     where cohort.reportAge = 'Y'
       and cohort.ipedsAgeGroup is not null 
@@ -2236,12 +2237,14 @@ from (
 	select NULL, -- personId,
 		StudentLevel.ipedsLevel,
 		AgeGroup.ipedsAgeGroup,
-		NULL  -- ipedsGender
+		NULL,  -- ipedsGender
+		'Y'  --reportAge
 	from FormatPartBStudentLevel StudentLevel
 		cross join FormatPartBAgeGroup AgeGroup
     where (select clientconfig.reportAge
         from ClientConfigMCR clientconfig) = 'Y'
 	)
+where reportAge = 'Y'
 group by ipedsLevel,
     ipedsAgeGroup
 
@@ -2250,7 +2253,7 @@ group by ipedsLevel,
 union
 
 --Part C: Residence of First-Time Degree/Certificate-Seeking Undergraduate Students
---**(Part C is optional in this collection)**
+--**(Part C is mandatory in 20-21)**
 --undergraduate ONLY
 
 select 'C', -- part,
@@ -2279,6 +2282,35 @@ from CohortSTU cohort
 where cohort.reportResidency = 'Y'
 and cohort.ipedsPartAStudentLevel in ('1', '15')
 group by cohort.ipedsStateCode
+
+union
+
+--dummy record for Part C in mandatory years	
+select 'C', -- part,
+	4, -- sortorder,
+	NULL, -- field1,
+	'57', -- field2, --State of residence, 1, 2, 4–6, 8–13, 15–42, 44–51, 53–57, 60, 64, 66, 68–70, 72, 78, 90 (valid FIPS codes, refer to state table in appendix) (98 and 99 are for export only)
+	1, -- field3, --Total first-time degree/certificate-seeking undergraduates, 1 to 999999 ***error in spec - not allowing 0
+	0, -- field4, --Total first-time degree/certificate-seeking undergraduates who enrolled within 12 months of graduating high school 0 to 999999 
+	NULL, -- field5,
+	NULL, -- field6,
+	NULL, -- field7,
+	NULL, -- field8,
+	NULL, -- field9,
+	NULL, -- field10,
+	NULL, -- field11,
+	NULL, -- field12,
+	NULL, -- field13,
+	NULL, -- field14,
+	NULL, -- field15,
+	NULL, -- field16,
+	NULL, -- field17,
+	NULL, -- field18,
+	NULL, -- field19,
+	NULL -- field20
+where (select clientconfig.reportResidency
+        from ClientConfigMCR clientconfig) = 'Y'
+and not exists (select * from CohortSTU)
 
 union
 
