@@ -116,6 +116,149 @@ ACADEMIC_LIBRARIES_1:
       start: 2019-01-01
       end: 2019-10-01
 
+ADMISSIONS_1:
+  # reporting period for Cohort: Fall Census 2020 and prior summer
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-08-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
+  - viewName: TestScore
+    entityName: TestScore
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2019-12-31
+
 COMPLETIONS_1:
   # reporting period: terms within 2018-07-01 to 2019-06-30; as-of date 2019-06-30
 
