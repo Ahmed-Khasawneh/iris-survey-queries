@@ -21,7 +21,7 @@ phases:
       - aws s3 sync src/2020 "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src/2020" --delete
       - python setup.py bdist_egg
       - cd dist
-      - mv iris_report_queries*.egg iris_report_queries*.egg
+      - mv iris_report_queries*.egg iris_report_queries.egg
       - mkdir ./lib && cp -r ../src/lib ./lib
       - mkdir ./queries && cp -r ../src/queries ./queries
       - aws s3 sync . "s3://doris-code-bucket-${environment}/iris-report-queries/glue-scripts/" --delete
