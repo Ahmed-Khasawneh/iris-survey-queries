@@ -8,3 +8,6 @@ node_modules
 .spark
 .glue-libs
 spark-warehouse
+build
+dist
+iris_report_queries.egg-info

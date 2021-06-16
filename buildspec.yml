@@ -2,6 +2,8 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.7
     commands:
       - echo "[Install phase]"
       - npm install
@@ -15,4 +17,19 @@ phases:
       - npx yamllint src/**/*.yml
       - echo "[Build phase]"
       - environment=$(echo $STAGE | tr '[:upper:]' '[:lower:]')
-      - aws s3 sync src "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src" --delete
+      - aws s3 sync src/2019 "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src/2019" --delete
+      - aws s3 sync src/2020 "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src/2020" --delete
+      - cd src
+      - environment=$( echo $STAGE | tr '[:upper:]' '[:lower:]')
+      - aws s3 sync ./queries "s3://doris-code-bucket-${environment}/glue-scripts/iris-report-queries/queries"
+      - aws s3 sync ./lib "s3://doris-code-bucket-${environment}/glue-scripts/iris-report-queries/lib"
+      - cd ..
+      - python setup.py bdist_egg
+      - cd dist
+      - mv iris_report_queries-0.0.1-py3.7.egg iris_report_queries.egg
+      - aws s3 sync . "s3://doris-code-bucket-${environment}/glue-scripts/iris-report-queries"
+      - cd ..
+      - pip install -r requirements.txt --target "$CODEBUILD_SRC_DIR/site-packages"
+      - cd $CODEBUILD_SRC_DIR/site-packages
+      - zip -r -q -X "$CODEBUILD_SRC_DIR/site-packages.zip" *
+      - aws s3 cp "$CODEBUILD_SRC_DIR/site-packages.zip" "s3://doris-code-bucket-${environment}/glue-scripts/iris-report-queries"
