@@ -27,7 +27,7 @@ phases:
       - python setup.py bdist_egg
       - cd dist
       - mv iris_report_queries-0.0.1-py3.7.egg iris_report_queries.egg
-      - aws s3 sync . "s3://doris-code-bucket-${environment}/glue-scripts/iris-report-queries"
+      - aws s3 sync . "s3://doris-code-bucket-${environment}/glue-scripts"
       - cd ..
       - pip install -r requirements.txt --target "$CODEBUILD_SRC_DIR/site-packages"
       - cd $CODEBUILD_SRC_DIR/site-packages
