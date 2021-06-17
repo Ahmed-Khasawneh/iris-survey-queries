@@ -11,7 +11,6 @@ import boto3
 import uuid
 import re
 from pyspark.sql.utils import AnalysisException
-import argparse
 from datetime import datetime
 
 OUTPUT_BUCKET = 'doris-survey-reports-dev'
@@ -31,23 +30,24 @@ optionNames = [
     'user_id'
 ]
 
-args = getResolvedOptions(sys.argv, optionNames)
+#args = getResolvedOptions(sys.argv, optionNames)
 
 #Default survey values
-var_surveyYear = args['year']
+var_surveyYear = '2021' #args['year']
 
+"""
 survey_id_map = {
     'TWELVE_MONTH_ENROLLMENT_1': 'E1D', 
     'TWELVE_MONTH_ENROLLMENT_2': 'E12',
     'TWELVE_MONTH_ENROLLMENT_3': 'E1E',
     'TWELVE_MONTH_ENROLLMENT_4': 'E1F'
 }
-
-var_surveyId = survey_id_map[args['survey_type']]
+"""
+var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
 var_surveyType = '12ME'
 var_repEndTag = 'June End'
 
-def spark_refresh_entity_views_v2(tenant_id, survey_type, stage, year=2019, user_id=None):
+def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420', survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2021, user_id=None):
     lambda_client = boto3.client('lambda', 'us-east-1')
     invoke_response = lambda_client.invoke(
         FunctionName = "iris-connector-doris-{}-getReportPayload".format(stage),
@@ -78,7 +78,8 @@ def spark_refresh_entity_views_v2(tenant_id, survey_type, stage, year=2019, user
             print("No snapshots found for {}".format(view_name))
 
 
-spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
+spark_refresh_entity_views_v2()
+#spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
 
 #IPEDSReportingPeriod   
 global_ipedsReportingPeriod = spark.sql(query_helpers.func_ipedsReportingPeriod(surveyYear = var_surveyYear, surveyId = var_surveyId, repPeriodTag1 = var_repEndTag)).distinct()
@@ -485,18 +486,3 @@ def get_file_from_s3(uri):
 def parse_s3_uri(uri):
     match = S3_URI_REGEX.match(uri)
     return (match.group(1), match.group(2))
-
-def parse_args():
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--sql', dest='sql', help='sql for the script to run')
-    parser.add_argument('--tenant_id', dest='tenant_id',
-                        help='tenant id to get data from')
-    parser.add_argument('--stage', dest='stage', default='DEV',
-                        help='stage to run data against')
-    parser.add_argument('--survey_type', dest='survey_type',
-                        help='survey type to prepare data for')
-    parser.add_argument('--year', dest='year', type=int, default=2019,
-                        help='survey type to prepare data for')
-    parser.add_argument('--user_id', dest='user_id', help="user id to run as")
-
-    return parser.parse_args()
