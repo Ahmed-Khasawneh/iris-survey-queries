@@ -4,7 +4,7 @@ from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f
 from pyspark.sql.functions import sum as _sum, expr, col, lit
 from awsglue.utils import getResolvedOptions
-from lib import query_helpers
+from common import query_helpers
 import pandas as pd # todo: replace pandas with pyspark
 
 glueContext = GlueContext(SparkContext.getOrCreate())
