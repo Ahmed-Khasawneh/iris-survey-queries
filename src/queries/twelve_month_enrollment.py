@@ -1,12 +1,11 @@
+import sys
 from pyspark import SparkContext
 from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f
 from pyspark.sql.functions import sum as _sum, expr, col, lit
 from awsglue.utils import getResolvedOptions
-import query_helpers
-#import numpy as np
-import pandas as pd
-#from script_1 import df # look into importing a dataframe from script_1 to script_2
+from lib import query_helpers
+import pandas as pd # todo: replace pandas with pyspark
 
 glueContext = GlueContext(SparkContext.getOrCreate())
 sparkContext = SparkContext.getOrCreate()
@@ -34,14 +33,14 @@ var_surveyType = '12ME'
 var_repEndTag = 'June End'
 
 #IPEDSReportingPeriod   
-global_ipedsReportingPeriod = spark.sql(func_ipedsReportingPeriod(surveyYear = var_surveyYear, surveyId = var_surveyId, repPeriodTag1 = var_repEndTag)).distinct()
+global_ipedsReportingPeriod = spark.sql(query_helpers.func_ipedsReportingPeriod(surveyYear = var_surveyYear, surveyId = var_surveyId, repPeriodTag1 = var_repEndTag)).distinct()
 #(surveyYear = "1920", surveyId = 'EF1', repPeriodTag1 = '', repPeriodTag2 = '', repPeriodTag3 = '', repPeriodTag4 = '', repPeriodTag5 = '', dmVersion = '')
 
 reportEndSnapshot = pd.DataFrame(global_ipedsReportingPeriod.limit(1).select("snapshotDate").collect())
 reportEndSnapshot = reportEndSnapshot.to_string(header=False, index=False, index_names=False)
 
 #IPEDSClientConfig
-global_ipedsClientConfig = spark.sql(func_ipedsClientConfig(surveyYear = var_surveyYear, snapshotDate = reportEndSnapshot)).limit(1).collect()
+global_ipedsClientConfig = spark.sql(query_helpers.func_ipedsClientConfig(surveyYear = var_surveyYear, snapshotDate = reportEndSnapshot)).limit(1).collect()
 #(surveyYear = "1920", snapshotDate = "9999-09-09", dmVersion = '')
 
 global_ipedsClientConfig = pd.DataFrame(global_ipedsClientConfig)
@@ -58,7 +57,7 @@ config_instructionalActivityType = list_ipedsClientConfig[38]
 config_tmAnnualDPPCreditHoursFTE = list_ipedsClientConfig[51]
 
 #AcademicTerm
-global_academicTerm = spark.sql(func_academicTerm())
+global_academicTerm = spark.sql(query_helpers.func_academicTerm())
 #(repPeriodTag1 = '', repPeriodTag2 = '', repPeriodTag3 = '', repPeriodTag4 = '', repPeriodTag5 = '', dmVersion = '')
 
 #IPEDSReportingPeriod || AcademicTerm
@@ -81,15 +80,15 @@ global_reportingPeriodOrder = global_ipedsReportingPeriod.join(
 
 global_reportingPeriodOrder.createOrReplaceTempView("global_reportingPeriodOrder")
 
-global_reportingPeriodRefactor = spark.sql(func_reportingPeriodRefactor()).distinct()
+global_reportingPeriodRefactor = spark.sql(query_helpers.func_reportingPeriodRefactor()).distinct()
         
 global_reportingPeriodRefactor.createOrReplaceTempView("global_reportingPeriodRefactor")
 
 #Cohort
-global_cohort = spark.sql(func_cohort(repPeriod = 'global_reportingPeriodRefactor', termOrder = 'global_reportingPeriodOrder', instructionalActivityType = config_instructionalActivityType, genderForNonBinary = config_genderForNonBinary, genderForUnknown = config_genderForUnknown, acadOrProgReporter = config_acadOrProgReporter, surveyType = var_surveyType))
+global_cohort = spark.sql(query_helpers.func_cohort(repPeriod = 'global_reportingPeriodRefactor', termOrder = 'global_reportingPeriodOrder', instructionalActivityType = config_instructionalActivityType, genderForNonBinary = config_genderForNonBinary, genderForUnknown = config_genderForUnknown, acadOrProgReporter = config_acadOrProgReporter, surveyType = var_surveyType))
 
 #CourseLevelCounts
-global_courseLevelCounts = spark.sql(func_courseLevelCounts(repPeriod = 'global_reportingPeriodRefactor', termOrder = 'global_reportingPeriodOrder', instructionalActivityType = config_instructionalActivityType))
+global_courseLevelCounts = spark.sql(query_helpers.func_courseLevelCounts(repPeriod = 'global_reportingPeriodRefactor', termOrder = 'global_reportingPeriodOrder', instructionalActivityType = config_instructionalActivityType))
 global_courseLevelCounts = global_courseLevelCounts.join(
     global_cohort,
     (global_cohort.personId == global_courseLevelCounts.personId), 'inner').select(
