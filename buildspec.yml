@@ -14,7 +14,7 @@ phases:
 
   build:
     commands:
-      - npx yamllint src/**/*.yml
+      - npx yamllint sql/**/*.yml
       - echo "[Build phase]"
       - environment=$(echo $STAGE | tr '[:upper:]' '[:lower:]')
       - aws s3 sync sql/2019 "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src/2019" --delete
