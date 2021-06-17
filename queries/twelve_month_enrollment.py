@@ -22,10 +22,10 @@ args = getResolvedOptions(sys.argv, optionNames)
 var_surveyYear = args['survey_year']
 
 survey_id_map = {
-    'TWELEVE_MONTH_ENROLLMENT_1': 'E1D', 
-    'TWELEVE_MONTH_ENROLLMENT_2': 'E12',
-    'TWELEVE_MONTH_ENROLLMENT_3': 'E1E',
-    'TWELEVE_MONTH_ENROLLMENT_4': 'E1F'
+    'TWELVE_MONTH_ENROLLMENT_1': 'E1D', 
+    'TWELVE_MONTH_ENROLLMENT_2': 'E12',
+    'TWELVE_MONTH_ENROLLMENT_3': 'E1E',
+    'TWELVE_MONTH_ENROLLMENT_4': 'E1F'
 }
 
 var_surveyId = survey_id_map[args['survey_type']]
