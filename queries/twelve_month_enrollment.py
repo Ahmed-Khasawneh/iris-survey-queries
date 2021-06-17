@@ -11,7 +11,6 @@ import boto3
 import uuid
 import re
 from pyspark.sql.utils import AnalysisException
-import argparse
 from datetime import datetime
 
 OUTPUT_BUCKET = 'doris-survey-reports-dev'
@@ -485,18 +484,3 @@ def get_file_from_s3(uri):
 def parse_s3_uri(uri):
     match = S3_URI_REGEX.match(uri)
     return (match.group(1), match.group(2))
-
-def parse_args():
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--sql', dest='sql', help='sql for the script to run')
-    parser.add_argument('--tenant_id', dest='tenant_id',
-                        help='tenant id to get data from')
-    parser.add_argument('--stage', dest='stage', default='DEV',
-                        help='stage to run data against')
-    parser.add_argument('--survey_type', dest='survey_type',
-                        help='survey type to prepare data for')
-    parser.add_argument('--year', dest='year', type=int, default=2019,
-                        help='survey type to prepare data for')
-    parser.add_argument('--user_id', dest='user_id', help="user id to run as")
-
-    return parser.parse_args()
