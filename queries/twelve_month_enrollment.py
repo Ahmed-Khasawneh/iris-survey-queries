@@ -51,6 +51,7 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
     lambda_client = boto3.client('lambda', 'us-east-1')
     invoke_response = lambda_client.invoke(
         FunctionName = "iris-connector-doris-{}-getReportPayload".format(stage),
+        InvocationType = 'RequestResponse', 
         LogType = "None",
         Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id }).encode('utf-8')
     )
@@ -58,6 +59,7 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
     view_metadata_without_s3_paths["tenantId"] = tenant_id
     invoke_response = lambda_client.invoke(
         FunctionName = "doris-data-access-apis-{}-GetEntitySnapshotPaths".format(stage),
+        InvocationType = 'RequestResponse', 
         LogType = "None",
         Payload = json.dumps(view_metadata_without_s3_paths)
     )
@@ -396,55 +398,7 @@ def fromisodate(iso_date_str):
         return datetime.strptime(date_str_with_timezone, "%Y-%m-%dT%H:%M:%S.%f%z")
     except:
         return datetime.strptime(iso_date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-
-def spark_refresh_entity_views(tenant_id, stage):
-    lambda_client = boto3.client('lambda', 'us-east-1')
-    s3 = boto3.client('s3', 'us-east-1')
-
-    invoke_response = lambda_client.invoke(
-        FunctionName="doris-data-access-apis-{}-GetEntitiesStatuses".format(
-            stage),
-        LogType="None",
-        Payload=json.dumps({'tenant_id': tenant_id}).encode('utf-8')
-    )
-
-    entity_response = json.loads(
-        invoke_response['Payload'].read().decode("utf-8"))
-
-    entity_map = {}
-
-    for entity in entity_response['entities']:
-        bucket_name = "doris-data-raw-{}".format(stage.lower())
-
-        key_prefix = "processed-data/{}/{}/".format(tenant_id, entity['id'])
-
-        paginator = s3.get_paginator('list_objects_v2')
-
-        page_iterator = paginator.paginate(
-            Bucket=bucket_name,
-            Prefix=key_prefix
-        )
-
-        entity_key_map = {}
-
-        for page in page_iterator:
-            if 'Contents' in page:
-                for item in page['Contents']:
-                    if not '$folder$' in item['Key']:
-                        item_key = '/'.join(item['Key'].split('/')[0:-1])
-                        entity_key_map[item_key] = True
-
-        entity_keys = list(entity_key_map.keys())
-        entity_keys.sort(reverse=True)
-
-        if len(entity_keys) > 0:
-            entity_map[entity['name']] = 's3://{}/{}'.format(bucket_name, entity_keys[0])
-
-    for entity_name, s3_path in entity_map.items():
-        print("{} = {}".format(entity_name, s3_path))
-        spark_read_s3_source([s3_path]).toDF().createOrReplaceTempView(entity_name)
-
-
+        
 def spark_create_json_format(data_frame):
     column_name = str(uuid.uuid4())
     df = data_frame.withColumn(column_name, f.lit(0))
