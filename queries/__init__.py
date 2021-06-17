@@ -1,0 +1,3 @@
+"""
+Package survey query functions
+"""
