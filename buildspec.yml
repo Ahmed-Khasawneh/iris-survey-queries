@@ -22,7 +22,7 @@ phases:
       - python setup.py bdist_egg
       - cd dist
       - mv iris_report_queries*.egg iris_report_queries.egg
-      - cp -r ../lib .
+      - cp -r ../common .
       - cp -r ../queries .
       - aws s3 sync . "s3://doris-code-bucket-${environment}/iris-report-queries/glue-scripts/" --delete
       - cd ..
