@@ -5,7 +5,6 @@ from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from pyspark.sql.functions import sum as _sum, expr, col, lit
 from awsglue.utils import getResolvedOptions
 from common import query_helpers
-from common import s3_utility
 import pandas as pd # todo: replace pandas with pyspark
 import json
 import boto3
@@ -412,11 +411,10 @@ surveyOutput = spark_create_json_format(surveyOutput)
 currentDate = datetime.today().isoformat(sep=' ', timespec='seconds')
 
 # todo: inject s3 bucket; understand why filenames have prefix of 'part-00000-' and suffix of '-c000'
-key = f'reports/11702b15-8db2-4a35-8087-b560bb233420/{uuid4()}/{currentDate}';
-bucket = 'doris-survey-reports-dev'
+s3_key = f'reports/11702b15-8db2-4a35-8087-b560bb233420/{uuid4()}/{currentDate}';
+s3_bucket = 'doris-survey-reports-dev'
+s3_path = f's3://{s3_bucket}/{s3_key}'
 
-s3_path = s3_utility.create_s3_path_from_params(bucket, key)
-
-s3_utility.write_dataframe_as_json_to_s3(surveyOutput.repartition(1), s3_path, 'overwrite', 'json')
+surveyOutput.repartition(1).write.json(path=s3_path, mode='overwrite')
 
 print(f'Stored report JSON to {s3_path}')
