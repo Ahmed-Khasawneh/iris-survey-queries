@@ -459,7 +459,7 @@ surveyOutput = spark_create_json_format(surveyOutput)
 currentDate = datetime.today().isoformat(sep=' ', timespec='seconds')
 
 # todo: inject s3 bucket; understand why filenames have prefix of 'part-00000-' and suffix of '-c000'
-key = f'reports/11702b15-8db2-4a35-8087-b560bb233420/{uuid4()}/{currentDate}/part-00000-{uuid4()}-c000.json';
+key = f'reports/11702b15-8db2-4a35-8087-b560bb233420/{uuid4()}/{currentDate}';
 bucket = 'doris-survey-reports-dev'
 
 s3_path = create_s3_path_from_params(bucket, key)
