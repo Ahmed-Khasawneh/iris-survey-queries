@@ -56,6 +56,9 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
         Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id }).encode('utf-8')
     )
     view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
+
+    print(json.dumps(view_metadata_without_s3_paths, indent=2))
+
     view_metadata_without_s3_paths["tenantId"] = tenant_id
     invoke_response = lambda_client.invoke(
         FunctionName = "doris-data-access-apis-{}-GetEntitySnapshotPaths".format(stage),
