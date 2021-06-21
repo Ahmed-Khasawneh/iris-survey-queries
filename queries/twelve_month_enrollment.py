@@ -47,7 +47,7 @@ var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
 var_surveyType = '12ME'
 var_repEndTag = 'June End'
 
-def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420', survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2021, user_id=None):
+def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420', survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2020, user_id=None):
     lambda_client = boto3.client('lambda', 'us-east-1')
     invoke_response = lambda_client.invoke(
         FunctionName = "iris-connector-doris-{}-getReportPayload".format(stage),
