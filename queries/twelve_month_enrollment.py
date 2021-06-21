@@ -12,6 +12,7 @@ import uuid
 import re
 from pyspark.sql.utils import AnalysisException
 from datetime import datetime
+from uuid import uuid4
 
 OUTPUT_BUCKET = 'doris-survey-reports-dev'
 S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
@@ -27,7 +28,8 @@ optionNames = [
     'sql',
     'tenant_id',
     'stage',
-    'user_id'
+    'user_id',
+    'sql_script_s3_output_bucket',
 ]
 
 #args = getResolvedOptions(sys.argv, optionNames)
@@ -135,6 +137,19 @@ def get_file_from_s3(uri):
 def parse_s3_uri(uri):
     match = S3_URI_REGEX.match(uri)
     return (match.group(1), match.group(2))
+
+def create_s3_path_from_params(bucket, key):
+    """Returns a string formatted as an S3 path URL.
+
+    Args:
+        bucket (str): An S3 bucket name.
+        key (str): An S3 key name.
+
+    Returns:
+        str: A string formatted as an S3 path URL.
+    """
+    s3_path = 's3://{0}/{1}'.format(bucket, key)
+    return s3_path
 
 def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420', survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2020, user_id=None):
     lambda_client = boto3.client('lambda', 'us-east-1')
@@ -438,9 +453,17 @@ for column in [column for column in partA_out.columns if column not in partB_out
 surveyOutput = partA_out.unionByName(partC_out).unionByName(partB_out)
 
 surveyOutput.show()
-#surveyOutput = create_json_format(surveyOutput)
-#write_dataframe_as_json_to_s3(surveyOutput.repartition(1), s3_path, constants.SPARK_OVERWRITE_MODE, 'json')
 
-#global_courseLevelCounts.show()
-#surveyOutput.show()
+surveyOutput = spark_create_json_format(surveyOutput)
 
+currentDate = datetime.today().isoformat(sep=' ', timespec='seconds')
+
+# todo: inject s3 bucket; understand why filenames have prefix of 'part-00000-' and suffix of '-c000'
+key = f'reports/11702b15-8db2-4a35-8087-b560bb233420/{uuid4()}/{currentDate}/part-00000-{uuid4()}-c000.json';
+bucket = 'doris-survey-reports-dev'
+
+s3_path = create_s3_path_from_params(bucket, key)
+
+write_dataframe_as_json_to_s3(surveyOutput.repartition(1), s3_path, 'overwrite', 'json')
+
+print(f'Stored report JSON to {s3_path}')
