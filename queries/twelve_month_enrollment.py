@@ -5,6 +5,7 @@ from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from pyspark.sql.functions import sum as _sum, expr, col, lit
 from awsglue.utils import getResolvedOptions
 from common import query_helpers
+from common import s3_utility
 import pandas as pd # todo: replace pandas with pyspark
 import json
 import boto3
@@ -102,54 +103,6 @@ def spark_create_json_format(data_frame):
     result = df.groupBy(column_name).agg(f.collect_list(f.struct(data_frame.columns)).alias("Items"))
     result = result.drop(column_name)
     return result
-
-
-def write_dataframe_as_json_to_s3(dataframe, s3_path, mode, file_format):
-    """Writes spark dataframe to s3 
-    path in given format. 
-    """
-    dataframe.write.mode(mode).format(file_format).json(s3_path)
-
-
-def get_output_file_key(uri):
-    s3 = boto3.client('s3', 'us-east-1')
-    (bucket, key) = parse_s3_uri(uri)
-    response = s3.list_objects_v2(
-        Bucket=bucket,
-        Prefix=key
-    )
-
-    if 'Contents' in response and len(response['Contents']) > 0:
-        return response['Contents'][0]['Key']
-
-    return None
-
-
-def get_file_from_s3(uri):
-    s3 = boto3.client('s3', 'us-east-1')
-    (bucket, key) = parse_s3_uri(uri)
-    response = s3.get_object(
-        Bucket=bucket,
-        Key=key
-    )
-    return response['Body'].read().decode('utf-8')
-
-def parse_s3_uri(uri):
-    match = S3_URI_REGEX.match(uri)
-    return (match.group(1), match.group(2))
-
-def create_s3_path_from_params(bucket, key):
-    """Returns a string formatted as an S3 path URL.
-
-    Args:
-        bucket (str): An S3 bucket name.
-        key (str): An S3 key name.
-
-    Returns:
-        str: A string formatted as an S3 path URL.
-    """
-    s3_path = 's3://{0}/{1}'.format(bucket, key)
-    return s3_path
 
 def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420', survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2020, user_id=None):
     lambda_client = boto3.client('lambda', 'us-east-1')
@@ -462,8 +415,8 @@ currentDate = datetime.today().isoformat(sep=' ', timespec='seconds')
 key = f'reports/11702b15-8db2-4a35-8087-b560bb233420/{uuid4()}/{currentDate}';
 bucket = 'doris-survey-reports-dev'
 
-s3_path = create_s3_path_from_params(bucket, key)
+s3_path = s3_utility.create_s3_path_from_params(bucket, key)
 
-write_dataframe_as_json_to_s3(surveyOutput.repartition(1), s3_path, 'overwrite', 'json')
+s3_utility.write_dataframe_as_json_to_s3(surveyOutput.repartition(1), s3_path, 'overwrite', 'json')
 
 print(f'Stored report JSON to {s3_path}')
