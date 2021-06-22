@@ -28,7 +28,6 @@ def run_query():
 
   logger.info(options)
 
-  var_surveyYear = options['surveyYear']
   stage = options['stage']
   year = options['calendarYear']
   user_id = options['userId']
