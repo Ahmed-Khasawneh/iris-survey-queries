@@ -16,7 +16,7 @@ def run_query():
 def get_options():
     optionNames = [
       'debugLogging',
-      'calendarYear'
+      'calendarYear',
       'surveyType',
       'stage',
       's3Bucket',
