@@ -15,15 +15,14 @@ def run_twelve_month_enrollment_query(options, spark, sparkContext):
   OUTPUT_BUCKET = 'doris-survey-reports-dev'
   S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
 
-  """
   survey_id_map = {
       'TWELVE_MONTH_ENROLLMENT_1': 'E1D', 
       'TWELVE_MONTH_ENROLLMENT_2': 'E12',
       'TWELVE_MONTH_ENROLLMENT_3': 'E1E',
       'TWELVE_MONTH_ENROLLMENT_4': 'E1F'
   }
-  """
-  var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
+  
+  var_surveyId = survey_id_map[options['surveyType']]
   var_surveyType = '12ME'
   var_repEndTag = 'June End'
   var_surveyYear = '2021'
