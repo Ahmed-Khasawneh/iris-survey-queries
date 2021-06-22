@@ -11,7 +11,7 @@ from pyspark.sql.utils import AnalysisException
 from datetime import datetime
 from uuid import uuid4
 
-def run_twelve_month_enrollment_query(options, spark,sparkContext):
+def run_twelve_month_enrollment_query(options, spark, sparkContext):
   OUTPUT_BUCKET = 'doris-survey-reports-dev'
   S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
 

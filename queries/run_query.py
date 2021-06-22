@@ -41,7 +41,7 @@ def run_query():
     or survey_type == 'TWELVE_MONTH_ENROLLMENT_2' 
     or survey_type == 'TWELVE_MONTH_ENROLLMENT_3' 
     or survey_type == 'TWELVE_MONTH_ENROLLMENT_4'):
-    surveyOutput = run_twelve_month_enrollment_query(options)
+    surveyOutput = run_twelve_month_enrollment_query(options, spark, sparkContext)
   else:
     raise Exception(f'Unsupported survey type: {survey_type}')
   
