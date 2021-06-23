@@ -49,11 +49,7 @@ def run_query():
 
   surveyOutput = spark_create_json_format(surveyOutput)
 
-  currentDate = datetime.today().isoformat(sep=' ', timespec='seconds')
-
-  s3_bucket = options['s3Bucket']
-  s3_key = f'reports/11702b15-8db2-4a35-8087-b560bb233420/{uuid4()}/{currentDate}'
-  s3_path = f's3://{s3_bucket}/{s3_key}'
+  s3_path = f"s3://{options['s3Bucket']}/{options['s3Key']}"
 
   surveyOutput.repartition(1).write.json(path=s3_path, mode='overwrite')
 
