@@ -11,9 +11,9 @@ sparkContext = SparkContext.getOrCreate()
 spark = SQLContext(sparkContext)
 
 #delete once the spark-executor.py file has been updated to stop creating views from created dataframes
-ipeds_client_config = spark.sql("select * from ipedsClientConfig")
+ipeds_client_config = spark.sql("select * from IPEDSClientConfig")
 academic_term = spark.sql("select * from academicTerm")
-ipeds_reporting_period = spark.sql("select * from ipedsReportingPeriod")
+ipeds_reporting_period = spark.sql("select * from IPEDSReportingPeriod")
 registration = spark.sql("select * from registration")
 course_section = spark.sql("select * from courseSection")
 course_section_schedule = spark.sql("select * from courseSectionSchedule")
@@ -37,7 +37,7 @@ field_of_study = spark.sql("select * from fieldOfStudy")
 
 def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order, ipeds_client_config_partition_filter):
 
-    ipeds_client_config = spark.sql("select * from ipedsClientConfig")
+    #ipeds_client_config = spark.sql("select * from IPEDSClientConfig")
 
     ipeds_client_config = ipeds_client_config.filter(expr(f"{ipeds_client_config_partition_filter}"))
 
@@ -102,7 +102,7 @@ def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_o
         
 def academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter):
     
-    academic_term = spark.sql("select * from academicTerm")
+    #academic_term = spark.sql("select * from academicTerm")
     
     academic_term = academic_term.filter(expr(f"{academic_term_partition_filter}"))
     
@@ -179,7 +179,7 @@ def ipeds_reporting_period_mcr(
     academic_term_order,
     academic_term_partition_filter):
 
-    ipeds_reporting_period = spark.sql("select * from ipedsReportingPeriod")
+    #ipeds_reporting_period = spark.sql("select * from ipedsReportingPeriod")
 
     ipeds_reporting_period = ipeds_reporting_period.filter(expr(f"{ipeds_reporting_period_partition_filter}"))
 
@@ -315,11 +315,11 @@ def academic_term_reporting_refactor(
         
 def ipeds_course_type_counts():
 
-    registration = spark.sql("select * from registration")
-    course_section = spark.sql("select * from courseSection")
-    course_section_schedule = spark.sql("select * from courseSectionSchedule")
-    course = spark.sql("select * from course")
-    campus = spark.sql("select * from campus")
+    #registration = spark.sql("select * from registration")
+    #course_section = spark.sql("select * from courseSection")
+    #course_section_schedule = spark.sql("select * from courseSectionSchedule")
+    #course = spark.sql("select * from course")
+    #campus = spark.sql("select * from campus")
     
     registration = registration.join(
         academic_term_reporting_refactor,
@@ -655,12 +655,12 @@ def ipeds_course_type_counts():
         
 def ipeds_cohort():
 
-    student = spark.sql("select * from student")
-    person = spark.sql("select * from person")
-    academic_track = spark.sql("select * from academicTrack")
-    degree_program = spark.sql("select * from degreeProgram")
-    degree = spark.sql("select * from degree")
-    field_of_study = spark.sql("select * from fieldOfStudy")
+    #student = spark.sql("select * from student")
+    #person = spark.sql("select * from person")
+    #academic_track = spark.sql("select * from academicTrack")
+    #degree_program = spark.sql("select * from degreeProgram")
+    #degree = spark.sql("select * from degree")
+    #field_of_study = spark.sql("select * from fieldOfStudy")
 
     student = student.join(
         academic_term_reporting_refactor,
