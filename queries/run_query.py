@@ -55,10 +55,10 @@ def run_query():
 
   print(f'Stored report JSON to {s3_path}')
 
-def convert_four_digit_year_to_two_year_range(four_digit_year):
-  year1 = str(four_digit_year[2:4])
-  year2 = str(int(year1) + 1)
-  return year1 + year2
+#def convert_four_digit_year_to_two_year_range(four_digit_year):
+#  year1 = str(four_digit_year[2:4])
+#  year2 = str(int(year1) + 1)
+#  return year1 + year2
   
 def get_options():
     optionNames = [
@@ -73,7 +73,7 @@ def get_options():
     ]
 
     options = getResolvedOptions(sys.argv, optionNames)
-    options['calendarYear'] = convert_four_digit_year_to_two_year_range(options['calendarYear'])
+#    options['calendarYear'] = convert_four_digit_year_to_two_year_range(options['calendarYear'])
 
     return options
 
