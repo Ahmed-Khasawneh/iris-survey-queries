@@ -12,6 +12,7 @@ import uuid
 import re
 from pyspark.sql.utils import AnalysisException
 from datetime import datetime
+from uuid import uuid4
 
 OUTPUT_BUCKET = 'doris-survey-reports-dev'
 S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
@@ -27,7 +28,8 @@ optionNames = [
     'sql',
     'tenant_id',
     'stage',
-    'user_id'
+    'user_id',
+    'sql_script_s3_output_bucket',
 ]
 
 #args = getResolvedOptions(sys.argv, optionNames)
@@ -44,1207 +46,8 @@ survey_id_map = {
 }
 """
 var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
-var_surveyYear = '2021'
 var_surveyType = '12ME'
 var_repEndTag = 'June End'
-repPeriodTag1 = 'Academic Year End'
-repPeriodTag2 = 'June End'
-repPeriodTag3 = 'Fall Census'
-repPeriodTag4 = 'Fall Census'
-repPeriodTag5 = 'Fall Census'
-
-def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420', survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2021, user_id=None):
-    lambda_client = boto3.client('lambda', 'us-east-1')
-    invoke_response = lambda_client.invoke(
-        FunctionName = "iris-connector-doris-{}-getReportPayload".format(stage),
-        InvocationType = 'RequestResponse', 
-        LogType = "None",
-        Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id }).encode('utf-8')
-    )
-    view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
-    view_metadata_without_s3_paths["tenantId"] = tenant_id
-    invoke_response = lambda_client.invoke(
-        FunctionName = "doris-data-access-apis-{}-GetEntitySnapshotPaths".format(stage),
-        InvocationType = 'RequestResponse', 
-        LogType = "None",
-        Payload = json.dumps(view_metadata_without_s3_paths)
-    )
-    view_metadata = json.loads(invoke_response['Payload'].read().decode("utf-8"))
-    snapshot_metadata = view_metadata.get('snapshotMetadata', {})
-
-    print(json.dumps(view_metadata, indent=2))
-
-    for view in view_metadata.get('views', []):
-        s3_paths = view.get('s3Paths', [])
-        view_name = view.get('viewName')
-        if len(s3_paths) > 0:
-            print("{}: ({})".format(view_name, ','.join(s3_paths)))
-            df = spark_read_s3_source(s3_paths).toDF()
-            df = add_snapshot_metadata_columns(df, snapshot_metadata)
-            df.createOrReplaceTempView(view_name)
-        else:
-            print("No snapshots found for {}".format(view_name))
-
-
-spark_refresh_entity_views_v2()
-#spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
-
-ipeds_client_config_partition = "surveyCollectionYear"
-ipeds_client_config_order = f"""
-    ((case when array_contains(tags, '{repPeriodTag1}') then 1
-         when array_contains(tags, '{repPeriodTag2}') then 2
-         else 3 end) asc,
-    snapshotDate desc,
-    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
-	 """
-ipeds_client_config_partition_filter = f"surveyCollectionYear = '{surveyYear}'" # f"surveyId = '{var_surveyId}' and surveyYear = '{surveyYear}"
-  
-############
-
-ipeds_reporting_period_partition = "surveyCollectionYear, surveyId, surveySection, termCode, partOfTermCode"
-ipeds_reporting_period_order = f"""
-    ((case when array_contains(tags, '{repPeriodTag1}') then 1
-         when array_contains(tags, '{repPeriodTag2}') then 2
-         else 3 end) asc,
-    snapshotDate desc,
-    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
-	 """
-ipeds_reporting_period_partition_filter = f"surveyId = '{var_surveyId}'"
-
-############
-
-academic_term_partition = "termCode, partOfTermCode"
-academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
-academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
-
-############
-
-
-
-def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order, ipeds_client_config_partition_filter):
-
-	ipeds_client_config = spark.sql('select * from ipedsClientConfig')
-
-	ipeds_client_config = ipeds_client_config.filter(f.expr(f"{ipeds_client_config_partition_filter}"))
-
-	# Should be able to switch to this\/ and remove this /\ when moving to a script
-	ipeds_client_config = ipeds_client_config.select(
-		f.coalesce(upper(col('acadOrProgReporter')), lit('A')).alias('acadOrProgReporter'), # 'A'
-		f.coalesce(upper(col('admAdmissionTestScores')), lit('R')).alias('admAdmissionTestScores'), # 'R'
-		f.coalesce(upper(col('admCollegePrepProgram')), lit('R')).alias('admCollegePrepProgram'), # 'R'
-		f.coalesce(upper(col('admDemoOfCompetency')), lit('R')).alias(' admDemoOfCompetency'), # 'R'
-		f.coalesce(upper(col('admOtherTestScores')), lit('R')).alias('admOtherTestScores'),  # 'R'
-		f.coalesce(upper(col('admRecommendation')), lit('R')).alias('admRecommendation'), # 'R'
-		f.coalesce(upper(col('admSecSchoolGPA')), lit('R')).alias('admSecSchoolGPA'), # 'R'
-		f.coalesce(upper(col('admSecSchoolRank')), lit('R')).alias('admSecSchoolRank'), # 'R'
-		f.coalesce(upper(col('admSecSchoolRecord')), lit('R')).alias('admSecSchoolRecord'), # 'R'
-		f.coalesce(upper(col('admTOEFL')), lit('R')).alias('admTOEFL'), # 'R'
-		f.coalesce(upper(col('admUseForBothSubmitted')), lit('B')).alias('admUseForBothSubmitted'), # 'B'
-		f.coalesce(upper(col('admUseForMultiOfSame')), lit('H')).alias('admUseForMultiOfSame'), # 'H'
-		f.coalesce(upper(col('admUseTestScores')), lit('B')).alias('admUseTestScores'), # 'B'
-		f.coalesce(upper(col('compGradDateOrTerm')), lit('D')).alias('compGradDateOrTerm'), # 'D'
-		upper(col('eviReserved1')).alias('eviReserved1'), # ' '
-		upper(col('eviReserved2')).alias('eviReserved2'), # ' '
-		upper(col('eviReserved3')).alias('eviReserved3'), # ' '
-		upper(col('eviReserved4')).alias('eviReserved4'), # ' '
-		upper(col('eviReserved5')).alias('eviReserved5'), # ' '
-		f.coalesce(upper(col('feIncludeOptSurveyData')), lit('Y')).alias('feIncludeOptSurveyData'), # 'Y'
-		f.coalesce(upper(col('finAthleticExpenses')), lit('A')).alias('finAthleticExpenses'), # 'A'
-		f.coalesce(upper(col('finBusinessStructure')), lit('LLC')).alias('finBusinessStructure'), # 'LLC'
-		f.coalesce(upper(col('finEndowmentAssets')), lit('Y')).alias('finEndowmentAssets'), # 'Y'
-		f.coalesce(upper(col('finGPFSAuditOpinion')), lit('U')).alias('finGPFSAuditOpinion'), # 'U'
-		f.coalesce(upper(col('finParentOrChildInstitution')), lit('P')).alias('finParentOrChildInstitution'), # 'P'
-		f.coalesce(upper(col('finPellTransactions')), lit('P')).alias('finPellTransactions'), # 'P'
-		f.coalesce(upper(col('finPensionBenefits')), lit('Y')).alias('finPensionBenefits'), # 'Y'
-		f.coalesce(upper(col('finReportingModel')), lit('B')).alias('finReportingModel'), # 'B'
-		f.coalesce(upper(col('finTaxExpensePaid')), lit('B')).alias('finTaxExpensePaid'), # 'B'
-		f.coalesce(upper(col('fourYrOrLessInstitution')), lit('F')).alias('fourYrOrLessInstitution'), # 'F'
-		f.coalesce(upper(col('genderForNonBinary')), lit('F')).alias('genderForNonBinary'), # 'F'
-		f.coalesce(upper(col('genderForUnknown')), lit('F')).alias('genderForUnknown'), # 'F'
-		f.coalesce(upper(col('grReportTransferOut')), lit('N')).alias('grReportTransferOut'), # 'N'
-		f.coalesce(upper(col('hrIncludeSecondarySalary')), lit('N')).alias('hrIncludeSecondarySalary'), # 'N'
-		f.coalesce(upper(col('icOfferDoctorAwardLevel')), lit('Y')).alias('icOfferDoctorAwardLevel'), # 'Y'
-		f.coalesce(upper(col('icOfferGraduateAwardLevel')), lit('Y')).alias('icOfferGraduateAwardLevel'), # 'Y'
-		f.coalesce(upper(col('icOfferUndergradAwardLevel')), lit('Y')).alias('icOfferUndergradAwardLevel'), # 'Y'
-		f.coalesce(upper(col('includeNonDegreeAsUG')), lit('Y')).alias('includeNonDegreeAsUG'), # 'Y'
-		f.coalesce(upper(col('instructionalActivityType')), lit('CR')).alias('instructionalActivityType'), # 'CR'
-		f.coalesce(upper(col('ncBranchCode')), lit('00')).alias('ncBranchCode'), # '00'
-		f.coalesce(upper(col('ncSchoolCode')), lit('000000')).alias('ncSchoolCode'), # '000000'
-		f.coalesce(upper(col('ncSchoolName')), lit('XXXXX')).alias('ncSchoolName'), # 'XXXXX'
-		f.coalesce(upper(col('publicOrPrivateInstitution')), lit('U')).alias('publicOrPrivateInstitution'), # 'U'
-	    to_timestamp(col('recordActivityDate')).alias('recordActivityDate'),  # '9999-09-09'
-		f.coalesce(upper(col('sfaGradStudentsOnly')), lit('N')).alias('sfaGradStudentsOnly'), # 'N'
-		upper(col('sfaLargestProgCIPC')).alias('sfaLargestProgCIPC'), # 'null
-		f.coalesce(upper(col('sfaReportPriorYear')), lit('N')).alias('sfaReportPriorYear'), # 'N'
-		f.coalesce(upper(col('sfaReportSecondPriorYear')), lit('N')).alias('sfaReportSecondPriorYear'), # 'N'
-    	f.coalesce(upper(col('surveyCollectionYear')), lit('2021')).alias('surveyCollectionYear'), # '2021'
-		f.coalesce(upper(col('tmAnnualDPPCreditHoursFTE')), lit('12')).alias('tmAnnualDPPCreditHoursFTE'), # '12'
-		to_timestamp(col('snapshotDate')).alias('snapshotDate'),
-		ipeds_client_config.tags)
-
-	ipeds_client_config = ipeds_client_config.select(
-		ipeds_client_config["*"],
-		f.row_number().over(Window.partitionBy(
-			f.expr(f"({ipeds_client_config_partition})")).orderBy(f.expr(f"{ipeds_client_config_order}"))).alias('rowNum'))
-
-	ipeds_client_config = ipeds_client_config.filter(ipeds_client_config.rowNum == 1).limit(1)
-			
-	return ipeds_client_config
-
-def academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter):
-
-	academic_term = spark.sql('select * from academicTerm')
-
-	academic_term = academic_term.filter(f.expr(f"{academic_term_partition_filter}"))
-
-	# Should be able to switch to this\/ and remove this /\ when moving to a script
-	academic_term = academic_term.select(
-		academic_term.academicYear,
-		to_timestamp(academic_term.censusDate).alias('censusDate'),
-		to_timestamp(academic_term.endDate).alias('endDate'),
-		academic_term.financialAidYear,
-		academic_term.isIPEDSReportable,
-		upper(academic_term.partOfTermCode).alias('partOfTermCode'),
-		academic_term.partOfTermCodeDescription,
-		to_timestamp(academic_term.recordActivityDate).alias('recordActivityDate'),
-		academic_term.requiredFTCreditHoursGR,
-		academic_term.requiredFTCreditHoursUG,
-		academic_term.requiredFTClockHoursUG,
-		# expr(col("requiredFTCreditHoursUG")/coalesce(col("requiredFTClockHoursUG"), col("requiredFTCreditHoursUG"))).alias("equivCRHRFactor"),
-		to_timestamp(academic_term.startDate).alias('startDate'),
-		academic_term.termClassification,
-		upper(academic_term.termCode).alias('termCode'),
-		academic_term.termCodeDescription,
-		academic_term.termType,
-		to_timestamp(academic_term.snapshotDate).alias('snapshotDate'),
-		academic_term.tags)
-
-	academic_term = academic_term.select(
-		academic_term["*"],
-		f.row_number().over(Window.partitionBy(
-			f.expr(f"({academic_term_partition})")).orderBy(f.expr(f"{academic_term_order}"))).alias('rowNum'))
-
-	academic_term = academic_term.filter(academic_term.rowNum == 1)
-
-	academic_term_order = academic_term.select(
-		academic_term.termCode,
-		academic_term.partOfTermCode,
-		academic_term.censusDate,
-		academic_term.startDate,
-		academic_term.endDate).distinct()
-
-	part_of_term_order = academic_term_order.select(
-	    academic_term_order["*"], 
-	    f.rank().over(Window.orderBy(col('censusDate').desc(), col('startDate').desc())).alias('partOfTermOrder')).where((col("termCode").isNotNull()) & (col("partOfTermCode").isNotNull()))
-
-	academic_term_order_max = part_of_term_order.groupBy('termCode').agg(
-		f.max(part_of_term_order.partOfTermOrder).alias('termCodeOrder'),
-		f.max(part_of_term_order.censusDate).alias('maxCensus'),
-		f.min(part_of_term_order.startDate).alias('minStart'),
-		f.max("endDate").alias("maxEnd"))
-
-	academic_term = academic_term.join(
-		part_of_term_order,
-		(academic_term.termCode == part_of_term_order.termCode) &
-		(academic_term.partOfTermCode == part_of_term_order.partOfTermCode), 'inner').select(
-			academic_term["*"],
-			part_of_term_order.partOfTermOrder).where(col("termCode").isNotNull())
-
-	academic_term = academic_term.join(
-		academic_term_order_max,
-		(academic_term.termCode == academic_term_order_max.termCode), 'inner').select(
-			academic_term["*"],
-			academic_term_order_max.termCodeOrder,
-			academic_term_order_max.maxCensus,
-			academic_term_order_max.minStart,
-			academic_term_order_max.maxEnd).distinct()
-			
-	return academic_term
-
-def ipeds_reporting_period_mcr(ipeds_reporting_period_partition, ipeds_reporting_period_order, ipeds_reporting_period_partition_filter,
-                                                        academic_term_partition, academic_term_order, academic_term_partition_filter):
-                                                            
-    academic_term = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
-    
-    ipeds_reporting_period = spark.sql("select * from ipedsReportingPeriod")
-    
-    ipeds_reporting_period = ipeds_reporting_period.filter(f.expr(f"{ipeds_reporting_period_partition_filter}"))
-    
-    # Should be able to switch to this\/ and remove this /\ when moving to a script
-    # ipeds_reporting_period = ipedsReportingPeriod.select(
-    ipeds_reporting_period = ipeds_reporting_period.select(
-        upper(ipeds_reporting_period.partOfTermCode).alias('partOfTermCode'),
-        to_timestamp(ipeds_reporting_period.recordActivityDate).alias('recordActivityDate'),
-        ipeds_reporting_period.surveyCollectionYear,
-        upper(ipeds_reporting_period.surveyId).alias('surveyId'),
-        upper(ipeds_reporting_period.surveyName).alias('surveyName'),
-        upper(ipeds_reporting_period.surveySection).alias('surveySection'),
-        upper(ipeds_reporting_period.termCode).alias('termCode'),
-        to_timestamp(ipeds_reporting_period.snapshotDate).alias('snapshotDate'),
-        ipeds_reporting_period.tags)
-    
-    ipeds_reporting_period = ipeds_reporting_period.select(
-        ipeds_reporting_period["*"],
-        f.row_number().over(Window.partitionBy(
-            f.expr(f"({ipeds_reporting_period_partition})")).orderBy(f.expr(f"{ipeds_reporting_period_order}"))).alias(
-            "rowNum"))
-    
-    ipeds_reporting_period = ipeds_reporting_period.filter((ipeds_reporting_period.rowNum == 1) & (col('termCode').isNotNull()) & (col('partOfTermCode').isNotNull()))
-    
-    ipeds_reporting_period = ipeds_reporting_period.join(
-        academic_term,
-        (academic_term.termCode == ipeds_reporting_period.termCode) &
-        (academic_term.partOfTermCode == ipeds_reporting_period.partOfTermCode), 'left').select(
-        ipeds_reporting_period["*"],
-        when(upper(col('surveySection')).isin('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER'), 'PY').when(upper(col('surveySection')).isin('COHORT', 'PRIOR SUMMER'), 'CY').alias('yearType'),
-        academic_term.termCodeOrder,
-        academic_term.partOfTermOrder,
-        academic_term.maxCensus,
-        academic_term.minStart,
-        academic_term.maxEnd,
-        academic_term.censusDate,
-        academic_term.termClassification,
-        academic_term.termType,
-        academic_term.startDate,
-        academic_term.endDate,
-        academic_term.requiredFTCreditHoursGR,
-        academic_term.requiredFTCreditHoursUG,
-        academic_term.requiredFTClockHoursUG,
-        academic_term.financialAidYear)
-
-    return ipeds_reporting_period
-
-def academic_term_reporting_refactor(ipeds_reporting_period_partition, ipeds_reporting_period_order,
-                                     ipeds_reporting_period_partition_filter,
-                                     academic_term_partition, academic_term_order, academic_term_partition_filter):
-                                         
-    ipeds_reporting_period = ipeds_reporting_period_mcr(ipeds_reporting_period_partition, ipeds_reporting_period_order,
-                                                        ipeds_reporting_period_partition_filter,
-                                                        academic_term_partition, academic_term_order,
-                                                        academic_term_partition_filter)
-                                                        
-    academic_term = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
-
-    academic_term_reporting = ipeds_reporting_period.select(
-        ipeds_reporting_period.surveySection,
-        ipeds_reporting_period.termCode,
-        f.expr("""       
-			(case when termClassification = 'Standard Length' then 1
-				 when termClassification is null then (case when termType in ('Fall', 'Spring') then 1 else 2 end)
-				 else 2
-			end) 
-		""").alias('fullTermOrder'),
-        ipeds_reporting_period.yearType,
-        ipeds_reporting_period.partOfTermCode,
-        # coalesce(acadterm.snapshotDate, repperiod.snapshotDate) snapshotDate,
-        ipeds_reporting_period.snapshotDate,
-        ipeds_reporting_period.tags,
-        # coalesce(acadterm.censusDate, repperiod.censusDate) censusDate,
-        ipeds_reporting_period.termCodeOrder,
-        ipeds_reporting_period.partOfTermOrder,
-        ipeds_reporting_period.maxCensus,
-        ipeds_reporting_period.minStart,
-        ipeds_reporting_period.maxEnd,
-        ipeds_reporting_period.censusDate,
-        ipeds_reporting_period.termClassification,
-        ipeds_reporting_period.termType,
-        ipeds_reporting_period.startDate,
-        ipeds_reporting_period.endDate,
-        ipeds_reporting_period.requiredFTCreditHoursGR,
-        ipeds_reporting_period.requiredFTCreditHoursUG,
-        ipeds_reporting_period.requiredFTClockHoursUG,
-        ipeds_reporting_period.financialAidYear,
-        expr("(coalesce(requiredFTCreditHoursUG/coalesce(requiredFTClockHoursUG, requiredFTCreditHoursUG), 1))").alias('equivCRHRFactor'))
-
-    academic_term_reporting = academic_term_reporting.select(
-        academic_term_reporting["*"],
-        f.row_number().over(Window.partitionBy(
-            f.expr("(termCode, partOfTermCode)")).orderBy(f.expr("""
-					((case when snapshotDate <= to_date(date_add(censusdate, 3), 'YYYY-MM-DD') 
-								and snapshotDate >= to_date(date_sub(censusDate, 1), 'YYYY-MM-DD') 
-								and ((array_contains(tags, 'Fall Census') and termType = 'Fall')
-									or (array_contains(tags, 'Spring Census') and termType = 'Spring')
-									or (array_contains(tags, 'Pre-Fall Summer Census') and termType = 'Summer')
-									or (array_contains(tags, 'Post-Fall Summer Census') and termType = 'Summer')) then 1
-						  when snapshotDate <= to_date(date_add(censusdate, 3), 'YYYY-MM-DD') 
-								and snapshotDate >= to_date(date_sub(censusDate, 1), 'YYYY-MM-DD') then 2
-						 else 3 end) asc,
-					(case when snapshotDate > censusDate then snapshotDate else CAST('9999-09-09' as DATE) end) asc,
-					(case when snapshotDate < censusDate then snapshotDate else CAST('1900-09-09' as DATE) end) desc)
-			"""))).alias('rowNum'))
-
-    academic_term_reporting = academic_term_reporting.filter(academic_term_reporting.rowNum == 1)
-
-    max_term_order_summer = academic_term_reporting.filter(academic_term_reporting.termType == 'Summer').select(
-        f.max(academic_term_reporting.termCodeOrder).alias('maxSummerTerm'))
-
-    max_term_order_fall = academic_term_reporting.filter(academic_term_reporting.termType == 'Fall').select(
-        f.max(academic_term_reporting.termCodeOrder).alias('maxFallTerm'))
-
-    academic_term_reporting_refactor = academic_term_reporting.crossJoin(max_term_order_summer).crossJoin(
-        max_term_order_fall)
-
-    academic_term_reporting_refactor = academic_term_reporting_refactor.withColumn(
-        'termTypeNew',
-        f.expr("(case when termType = 'Summer' and termClassification != 'Standard Length' then (case when maxSummerTerm < maxFallTerm then 'Pre-Fall Summer' else 'Post-Spring Summer' end) else termType end)"))
-
-    return academic_term_reporting_refactor
-
-registration = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
-course_section = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
-course_section_schedule = spark.sql("select * from courseSectionSchedule").filter(col('isIpedsReportable') == True)
-course = spark.sql("select * from course").filter(col('isIpedsReportable') == True)
-campus = spark.sql("select * from campus").filter(col('isIpedsReportable') == True)
-
-ipeds_client_config = ipeds_client_config_mcr(ipeds_client_config_partition = ipeds_client_config_partition, 
-                                            ipeds_client_config_order = ipeds_client_config_order, 
-                                            ipeds_client_config_partition_filter = ipeds_client_config_partition_filter).cache()
-
-academic_term = academic_term_mcr(academic_term_partition = academic_term_partition, academic_term_order = academic_term_order, academic_term_partition_filter = academic_term_partition_filter).cache()
-
-ipeds_reporting_period = ipeds_reporting_period_mcr(ipeds_reporting_period_partition = ipeds_reporting_period_partition, 
-                                                    ipeds_reporting_period_order = ipeds_reporting_period_order, 
-                                                    ipeds_reporting_period_partition_filter = ipeds_reporting_period_partition_filter,
-                                                    academic_term_partition = academic_term_partition, 
-                                                    academic_term_order = academic_term_order, 
-                                                    academic_term_partition_filter = academic_term_partition_filter)
-
-academic_term_reporting_refactor = academic_term_reporting_refactor(ipeds_reporting_period_partition = ipeds_reporting_period_partition, 
-                                                                    ipeds_reporting_period_order = ipeds_reporting_period_order,
-                                                                    ipeds_reporting_period_partition_filter = ipeds_reporting_period_partition_filter,
-                                                                    academic_term_partition = academic_term_partition, 
-                                                                    academic_term_order = academic_term_order, 
-                                                                    academic_term_partition_filter = academic_term_partition_filter).cache()
-
-registration = registration.join(
-	academic_term_reporting_refactor,
-	(registration.termCode == academic_term_reporting_refactor.termCode) &
-	(f.coalesce(registration.partOfTermCode, lit('1')) == academic_term_reporting_refactor.partOfTermCode) &
-	(((registration.registrationStatusActionDate != to_timestamp(lit('9999-09-09'))) & (registration.registrationStatusActionDate <= academic_term_reporting_refactor.censusDate))
-		| ((registration.registrationStatusActionDate == to_timestamp(lit('9999-09-09'))) 
-			& (registration.recordActivityDate != to_timestamp(lit('9999-09-09')))
-			& (registration.recordActivityDate <= academic_term_reporting_refactor.censusDate))
-		| ((registration.registrationStatusActionDate == to_timestamp(lit('9999-09-09')))
-			& (col('recordActivityDate') == to_timestamp(lit('9999-09-09'))))) &
-	(registration.snapshotDate <= academic_term_reporting_refactor.censusDate) &
-	(f.coalesce(registration.isIPEDSReportable, lit(True))), 'inner').select(
-		registration.personId.alias('regPersonId'),
-		to_timestamp(registration.snapshotDate).alias('regSnapshotDate'),
-		upper(registration.termCode).alias('regTermCode'),
-		f.coalesce(upper(registration.partOfTermCode), lit('1')).alias('regPartOfTermCode'),
-		upper(registration.courseSectionNumber).alias('regCourseSectionNumber'),
-		upper(registration.courseSectionCampusOverride).alias('regCourseSectionCampusOverride'),
-		upper(registration.courseSectionLevelOverride).alias('regCourseSectionLevelOverride'),
-		f.coalesce(registration.isAudited, lit(False)).alias('regIsAudited'),
-		f.coalesce(registration.isEnrolled, lit(True)).alias('regIsEnrolled'),
-		f.coalesce(registration.registrationStatusActionDate, to_timestamp(lit('9999-09-09'))).alias('regStatusActionDate'),
-		f.coalesce(registration.recordActivityDate, to_timestamp(lit('9999-09-09'))).alias('regRecordActivityDate'),
-		registration.enrollmentHoursOverride.alias('regEnrollmentHoursOverride'),
-		academic_term_reporting_refactor.snapshotDate.alias('repRefSnapshotDate'),
-		academic_term_reporting_refactor.yearType.alias('repRefYearType'),
-		academic_term_reporting_refactor.surveySection.alias('repRefSurveySection'),
-		academic_term_reporting_refactor.financialAidYear.alias('repRefFinancialAidYear'),
-		academic_term_reporting_refactor.termCodeOrder.alias('repRefTermCodeOrder'),
-		academic_term_reporting_refactor.maxCensus.alias('repRefMaxCensus'),
-		academic_term_reporting_refactor.fullTermOrder.alias('repRefFullTermOrder'),
-		academic_term_reporting_refactor.termTypeNew.alias('repRefTermTypeNew'),
-		academic_term_reporting_refactor.startDate.alias('repRefStartDate'),
-		academic_term_reporting_refactor.censusDate.alias('repRefCensusDate'),
-		academic_term_reporting_refactor.equivCRHRFactor.alias('repRefEquivCRHRFactor')).withColumn('regRowNum', f.row_number().over(Window.partitionBy(
-			col('repRefYearType'), col('repRefSurveySection'), col('regTermCode'), col('regPartOfTermCode'), col('regPersonId'), col('regCourseSectionNumber'), col('RegcourseSectionLevelOverride')).orderBy(
-				when(col('regSnapshotDate') ==  col('repRefSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-				when(col('regSnapshotDate') > col('repRefSnapshotDate'), col('regSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-				when(col('regSnapshotDate') < col('repRefSnapshotDate'), col('regSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-				col('regSnapshotDate').desc(),
-				col('regRecordActivityDate').desc(),
-				col('regStatusActionDate').desc()))).filter((col('regRowNum') == 1) & col('regIsEnrolled') == lit('True'))
-				
-registration_course_section = registration.join(
-	course_section, 
-	(registration.regTermCode == course_section.termCode) &
-	(registration.regPartOfTermCode == course_section.partOfTermCode) &
-	(registration.regCourseSectionNumber == course_section.courseSectionNumber) &
-	(course_section.termCode.isNotNull()) &
-	(f.coalesce(course_section.partOfTermCode, lit('1')).isNotNull()) &
-	(((course_section.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (course_section.recordActivityDate <= registration.repRefCensusDate))
-		| (course_section.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
-	(f.coalesce(course_section.isIPEDSReportable, lit(True)) == lit(True)), 'left').select(
-		to_timestamp(course_section.recordActivityDate).alias('crseSectRecordActivityDate'),
-		course_section.courseSectionLevel.alias('crseSectCourseSectionLevel'),
-		upper(course_section.subject).alias('crseSectSubject'),
-		upper(course_section.courseNumber).alias('crseSectCourseNumber'),
-		upper(course_section.section).alias('crseSectSection'),
-		upper(course_section.customDataValue).alias('crseSectCustomDataValue'),
-		course_section.courseSectionStatus.alias('crseSectCourseSectionStatus'),
-		f.coalesce(course_section.isESL, lit(False)).alias('crseSectIsESL'), 
-		f.coalesce(course_section.isRemedial, lit(False)).alias('crseSectIsRemedial'),
-		upper(course_section.college).alias('crseSectCollege'),
-		upper(course_section.division).alias('crseSectDivision'),
-		upper(course_section.department).alias('crseSectDepartment'),
-		f.coalesce(course_section.isClockHours, lit(False)).alias('crseSectIsClockHours'),
-		to_timestamp(course_section.snapshotDate).alias('crseSectSnapshotDate'),
-		registration.repRefSurveySection, 
-		registration.repRefYearType,
-		registration.regSnapshotDate,
-		registration.regPersonId,
-		registration.regTermCode,
-		registration.regPartOfTermCode,
-		registration.repRefFinancialAidYear,
-		registration.repRefMaxCensus,
-		registration.repRefCensusDate,
-		registration.repRefTermTypeNew,
-		registration.repRefTermCodeOrder,
-		registration.regCourseSectionNumber,
-		registration.regIsAudited,
-		registration.repRefEquivCRHRFactor,
-		registration.regCourseSectionCampusOverride,
-		f.coalesce(registration.regCourseSectionLevelOverride, course_section.courseSectionLevel).alias('newCourseSectionLevel'),
-		f.coalesce(registration.regEnrollmentHoursOverride, course_section.enrollmentHours).alias('newEnrollmentHours')).withColumn('crseSectRowNum', f.row_number().over(Window.partitionBy(
-			col('repRefYearType'), col('regTermCode'), col('regPartOfTermCode'), col('regPersonId'), col('regCourseSectionNumber')).orderBy(
-				when(col('crseSectSnapshotDate') ==  col('regSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-				when(col('crseSectSnapshotDate') > col('regSnapshotDate'), col('crseSectSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-				when(col('crseSectSnapshotDate') < col('regSnapshotDate'), col('crseSectSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-				col('crseSectSnapshotDate').desc(),
-				col('crseSectRecordActivityDate').desc()))).filter(col('crseSectRowNum') == 1)
-
-registration_course_section_schedule = registration_course_section.join(
-	course_section_schedule,
-	(registration_course_section.regTermCode == course_section_schedule.termCode) &
-	(registration_course_section.regPartOfTermCode == course_section_schedule.partOfTermCode) &
-	(registration_course_section.regCourseSectionNumber == course_section_schedule.courseSectionNumber) &
-	(course_section_schedule.termCode.isNotNull()) &
-	(f.coalesce(course_section_schedule.partOfTermCode, lit('1')).isNotNull()) &
-	(((course_section_schedule.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (course_section_schedule.recordActivityDate <= registration_course_section.repRefCensusDate))
-		| (course_section_schedule.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
-	(f.coalesce(course_section_schedule.isIPEDSReportable, lit(True)) == lit(True)) , 'left').select(
-		to_timestamp(course_section_schedule.snapshotDate).alias('crseSectSchedSnapshotDate'),
-		f.coalesce(to_timestamp(course_section_schedule.recordActivityDate), to_timestamp(lit('9999-09-09'))).alias('crseSectSchedRecordActivityDate'),
-		#upper(course_section_schedule.campus).alias('campus'),
-		course_section_schedule.instructionType.alias('crseSectSchedInstructionType'),
-		course_section_schedule.locationType.alias('crseSectSchedLocationType'),
-		f.coalesce(course_section_schedule.distanceEducationType, lit('Not distance education')).alias('crseSectSchedDistanceEducationType'),
-		course_section_schedule.onlineInstructionType.alias('crseSectSchedOnlineInstructionType'),
-		course_section_schedule.maxSeats.alias('crseSectSchedMaxSeats'),
-		#course_section_schedule.isIPEDSReportable.alias('courseSectionScheduleIsIPEDSReportable'),
-		registration_course_section.repRefYearType,
-		registration_course_section.repRefSurveySection,
-		registration_course_section.regSnapshotDate,
-		registration_course_section.regPersonId,
-		registration_course_section.regTermCode,
-		registration_course_section.regPartOfTermCode,
-		registration_course_section.repRefFinancialAidYear,
-		registration_course_section.repRefMaxCensus,
-		registration_course_section.repRefCensusDate,
-		registration_course_section.repRefTermTypeNew,
-		registration_course_section.repRefTermCodeOrder,
-		registration_course_section.regCourseSectionNumber,
-		registration_course_section.regIsAudited,
-		registration_course_section.repRefEquivCRHRFactor,
-		registration_course_section.regCourseSectionCampusOverride,
-		registration_course_section.newCourseSectionLevel,
-		registration_course_section.newEnrollmentHours,
-		#registration_course_section.regRecordActivityDate,
-		#registration_course_section.repRefSnapshotDate,
-		registration_course_section.crseSectSubject,
-		registration_course_section.crseSectCourseNumber,
-		registration_course_section.crseSectSection,
-		registration_course_section.crseSectCustomDataValue,
-		registration_course_section.crseSectCourseSectionStatus,
-		registration_course_section.crseSectIsESL, 
-		registration_course_section.crseSectIsRemedial,
-		registration_course_section.crseSectCollege,
-		registration_course_section.crseSectDivision,
-		registration_course_section.crseSectDepartment,
-		registration_course_section.crseSectIsClockHours,
-		upper(f.coalesce(registration_course_section.regCourseSectionCampusOverride, course_section_schedule.campus)).alias('newCampus')).withColumn('crseSectSchedRowNum', f.row_number().over(Window.partitionBy(
-				col('repRefYearType'), col('regTermCode'), col('regPartOfTermCode'), col('regPersonId'), col('regCourseSectionNumber'), col('newCourseSectionLevel'), col('crseSectSubject'), col('crseSectCourseNumber')).orderBy(
-					when(col('crseSectSchedSnapshotDate') ==  col('regSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-					when(col('crseSectSchedSnapshotDate') > col('regSnapshotDate'), col('crseSectSchedSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-					when(col('crseSectSchedSnapshotDate') < col('regSnapshotDate'), col('crseSectSchedSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-					col('crseSectSchedSnapshotDate').desc(),
-					col('crseSectSchedRecordActivityDate').desc()))).filter(col('crseSectSchedRowNum') == 1)
-
-registration_course = registration_course_section_schedule.join(
-	course,
-	(registration_course_section_schedule.crseSectSubject == course.subject) &
-	(registration_course_section_schedule.crseSectCourseNumber == course.courseNumber) &
-	(((course.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (course.recordActivityDate <= registration_course_section_schedule.repRefCensusDate))
-		| (course.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
-	(f.coalesce(course.isIPEDSReportable, lit(True)) == lit(True)), 'left').join(
-		academic_term,
-		(academic_term.termCode == course.termCodeEffective) &
-		(academic_term.termCodeOrder <= registration_course_section_schedule.repRefTermCodeOrder), 'left').select(
-			to_timestamp(course.snapshotDate).alias('crseSnapshotDate'),
-			upper(course.termCodeEffective).alias('crseTermCodeEffective'),
-			#upper(course.courseCollege).alias('crseCourseCollege'),
-			#upper(course.courseDivision).alias('crseCourseDivision'),
-			#upper(course.courseDepartment).alias('crseCourseDepartment'),
-			f.coalesce(to_timestamp(course.recordActivityDate), to_timestamp(lit('9999-09-09'))).alias('crseRecordActivityDate'),
-			course.courseStatus.alias('crseCourseStatus'),
-			registration_course_section_schedule.repRefYearType,
-			registration_course_section_schedule.repRefSurveySection,
-			registration_course_section_schedule.regSnapshotDate,
-			registration_course_section_schedule.regPersonId,
-			registration_course_section_schedule.regTermCode,
-			registration_course_section_schedule.regPartOfTermCode,
-			registration_course_section_schedule.repRefFinancialAidYear,
-			registration_course_section_schedule.repRefMaxCensus,
-			registration_course_section_schedule.repRefCensusDate,
-			registration_course_section_schedule.repRefTermTypeNew,
-			registration_course_section_schedule.repRefTermCodeOrder,
-			registration_course_section_schedule.regCourseSectionNumber,
-			registration_course_section_schedule.regIsAudited,
-			registration_course_section_schedule.repRefEquivCRHRFactor,
-			registration_course_section_schedule.newCourseSectionLevel,
-			registration_course_section_schedule.newEnrollmentHours,
-			#registration_course_section_schedule.repRefSnapshotDate,
-			registration_course_section_schedule.crseSectSubject,
-			registration_course_section_schedule.crseSectCourseNumber,
-			registration_course_section_schedule.crseSectSection,
-			registration_course_section_schedule.crseSectCustomDataValue,
-			registration_course_section_schedule.crseSectCourseSectionStatus,
-			registration_course_section_schedule.crseSectIsESL,
-			registration_course_section_schedule.crseSectIsRemedial,
-			registration_course_section_schedule.crseSectCollege,
-			registration_course_section_schedule.crseSectDivision,
-			registration_course_section_schedule.crseSectDepartment,
-			registration_course_section_schedule.crseSectIsClockHours,
-			registration_course_section_schedule.newCampus,
-			registration_course_section_schedule.crseSectSchedInstructionType,
-			registration_course_section_schedule.crseSectSchedLocationType,
-			registration_course_section_schedule.crseSectSchedDistanceEducationType,
-			registration_course_section_schedule.crseSectSchedOnlineInstructionType,
-			f.coalesce(registration_course_section_schedule.crseSectCollege, course.courseCollege).alias('newCollege'),
-			f.coalesce(registration_course_section_schedule.crseSectDivision, course.courseDivision).alias('newDivision'),
-			f.coalesce(registration_course_section_schedule.crseSectDepartment, course.courseDepartment).alias('newDepartment'),
-			academic_term.termCodeOrder.alias('crseEffectiveTermCodeOrder')).withColumn('crseRowNum', f.row_number().over(Window.partitionBy(
-				col('repRefYearType'), col('regTermCode'), col('regPartOfTermCode'), col('regPersonId'), col('regCourseSectionNumber'), col('newCourseSectionLevel'), col('crseSectSubject'), col('crseSectCourseNumber')).orderBy(
-					when(col('crseSnapshotDate') ==  col('regSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-					when(col('crseSnapshotDate') > col('regSnapshotDate'), col('crseSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-					when(col('crseSnapshotDate') < col('regSnapshotDate'), col('crseSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-					col('crseSnapshotDate').desc(),
-					col('crseEffectiveTermCodeOrder').desc(),
-					col('crseRecordActivityDate').desc()))).filter(col('crseRowNum') == 1)
-
-registration_course_campus = registration_course.join(
-	campus,
-	(registration_course.newCampus == campus.campus) &
-	(((campus.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (campus.recordActivityDate <= registration_course.repRefCensusDate))
-		| (campus.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
-	(f.coalesce(campus.isIPEDSReportable, lit(True)) == lit(True)), 'left').select(
-		registration_course['*'],
-		f.coalesce(campus.isInternational, lit(False)).alias('campIsInternational'),
-		f.coalesce(to_timestamp(campus.recordActivityDate), to_timestamp(lit('9999-09-09'))).alias('campRecordActivityDate'),
-		to_timestamp(campus.snapshotDate).alias('campSnapshotDate')).withColumn('campRowNum', f.row_number().over(Window.partitionBy(
-				col('repRefYearType'), col('regTermCode'), col('regPartOfTermCode'), col('regPersonId'), col('regCourseSectionNumber'), col('newCourseSectionLevel'), col('newCampus')).orderBy(
-					when(col('campSnapshotDate') ==  col('regSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-					when(col('campSnapshotDate') > col('regSnapshotDate'), col('campSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-					when(col('campSnapshotDate') < col('regSnapshotDate'), col('campSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-					col('campSnapshotDate').desc(),
-					col('campRecordActivityDate').desc()))).filter(col('campRowNum') == 1)
-
-course_type_counts = registration_course_campus.crossJoin(ipeds_client_config).select(
-	registration_course_campus.repRefSurveySection,
-	registration_course_campus.repRefYearType,
-	registration_course_campus.regTermCode,
-	registration_course_campus.repRefMaxCensus,
-	registration_course_campus.regPersonId,
-	registration_course_campus.regCourseSectionNumber,
-	registration_course_campus.newEnrollmentHours,
-	registration_course_campus.crseSectIsClockHours,
-	registration_course_campus.newCourseSectionLevel,
-	registration_course_campus.crseSectSchedLocationType,
-	registration_course_campus.crseSectIsESL,
-	registration_course_campus.crseSectIsRemedial,
-	registration_course_campus.campIsInternational,
-	registration_course_campus.regIsAudited,
-	registration_course_campus.crseSectSchedInstructionType,
-	registration_course_campus.crseSectSchedDistanceEducationType,
-	registration_course_campus.repRefEquivCRHRFactor,
-	ipeds_client_config.instructionalActivityType
-	).withColumn('newCourseSectionLevelUGGR',
-		when(col('newCourseSectionLevel').isin('UNDERGRADUATE', 'CONTINUING EDUCATION', 'OTHER'), lit('UG')).otherwise(
-			when(col('newCourseSectionLevel') == 'PROFESSIONAL PRACTICE DOCTORATE', lit('GR')).otherwise(
-				when(col('newCourseSectionLevel').isin('MASTERS', 'DOCTORATE'), lit('DPP'))))
-	).withColumn('newEnrollmentHoursCalc',
-		when(col('instructionalActivityType') == 'CR', col('newEnrollmentHours')).otherwise(
-			when(col('crseSectIsClockHours') == False, col('newEnrollmentHours')).otherwise(
-				when((col('crseSectIsClockHours') == True) & (col('instructionalActivityType') == 'B'), (col('newEnrollmentHours') * col('repRefEquivCRHRFactor'))).otherwise(col('newEnrollmentHours'))))).distinct().groupBy(
-				    'repRefSurveySection', 'repRefYearType', 'regTermCode', 'repRefMaxCensus', 'regPersonId').agg(
-				        f.coalesce(count(col('regCourseSectionNumber')), lit(0)).alias('totalCourses'),
-                        sum(when((col('newEnrollmentHoursCalc') >= 0), lit(1)).otherwise(lit(0))).alias('totalCreditCourses'),
-                        sum(when((col('crseSectIsClockHours') == False), col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('totalCreditHrs'),
-                        sum(when((col('crseSectIsClockHours') == True) & (col('newCourseSectionLevel') == 'UNDERGRADUATE'), col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('totalClockHrs'),	
-                        sum(when((col('newCourseSectionLevel') == 'CONTINUING EDUCATION'), lit(1)).otherwise(lit(0))).alias('totalCECourses'),
-                        sum(when((col('crseSectSchedLocationType') == 'Foreign Country'), lit(1)).otherwise(lit(0))).alias('totalSAHomeCourses'),
-                        sum(when((col('crseSectIsESL') == True), lit(1)).otherwise(lit(0))).alias('totalESLCourses'),
-                        sum(when((col('crseSectIsRemedial') == True), lit(1)).otherwise(lit(0))).alias('totalRemCourses'),
-                        sum(when((col('campIsInternational') == True), lit(1)).otherwise(lit(0))).alias('totalIntlCourses'),
-                        sum(when((col('regIsAudited') == True), lit(1)).otherwise(lit(0))).alias('totalAuditCourses'),
-                        sum(when((col('crseSectSchedInstructionType') == 'Thesis/Capstone'), lit(1)).otherwise(lit(0))).alias('totalThesisCourses'),
-                        sum(when((col('crseSectSchedInstructionType').isin('Residency', 'Internship', 'Practicum')) & (col('repRefEquivCRHRFactor') == 'DPP'), lit(1)).otherwise(lit(0))).alias('totalProfResidencyCourses'),
-                        sum(when((col('crseSectSchedDistanceEducationType') != 'Not distance education'), lit(1)).otherwise(lit(0))).alias('totalDECourses'),
-                        sum(when(((col('instructionalActivityType') != 'CL') & (col('newCourseSectionLevelUGGR') == 'UG')), col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('UGCreditHours'),
-                        sum(when(((col('instructionalActivityType') == 'CL') & (col('newCourseSectionLevelUGGR') == 'UG')), col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('UGClockHours'),
-                        sum(when((col('newCourseSectionLevelUGGR') == 'GR'), col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('GRCreditHours'),
-                        sum(when((col('newCourseSectionLevelUGGR') == 'DPP'), col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('DPPCreditHours'))
-				
-student = spark.sql("select * from student")
-person = spark.sql("select * from person")
-academic_track = spark.sql("select * from academicTrack")
-degree_program = spark.sql("select * from degreeProgram")
-degree = spark.sql("select * from degree")
-field_of_study = spark.sql("select * from fieldOfStudy")
-
-#academic_term_reporting_refactor = academic_term_reporting_refactor(ipeds_reporting_period_partition, ipeds_reporting_period_order,
-#                                     ipeds_reporting_period_partition_filter,
-#                                     academic_term_partition, academic_term_order, academic_term_partition_filter)
-                                     
-student = student.join(
-    academic_term_reporting_refactor,
-    ((upper(student.termCode) == academic_term_reporting_refactor.termCode)
-    & (f.coalesce(student.isIPEDSReportable, lit(True)) == True)), 'inner').select(
-        #academic_term_reporting_refactor['*'],
-        academic_term_reporting_refactor.yearType.alias('repRefYearType'),
-	    academic_term_reporting_refactor.financialAidYear.alias('repRefFinancialAidYear'),
-	    academic_term_reporting_refactor.surveySection.alias('repRefSurveySection'),
-	    academic_term_reporting_refactor.termCodeOrder.alias('repRefTermCodeOrder'),
-        academic_term_reporting_refactor.termTypeNew.alias('repRefTermTypeNew'),
-	    academic_term_reporting_refactor.startDate.alias('repRefStartDate'),
-	    academic_term_reporting_refactor.censusDate.alias('repRefCensusDate'),
-	    academic_term_reporting_refactor.requiredFTCreditHoursGR.alias('repRefRequiredFTCreditHoursGR'),
-	    academic_term_reporting_refactor.requiredFTCreditHoursUG.alias('repRefRequiredFTCreditHoursUG'),
-	    academic_term_reporting_refactor.requiredFTClockHoursUG.alias('repRefRequiredFTClockHoursUG'),
-	    academic_term_reporting_refactor.snapshotDate.alias('repRefSnapshotDate'),
-	    academic_term_reporting_refactor.fullTermOrder.alias('repRefFullTermOrder'),
-        student.personId.alias('stuPersonId'),
-        student.termCode.alias('stuTermCode'),
-	    (when((student.studentType).isin('High School', 'Visiting', 'Unknown'), lit(True)).otherwise(
-	        when((student.studentLevel).isin('Continuing Education', 'Other'), lit(True)).otherwise(
-	            when(student.studyAbroadStatus == 'Study Abroad - Host Institution', lit(True)).otherwise(f.coalesce(col('isNonDegreeSeeking'), lit(False)))))).alias('stuIsNonDegreeSeeking'),
-        student.studentLevel.alias('stuStudentLevel'),
-        student.studentType.alias('stuStudentType'),
-        student.residency.alias('stuResidency'),
-        upper(student.homeCampus).alias('stuHomeCampus'),
-        student.fullTimePartTimeStatus.alias('stuFullTimePartTimeStatus'),
-        student.studyAbroadStatus.alias('stuStudyAbroadStatus'),
-        f.coalesce(student.recordActivityDate, to_timestamp(lit('9999-09-09'))).alias('stuRecordActivityDate'),
-        to_timestamp(student.snapshotDate).alias('stuSnapshotDate')).filter(
-            ((col('stuRecordActivityDate') != to_timestamp(lit('9999-09-09')))
-                & (col('stuRecordActivityDate') <= col('repRefCensusDate')))
-            | (col('stuRecordActivityDate') == to_timestamp(lit('9999-09-09')))).withColumn('studentRowNum', f.row_number().over(Window.partitionBy(
-                col('repRefYearType'), col('repRefSurveySection'), col('stuPersonId'), col('stuTermCode')).orderBy(
-                    when(col('stuSnapshotDate') ==  col('repRefSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-                    when(col('stuSnapshotDate') > col('repRefSnapshotDate'), col('stuSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).asc(),
-                    when(col('stuSnapshotDate') < col('repRefSnapshotDate'), col('stuSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-                    col('stuSnapshotDate').desc(),
-                    col('stuRecordActivityDate').desc()))).filter(col('studentRowNum') == 1)
-
-student_reg = student.join(
-    course_type_counts,
-	(student.stuPersonId == course_type_counts.regPersonId) &
-	(student.stuTermCode == course_type_counts.regTermCode), 'left').filter(course_type_counts.regPersonId.isNotNull()).withColumn(
-	    'NDSRn', row_number().over(Window.partitionBy(student.stuPersonId, student.repRefYearType).orderBy(student.stuIsNonDegreeSeeking, student.repRefFullTermOrder, student.repRefTermCodeOrder, student.repRefStartDate))).withColumn(
-	    'FFTRn', row_number().over(Window.partitionBy(student.stuPersonId, student.repRefYearType).orderBy(student.repRefFullTermOrder, student.repRefTermCodeOrder, student.repRefStartDate))).select(
-            course_type_counts.regPersonId,
-            course_type_counts.repRefYearType,
-            course_type_counts.regTermCode,
-            col('FFTRn'),
-            col('NDSRn'),
-            when(student.stuIsNonDegreeSeeking == True, 1).otherwise(2).alias('stuRefIsNonDegreeSeeking'),
-            when((student.stuIsNonDegreeSeeking == False) & (student.stuStudentLevel != 'Undergraduate'), None)
-                .when((student.stuIsNonDegreeSeeking == False) & (col('NDSRn') == 1) & (col('FFTRn') == 1), student.stuStudentType)
-                .when((student.stuIsNonDegreeSeeking == False) & (col('NDSRn') == 1), 'Continuing')
-                .otherwise(None).alias('stuRefStudentType'),
-            when((student.stuIsNonDegreeSeeking == False) & (student.stuStudentLevel != 'Undergraduate'), None)
-                .when((student.stuIsNonDegreeSeeking == False) & (col('NDSRn') == 1), student.repRefTermTypeNew)
-                .otherwise(None).alias('stuRefTypeTermType'),
-            when(student.repRefTermTypeNew == 'Pre-Fall Summer', student.stuStudentType).otherwise(None).alias('preFallStudType'),
-            when(col('FFTRn') == 1, student.stuStudentLevel).otherwise(None).alias("stuRefStudentLevel"), 
-            when(col('FFTRn') == 1, student.stuTermCode).otherwise(None).alias("firstFullTerm"), 
-            when(col('FFTRn') == 1, student.stuHomeCampus).otherwise(None).alias("stuRefCampus"),
-            when(col('FFTRn') == 1, student.stuFullTimePartTimeStatus).otherwise(None).alias("stuRefFullTimePartTimeStatus"), 
-            when(col('FFTRn') == 1, student.stuStudyAbroadStatus).otherwise(None).alias("stuRefStudyAbroadStatus"), 
-            when(col('FFTRn') == 1, student.stuResidency).otherwise(None).alias("stuRefResidency"), 
-            when(col('FFTRn') == 1, student.repRefSurveySection).otherwise(None).alias("stuRefSurveySection"),
-            when(col('FFTRn') == 1, student.stuSnapshotDate).otherwise(None).alias("stuRefSnapshotDate"),
-            when(col('FFTRn') == 1, student.repRefTermCodeOrder).otherwise(None).alias("stuRefTermCodeOrder"),
-            when(col('FFTRn') == 1, student.repRefTermTypeNew).otherwise(None).alias("stuRefTermTypeNew"),
-            when(col('FFTRn') == 1, student.repRefCensusDate).otherwise(None).alias("stuRefCensusDate"), 
-            when(col('FFTRn') == 1, student.repRefFinancialAidYear).otherwise(None).alias("stuRefFinancialAidYear"), 
-            when(col('FFTRn') == 1, student.repRefRequiredFTCreditHoursGR).otherwise(None).alias("stuRefRequiredFTCreditHoursGR"), 
-            when(col('FFTRn') == 1, student.repRefRequiredFTCreditHoursUG).otherwise(None).alias("stuRefRequiredFTCreditHoursUG"), 
-            when(col('FFTRn') == 1, student.repRefRequiredFTClockHoursUG).otherwise(None).alias("stuRefRequiredFTClockHoursUG"),
-            when(col('FFTRn') == 1, course_type_counts.totalCourses).otherwise(None).alias("stuRefTotalCourses"),
-            when(col('FFTRn') == 1, course_type_counts.totalCreditCourses).otherwise(None).alias("stuRefTotalCreditCourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalCreditHrs).otherwise(None).alias("stuRefTotalCreditHrs"), 
-            when(col('FFTRn') == 1, course_type_counts.totalClockHrs).otherwise(None).alias("stuRefTotalClockHrs"), 
-            when(col('FFTRn') == 1, course_type_counts.totalCECourses).otherwise(None).alias("stuRefTotalCECourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalSAHomeCourses).otherwise(None).alias("stuRefTotalSAHomeCourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalESLCourses).otherwise(None).alias("stuRefTotalESLCourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalRemCourses).otherwise(None).alias("stuRefTotalRemCourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalIntlCourses).otherwise(None).alias("stuRefTotalIntlCourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalAuditCourses).otherwise(None).alias("stuRefTotalAuditCourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalThesisCourses).otherwise(None).alias("stuRefTotalThesisCourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalProfResidencyCourses).otherwise(None).alias("stuRefTotalProfResidencyCourses"), 
-            when(col('FFTRn') == 1, course_type_counts.totalDECourses).otherwise(None).alias("stuRefTotalDECourses"), 
-            when(col('FFTRn') == 1, course_type_counts.UGCreditHours).otherwise(None).alias("stuRefUGCreditHours"), 
-            when(col('FFTRn') == 1, course_type_counts.UGClockHours).otherwise(None).alias("stuRefUGClockHours"), 
-            when(col('FFTRn') == 1, course_type_counts.GRCreditHours).otherwise(None).alias("stuRefGRCreditHours"), 
-            when(col('FFTRn') == 1, course_type_counts.DPPCreditHours).otherwise(None).alias("stuRefDPPCreditHours"))
-
-student_fft = student_reg.groupBy(student_reg.regPersonId, student_reg.repRefYearType).agg(
-    min(student_reg.stuRefIsNonDegreeSeeking).alias("stuRefIsNonDegreeSeeking"),
-    max(student_reg.stuRefStudentType).alias("stuRefStudentType"),
-    max(student_reg.stuRefTypeTermType).alias("stuRefTypeTermType"),
-    max(student_reg.preFallStudType).alias("preFallStudType"),
-    max(student_reg.stuRefStudentLevel).alias("stuRefStudentLevel"), 
-    when(max(student_reg.stuRefStudentLevel).isin("Masters", "Doctorate", "Professional Practice Doctorate"), "GR")
-        .otherwise("UG").alias("studentLevelUGGR"), 
-    max(student_reg.firstFullTerm).alias("regFirstFullTerm"),
-    max(student_reg.stuRefCampus).alias("stuRefCampus"),
-    max(student_reg.stuRefFullTimePartTimeStatus).alias("stuRefFullTimePartTimeStatus"),
-    max(student_reg.stuRefStudyAbroadStatus).alias("stuRefStudyAbroadStatus"),
-    max(student_reg.stuRefResidency).alias("stuRefResidency"),
-    max(student_reg.stuRefSurveySection).alias("stuRefSurveySection"),
-    max(student_reg.stuRefSnapshotDate).alias("stuRefSnapshotDate"), 
-    max(student_reg.stuRefTermCodeOrder).alias("stuRefTermCodeOrder"),
-    max(student_reg.stuRefTermTypeNew).alias("stuRefTermTypeNew"),
-    max(student_reg.stuRefCensusDate).alias("stuRefCensusDate"),
-    max(student_reg.stuRefFinancialAidYear).alias("stuRefFinancialAidYear"),
-    max(student_reg.stuRefRequiredFTCreditHoursGR).alias("stuRefRequiredFTCreditHoursGR"),
-    max(student_reg.stuRefRequiredFTCreditHoursUG).alias("stuRefRequiredFTCreditHoursUG"),
-    max(student_reg.stuRefRequiredFTClockHoursUG).alias("stuRefRequiredFTClockHoursUG"),
-    sum(student_reg.stuRefTotalCourses).alias("stuRefTotalCourses"),
-    sum(student_reg.stuRefTotalCreditCourses).alias("stuRefTotalCreditCourses"),
-    sum(student_reg.stuRefTotalCreditHrs).alias("stuRefTotalCreditHrs"),
-    sum(student_reg.stuRefTotalClockHrs).alias("stuRefTotalClockHrs"),
-    sum(student_reg.stuRefTotalCECourses).alias("stuRefTotalCECourses"),
-    sum(student_reg.stuRefTotalSAHomeCourses).alias("stuRefTotalSAHomeCourses"), 
-    sum(student_reg.stuRefTotalESLCourses).alias("stuRefTotalESLCourses"),
-    sum(student_reg.stuRefTotalRemCourses).alias("stuRefTotalRemCourses"),
-    sum(student_reg.stuRefTotalIntlCourses).alias("stuRefTotalIntlCourses"),
-    sum(student_reg.stuRefTotalAuditCourses).alias("stuRefTotalAuditCourses"),
-    sum(student_reg.stuRefTotalThesisCourses).alias("stuRefTotalThesisCourses"),
-    sum(student_reg.stuRefTotalProfResidencyCourses).alias("stuRefTotalProfResidencyCourses"),
-    sum(student_reg.stuRefTotalDECourses).alias("stuRefTotalDECourses"),
-    sum(student_reg.stuRefUGCreditHours).alias("stuRefUGCreditHours"),
-    sum(student_reg.stuRefUGClockHours).alias("stuRefUGClockHours"),
-    sum(student_reg.stuRefGRCreditHours).alias("stuRefGRCreditHours"),
-    sum(student_reg.stuRefDPPCreditHours).alias("stuRefDPPCreditHours"))
-
-student_fft = student_fft.crossJoin(ipeds_client_config).select(
-    student_fft['*'],
-    ipeds_client_config.acadOrProgReporter.alias('configAcadOrProgReporter'),
-    ipeds_client_config.admUseTestScores.alias('configAdmUseTestScores'),
-    ipeds_client_config.compGradDateOrTerm.alias('configCompGradDateOrTerm'),
-    ipeds_client_config.feIncludeOptSurveyData.alias('configFeIncludeOptSurveyData'),
-    ipeds_client_config.fourYrOrLessInstitution.alias('configFourYrOrLessInstitution'),
-    ipeds_client_config.genderForNonBinary.alias('configGenderForNonBinary'),
-    ipeds_client_config.genderForUnknown.alias('configGenderForUnknown'),
-    ipeds_client_config.grReportTransferOut.alias('configGrReportTransferOut'),
-    ipeds_client_config.icOfferUndergradAwardLevel.alias('configIcOfferUndergradAwardLevel'),
-    ipeds_client_config.icOfferGraduateAwardLevel.alias('configIcOfferGraduateAwardLevel'),
-    ipeds_client_config.icOfferDoctorAwardLevel.alias('configIcOfferDoctorAwardLevel'),
-    ipeds_client_config.includeNonDegreeAsUG.alias('configIncludeNonDegreeAsUG'),
-    ipeds_client_config.instructionalActivityType.alias('configInstructionalActivityType'),
-    ipeds_client_config.publicOrPrivateInstitution.alias('configPublicOrPrivateInstitution'),
-    ipeds_client_config.recordActivityDate.alias('configRecordActivityDate'),
-    ipeds_client_config.sfaGradStudentsOnly.alias('configSfaGradStudentsOnly'),
-    ipeds_client_config.sfaLargestProgCIPC.alias('configSfaLargestProgCIPC'),
-    ipeds_client_config.sfaReportPriorYear.alias('configSfaReportPriorYear'),
-    ipeds_client_config.sfaReportSecondPriorYear.alias('configSfaReportSecondPriorYear'),
-    ipeds_client_config.surveyCollectionYear.alias('configSurveyCollectionYear'),
-    ipeds_client_config.tmAnnualDPPCreditHoursFTE.alias('configTmAnnualDPPCreditHoursFTE')
-    ).withColumn(
-        "isNonDegreeSeeking_calc",
-        when(student_fft.stuRefStudyAbroadStatus != 'Study Abroad - Home Institution', student_fft.stuRefIsNonDegreeSeeking)
-        .when((student_fft.stuRefTotalSAHomeCourses > 0) | (student_fft.stuRefTotalCreditHrs > 0) | (student_fft.stuRefTotalClockHrs > 0), 0) 
-        .otherwise(student_fft.stuRefIsNonDegreeSeeking)).withColumn(
-                "studentType_calc",
-                when((student_fft.studentLevelUGGR == 'UG') & (student_fft.stuRefTypeTermType == 'Fall') & (student_fft.stuRefStudentType == 'Continuing') & (student_fft.preFallStudType.isNotNull()), student_fft.preFallStudType)
-                .otherwise(student_fft.stuRefStudentType)).withColumn(
-                    "timeStatus_calc",
-                    when((student_fft.studentLevelUGGR == 'UG') & (col('configInstructionalActivityType').isin('CR', 'B')) & (student_fft.stuRefTotalCreditHrs >= student_fft.stuRefRequiredFTCreditHoursUG), 'Full Time')
-                    .when((student_fft.studentLevelUGGR == 'UG') & (col('configInstructionalActivityType').isin('CR', 'B')) & (student_fft.stuRefTotalCreditHrs < student_fft.stuRefRequiredFTCreditHoursUG), 'Part Time')
-                    .when((student_fft.studentLevelUGGR == 'UG') & (col('configInstructionalActivityType') == 'CL') & (student_fft.stuRefTotalClockHrs >= student_fft.stuRefRequiredFTClockHoursUG), 'Full Time')
-                    .when((student_fft.studentLevelUGGR == 'UG') & (col('configInstructionalActivityType') == 'CL') & (student_fft.stuRefTotalClockHrs < student_fft.stuRefRequiredFTClockHoursUG), 'Part Time')
-                    .when((student_fft.studentLevelUGGR == 'GR') & (col('configInstructionalActivityType') >= student_fft.stuRefRequiredFTCreditHoursGR), 'Full Time')
-                    .when((student_fft.studentLevelUGGR == 'GR') & (col('configInstructionalActivityType') < student_fft.stuRefRequiredFTCreditHoursGR), 'Part Time')
-                    .otherwise(None)).withColumn(
-                        "distanceEdInd_calc",
-                        when(student_fft.stuRefTotalDECourses == student_fft.stuRefTotalCourses, 'Exclusive DE')
-                        .when(student_fft.stuRefTotalDECourses > 0, 'Some DE')
-                        .otherwise('None'))
-
-
-cohort_person = student_fft.join(person, 
-    (student_fft.regPersonId == person.personId) & 
-    (coalesce(person.isIPEDSReportable, lit(True)) == True) &
-    ((coalesce(to_date(person.recordActivityDate, 'YYYY-MM-DD'), to_date(lit('9999-09-09'), 'YYYY-MM-DD')) == to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
-        | ((coalesce(to_date(person.recordActivityDate, 'YYYY-MM-DD'), to_date(lit('9999-09-09'), 'YYYY-MM-DD')) != to_date(lit('9999-09-09'), 'YYYY-MM-DD')) 
-        & (to_date(person.recordActivityDate, 'YYYY-MM-DD') <= to_date(student_fft.stuRefCensusDate, 'YYYY-MM-DD')))), 'left').select(
-    student_fft["*"],
-	to_date(person.birthDate,'YYYY-MM-DD').alias("persBirthDate"),
-    upper(person.nation).alias("persNation"),
-    upper(person.state).alias("persState"),
-    (when(person.gender == 'Male', 'M')
-        .when(person.gender == 'Female', 'F') 
-        .when(person.gender == 'Non-Binary', student_fft.configGenderForNonBinary)
-        .otherwise(student_fft.configGenderForUnknown)).alias('persIpedsGender'),
-    (when(coalesce(person.isUSCitizen, lit(True)) == True, 'Y')
-        .when(((coalesce(person.isInUSOnVisa, lit(False)) == True) | 
-            ((student_fft.stuRefCensusDate >= to_date(person.visaStartDate)) & (student_fft.stuRefCensusDate <= to_date(person.visaEndDate)) & (person.visaType.isin('Employee Resident', 'Other Resident')))), 'Y')
-        .when(((person.isInUSOnVisa == 1) | ((student_fft.stuRefCensusDate >= to_date(person.visaStartDate)) & (student_fft.stuRefCensusDate <= to_date(person.visaEndDate))))
-            & (person.visaType.isin('Student Non-resident', 'Other Resident', 'Other Non-resident')), '1') #non-resident alien
-        .otherwise('9')).alias('persIpedsEthnInd'),
-    (when(coalesce(person.isMultipleRaces, lit(False)) == True, '8')
-        .when(((person.ethnicity == 'Hispanic or Latino') | (coalesce(person.isHispanic, lit(False))) == True), '2')
-        .when(person.ethnicity == 'American Indian or Alaskan Native', '3')
-        .when(person.ethnicity == 'Asian', '4')
-        .when(person.ethnicity == 'Black or African American', '5')
-        .when(person.ethnicity == 'Native Hawaiian or Other Pacific Islander', '6')
-        .when(person.ethnicity == 'Caucasian', '7')
-        .otherwise('9')).alias('persIpedsEthnValue'),
-    to_timestamp(person.recordActivityDate).alias('persRecordActivityDate'),
-    to_timestamp(person.snapshotDate).alias('persSnapshotDate')).withColumn('persRowNum', f.row_number().over(Window.partitionBy(
-        col('repRefYearType'), col('repRefYearType'), col('stuRefFullTimePartTimeStatus'), col('regPersonId')).orderBy(
-            when(col('persSnapshotDate') ==  col('stuRefSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-            when(col('persSnapshotDate') > col('stuRefSnapshotDate'), col('persSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-            when(col('persSnapshotDate') < col('stuRefSnapshotDate'), col('persSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-            col('persSnapshotDate').desc(),
-            col('persRecordActivityDate').desc()))).filter(col('persRowNum') == 1)
-
-academic_track = cohort_person.join(academic_track, 
-    (cohort_person.regPersonId == academic_track.personId) & 
-    (coalesce(academic_track.isIPEDSReportable, lit(True)) == True) &
-    (academic_track.fieldOfStudyType == 'Major') &
-    (((academic_track.fieldOfStudyActionDate != to_date(lit('9999-09-09'), 'YYYY-MM-DD')) & (academic_track.fieldOfStudyActionDate <= cohort_person.stuRefCensusDate))
-    | ((academic_track.fieldOfStudyActionDate == to_date(lit('9999-09-09'), 'YYYY-MM-DD')) 
-        & (academic_track.recordActivityDate != to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
-        & (academic_track.recordActivityDate <= cohort_person.stuRefCensusDate))
-    | ((academic_track.fieldOfStudyActionDate == to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
-        & (academic_track.recordActivityDate == to_date(lit('9999-09-09'), 'YYYY-MM-DD'))))
-    & (academic_track.snapshotDate <= cohort_person.stuRefCensusDate), 'left').join(
-        academic_term,
-        (academic_term.termCode == academic_track.termCodeEffective) &
-        (academic_term.termCodeOrder <= cohort_person.stuRefTermCodeOrder), 'left').select(
-            cohort_person["*"],
-            upper(academic_track.degreeProgram).alias('acadTrkDegreeProgram'),
-            academic_track.academicTrackStatus.alias('acadTrkAcademicTrackStatus'),
-            f.coalesce(academic_track.fieldOfStudyPriority, lit(1)).alias('acadTrkFieldOfStudyPriority'),
-            upper(academic_track.termCodeEffective).alias('acadTrkAcademicTrackTermCodeEffective'),
-            academic_term.termCodeOrder.alias('acadTrkTermOrder'),
-            to_timestamp(academic_track.fieldOfStudyActionDate).alias('acadTrkFieldOfStudyActionDate'),
-            to_timestamp(academic_track.recordActivityDate).alias('acadTrkRecordActivityDate'),
-            to_timestamp(academic_track.snapshotDate).alias('acadTrkSnapshotDate')).withColumn('acadTrkTrackRowNum', f.row_number().over(Window.partitionBy(
-                col('repRefYearType'), col('regPersonId')).orderBy(
-                    when(col('acadTrkSnapshotDate') ==  col('stuRefSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-                    when(col('acadTrkSnapshotDate') > col('stuRefSnapshotDate'), col('acadTrkSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-                    when(col('acadTrkSnapshotDate') < col('stuRefSnapshotDate'), col('acadTrkSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-                    col('acadTrkSnapshotDate').desc(),
-                    col('acadTrkFieldOfStudyPriority').asc(),
-                    col('acadTrkTermOrder').desc(),
-                    col('acadTrkRecordActivityDate').desc(),
-                    when(col('acadTrkAcademicTrackStatus') == lit('In Progress'), lit(1)).otherwise(lit(2)).asc()))).filter(col('acadTrkTrackRowNum') == 1)
-                    
-degree_program = academic_track.join(degree_program, 
-    (academic_track.acadTrkDegreeProgram == degree_program.degreeProgram) & 
-    (coalesce(degree_program.isIPEDSReportable, lit(True)) == True) &
-    ((coalesce(to_date(degree_program.recordActivityDate, 'YYYY-MM-DD'), to_date(lit('9999-09-09'), 'YYYY-MM-DD')) == to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
-        | ((coalesce(to_date(degree_program.recordActivityDate, 'YYYY-MM-DD'), to_date(lit('9999-09-09'), 'YYYY-MM-DD')) != to_date(lit('9999-09-09'), 'YYYY-MM-DD')) 
-        & (to_date(degree_program.recordActivityDate, 'YYYY-MM-DD') <= to_date(academic_track.stuRefCensusDate, 'YYYY-MM-DD'))))
-    & (degree_program.snapshotDate <= academic_track.stuRefCensusDate), 'left').join(
-        academic_term,
-        (academic_term.termCode == degree_program.termCodeEffective) &
-        (academic_term.termCodeOrder <= academic_track.stuRefTermCodeOrder), 'left').select(
-            academic_track["*"],
-            upper(degree_program.degreeProgram).alias('degProgDegreeProgram'),
-            upper(degree_program.degree).alias('degProgDegree'),
-            upper(degree_program.major).alias('degProgMajor'),
-            degree_program.startDate.alias('degProgStartDate'),
-            f.coalesce(degree_program.isESL, lit(False)).alias('degProgIsESL'),
-            upper(degree_program.termCodeEffective).alias('degProgTermCodeEffective'),
-            academic_term.termCodeOrder.alias('degProgTermOrder'),
-            to_timestamp(degree_program.recordActivityDate).alias('degProgRecordActivityDate'),
-            to_timestamp(degree_program.snapshotDate).alias('degProgSnapshotDate')).withColumn('degProgRowNum', f.row_number().over(Window.partitionBy(
-                col('repRefYearType'), col('regPersonId'), col('acadTrkDegreeProgram'), col('degProgDegreeProgram')).orderBy(
-                    when(col('degProgSnapshotDate') ==  col('stuRefSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-                    when(col('degProgSnapshotDate') > col('stuRefSnapshotDate'), col('degProgSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-                    when(col('degProgSnapshotDate') < col('stuRefSnapshotDate'), col('degProgSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-                    col('degProgSnapshotDate').desc(),
-                    col('degProgTermOrder').desc(),
-                    col('degProgStartDate').desc(),
-                    col('degProgRecordActivityDate').desc()))).filter(col('degProgRowNum') <= 1)
-
-degree = degree_program.join(degree, 
-    (degree_program.degProgDegree == degree.degree) & 
-    (coalesce(degree.isIPEDSReportable, lit(True)) == True) &
-    ((coalesce(to_date(degree.recordActivityDate, 'YYYY-MM-DD'), to_date(lit('9999-09-09'), 'YYYY-MM-DD')) == to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
-        | ((coalesce(to_date(degree.recordActivityDate, 'YYYY-MM-DD'), to_date(lit('9999-09-09'), 'YYYY-MM-DD')) != to_date(lit('9999-09-09'), 'YYYY-MM-DD')) 
-        & (to_date(degree.recordActivityDate, 'YYYY-MM-DD') <= to_date(degree_program.stuRefCensusDate, 'YYYY-MM-DD'))))
-    & (degree.snapshotDate <= degree_program.stuRefCensusDate), 'left').select(
-        degree_program["*"],
-        upper(degree.awardLevel).alias('degAwardLevel'),
-        f.coalesce(degree.isNonDegreeSeeking, lit(False)).alias('degIsNonDegreeSeeking'),
-        to_timestamp(degree.recordActivityDate).alias('degRecordActivityDate'),
-        to_timestamp(degree.snapshotDate).alias('degSnapshotDate')).withColumn('degRowNum', f.row_number().over(Window.partitionBy(
-            col('repRefYearType'), col('stuRefSurveySection'), col('regPersonId')).orderBy(
-                when(col('degSnapshotDate') ==  col('stuRefSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-                when(col('degSnapshotDate') > col('stuRefSnapshotDate'), col('degSnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-                when(col('degSnapshotDate') < col('stuRefSnapshotDate'), col('degSnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-                col('degSnapshotDate').desc(),
-                col('degRecordActivityDate').desc()))).filter(col('degRowNum') <= 1)
-
-field_of_study = degree.join(field_of_study, 
-    (degree.degProgMajor == field_of_study.fieldOfStudy) & 
-    (field_of_study.fieldOfStudyType == 'Major') &
-    (coalesce(field_of_study.isIPEDSReportable, lit(True)) == True) &
-    ((coalesce(to_date(field_of_study.recordActivityDate, 'YYYY-MM-DD'), to_date(lit('9999-09-09'), 'YYYY-MM-DD')) == to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
-        | ((coalesce(to_date(field_of_study.recordActivityDate, 'YYYY-MM-DD'), to_date(lit('9999-09-09'), 'YYYY-MM-DD')) != to_date(lit('9999-09-09'), 'YYYY-MM-DD')) 
-        & (to_date(field_of_study.recordActivityDate, 'YYYY-MM-DD') <= to_date(degree.stuRefCensusDate, 'YYYY-MM-DD'))))
-    & (field_of_study.snapshotDate <= degree.stuRefCensusDate), 'left').select(
-        degree["*"],
-        field_of_study.cipCode.alias('fldOfStdyCipCode'), 
-        to_timestamp(field_of_study.recordActivityDate).alias('fldOfStdyRecordActivityDate'),
-        to_timestamp(field_of_study.snapshotDate).alias('fldOfStdySnapshotDate')).withColumn('fldOfStdyRowNum', f.row_number().over(Window.partitionBy(
-            col('repRefYearType'), col('stuRefSurveySection'), col('regPersonId'), col('degProgMajor')).orderBy(
-                when(col('fldOfStdySnapshotDate') ==  col('stuRefSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
-                when(col('fldOfStdySnapshotDate') > col('stuRefSnapshotDate'), col('fldOfStdySnapshotDate')).otherwise(to_timestamp(lit('9999-09-09'))).asc(),
-                when(col('fldOfStdySnapshotDate') < col('stuRefSnapshotDate'), col('fldOfStdySnapshotDate')).otherwise(to_timestamp(lit('1900-09-09'))).desc(),
-                col('fldOfStdySnapshotDate').desc(),
-                col('fldOfStdyRecordActivityDate').desc()))).filter(col('fldOfStdyRowNum') <= 1)
-
-cohort = field_of_study.withColumn(
-    'ipedsInclude',
-    when((col('stuRefTotalCECourses') == col('stuRefTotalCourses'))
-		| (col('stuRefTotalIntlCourses') == col('stuRefTotalCourses'))
-		| (col('stuRefTotalAuditCourses') == col('stuRefTotalCourses'))
-		| ((col('stuRefTotalRemCourses') == col('stuRefTotalCourses')) & (col('isNonDegreeSeeking_calc') == lit(False)))
-		#| {ESLFilter}
-		#| {GradFilter}
-        | (col('stuRefTotalSAHomeCourses') > lit(0))
-        | (col('stuRefTotalCreditHrs') > lit(0))
-        | (col('stuRefTotalClockHrs') > lit(0)), lit(1)).otherwise(0))
-
-cohort_out = cohort.select(
-    cohort["*"],
-    expr("""
-    case when studentLevelUGGR = 'GR' then '99'
-         when isNonDegreeSeeking_calc = 1 and timeStatus_calc = 'Full Time' then '7'
-         when isNonDegreeSeeking_calc = 1 and timeStatus_calc = 'Part Time' then '21'
-         when studentType_calc = 'First Time' and timeStatus_calc = 'Full Time' then '1'
-         when studentType_calc = 'Transfer' and timeStatus_calc = 'Full Time' then '2'
-         when studentType_calc = 'Continuing' and timeStatus_calc = 'Full Time' then '3'
-         when studentType_calc = 'First Time' and timeStatus_calc = 'Part Time' then '15'
-         when studentType_calc = 'Transfer' and timeStatus_calc = 'Part Time' then '16'
-         when studentType_calc = 'Continuing' and timeStatus_calc = 'Part Time' then '17'
-         else '1'
-    end
-    """).alias("ipedsPartAStudentLevel"),
-    expr("""
-    case when studentLevelUGGR = 'GR' then '3'
-         when isNonDegreeSeeking_calc = 1 then '2'
-         when studentLevelUGGR = 'UG' then '1'
-         else null
-    end
-    """).alias("ipedsPartCStudentLevel")
-    ).filter(cohort.ipedsInclude == 1)
-
-#CourseLevelCounts
-#course_type_counts = spark.sql(func_courseLevelCounts(repPeriod = 'global_reportingPeriodRefactor', termOrder = 'global_reportingPeriodOrder', instructionalActivityType = config_instructionalActivityType))
-
-course_type_counts_out = course_type_counts.join(
-    cohort,
-    (cohort.regPersonId == course_type_counts.regPersonId), 'inner').filter(cohort.ipedsInclude == 1).select(
-        course_type_counts["*"]).agg(
-            sum("UGCreditHours").alias("UGCreditHours"),
-            sum("UGClockHours").alias("UGClockHours"),
-            sum("GRCreditHours").alias("GRCreditHours"),
-            sum("DPPCreditHours").alias("DPPCreditHours"))
-
-#Survey version output lists
-if var_surveyId == 'E1D':
-    A_UgGrBoth = ["1", "2", "3", "7", "15", "16", "17", "21", "99"]
-    A_UgOnly = ["1", "2", "3", "7", "15", "16", "17", "21"]
-    A_GrOnly = ["99"]
-    C_UgGrBoth = ["1", "2", "3"]
-    C_UgOnly = ["1", "2"]
-    C_GrOnly = ["3"]
-elif var_surveyId == 'E12':
-    A_UgGrBoth = ["1", "2", "3", "7", "15", "16", "17", "21"]
-    A_UgOnly = ["1", "2", "3", "7", "15", "16", "17", "21"]
-    A_GrOnly = [""] 
-    C_UgGrBoth = ["1", "2"]
-    C_UgOnly = ["1", "2"]
-    C_GrOnly = [""]
-elif var_surveyId == 'E1E':
-    A_UgGrBoth = ["1", "3", "7", "15", "17", "21"]
-    A_UgOnly = ["1", "3", "7", "15", "17", "21"]
-    A_GrOnly = [""] 
-    C_UgGrBoth = ["1", "2"]
-    C_UgOnly = ["1", "2"]
-    C_GrOnly = [""]
-else: #V4
-    A_UgGrBoth = ["1", "3", "15", "17"]
-    A_UgOnly = ["1", "3", "15", "17"]
-    A_GrOnly = [""] 
-    C_UgGrBoth = ["1", "2", "3"]
-    C_UgOnly = ["1", "2"]
-    C_GrOnly = ["3"]
-
-#Part A
-if cohort_out.rdd.isEmpty() == False:
-    #FormatPartA
-    a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-    a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""), ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", ""), ("", "99", "", "")]
-    FormatPartA = sparkContext.parallelize(a_data)
-    FormatPartA = spark.createDataFrame(FormatPartA).toDF(*a_columns)
-    
-    partA_out = cohort_out.select("regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender").filter(
-        (cohort_out.ipedsPartAStudentLevel.isNotNull()) & 
-        (cohort_out.ipedsPartAStudentLevel != '')).union(FormatPartA)
-        
-    partA_out = partA_out.select(
-		partA_out.ipedsPartAStudentLevel.alias("field1"),
-		when(((col('persIpedsEthnValue') == lit('1')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field2"), # FYRACE01 - Nonresident alien - Men (1), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('1')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field3"), # FYRACE02 - Nonresident alien - Women (2), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('2')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field4"), # FYRACE25 - Hispanic/Latino - Men (25), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('2')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field5"), # FYRACE26 - Hispanic/Latino - Women (26), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('3')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field6"), # FYRACE27 - American Indian or Alaska Native - Men (27), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('3')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field7"), # FYRACE28 - American Indian or Alaska Native - Women (28), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('4')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field8"), # FYRACE29 - Asian - Men (29), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('4')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field9"), # FYRACE30 - Asian - Women (30), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('5')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field10"), # FYRACE31 - Black or African American - Men (31), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('5')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field11"), # FYRACE32 - Black or African American - Women (32), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('6')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field12"), # FYRACE33 - Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('6')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field13"), # FYRACE34 - Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('7')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field14"), # FYRACE35 - White - Men (35), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('7')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field15"), # FYRACE36 - White - Women (36), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('8')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field16"), # FYRACE37 - Two or more races - Men (37), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('8')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field17"), # FYRACE38 - Two or more races - Women (38), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('9')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(lit('0')).alias("field18"), # FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
-		when(((col('persIpedsEthnValue') == lit('9')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(lit('0')).alias("field19")) # FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
-
-    partA_out = partA_out.withColumn('part', f.lit('A')).groupBy("part", "field1").agg(
-	    sum("field2").alias("field2"),
-	    sum("field3").alias("field3"),
-	    sum("field4").alias("field4"), 
-	    sum("field5").alias("field5"), 
-	    sum("field6").alias("field6"), 
-	    sum("field7").alias("field7"), 
-	    sum("field8").alias("field8"), 
-	    sum("field9").alias("field9"), 
-	    sum("field10").alias("field10"),
-    	sum("field11").alias("field11"), 
-	    sum("field12").alias("field12"), 
-	    sum("field13").alias("field13"), 
-	    sum("field14").alias("field14"), 
-	    sum("field15").alias("field15"), 
-	    sum("field16").alias("field16"), 
-	    sum("field17").alias("field17"), 
-	    sum("field18").alias("field18"), 
-	    sum("field19").alias("field19")
-	    )
-
-else:
-    a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9", "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18", "field19"]
-    a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
-        ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
-        ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
-        ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
-        ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
-        ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
-        ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
-        ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
-        ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-
-    partA_out = sparkContext.parallelize(a_data)
-    partA_out = spark.createDataFrame(partA_out).toDF(*a_columns)
-    
-#Part A output filter
-partA_out = partA_out.crossJoin(ipeds_client_config).filter(
-    (((col('icOfferUndergradAwardLevel') == 'Y') & (col('icOfferGraduateAwardLevel') == 'Y') & (col('field1').isin(A_UgGrBoth)))
-    | ((col('icOfferUndergradAwardLevel') == 'Y') & (col('icOfferGraduateAwardLevel') == 'N') & (col('field1').isin(A_UgOnly)))
-    | ((col('icOfferUndergradAwardLevel') == 'N') & (col('icOfferGraduateAwardLevel') == 'Y') & (col('field1').isin(A_GrOnly)))
-    | ((col('icOfferUndergradAwardLevel') == 'N') & (col('icOfferGraduateAwardLevel') == 'N')))).select(partA_out['*'])
-
-#Part C
-if cohort_out.rdd.isEmpty() == False:
-	#FormatPartC
-	c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-	c_data = [("", "1", ""), ("", "2", ""), ("", "3", "")]
-	FormatPartC = sparkContext.parallelize(c_data)
-	FormatPartC = spark.createDataFrame(FormatPartC).toDF(*c_columns)
-
-	#Part C
-	partC_out = cohort_out.select("regPersonId", "ipedsPartCStudentLevel", "distanceEdInd_calc").filter((cohort_out.ipedsPartCStudentLevel.isNotNull()) & (cohort_out.ipedsPartCStudentLevel != '') & (cohort_out.distanceEdInd_calc != 'None')).union(FormatPartC)
-	partC_out = partC_out.select(
-		partC_out.ipedsPartCStudentLevel.alias("field1"),
-		when((col('distanceEdInd_calc') == lit('Exclusive DE')), lit('1')).otherwise(lit('0')).alias("field2"), # Enrolled exclusively in distance education courses
-		when((col('distanceEdInd_calc') == lit('Some DE')), lit('1')).otherwise(lit('0')).alias("field3")) # Enrolled in at least one but not all distance education courses
-		
-	partC_out = partC_out.withColumn('part', f.lit('C')).groupBy("part", "field1").agg(
-		sum("field2").alias("field2"),
-		sum("field3").alias("field3"))
-
-else:
-    c_columns = ["part", "field1", "field2", "field3"]
-    c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0"), ("C", "3", "0", "0")]
-    partC_out = sparkContext.parallelize(c_data)
-    partC_out = spark.createDataFrame(partC_out).toDF(*c_columns)
-    
-#Part C output filter
-partC_out = partC_out.crossJoin(ipeds_client_config).filter(
-    (((col('icOfferUndergradAwardLevel') == 'Y') & (col('icOfferGraduateAwardLevel') == 'Y') & (col('field1').isin(C_UgGrBoth)))
-    | ((col('icOfferUndergradAwardLevel') == 'Y') & (col('icOfferGraduateAwardLevel') == 'N') & (col('field1').isin(C_UgOnly)))
-    | ((col('icOfferUndergradAwardLevel') == 'N') & (col('icOfferGraduateAwardLevel') == 'Y') & (col('field1').isin(C_GrOnly)))
-    | ((col('icOfferUndergradAwardLevel') == 'N') & (col('icOfferGraduateAwardLevel') == 'N')))).select(partC_out['*'])
-
-#Part B
-if course_type_counts_out.rdd.isEmpty() == False:
-    partB_out = course_type_counts_out.crossJoin(ipeds_client_config).withColumn('part', f.lit('B')).select(
-        'part',
-        #CREDHRSU - credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.  
-        when(((col('icOfferUndergradAwardLevel') == lit('Y')) & (col('instructionalActivityType') == lit('CL'))), f.coalesce(col('UGCreditHours'), lit(0))).alias('field2'),
-        # CONTHRS  - clock hour instructional activity at the undergraduate level, 0 to 9999999, blank = not applicable, if no undergraduate programs are measured in clock hours.
-	    when(((col('icOfferUndergradAwardLevel') == lit('Y')) & (col('instructionalActivityType') == lit('CR'))), f.coalesce(col('UGClockHours'), lit(0))).alias('field3'),
-        # CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
-	    expr(f"round((case when icOfferGraduateAwardLevel = 'Y' and '{var_surveyId}' = 'E1D' then coalesce(GRCreditHours, 0) else null end))").cast('int').alias("field4"),
-        # RDOCFTE  - reported Doctor'92s degree-professional practice student FTE, 0 to 99999999, blank = not applicable
-	    expr(f"""round((case when icOfferDoctorAwardLevel = 'Y' and '{var_surveyId}' = 'E1D' then 
-						    (case when coalesce(DPPCreditHours, 0) > 0 then coalesce(cast(round(DPPCreditHours / tmAnnualDPPCreditHoursFTE, 0) as string), '0') 
-					    else '0' end) else null end))""").cast('int').alias("field5"))
-    
-else:
-    b_columns = ["part", "field2", "field3", "field4", "field5"]
-    b_data = [("B", "0", "", "0", "0")]
-    partB_out = sparkContext.parallelize(b_data)
-    partB_out = spark.createDataFrame(partB_out).toDF(*b_columns)
-
-#Survey out formatting
-for column in [column for column in partB_out.columns if column not in partA_out.columns]:
-    partA_out = partA_out.withColumn(column, lit(None))
-
-for column in [column for column in partA_out.columns if column not in partC_out.columns]:
-    partC_out = partC_out.withColumn(column, lit(None))
-
-for column in [column for column in partA_out.columns if column not in partB_out.columns]:
-    partB_out = partB_out.withColumn(column, lit(None))
-    
-surveyOutput = partA_out.unionByName(partC_out).unionByName(partB_out)
-
-
-#surveyOutput = create_json_format(surveyOutput)
-#write_dataframe_as_json_to_s3(surveyOutput.repartition(1), s3_path, constants.SPARK_OVERWRITE_MODE, 'json')
-
-#global_courseLevelCounts.show()
-surveyOutput.show()	
-#surveyOutput = create_json_format(surveyOutput)
-#write_dataframe_as_json_to_s3(surveyOutput.repartition(1), s3_path, constants.SPARK_OVERWRITE_MODE, 'json')
-
-#global_courseLevelCounts.show()
-#surveyOutput.show()
 
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
@@ -1300,37 +103,318 @@ def spark_create_json_format(data_frame):
     result = result.drop(column_name)
     return result
 
-
-def write_dataframe_as_json_to_s3(dataframe, s3_path, mode, file_format):
-    """Writes spark dataframe to s3 
-    path in given format. 
-    """
-    dataframe.write.mode(mode).format(file_format).json(s3_path)
-
-
-def get_output_file_key(uri):
-    s3 = boto3.client('s3', 'us-east-1')
-    (bucket, key) = parse_s3_uri(uri)
-    response = s3.list_objects_v2(
-        Bucket=bucket,
-        Prefix=key
+def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420', survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2020, user_id=None):
+    lambda_client = boto3.client('lambda', 'us-east-1')
+    invoke_response = lambda_client.invoke(
+        FunctionName = "iris-connector-doris-{}-getReportPayload".format(stage),
+        InvocationType = 'RequestResponse', 
+        LogType = "None",
+        Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id }).encode('utf-8')
     )
+    view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
 
-    if 'Contents' in response and len(response['Contents']) > 0:
-        return response['Contents'][0]['Key']
+    print(json.dumps(view_metadata_without_s3_paths, indent=2))
 
-    return None
-
-
-def get_file_from_s3(uri):
-    s3 = boto3.client('s3', 'us-east-1')
-    (bucket, key) = parse_s3_uri(uri)
-    response = s3.get_object(
-        Bucket=bucket,
-        Key=key
+    view_metadata_without_s3_paths["tenantId"] = tenant_id
+    invoke_response = lambda_client.invoke(
+        FunctionName = "doris-data-access-apis-{}-GetEntitySnapshotPaths".format(stage),
+        InvocationType = 'RequestResponse', 
+        LogType = "None",
+        Payload = json.dumps(view_metadata_without_s3_paths)
     )
-    return response['Body'].read().decode('utf-8')
+    view_metadata = json.loads(invoke_response['Payload'].read().decode("utf-8"))
+    snapshot_metadata = view_metadata.get('snapshotMetadata', {})
 
-def parse_s3_uri(uri):
-    match = S3_URI_REGEX.match(uri)
-    return (match.group(1), match.group(2))
+    print(json.dumps(view_metadata, indent=2))
+
+    for view in view_metadata.get('views', []):
+        s3_paths = view.get('s3Paths', [])
+        view_name = view.get('viewName')
+        if len(s3_paths) > 0:
+            print("{}: ({})".format(view_name, ','.join(s3_paths)))
+            df = spark_read_s3_source(s3_paths).toDF()
+            df = add_snapshot_metadata_columns(df, snapshot_metadata)
+            df.createOrReplaceTempView(view_name)
+        else:
+            print("No snapshots found for {}".format(view_name))
+
+
+spark_refresh_entity_views_v2()
+#spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
+
+#IPEDSReportingPeriod   
+global_ipedsReportingPeriod = spark.sql(query_helpers.func_ipedsReportingPeriod(surveyYear = var_surveyYear, surveyId = var_surveyId, repPeriodTag1 = var_repEndTag)).distinct()
+#(surveyYear = "1920", surveyId = 'EF1', repPeriodTag1 = '', repPeriodTag2 = '', repPeriodTag3 = '', repPeriodTag4 = '', repPeriodTag5 = '', dmVersion = '')
+
+reportEndSnapshot = pd.DataFrame(global_ipedsReportingPeriod.limit(1).select("snapshotDate").collect())
+reportEndSnapshot = reportEndSnapshot.to_string(header=False, index=False, index_names=False)
+
+#IPEDSClientConfig
+global_ipedsClientConfig = spark.sql(query_helpers.func_ipedsClientConfig(surveyYear = var_surveyYear, snapshotDate = reportEndSnapshot)).limit(1).collect()
+#(surveyYear = "1920", snapshotDate = "9999-09-09", dmVersion = '')
+
+global_ipedsClientConfig = pd.DataFrame(global_ipedsClientConfig)
+global_ipedsClientConfig = global_ipedsClientConfig.to_string(header=False, index=False, index_names=False).split()
+list_ipedsClientConfig = ["', '".join(ele.split()) for ele in global_ipedsClientConfig]
+
+config_acadOrProgReporter = list_ipedsClientConfig[0]
+config_genderForNonBinary = list_ipedsClientConfig[30]
+config_genderForUnknown = list_ipedsClientConfig[31]
+config_icOfferDoctorAwardLevel = list_ipedsClientConfig[34]
+config_icOfferGraduateAwardLevel = list_ipedsClientConfig[35]
+config_icOfferUndergradAwardLevel = list_ipedsClientConfig[36]
+config_instructionalActivityType = list_ipedsClientConfig[38]
+config_tmAnnualDPPCreditHoursFTE = list_ipedsClientConfig[51]
+
+#AcademicTerm
+global_academicTerm = spark.sql(query_helpers.func_academicTerm())
+#(repPeriodTag1 = '', repPeriodTag2 = '', repPeriodTag3 = '', repPeriodTag4 = '', repPeriodTag5 = '', dmVersion = '')
+
+#IPEDSReportingPeriod || AcademicTerm
+global_reportingPeriodOrder = global_ipedsReportingPeriod.join(
+    global_academicTerm, 
+    (global_ipedsReportingPeriod.termCode == global_academicTerm.termCode) &
+    (global_ipedsReportingPeriod.partOfTermCode == global_academicTerm.partOfTermCode), 'inner').select(
+    global_ipedsReportingPeriod["*"], 
+    global_academicTerm.termOrder,
+    global_academicTerm.termType,
+    global_academicTerm.termClassification,
+    global_academicTerm.financialAidYear,
+    global_academicTerm.censusDate,
+    global_academicTerm.maxCensus,
+    global_academicTerm.startDate,
+    global_academicTerm.endDate,
+    global_academicTerm.requiredFTClockHoursUG,
+    global_academicTerm.requiredFTCreditHoursGR, 
+    global_academicTerm.requiredFTCreditHoursUG)
+
+global_reportingPeriodOrder.createOrReplaceTempView("global_reportingPeriodOrder")
+
+global_reportingPeriodRefactor = spark.sql(query_helpers.func_reportingPeriodRefactor()).distinct()
+        
+global_reportingPeriodRefactor.createOrReplaceTempView("global_reportingPeriodRefactor")
+
+#Cohort
+global_cohort = spark.sql(query_helpers.func_cohort(repPeriod = 'global_reportingPeriodRefactor', termOrder = 'global_reportingPeriodOrder', instructionalActivityType = config_instructionalActivityType, genderForNonBinary = config_genderForNonBinary, genderForUnknown = config_genderForUnknown, acadOrProgReporter = config_acadOrProgReporter, surveyType = var_surveyType))
+
+#CourseLevelCounts
+global_courseLevelCounts = spark.sql(query_helpers.func_courseLevelCounts(repPeriod = 'global_reportingPeriodRefactor', termOrder = 'global_reportingPeriodOrder', instructionalActivityType = config_instructionalActivityType))
+global_courseLevelCounts = global_courseLevelCounts.join(
+    global_cohort,
+    (global_cohort.personId == global_courseLevelCounts.personId), 'inner').select(
+        global_courseLevelCounts["*"],
+        global_cohort.ipedsEnrolled).filter(global_cohort.ipedsEnrolled == 1)
+
+CourseTypeCountsCRN = global_courseLevelCounts.agg(
+    _sum("UGCreditHours").alias("UGCreditHours"),
+    _sum("UGClockHours").alias("UGClockHours"),
+    _sum("GRCreditHours").alias("GRCreditHours"),
+    _sum("DPPCreditHours").alias("DPPCreditHours"))
+
+cohort_out = global_cohort.select(
+    global_cohort["*"],
+    expr("""
+    case when studentLevelUGGR = 'GR' then '99'
+         when isNonDegreeSeeking = 1 and timeStatus = 'Full Time' then '7'
+         when isNonDegreeSeeking = 1 and timeStatus = 'Part Time' then '21'
+         when studentType = 'First Time' and timeStatus = 'Full Time' then '1'
+         when studentType = 'Transfer' and timeStatus = 'Full Time' then '2'
+         when studentType = 'Continuing' and timeStatus = 'Full Time' then '3'
+         when studentType = 'First Time' and timeStatus = 'Part Time' then '15'
+         when studentType = 'Transfer' and timeStatus = 'Part Time' then '16'
+         when studentType = 'Continuing' and timeStatus = 'Part Time' then '17'
+         else '1'
+    end
+    """).alias("ipedsPartAStudentLevel"),
+    expr("""
+    case when studentLevelUGGR = 'GR' then '3'
+         when isNonDegreeSeeking = 1 then '2'
+         when studentLevelUGGR = 'UG' then '1'
+         else null
+    end
+    """).alias("ipedsPartCStudentLevel")
+    ).filter(global_cohort.ipedsEnrolled == 1)
+    
+#Survey version output lists
+if var_surveyId == 'E1D':
+    A_UgGrBoth = ["1", "2", "3", "7", "15", "16", "17", "21", "99"]
+    A_UgOnly = ["1", "2", "3", "7", "15", "16", "17", "21"]
+    A_GrOnly = ["99"]
+    C_UgGrBoth = ["1", "2", "3"]
+    C_UgOnly = ["1", "2"]
+    C_GrOnly = ["3"]
+elif var_surveyId == 'E12':
+    A_UgGrBoth = ["1", "2", "3", "7", "15", "16", "17", "21"]
+    A_UgOnly = ["1", "2", "3", "7", "15", "16", "17", "21"]
+    A_GrOnly = [""] 
+    C_UgGrBoth = ["1", "2"]
+    C_UgOnly = ["1", "2"]
+    C_GrOnly = [""]
+elif var_surveyId == 'E1E':
+    A_UgGrBoth = ["1", "3", "7", "15", "17", "21"]
+    A_UgOnly = ["1", "3", "7", "15", "17", "21"]
+    A_GrOnly = [""] 
+    C_UgGrBoth = ["1", "2"]
+    C_UgOnly = ["1", "2"]
+    C_GrOnly = [""]
+else: #V4
+    A_UgGrBoth = ["1", "3", "15", "17"]
+    A_UgOnly = ["1", "3", "15", "17"]
+    A_GrOnly = [""] 
+    C_UgGrBoth = ["1", "2", "3"]
+    C_UgOnly = ["1", "2"]
+    C_GrOnly = ["3"]
+
+#Part A
+if cohort_out.rdd.isEmpty() == False:
+    #FormatPartA
+    a_columns = ["personId", "ipedsLevel", "ipedsEthnicity", "ipedsGender"]
+    a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""), ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", ""), ("", "99", "", "")]
+    FormatPartA = sparkContext.parallelize(a_data)
+    FormatPartA = spark.createDataFrame(FormatPartA).toDF(*a_columns)
+
+    partA_out = cohort_out.select("personId", "ipedsPartAStudentLevel", "ipedsEthnicity", "ipedsGender").filter((cohort_out.ipedsPartAStudentLevel.isNotNull()) & (cohort_out.ipedsPartAStudentLevel != '')).union(FormatPartA)
+    partA_out = partA_out.select(
+		partA_out.ipedsPartAStudentLevel.alias("field1"),
+		expr("case when ipedsEthnicity = '1' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field2"),   # FYRACE01 - Nonresident alien - Men (1), 0 to 999999
+		expr("case when ipedsEthnicity = '1' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field3"),   # FYRACE02 - Nonresident alien - Women (2), 0 to 999999
+		expr("case when ipedsEthnicity = '2' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field4"),   # FYRACE25 - Hispanic/Latino - Men (25), 0 to 999999
+		expr("case when ipedsEthnicity = '2' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field5"),   # FYRACE26 - Hispanic/Latino - Women (26), 0 to 999999
+		expr("case when ipedsEthnicity = '3' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field6"),   # FYRACE27 - American Indian or Alaska Native - Men (27), 0 to 999999
+		expr("case when ipedsEthnicity = '3' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field7"),   # FYRACE28 - American Indian or Alaska Native - Women (28), 0 to 999999
+		expr("case when ipedsEthnicity = '4' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field8"),   # FYRACE29 - Asian - Men (29), 0 to 999999
+		expr("case when ipedsEthnicity = '4' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field9"),   # FYRACE30 - Asian - Women (30), 0 to 999999
+		expr("case when ipedsEthnicity = '5' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field10"),  # FYRACE31 - Black or African American - Men (31), 0 to 999999
+		expr("case when ipedsEthnicity = '5' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field11"),  # FYRACE32 - Black or African American - Women (32), 0 to 999999
+		expr("case when ipedsEthnicity = '6' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field12"),  # FYRACE33 - Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
+		expr("case when ipedsEthnicity = '6' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field13"),  # FYRACE34 - Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
+		expr("case when ipedsEthnicity = '7' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field14"),  # FYRACE35 - White - Men (35), 0 to 999999
+		expr("case when ipedsEthnicity = '7' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field15"),  # FYRACE36 - White - Women (36), 0 to 999999
+		expr("case when ipedsEthnicity = '8' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field16"),  # FYRACE37 - Two or more races - Men (37), 0 to 999999
+		expr("case when ipedsEthnicity = '8' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field17"),  # FYRACE38 - Two or more races - Women (38), 0 to 999999
+		expr("case when ipedsEthnicity = '9' and ipedsGender = 'M' then 1 else 0 end").cast('int').alias("field18"),  # FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
+		expr("case when ipedsEthnicity = '9' and ipedsGender = 'F' then 1 else 0 end").cast('int').alias("field19"))  # FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
+
+    partA_out = partA_out.withColumn('part', f.lit('A')).groupBy("part", "field1").agg(
+	    _sum("field2").alias("field2"),
+	    _sum("field3").alias("field3"),
+	    _sum("field4").alias("field4"), 
+	    _sum("field5").alias("field5"), 
+	    _sum("field6").alias("field6"), 
+	    _sum("field7").alias("field7"), 
+	    _sum("field8").alias("field8"), 
+	    _sum("field9").alias("field9"), 
+	    _sum("field10").alias("field10"),
+    	_sum("field11").alias("field11"), 
+	    _sum("field12").alias("field12"), 
+	    _sum("field13").alias("field13"), 
+	    _sum("field14").alias("field14"), 
+	    _sum("field15").alias("field15"), 
+	    _sum("field16").alias("field16"), 
+	    _sum("field17").alias("field17"), 
+	    _sum("field18").alias("field18"), 
+	    _sum("field19").alias("field19")
+	    )
+
+else:
+    a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9", "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18", "field19"]
+    a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
+        ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
+        ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
+        ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
+        ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
+        ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
+        ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
+        ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"), 
+        ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+
+    partA_out = sparkContext.parallelize(a_data)
+    partA_out = spark.createDataFrame(partA_out).toDF(*a_columns)
+#Part A output filter
+if config_icOfferUndergradAwardLevel == 'Y' and config_icOfferGraduateAwardLevel == 'Y':
+    partA_out = partA_out.where(partA_out.field1.isin(A_UgGrBoth))
+elif config_icOfferUndergradAwardLevel == 'Y' and config_icOfferGraduateAwardLevel == 'N':
+    partA_out = partA_out.where(partA_out.field1.isin(A_UgOnly))
+elif config_icOfferUndergradAwardLevel == 'N' and config_icOfferGraduateAwardLevel == 'Y':
+    partA_out = partA_out.where(partA_out.field1.isin(A_GrOnly))
+    
+#Part C
+if cohort_out.rdd.isEmpty() == False:
+	#FormatPartC
+	c_columns = ["personId", "ipedsLevel", "distanceEdInd"]
+	c_data = [("", "1", ""), ("", "2", ""), ("", "3", "")]
+	FormatPartC = sparkContext.parallelize(c_data)
+	FormatPartC = spark.createDataFrame(FormatPartC).toDF(*c_columns)
+
+	#Part C
+	partC_out = cohort_out.select("personId", "ipedsPartCStudentLevel", "distanceEdInd").filter((cohort_out.ipedsPartCStudentLevel.isNotNull()) & (cohort_out.ipedsPartCStudentLevel != '') & (cohort_out.distanceEdInd != 'None')).union(FormatPartC)
+	partC_out = partC_out.select(
+		partC_out.ipedsPartCStudentLevel.alias("field1"),
+		expr("case when distanceEdInd = 'Exclusive DE' then 1 else 0 end").cast('int').alias("field2"), # Enrolled exclusively in distance education courses
+		expr("case when distanceEdInd = 'Some DE' then 1 else 0 end").cast('int').alias("field3"))        # Enrolled in at least one but not all distance education courses
+
+	partC_out = partC_out.withColumn('part', f.lit('C')).groupBy("part", "field1").agg(
+		_sum("field2").alias("field2"),
+		_sum("field3").alias("field3"))
+
+else:
+    c_columns = ["part", "field1", "field2", "field3"]
+    c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0"), ("C", "3", "0", "0")]
+    partC_out = sparkContext.parallelize(c_data)
+    partC_out = spark.createDataFrame(partC_out).toDF(*c_columns)
+
+#Part C output filter
+if config_icOfferUndergradAwardLevel == 'Y' and config_icOfferGraduateAwardLevel == 'Y':
+    partC_out = partC_out.where(partC_out.field1.isin(C_UgGrBoth))
+elif config_icOfferUndergradAwardLevel == 'Y' and config_icOfferGraduateAwardLevel == 'N':
+    partC_out = partC_out.where(partC_out.field1.isin(C_UgOnly))
+elif config_icOfferUndergradAwardLevel == 'N' and config_icOfferGraduateAwardLevel == 'Y':
+    partC_out = partC_out.where(partC_out.field1.isin(C_GrOnly))
+
+#Part B
+if CourseTypeCountsCRN.rdd.isEmpty() == False:
+    partB_out = CourseTypeCountsCRN.withColumn('part', f.lit('B')).select(
+        "part",
+    #CREDHRSU - credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.    
+	    expr(f"round((case when '{config_icOfferUndergradAwardLevel}' = 'Y' and '{config_instructionalActivityType}' != 'CL' then coalesce(UGCreditHours, 0) else null end))").cast('int').alias("field2"),
+    # CONTHRS  - clock hour instructional activity at the undergraduate level, 0 to 9999999, blank = not applicable, if no undergraduate programs are measured in clock hours.
+	    expr(f"round((case when '{config_icOfferUndergradAwardLevel}' = 'Y' and '{config_instructionalActivityType}' != 'CR' then coalesce(UGClockHours, 0) else null end))").cast('int').alias("field3"),
+    # CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
+	    expr(f"round((case when '{config_icOfferGraduateAwardLevel}' = 'Y' and '{var_surveyId}' = 'E1D' then coalesce(GRCreditHours, 0) else null end))").cast('int').alias("field4"),
+    # RDOCFTE  - reported Doctor'92s degree-professional practice student FTE, 0 to 99999999, blank = not applicable
+	    expr(f"""round((case when '{config_icOfferDoctorAwardLevel}' = 'Y' and '{var_surveyId}' = 'E1D' then 
+						    (case when coalesce(DPPCreditHours, 0) > 0 then coalesce(cast(round(DPPCreditHours / {config_tmAnnualDPPCreditHoursFTE}, 0) as string), '0') 
+					    else '0' end) else null end))""").cast('int').alias("field5")
+	)
+else:
+    b_columns = ["part", "field2", "field3", "field4", "field5"]
+    b_data = [("B", "0", "", "0", "0")]
+    partB_out = sparkContext.parallelize(b_data)
+    partB_out = spark.createDataFrame(partB_out).toDF(*b_columns)
+    
+#Survey out formatting
+for column in [column for column in partB_out.columns if column not in partA_out.columns]:
+    partA_out = partA_out.withColumn(column, lit(None))
+
+for column in [column for column in partA_out.columns if column not in partC_out.columns]:
+    partC_out = partC_out.withColumn(column, lit(None))
+
+for column in [column for column in partA_out.columns if column not in partB_out.columns]:
+    partB_out = partB_out.withColumn(column, lit(None))
+    
+surveyOutput = partA_out.unionByName(partC_out).unionByName(partB_out)
+
+surveyOutput.show()
+
+surveyOutput = spark_create_json_format(surveyOutput)
+
+currentDate = datetime.today().isoformat(sep=' ', timespec='seconds')
+
+# todo: inject s3 bucket from command args
+s3_bucket = 'doris-survey-reports-dev'
+s3_key = f'reports/11702b15-8db2-4a35-8087-b560bb233420/{uuid4()}/{currentDate}';
+s3_path = f's3://{s3_bucket}/{s3_key}'
+
+surveyOutput.repartition(1).write.json(path=s3_path, mode='overwrite')
+
+print(f'Stored report JSON to {s3_path}')
