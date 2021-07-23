@@ -15,8 +15,8 @@ glueContext = GlueContext(SparkContext.getOrCreate())
 sparkContext = SparkContext.getOrCreate()
 spark = SQLContext(sparkContext)
 
-    OUTPUT_BUCKET = 'doris-survey-reports-dev'
-    S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
+OUTPUT_BUCKET = 'doris-survey-reports-dev'
+S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
 
 survey_id_map = {
     'TWELVE_MONTH_ENROLLMENT_1': 'E1D',
