@@ -645,8 +645,8 @@ select cohortemp.personId personId,
 	(case when cohortemp.tenureStatus = 'Tenured' then 1
 		when cohortemp.tenureStatus = 'On Tenure Track' then 2
 		when cohortemp.nonTenureContractLength = 'Multi-year' then 3
-		when cohortemp.nonTenureContractLength = 'Less than Annual' then 4
-		when cohortemp.nonTenureContractLength = 'Annual' then 5
+		when cohortemp.nonTenureContractLength = 'Annual' then 4
+		when cohortemp.nonTenureContractLength = 'Less than Annual' then 5
 		when cohortemp.isFaculty = false then 6
 		when cohortemp.nonTenureContractLength = 'Indefinite' then 7
 		else 7 
