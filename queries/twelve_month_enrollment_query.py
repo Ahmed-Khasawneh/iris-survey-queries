@@ -1,20 +1,23 @@
+import logging
 import sys
-#import re
+import boto3
+import json
+from uuid import uuid4
+from common import query_helpers
+from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
+from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
+    to_date, when, coalesce, count
+from pyspark.sql.utils import AnalysisException
+from datetime import datetime
 from pyspark import SparkContext
 from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
-from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
-    to_date, when, coalesce, count
-from pyspark.sql.window import Window
 from awsglue.utils import getResolvedOptions
-from common import query_helpers
-from pyspark.sql.utils import AnalysisException
-from datetime import datetime
-from uuid import uuid4
 
-glueContext = GlueContext(SparkContext.getOrCreate())
+spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
 sparkContext = SparkContext.getOrCreate()
-spark = SQLContext(sparkContext)
+sqlContext = SQLContext(sparkContext)
+glueContext = GlueContext(sparkContext)
 
 #OUTPUT_BUCKET = 'doris-survey-reports-dev'
 #S3_URI_REGEX = re.compile(r"s3://([^/]+)/?(.*)")
