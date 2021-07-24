@@ -44,11 +44,11 @@ survey_id_map = {
 """
 var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
 var_surveyType = '12ME'
-repPeriodTag1 = 'Academic Year End'
-repPeriodTag2 = 'June End'
-repPeriodTag3 = 'Fall Census'
-repPeriodTag4 = 'Fall Census'
-repPeriodTag5 = 'Fall Census'
+var_repPeriodTag1 = 'Academic Year End'
+var_repPeriodTag2 = 'June End'
+var_repPeriodTag3 = 'Fall Census'
+var_repPeriodTag4 = 'Fall Census'
+var_repPeriodTag5 = 'Fall Census'
 
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
