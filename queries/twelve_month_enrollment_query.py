@@ -7,7 +7,7 @@ from common import query_helpers
 from pyspark.sql.window import Window
 #from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
-    to_date, when, coalesce, count
+    to_date, when, coalesce, count, rank
 from pyspark.sql.utils import AnalysisException
 from datetime import datetime
 from pyspark import SparkContext
