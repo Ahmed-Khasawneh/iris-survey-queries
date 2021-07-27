@@ -15,7 +15,6 @@ from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
-#spark = SparkSession.getActiveSession()
 spark = SparkSession.builder.getOrCreate()
 sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
