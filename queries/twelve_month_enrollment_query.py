@@ -168,15 +168,15 @@ academic_term_partition = "termCode, partOfTermCode"
 academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
 academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
 
-ipeds_client_config = ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order, ipeds_client_config_partition_filter).cache()
+ipeds_client_config = query_helpers.ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order, ipeds_client_config_partition_filter).cache()
 
 
 
-academic_term = academic_term_mcr(academic_term_partition=academic_term_partition,
+academic_term = query_helpers.academic_term_mcr(academic_term_partition=academic_term_partition,
                                   academic_term_order=academic_term_order,
                                   academic_term_partition_filter=academic_term_partition_filter).cache()
 
-academic_term_reporting_refactor = academic_term_reporting_refactor(
+academic_term_reporting_refactor = query_helpers.academic_term_reporting_refactor(
     ipeds_reporting_period_partition=ipeds_reporting_period_partition,
     ipeds_reporting_period_order=ipeds_reporting_period_order,
     ipeds_reporting_period_partition_filter=ipeds_reporting_period_partition_filter,
@@ -185,9 +185,9 @@ academic_term_reporting_refactor = academic_term_reporting_refactor(
     academic_term_partition_filter=academic_term_partition_filter).cache()
 
 
-course_type_counts = ipeds_course_type_counts()
+course_type_counts = query_helpers.ipeds_course_type_counts()
 
-cohort = ipeds_cohort()
+cohort = query_helpers.ipeds_cohort()
 
 #academic_term.unpersist()
 
