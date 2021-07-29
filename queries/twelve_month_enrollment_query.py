@@ -187,111 +187,13 @@ academic_term = query_helpers.academic_term_mcr(
     academic_term_order,
     academic_term_partition_filter).cache()
 
-ipeds_reporting_period = spark.sql("select * from ipedsReportingPeriod")
-
-# Should be able to switch to this\/ and remove this /\ when moving to a script
-# ipeds_reporting_period = ipedsReportingPeriod.select(
-ipeds_reporting_period_2 = ipeds_reporting_period.filter(expr(f"{ipeds_reporting_period_partition_filter}")).select(
-    upper(ipeds_reporting_period.partOfTermCode).alias('partOfTermCode'),
-    to_timestamp(ipeds_reporting_period.recordActivityDate).alias('recordActivityDate'),
-    ipeds_reporting_period.surveyCollectionYear,
-    upper(ipeds_reporting_period.surveyId).alias('surveyId'),
-    upper(ipeds_reporting_period.surveyName).alias('surveyName'),
-    upper(ipeds_reporting_period.surveySection).alias('surveySection'),
-    upper(ipeds_reporting_period.termCode).alias('termCode'),
-    to_timestamp(ipeds_reporting_period.snapshotDate).alias('snapshotDate'),
-    ipeds_reporting_period.tags).withColumn(
-    'ipedsRepPerRowNum',
-    row_number().over(Window.partitionBy(
-        expr(f"({ipeds_reporting_period_partition})")).orderBy(expr(f"{ipeds_reporting_period_order}")))).filter(
-    (col('ipedsRepPerRowNum') == 1) & (col('termCode').isNotNull()) & (col('partOfTermCode').isNotNull()))
-
-ipeds_reporting_period_3 = ipeds_reporting_period_2.join(
-    academic_term,
-    (academic_term.termCode == ipeds_reporting_period_2.termCode) &
-    (academic_term.partOfTermCode == ipeds_reporting_period_2.partOfTermCode), 'left').select(
-    ipeds_reporting_period_2["*"],
-    when(upper(col('surveySection')).isin('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER'), 'PY').when(
-        upper(col('surveySection')).isin('COHORT', 'PRIOR SUMMER'), 'CY').alias('yearType'),
-    academic_term.termCodeOrder,
-    academic_term.partOfTermOrder,
-    academic_term.maxCensus,
-    academic_term.minStart,
-    academic_term.maxEnd,
-    academic_term.censusDate,
-    academic_term.termClassification,
-    academic_term.termType,
-    academic_term.startDate,
-    academic_term.endDate,
-    academic_term.requiredFTCreditHoursGR,
-    academic_term.requiredFTCreditHoursUG,
-    academic_term.requiredFTClockHoursUG,
-    academic_term.financialAidYear)
-
-academic_term_reporting = ipeds_reporting_period_3.select(
-    ipeds_reporting_period_3.surveySection,
-    ipeds_reporting_period_3.termCode,
-    expr("""       
-            (case when termClassification = 'Standard Length' then 1
-                 when termClassification is null then (case when termType in ('Fall', 'Spring') then 1 else 2 end)
-                 else 2
-            end) 
-        """).alias('fullTermOrder'),
-    ipeds_reporting_period_3.yearType,
-    ipeds_reporting_period_3.partOfTermCode,
-    # coalesce(acadterm.snapshotDate, repperiod.snapshotDate) snapshotDate,
-    ipeds_reporting_period_3.snapshotDate,
-    ipeds_reporting_period_3.tags,
-    # coalesce(acadterm.censusDate, repperiod.censusDate) censusDate,
-    ipeds_reporting_period_3.termCodeOrder,
-    ipeds_reporting_period_3.partOfTermOrder,
-    ipeds_reporting_period_3.maxCensus,
-    ipeds_reporting_period_3.minStart,
-    ipeds_reporting_period_3.maxEnd,
-    ipeds_reporting_period_3.censusDate,
-    ipeds_reporting_period_3.termClassification,
-    ipeds_reporting_period_3.termType,
-    ipeds_reporting_period_3.startDate,
-    ipeds_reporting_period_3.endDate,
-    ipeds_reporting_period_3.requiredFTCreditHoursGR,
-    ipeds_reporting_period_3.requiredFTCreditHoursUG,
-    ipeds_reporting_period_3.requiredFTClockHoursUG,
-    ipeds_reporting_period_3.financialAidYear,
-    expr("(coalesce(requiredFTCreditHoursUG/coalesce(requiredFTClockHoursUG, requiredFTCreditHoursUG), 1))").alias(
-        'equivCRHRFactor'))
-
-academic_term_reporting_2 = academic_term_reporting.select(
-    academic_term_reporting["*"],
-    row_number().over(Window.partitionBy(
-        expr("(termCode, partOfTermCode)")).orderBy(expr("""
-                    ((case when snapshotDate <= to_date(date_add(censusdate, 3), 'YYYY-MM-DD') 
-                                and snapshotDate >= to_date(date_sub(censusDate, 1), 'YYYY-MM-DD') 
-                                and ((array_contains(tags, 'Fall Census') and termType = 'Fall')
-                                    or (array_contains(tags, 'Spring Census') and termType = 'Spring')
-                                    or (array_contains(tags, 'Pre-Fall Summer Census') and termType = 'Summer')
-                                    or (array_contains(tags, 'Post-Fall Summer Census') and termType = 'Summer')) then 1
-                          when snapshotDate <= to_date(date_add(censusdate, 3), 'YYYY-MM-DD') 
-                                and snapshotDate >= to_date(date_sub(censusDate, 1), 'YYYY-MM-DD') then 2
-                         else 3 end) asc,
-                    (case when snapshotDate > censusDate then snapshotDate else CAST('9999-09-09' as DATE) end) asc,
-                    (case when snapshotDate < censusDate then snapshotDate else CAST('1900-09-09' as DATE) end) desc)
-            """))).alias('rowNum'))
-
-academic_term_reporting_3 = academic_term_reporting_2.filter(academic_term_reporting_2.rowNum == 1)
-
-max_term_order_summer = academic_term_reporting_2.filter(academic_term_reporting_2.termType == 'Summer').select(
-    max(academic_term_reporting_2.termCodeOrder).alias('maxSummerTerm'))
-
-max_term_order_fall = academic_term_reporting_2.filter(academic_term_reporting_2.termType == 'Fall').select(
-    max(academic_term_reporting_2.termCodeOrder).alias('maxFallTerm'))
-
-academic_term_reporting_refactor = academic_term_reporting_3.crossJoin(max_term_order_summer).crossJoin(
-    max_term_order_fall)
-
-academic_term_reporting_refactor_out = academic_term_reporting_refactor.withColumn(
-    'termTypeNew',
-    expr(
-        "(case when termType = 'Summer' and termClassification != 'Standard Length' then (case when maxSummerTerm < maxFallTerm then 'Pre-Fall Summer' else 'Post-Spring Summer' end) else termType end)"))
+academic_term_reporting_refactor = query_helpers.academic_term_reporting_refactor(
+    ipeds_reporting_period_partition,
+    ipeds_reporting_period_order,
+    ipeds_reporting_period_partition_filter,
+    academic_term_partition,
+    academic_term_order,
+    academic_term_partition_filter).cache()
 
 registration = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
 course_section = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
@@ -300,17 +202,17 @@ course = spark.sql("select * from course").filter(col('isIpedsReportable') == Tr
 campus = spark.sql("select * from campus").filter(col('isIpedsReportable') == True)
 
 registration_out = registration.join(
-    academic_term_reporting_refactor_out,
-    (registration.termCode == academic_term_reporting_refactor_out.termCode) &
-    (coalesce(registration.partOfTermCode, lit('1')) == academic_term_reporting_refactor_out.partOfTermCode) &
+    academic_term_reporting_refactor,
+    (registration.termCode == academic_term_reporting_refactor.termCode) &
+    (coalesce(registration.partOfTermCode, lit('1')) == academic_term_reporting_refactor.partOfTermCode) &
     (((registration.registrationStatusActionDate != to_timestamp(lit('9999-09-09'))) & (
-            registration.registrationStatusActionDate <= academic_term_reporting_refactor_out.censusDate))
+            registration.registrationStatusActionDate <= academic_term_reporting_refactor.censusDate))
      | ((registration.registrationStatusActionDate == to_timestamp(lit('9999-09-09')))
         & (registration.recordActivityDate != to_timestamp(lit('9999-09-09')))
-        & (registration.recordActivityDate <= academic_term_reporting_refactor_out.censusDate))
+        & (registration.recordActivityDate <= academic_term_reporting_refactor.censusDate))
      | ((registration.registrationStatusActionDate == to_timestamp(lit('9999-09-09')))
         & (col('recordActivityDate') == to_timestamp(lit('9999-09-09'))))) &
-    (registration.snapshotDate <= academic_term_reporting_refactor_out.censusDate) &
+    (registration.snapshotDate <= academic_term_reporting_refactor.censusDate) &
     (coalesce(registration.isIPEDSReportable, lit(True))), 'inner').select(
     registration.personId.alias('regPersonId'),
     to_timestamp(registration.snapshotDate).alias('regSnapshotDate'),
@@ -325,17 +227,17 @@ registration_out = registration.join(
         'regStatusActionDate'),
     coalesce(registration.recordActivityDate, to_timestamp(lit('9999-09-09'))).alias('regRecordActivityDate'),
     registration.enrollmentHoursOverride.alias('regEnrollmentHoursOverride'),
-    academic_term_reporting_refactor_out.snapshotDate.alias('repRefSnapshotDate'),
-    academic_term_reporting_refactor_out.yearType.alias('repRefYearType'),
-    academic_term_reporting_refactor_out.surveySection.alias('repRefSurveySection'),
-    academic_term_reporting_refactor_out.financialAidYear.alias('repRefFinancialAidYear'),
-    academic_term_reporting_refactor_out.termCodeOrder.alias('repRefTermCodeOrder'),
-    academic_term_reporting_refactor_out.maxCensus.alias('repRefMaxCensus'),
-    academic_term_reporting_refactor_out.fullTermOrder.alias('repRefFullTermOrder'),
-    academic_term_reporting_refactor_out.termTypeNew.alias('repRefTermTypeNew'),
-    academic_term_reporting_refactor_out.startDate.alias('repRefStartDate'),
-    academic_term_reporting_refactor_out.censusDate.alias('repRefCensusDate'),
-    academic_term_reporting_refactor_out.equivCRHRFactor.alias('repRefEquivCRHRFactor')).withColumn(
+    academic_term_reporting_refactor.snapshotDate.alias('repRefSnapshotDate'),
+    academic_term_reporting_refactor.yearType.alias('repRefYearType'),
+    academic_term_reporting_refactor.surveySection.alias('repRefSurveySection'),
+    academic_term_reporting_refactor.financialAidYear.alias('repRefFinancialAidYear'),
+    academic_term_reporting_refactor.termCodeOrder.alias('repRefTermCodeOrder'),
+    academic_term_reporting_refactor.maxCensus.alias('repRefMaxCensus'),
+    academic_term_reporting_refactor.fullTermOrder.alias('repRefFullTermOrder'),
+    academic_term_reporting_refactor.termTypeNew.alias('repRefTermTypeNew'),
+    academic_term_reporting_refactor.startDate.alias('repRefStartDate'),
+    academic_term_reporting_refactor.censusDate.alias('repRefCensusDate'),
+    academic_term_reporting_refactor.equivCRHRFactor.alias('repRefEquivCRHRFactor')).withColumn(
     'regRowNum',
     row_number().over(
         Window.partitionBy(
@@ -669,22 +571,22 @@ field_of_study = spark.sql("select * from fieldOfStudy")
 # ipeds_course_type_counts = ipeds_course_type_counts()
 
 student = student.join(
-    academic_term_reporting_refactor_out,
-    ((upper(student.termCode) == academic_term_reporting_refactor_out.termCode)
+    academic_term_reporting_refactor,
+    ((upper(student.termCode) == academic_term_reporting_refactor.termCode)
      & (coalesce(student.isIPEDSReportable, lit(True)) == True)), 'inner').select(
-    # academic_term_reporting_refactor_out['*'],
-    academic_term_reporting_refactor_out.yearType.alias('repRefYearType'),
-    academic_term_reporting_refactor_out.financialAidYear.alias('repRefFinancialAidYear'),
-    academic_term_reporting_refactor_out.surveySection.alias('repRefSurveySection'),
-    academic_term_reporting_refactor_out.termCodeOrder.alias('repRefTermCodeOrder'),
-    academic_term_reporting_refactor_out.termTypeNew.alias('repRefTermTypeNew'),
-    academic_term_reporting_refactor_out.startDate.alias('repRefStartDate'),
-    academic_term_reporting_refactor_out.censusDate.alias('repRefCensusDate'),
-    academic_term_reporting_refactor_out.requiredFTCreditHoursGR.alias('repRefRequiredFTCreditHoursGR'),
-    academic_term_reporting_refactor_out.requiredFTCreditHoursUG.alias('repRefRequiredFTCreditHoursUG'),
-    academic_term_reporting_refactor_out.requiredFTClockHoursUG.alias('repRefRequiredFTClockHoursUG'),
-    academic_term_reporting_refactor_out.snapshotDate.alias('repRefSnapshotDate'),
-    academic_term_reporting_refactor_out.fullTermOrder.alias('repRefFullTermOrder'),
+    # academic_term_reporting_refactor['*'],
+    academic_term_reporting_refactor.yearType.alias('repRefYearType'),
+    academic_term_reporting_refactor.financialAidYear.alias('repRefFinancialAidYear'),
+    academic_term_reporting_refactor.surveySection.alias('repRefSurveySection'),
+    academic_term_reporting_refactor.termCodeOrder.alias('repRefTermCodeOrder'),
+    academic_term_reporting_refactor.termTypeNew.alias('repRefTermTypeNew'),
+    academic_term_reporting_refactor.startDate.alias('repRefStartDate'),
+    academic_term_reporting_refactor.censusDate.alias('repRefCensusDate'),
+    academic_term_reporting_refactor.requiredFTCreditHoursGR.alias('repRefRequiredFTCreditHoursGR'),
+    academic_term_reporting_refactor.requiredFTCreditHoursUG.alias('repRefRequiredFTCreditHoursUG'),
+    academic_term_reporting_refactor.requiredFTClockHoursUG.alias('repRefRequiredFTClockHoursUG'),
+    academic_term_reporting_refactor.snapshotDate.alias('repRefSnapshotDate'),
+    academic_term_reporting_refactor.fullTermOrder.alias('repRefFullTermOrder'),
     student.personId.alias('stuPersonId'),
     student.termCode.alias('stuTermCode'),
     (when((student.studentType).isin('High School', 'Visiting', 'Unknown'), lit(True)).otherwise(
