@@ -179,7 +179,7 @@ academic_term_partition = "termCode, partOfTermCode"
 academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
 academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
 
-ipeds_client_config = query_helpers.ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
+ipeds_client_config_out = query_helpers.ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
                             ipeds_client_config_partition_filter)
 
 academic_term = spark.sql('select * from academicTerm').filter(col('isIpedsReportable') == True)
