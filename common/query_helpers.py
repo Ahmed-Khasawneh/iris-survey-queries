@@ -286,7 +286,8 @@ def academic_term_reporting_refactor(
     
     ipeds_reporting_period_in = spark.sql("select * from ipedsReportingPeriod")
 
-    ipeds_reporting_period_2 = academic_term.join(broadcast(ipeds_reporting_period_in),
+    #ipeds_reporting_period_2 = academic_term.join(broadcast(ipeds_reporting_period_in),
+    ipeds_reporting_period_2 = academic_term.join(ipeds_reporting_period_in,
                                                   ((academic_term.termCode == upper(
                                                       ipeds_reporting_period_in.termCode)) &
                                                    (academic_term.partOfTermCode == coalesce(
