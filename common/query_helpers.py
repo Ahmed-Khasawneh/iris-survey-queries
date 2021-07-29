@@ -274,3 +274,95 @@ def academic_term_mcr(academic_term_partition, academic_term_order, academic_ter
         academic_term_order_max.maxEnd).distinct()  # .cache()
 
     return academic_term
+
+def academic_term_reporting_refactor(
+    ipeds_reporting_period_partition, ipeds_reporting_period_order,
+    ipeds_reporting_period_partition_filter,
+    academic_term_partition, 
+    academic_term_order, 
+    academic_term_partition_filter):
+    
+    ipeds_reporting_period_in = spark.sql("select * from ipedsReportingPeriod")
+
+    ipeds_reporting_period_2 = academic_term.join(broadcast(ipeds_reporting_period_in),
+                                                  ((academic_term.termCode == upper(
+                                                      ipeds_reporting_period_in.termCode)) &
+                                                   (academic_term.partOfTermCode == coalesce(
+                                                       upper(ipeds_reporting_period_in.partOfTermCode), lit('1')))),
+                                                  'inner').filter(
+        expr(f"{ipeds_reporting_period_partition_filter}")).select(
+        upper(ipeds_reporting_period_in.partOfTermCode).alias('partOfTermCode'),
+        to_timestamp(ipeds_reporting_period_in.recordActivityDate).alias('recordActivityDate'),
+        ipeds_reporting_period_in.surveyCollectionYear,
+        upper(ipeds_reporting_period_in.surveyId).alias('surveyId'),
+        upper(ipeds_reporting_period_in.surveyName).alias('surveyName'),
+        upper(ipeds_reporting_period_in.surveySection).alias('surveySection'),
+        upper(ipeds_reporting_period_in.termCode).alias('termCode'),
+        to_timestamp(ipeds_reporting_period_in.snapshotDate).alias('snapshotDate'),
+        ipeds_reporting_period_in.tags,
+        when(upper(ipeds_reporting_period_in.surveySection).isin('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER'),
+             'PY').when(
+            upper(ipeds_reporting_period_in.surveySection).isin('COHORT', 'PRIOR SUMMER'), 'CY').alias('yearType'),
+        academic_term.termCodeOrder,
+        academic_term.partOfTermOrder,
+        academic_term.maxCensus,
+        academic_term.minStart,
+        academic_term.maxEnd,
+        academic_term.censusDate,
+        academic_term.termClassification,
+        academic_term.termType,
+        academic_term.startDate,
+        academic_term.endDate,
+        academic_term.requiredFTCreditHoursGR,
+        academic_term.requiredFTCreditHoursUG,
+        academic_term.requiredFTClockHoursUG,
+        academic_term.financialAidYear
+    ).withColumn(
+        'fullTermOrder',
+        expr("""       
+                    (case when termClassification = 'Standard Length' then 1
+                        when termClassification is null then (case when termType in ('Fall', 'Spring') then 1 else 2 end)
+                        else 2
+                    end) 
+                """)
+    ).withColumn(
+        'equivCRHRFactor',
+        expr("(coalesce(requiredFTCreditHoursUG/coalesce(requiredFTClockHoursUG, requiredFTCreditHoursUG), 1))")
+    ).withColumn(
+        'ipedsRepPerRowNum',
+        row_number().over(Window.partitionBy(
+            expr(f"({ipeds_reporting_period_partition})")).orderBy(expr(f"{ipeds_reporting_period_order}")))).filter(
+        (col('ipedsRepPerRowNum') == 1) & (col('termCode').isNotNull()) & (col('partOfTermCode').isNotNull())
+    ).withColumn(
+        'rowNum',
+        row_number().over(Window.partitionBy(
+            expr("(termCode, partOfTermCode)")).orderBy(
+            expr("""
+                            ((case when snapshotDate <= to_date(date_add(censusdate, 3), 'YYYY-MM-DD') 
+                                        and snapshotDate >= to_date(date_sub(censusDate, 1), 'YYYY-MM-DD') 
+                                        and ((array_contains(tags, 'Fall Census') and termType = 'Fall')
+                                            or (array_contains(tags, 'Spring Census') and termType = 'Spring')
+                                            or (array_contains(tags, 'Pre-Fall Summer Census') and termType = 'Summer')
+                                            or (array_contains(tags, 'Post-Fall Summer Census') and termType = 'Summer')) then 1
+                                when snapshotDate <= to_date(date_add(censusdate, 3), 'YYYY-MM-DD') 
+                                    and snapshotDate >= to_date(date_sub(censusDate, 1), 'YYYY-MM-DD') then 2
+                                else 3 end) asc,
+                            (case when snapshotDate > censusDate then snapshotDate else CAST('9999-09-09' as DATE) end) asc,
+                            (case when snapshotDate < censusDate then snapshotDate else CAST('1900-09-09' as DATE) end) desc)
+                        """)))).filter(col('rowNum') == 1).cache()
+
+    max_term_order_summer = ipeds_reporting_period_2.filter(ipeds_reporting_period_2.termType == 'Summer').select(
+        max(ipeds_reporting_period_2.termCodeOrder).alias('maxSummerTerm'))
+
+    max_term_order_fall = ipeds_reporting_period_2.filter(ipeds_reporting_period_2.termType == 'Fall').select(
+        max(ipeds_reporting_period_2.termCodeOrder).alias('maxFallTerm'))
+
+    academic_term_reporting_refactor = ipeds_reporting_period_2.crossJoin(max_term_order_summer).crossJoin(
+        max_term_order_fall).withColumn(
+        'termTypeNew',
+        expr(
+            "(case when termType = 'Summer' and termClassification != 'Standard Length' then (case when maxSummerTerm < maxFallTerm then 'Pre-Fall Summer' else 'Post-Spring Summer' end) else termType end)")).cache()
+
+    # ipeds_reporting_period_2.unpersist()
+
+    return academic_term_reporting_refactor
