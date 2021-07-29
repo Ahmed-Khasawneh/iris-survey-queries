@@ -147,7 +147,6 @@ spark_refresh_entity_views_v2()
 
 def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
                             ipeds_client_config_partition_filter):
-                                
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
 
     ipeds_client_config = ipeds_client_config_in.filter(expr(f"{ipeds_client_config_partition_filter}")).select(
@@ -209,6 +208,7 @@ def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_o
         col('clientConfigRowNum') <= 1).limit(1).cache()
 
     return ipeds_client_config
+
 
 def academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter):
     academic_term_in = spark.sql('select * from academicTerm')
@@ -275,18 +275,19 @@ def academic_term_mcr(academic_term_partition, academic_term_order, academic_ter
 
     return academic_term
 
+
 def academic_term_reporting_refactor(
-    ipeds_reporting_period_partition, ipeds_reporting_period_order,
-    ipeds_reporting_period_partition_filter,
-    academic_term_partition, 
-    academic_term_order, 
-    academic_term_partition_filter):
-    
+        ipeds_reporting_period_partition, ipeds_reporting_period_order,
+        ipeds_reporting_period_partition_filter,
+        academic_term_partition,
+        academic_term_order,
+        academic_term_partition_filter):
+            
     academic_term = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
-    
+
     ipeds_reporting_period_in = spark.sql("select * from ipedsReportingPeriod")
 
-    #ipeds_reporting_period_2 = academic_term.join(broadcast(ipeds_reporting_period_in),
+    # ipeds_reporting_period_2 = academic_term.join(broadcast(ipeds_reporting_period_in),
     ipeds_reporting_period_2 = academic_term.join(ipeds_reporting_period_in,
                                                   ((academic_term.termCode == upper(
                                                       ipeds_reporting_period_in.termCode)) &
@@ -369,3 +370,379 @@ def academic_term_reporting_refactor(
     # ipeds_reporting_period_2.unpersist()
 
     return academic_term_reporting_refactor
+    
+def ipeds_course_type_counts():
+    registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
+    course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
+    course_section_schedule_in = spark.sql("select * from courseSectionSchedule").filter(
+        col('isIpedsReportable') == True)
+    course_in = spark.sql("select * from course").filter(col('isIpedsReportable') == True)
+    campus_in = spark.sql("select * from campus").filter(col('isIpedsReportable') == True)
+
+    registration = registration_in.join(
+        #broadcast(academic_term_reporting_refactor),
+        academic_term_reporting_refactor,
+        (registration_in.termCode == academic_term_reporting_refactor.termCode) &
+        (coalesce(registration_in.partOfTermCode, lit('1')) == academic_term_reporting_refactor.partOfTermCode) &
+        (((registration_in.registrationStatusActionDate != to_timestamp(lit('9999-09-09'))) & (
+                registration_in.registrationStatusActionDate <= academic_term_reporting_refactor.censusDate))
+         | ((registration_in.registrationStatusActionDate == to_timestamp(lit('9999-09-09')))
+            & (registration_in.recordActivityDate != to_timestamp(lit('9999-09-09')))
+            & (registration_in.recordActivityDate <= academic_term_reporting_refactor.censusDate))
+         | ((registration_in.registrationStatusActionDate == to_timestamp(lit('9999-09-09')))
+            & (registration_in.recordActivityDate == to_timestamp(lit('9999-09-09'))))) &
+        (registration_in.snapshotDate <= academic_term_reporting_refactor.censusDate) &
+        (coalesce(registration_in.isIPEDSReportable, lit(True))), 'inner').select(
+        registration_in.personId.alias('regPersonId'),
+        to_timestamp(registration_in.snapshotDate).alias('regSnapshotDate'),
+        upper(registration_in.termCode).alias('regTermCode'),
+        coalesce(upper(registration_in.partOfTermCode), lit('1')).alias('regPartOfTermCode'),
+        upper(registration_in.courseSectionNumber).alias('regCourseSectionNumber'),
+        upper(registration_in.courseSectionCampusOverride).alias('regCourseSectionCampusOverride'),
+        upper(registration_in.courseSectionLevelOverride).alias('regCourseSectionLevelOverride'),
+        coalesce(registration_in.isAudited, lit(False)).alias('regIsAudited'),
+        coalesce(registration_in.isEnrolled, lit(True)).alias('regIsEnrolled'),
+        coalesce(registration_in.registrationStatusActionDate, to_timestamp(lit('9999-09-09'))).alias(
+            'regStatusActionDate'),
+        coalesce(registration_in.recordActivityDate, to_timestamp(lit('9999-09-09'))).alias('regRecordActivityDate'),
+        registration_in.enrollmentHoursOverride.alias('regEnrollmentHoursOverride'),
+        academic_term_reporting_refactor.snapshotDate.alias('repRefSnapshotDate'),
+        academic_term_reporting_refactor.yearType.alias('repRefYearType'),
+        academic_term_reporting_refactor.surveySection.alias('repRefSurveySection'),
+        academic_term_reporting_refactor.financialAidYear.alias('repRefFinancialAidYear'),
+        academic_term_reporting_refactor.termCodeOrder.alias('repRefTermCodeOrder'),
+        academic_term_reporting_refactor.maxCensus.alias('repRefMaxCensus'),
+        academic_term_reporting_refactor.fullTermOrder.alias('repRefFullTermOrder'),
+        academic_term_reporting_refactor.termTypeNew.alias('repRefTermTypeNew'),
+        academic_term_reporting_refactor.startDate.alias('repRefStartDate'),
+        academic_term_reporting_refactor.censusDate.alias('repRefCensusDate'),
+        academic_term_reporting_refactor.equivCRHRFactor.alias('repRefEquivCRHRFactor')).withColumn(
+        'regRowNum',
+        row_number().over(
+            Window.partitionBy(
+                col('repRefYearType'),
+                col('repRefSurveySection'),
+                col('regTermCode'),
+                col('regPartOfTermCode'),
+                col('regPersonId'),
+                col('regCourseSectionNumber'),
+                col('RegcourseSectionLevelOverride')).orderBy(
+                when(col('regSnapshotDate') == col('repRefSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
+                when(col('regSnapshotDate') > col('repRefSnapshotDate'), col('regSnapshotDate')).otherwise(
+                    to_timestamp(lit('9999-09-09'))).asc(),
+                when(col('regSnapshotDate') < col('repRefSnapshotDate'), col('regSnapshotDate')).otherwise(
+                    to_timestamp(lit('1900-09-09'))).desc(),
+                col('regSnapshotDate').desc(),
+                col('regRecordActivityDate').desc(),
+                col('regStatusActionDate').desc()))).filter(
+        (col('regRowNum') == 1) & col('regIsEnrolled') == lit('True'))
+
+    registration_course_section = registration.join(
+        course_section_in,
+        (registration.regTermCode == course_section_in.termCode) &
+        (registration.regPartOfTermCode == course_section_in.partOfTermCode) &
+        (registration.regCourseSectionNumber == course_section_in.courseSectionNumber) &
+        (course_section_in.termCode.isNotNull()) &
+        (coalesce(course_section_in.partOfTermCode, lit('1')).isNotNull()) &
+        (((course_section_in.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (
+                course_section_in.recordActivityDate <= registration.repRefCensusDate))
+         | (course_section_in.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
+        (coalesce(course_section_in.isIPEDSReportable, lit(True)) == lit(True)), 'left').select(
+        to_timestamp(course_section_in.recordActivityDate).alias('crseSectRecordActivityDate'),
+        course_section_in.courseSectionLevel.alias('crseSectCourseSectionLevel'),
+        upper(course_section_in.subject).alias('crseSectSubject'),
+        upper(course_section_in.courseNumber).alias('crseSectCourseNumber'),
+        upper(course_section_in.section).alias('crseSectSection'),
+        upper(course_section_in.customDataValue).alias('crseSectCustomDataValue'),
+        course_section_in.courseSectionStatus.alias('crseSectCourseSectionStatus'),
+        coalesce(course_section_in.isESL, lit(False)).alias('crseSectIsESL'),
+        coalesce(course_section_in.isRemedial, lit(False)).alias('crseSectIsRemedial'),
+        upper(course_section_in.college).alias('crseSectCollege'),
+        upper(course_section_in.division).alias('crseSectDivision'),
+        upper(course_section_in.department).alias('crseSectDepartment'),
+        coalesce(course_section_in.isClockHours, lit(False)).alias('crseSectIsClockHours'),
+        to_timestamp(course_section_in.snapshotDate).alias('crseSectSnapshotDate'),
+        registration.repRefSurveySection,
+        registration.repRefYearType,
+        registration.regSnapshotDate,
+        registration.regPersonId,
+        registration.regTermCode,
+        registration.regPartOfTermCode,
+        registration.repRefFinancialAidYear,
+        registration.repRefMaxCensus,
+        registration.repRefCensusDate,
+        registration.repRefTermTypeNew,
+        registration.repRefTermCodeOrder,
+        registration.regCourseSectionNumber,
+        registration.regIsAudited,
+        registration.repRefEquivCRHRFactor,
+        registration.regCourseSectionCampusOverride,
+        coalesce(registration.regCourseSectionLevelOverride, course_section_in.courseSectionLevel).alias(
+            'newCourseSectionLevel'),
+        coalesce(registration.regEnrollmentHoursOverride, course_section_in.enrollmentHours).alias(
+            'newEnrollmentHours')).withColumn(
+        'crseSectRowNum',
+        row_number().over(
+            Window.partitionBy(
+                col('repRefYearType'), col('regTermCode'), col('regPartOfTermCode'), col('regPersonId'),
+                col('regCourseSectionNumber')).orderBy(
+                when(col('crseSectSnapshotDate') == col('regSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
+                when(col('crseSectSnapshotDate') > col('regSnapshotDate'), col('crseSectSnapshotDate')).otherwise(
+                    to_timestamp(lit('9999-09-09'))).asc(),
+                when(col('crseSectSnapshotDate') < col('regSnapshotDate'), col('crseSectSnapshotDate')).otherwise(
+                    to_timestamp(lit('1900-09-09'))).desc(),
+                col('crseSectSnapshotDate').desc(),
+                col('crseSectRecordActivityDate').desc()))).filter(col('crseSectRowNum') == 1)
+
+    registration_course_section_schedule = registration_course_section.join(
+        course_section_schedule_in,
+        (registration_course_section.regTermCode == course_section_schedule_in.termCode) &
+        (registration_course_section.regPartOfTermCode == course_section_schedule_in.partOfTermCode) &
+        (registration_course_section.regCourseSectionNumber == course_section_schedule_in.courseSectionNumber) &
+        (course_section_schedule_in.termCode.isNotNull()) &
+        (coalesce(course_section_schedule_in.partOfTermCode, lit('1')).isNotNull()) &
+        (((course_section_schedule_in.recordActivityDate != to_timestamp(lit('9999-09-09'))) &
+          (course_section_schedule_in.recordActivityDate <= registration_course_section.repRefCensusDate))
+         | (course_section_schedule_in.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
+        (coalesce(course_section_schedule_in.isIPEDSReportable, lit(True)) == lit(True)), 'left').select(
+        to_timestamp(course_section_schedule_in.snapshotDate).alias('crseSectSchedSnapshotDate'),
+        coalesce(to_timestamp(course_section_schedule_in.recordActivityDate), to_timestamp(lit('9999-09-09'))).alias(
+            'crseSectSchedRecordActivityDate'),
+        # upper(course_section_schedule_in.campus).alias('campus'),
+        course_section_schedule_in.instructionType.alias('crseSectSchedInstructionType'),
+        course_section_schedule_in.locationType.alias('crseSectSchedLocationType'),
+        coalesce(course_section_schedule_in.distanceEducationType, lit('Not distance education')).alias(
+            'crseSectSchedDistanceEducationType'),
+        course_section_schedule_in.onlineInstructionType.alias('crseSectSchedOnlineInstructionType'),
+        course_section_schedule_in.maxSeats.alias('crseSectSchedMaxSeats'),
+        # course_section_schedule_in.isIPEDSReportable.alias('courseSectionScheduleIsIPEDSReportable'),
+        registration_course_section.repRefYearType,
+        registration_course_section.repRefSurveySection,
+        registration_course_section.regSnapshotDate,
+        registration_course_section.regPersonId,
+        registration_course_section.regTermCode,
+        registration_course_section.regPartOfTermCode,
+        registration_course_section.repRefFinancialAidYear,
+        registration_course_section.repRefMaxCensus,
+        registration_course_section.repRefCensusDate,
+        registration_course_section.repRefTermTypeNew,
+        registration_course_section.repRefTermCodeOrder,
+        registration_course_section.regCourseSectionNumber,
+        registration_course_section.regIsAudited,
+        registration_course_section.repRefEquivCRHRFactor,
+        registration_course_section.regCourseSectionCampusOverride,
+        registration_course_section.newCourseSectionLevel,
+        registration_course_section.newEnrollmentHours,
+        # registration_course_section.regRecordActivityDate,
+        # registration_course_section.repRefSnapshotDate,
+        registration_course_section.crseSectSubject,
+        registration_course_section.crseSectCourseNumber,
+        registration_course_section.crseSectSection,
+        registration_course_section.crseSectCustomDataValue,
+        registration_course_section.crseSectCourseSectionStatus,
+        registration_course_section.crseSectIsESL,
+        registration_course_section.crseSectIsRemedial,
+        registration_course_section.crseSectCollege,
+        registration_course_section.crseSectDivision,
+        registration_course_section.crseSectDepartment,
+        registration_course_section.crseSectIsClockHours,
+        upper(
+            coalesce(registration_course_section.regCourseSectionCampusOverride,
+                     course_section_schedule_in.campus)).alias(
+            'newCampus')).withColumn(
+        'crseSectSchedRowNum',
+        row_number().over(
+            Window.partitionBy(
+                col('repRefYearType'),
+                col('regTermCode'),
+                col('regPartOfTermCode'),
+                col('regPersonId'),
+                col('regCourseSectionNumber'),
+                col('newCourseSectionLevel'),
+                col('crseSectSubject'),
+                col('crseSectCourseNumber')).orderBy(
+                when(col('crseSectSchedSnapshotDate') == col('regSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
+                when(col('crseSectSchedSnapshotDate') > col('regSnapshotDate'),
+                     col('crseSectSchedSnapshotDate')).otherwise(
+                    to_timestamp(lit('9999-09-09'))).asc(),
+                when(col('crseSectSchedSnapshotDate') < col('regSnapshotDate'),
+                     col('crseSectSchedSnapshotDate')).otherwise(
+                    to_timestamp(lit('1900-09-09'))).desc(),
+                col('crseSectSchedSnapshotDate').desc(),
+                col('crseSectSchedRecordActivityDate').desc()))).filter(col('crseSectSchedRowNum') == 1)
+
+    registration_course = registration_course_section_schedule.join(
+        course_in,
+        (registration_course_section_schedule.crseSectSubject == course_in.subject) &
+        (registration_course_section_schedule.crseSectCourseNumber == course_in.courseNumber) &
+        (((course_in.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (
+                course_in.recordActivityDate <= registration_course_section_schedule.repRefCensusDate))
+         | (course_in.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
+        (coalesce(course_in.isIPEDSReportable, lit(True)) == lit(True)), 'left').join(
+        #broadcast(academic_term),
+        academic_term,
+        (academic_term.termCode == course_in.termCodeEffective) &
+        (academic_term.termCodeOrder <= registration_course_section_schedule.repRefTermCodeOrder), 'left').select(
+        to_timestamp(course_in.snapshotDate).alias('crseSnapshotDate'),
+        upper(course_in.termCodeEffective).alias('crseTermCodeEffective'),
+        # upper(course_in.courseCollege).alias('crseCourseCollege'),
+        # upper(course_in.courseDivision).alias('crseCourseDivision'),
+        # upper(course_in.courseDepartment).alias('crseCourseDepartment'),
+        coalesce(to_timestamp(course_in.recordActivityDate), to_timestamp(lit('9999-09-09'))).alias(
+            'crseRecordActivityDate'),
+        course_in.courseStatus.alias('crseCourseStatus'),
+        registration_course_section_schedule.repRefYearType,
+        registration_course_section_schedule.repRefSurveySection,
+        registration_course_section_schedule.regSnapshotDate,
+        registration_course_section_schedule.regPersonId,
+        registration_course_section_schedule.regTermCode,
+        registration_course_section_schedule.regPartOfTermCode,
+        registration_course_section_schedule.repRefFinancialAidYear,
+        registration_course_section_schedule.repRefMaxCensus,
+        registration_course_section_schedule.repRefCensusDate,
+        registration_course_section_schedule.repRefTermTypeNew,
+        registration_course_section_schedule.repRefTermCodeOrder,
+        registration_course_section_schedule.regCourseSectionNumber,
+        registration_course_section_schedule.regIsAudited,
+        registration_course_section_schedule.repRefEquivCRHRFactor,
+        registration_course_section_schedule.newCourseSectionLevel,
+        registration_course_section_schedule.newEnrollmentHours,
+        # registration_course_section_schedule.repRefSnapshotDate,
+        registration_course_section_schedule.crseSectSubject,
+        registration_course_section_schedule.crseSectCourseNumber,
+        registration_course_section_schedule.crseSectSection,
+        registration_course_section_schedule.crseSectCustomDataValue,
+        registration_course_section_schedule.crseSectCourseSectionStatus,
+        registration_course_section_schedule.crseSectIsESL,
+        registration_course_section_schedule.crseSectIsRemedial,
+        registration_course_section_schedule.crseSectCollege,
+        registration_course_section_schedule.crseSectDivision,
+        registration_course_section_schedule.crseSectDepartment,
+        registration_course_section_schedule.crseSectIsClockHours,
+        registration_course_section_schedule.newCampus,
+        registration_course_section_schedule.crseSectSchedInstructionType,
+        registration_course_section_schedule.crseSectSchedLocationType,
+        registration_course_section_schedule.crseSectSchedDistanceEducationType,
+        registration_course_section_schedule.crseSectSchedOnlineInstructionType,
+        coalesce(registration_course_section_schedule.crseSectCollege, course_in.courseCollege).alias('newCollege'),
+        coalesce(registration_course_section_schedule.crseSectDivision, course_in.courseDivision).alias('newDivision'),
+        coalesce(registration_course_section_schedule.crseSectDepartment, course_in.courseDepartment).alias(
+            'newDepartment'),
+        academic_term.termCodeOrder.alias('crseEffectiveTermCodeOrder')).withColumn(
+        'crseRowNum',
+        row_number().over(
+            Window.partitionBy(
+                col('repRefYearType'),
+                col('regTermCode'),
+                col('regPartOfTermCode'),
+                col('regPersonId'),
+                col('regCourseSectionNumber'),
+                col('newCourseSectionLevel'),
+                col('crseSectSubject'),
+                col('crseSectCourseNumber')).orderBy(
+                when(col('crseSnapshotDate') == col('regSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
+                when(col('crseSnapshotDate') > col('regSnapshotDate'), col('crseSnapshotDate')).otherwise(
+                    to_timestamp(lit('9999-09-09'))).asc(),
+                when(col('crseSnapshotDate') < col('regSnapshotDate'), col('crseSnapshotDate')).otherwise(
+                    to_timestamp(lit('1900-09-09'))).desc(),
+                col('crseSnapshotDate').desc(),
+                col('crseEffectiveTermCodeOrder').desc(),
+                col('crseRecordActivityDate').desc()))).filter(col('crseRowNum') == 1)
+
+    registration_course_campus = registration_course.join(
+        campus_in,
+        #broadcast(campus_in),
+        (registration_course.newCampus == campus_in.campus) &
+        (((campus_in.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (
+                campus_in.recordActivityDate <= registration_course.repRefCensusDate))
+         | (campus_in.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
+        (coalesce(campus_in.isIPEDSReportable, lit(True)) == lit(True)), 'left').select(
+        registration_course['*'],
+        coalesce(campus_in.isInternational, lit(False)).alias('campIsInternational'),
+        coalesce(to_timestamp(campus_in.recordActivityDate), to_timestamp(lit('9999-09-09'))).alias(
+            'campRecordActivityDate'),
+        to_timestamp(campus_in.snapshotDate).alias('campSnapshotDate')).withColumn(
+        'campRowNum',
+        row_number().over(
+            Window.partitionBy(
+                col('repRefYearType'),
+                col('regTermCode'),
+                col('regPartOfTermCode'),
+                col('regPersonId'),
+                col('regCourseSectionNumber'),
+                col('newCourseSectionLevel'),
+                col('newCampus')).orderBy(
+                when(col('campSnapshotDate') == col('regSnapshotDate'), lit(1)).otherwise(lit('2')).asc(),
+                when(col('campSnapshotDate') > col('regSnapshotDate'), col('campSnapshotDate')).otherwise(
+                    to_timestamp(lit('9999-09-09'))).asc(),
+                when(col('campSnapshotDate') < col('regSnapshotDate'), col('campSnapshotDate')).otherwise(
+                    to_timestamp(lit('1900-09-09'))).desc(),
+                col('campSnapshotDate').desc(),
+                col('campRecordActivityDate').desc()))).filter(col('campRowNum') == 1)
+
+    course_type_counts = registration_course_campus.crossJoin(ipeds_client_config).select(
+        registration_course_campus.repRefSurveySection,
+        registration_course_campus.repRefYearType,
+        registration_course_campus.regTermCode,
+        registration_course_campus.repRefMaxCensus,
+        registration_course_campus.regPersonId,
+        registration_course_campus.regCourseSectionNumber,
+        registration_course_campus.newEnrollmentHours,
+        registration_course_campus.crseSectIsClockHours,
+        registration_course_campus.newCourseSectionLevel,
+        registration_course_campus.crseSectSchedLocationType,
+        registration_course_campus.crseSectIsESL,
+        registration_course_campus.crseSectIsRemedial,
+        registration_course_campus.campIsInternational,
+        registration_course_campus.regIsAudited,
+        registration_course_campus.crseSectSchedInstructionType,
+        registration_course_campus.crseSectSchedDistanceEducationType,
+        registration_course_campus.repRefEquivCRHRFactor,
+        ipeds_client_config.instructionalActivityType
+    ).withColumn(
+        'newCourseSectionLevelUGGR',
+        when(col('newCourseSectionLevel').isin('UNDERGRADUATE', 'CONTINUING EDUCATION', 'OTHER'), lit('UG')).otherwise(
+            when(col('newCourseSectionLevel') == 'PROFESSIONAL PRACTICE DOCTORATE', lit('GR')).otherwise(
+                when(col('newCourseSectionLevel').isin('MASTERS', 'DOCTORATE'), lit('DPP'))))
+    ).withColumn(
+        'newEnrollmentHoursCalc',
+        when(col('instructionalActivityType') == 'CR', col('newEnrollmentHours')).otherwise(
+            when(col('crseSectIsClockHours') == False, col('newEnrollmentHours')).otherwise(
+                when((col('crseSectIsClockHours') == True) & (col('instructionalActivityType') == 'B'),
+                     (col('newEnrollmentHours') * col('repRefEquivCRHRFactor'))).otherwise(col('newEnrollmentHours'))))
+    ).distinct().groupBy(
+        'repRefSurveySection',
+        'repRefYearType',
+        'regTermCode',
+        'repRefMaxCensus',
+        'regPersonId').agg(
+        coalesce(count(col('regCourseSectionNumber')), lit(0)).alias('totalCourses'),
+        sum(when((col('newEnrollmentHoursCalc') >= 0), lit(1)).otherwise(lit(0))).alias('totalCreditCourses'),
+        sum(when((col('crseSectIsClockHours') == False), col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias(
+            'totalCreditHrs'),
+        sum(when((col('crseSectIsClockHours') == True) & (col('newCourseSectionLevel') == 'UNDERGRADUATE'),
+                 col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('totalClockHrs'),
+        sum(when((col('newCourseSectionLevel') == 'CONTINUING EDUCATION'), lit(1)).otherwise(lit(0))).alias(
+            'totalCECourses'),
+        sum(when((col('crseSectSchedLocationType') == 'Foreign Country'), lit(1)).otherwise(lit(0))).alias(
+            'totalSAHomeCourses'),
+        sum(when((col('crseSectIsESL') == True), lit(1)).otherwise(lit(0))).alias('totalESLCourses'),
+        sum(when((col('crseSectIsRemedial') == True), lit(1)).otherwise(lit(0))).alias('totalRemCourses'),
+        sum(when((col('campIsInternational') == True), lit(1)).otherwise(lit(0))).alias('totalIntlCourses'),
+        sum(when((col('regIsAudited') == True), lit(1)).otherwise(lit(0))).alias('totalAuditCourses'),
+        sum(when((col('crseSectSchedInstructionType') == 'Thesis/Capstone'), lit(1)).otherwise(lit(0))).alias(
+            'totalThesisCourses'),
+        sum(when((col('crseSectSchedInstructionType').isin('Residency', 'Internship', 'Practicum')) & (
+                col('repRefEquivCRHRFactor') == 'DPP'), lit(1)).otherwise(lit(0))).alias('totalProfResidencyCourses'),
+        sum(when((col('crseSectSchedDistanceEducationType') != 'Not distance education'), lit(1)).otherwise(
+            lit(0))).alias('totalDECourses'),
+        sum(when(((col('instructionalActivityType') != 'CL') & (col('newCourseSectionLevelUGGR') == 'UG')),
+                 col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('UGCreditHours'),
+        sum(when(((col('instructionalActivityType') == 'CL') & (col('newCourseSectionLevelUGGR') == 'UG')),
+                 col('newEnrollmentHoursCalc')).otherwise(lit(0))).alias('UGClockHours'),
+        sum(when((col('newCourseSectionLevelUGGR') == 'GR'), col('newEnrollmentHoursCalc')).otherwise(
+            lit(0))).alias('GRCreditHours'),
+        sum(when((col('newCourseSectionLevelUGGR') == 'DPP'), col('newEnrollmentHoursCalc')).otherwise(
+            lit(0))).alias('DPPCreditHours')).cache()
+
+    return course_type_counts
