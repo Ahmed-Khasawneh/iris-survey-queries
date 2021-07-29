@@ -207,26 +207,26 @@ ipeds_reporting_period_2 = ipeds_reporting_period.filter(expr(f"{ipeds_reporting
     (col('ipedsRepPerRowNum') == 1) & (col('termCode').isNotNull()) & (col('partOfTermCode').isNotNull()))
 
 ipeds_reporting_period_3 = ipeds_reporting_period_2.join(
-    academic_term_out,
-    (academic_term_out.termCode == ipeds_reporting_period_2.termCode) &
-    (academic_term_out.partOfTermCode == ipeds_reporting_period_2.partOfTermCode), 'left').select(
+    academic_term,
+    (academic_term.termCode == ipeds_reporting_period_2.termCode) &
+    (academic_term.partOfTermCode == ipeds_reporting_period_2.partOfTermCode), 'left').select(
     ipeds_reporting_period_2["*"],
     when(upper(col('surveySection')).isin('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER'), 'PY').when(
         upper(col('surveySection')).isin('COHORT', 'PRIOR SUMMER'), 'CY').alias('yearType'),
-    academic_term_out.termCodeOrder,
-    academic_term_out.partOfTermOrder,
-    academic_term_out.maxCensus,
-    academic_term_out.minStart,
-    academic_term_out.maxEnd,
-    academic_term_out.censusDate,
-    academic_term_out.termClassification,
-    academic_term_out.termType,
-    academic_term_out.startDate,
-    academic_term_out.endDate,
-    academic_term_out.requiredFTCreditHoursGR,
-    academic_term_out.requiredFTCreditHoursUG,
-    academic_term_out.requiredFTClockHoursUG,
-    academic_term_out.financialAidYear)
+    academic_term.termCodeOrder,
+    academic_term.partOfTermOrder,
+    academic_term.maxCensus,
+    academic_term.minStart,
+    academic_term.maxEnd,
+    academic_term.censusDate,
+    academic_term.termClassification,
+    academic_term.termType,
+    academic_term.startDate,
+    academic_term.endDate,
+    academic_term.requiredFTCreditHoursGR,
+    academic_term.requiredFTCreditHoursUG,
+    academic_term.requiredFTClockHoursUG,
+    academic_term.financialAidYear)
 
 academic_term_reporting = ipeds_reporting_period_3.select(
     ipeds_reporting_period_3.surveySection,
@@ -495,9 +495,9 @@ registration_course = registration_course_section_schedule.join(
             course.recordActivityDate <= registration_course_section_schedule.repRefCensusDate))
      | (course.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
     (coalesce(course.isIPEDSReportable, lit(True)) == lit(True)), 'left').join(
-    academic_term_out,
-    (academic_term_out.termCode == course.termCodeEffective) &
-    (academic_term_out.termCodeOrder <= registration_course_section_schedule.repRefTermCodeOrder), 'left').select(
+    academic_term,
+    (academic_term.termCode == course.termCodeEffective) &
+    (academic_term.termCodeOrder <= registration_course_section_schedule.repRefTermCodeOrder), 'left').select(
     to_timestamp(course.snapshotDate).alias('crseSnapshotDate'),
     upper(course.termCodeEffective).alias('crseTermCodeEffective'),
     # upper(course.courseCollege).alias('crseCourseCollege'),
@@ -543,7 +543,7 @@ registration_course = registration_course_section_schedule.join(
     coalesce(registration_course_section_schedule.crseSectDivision, course.courseDivision).alias('newDivision'),
     coalesce(registration_course_section_schedule.crseSectDepartment, course.courseDepartment).alias(
         'newDepartment'),
-    academic_term_out.termCodeOrder.alias('crseEffectiveTermCodeOrder')).withColumn(
+    academic_term.termCodeOrder.alias('crseEffectiveTermCodeOrder')).withColumn(
     'crseRowNum',
     row_number().over(
         Window.partitionBy(
@@ -1014,15 +1014,15 @@ academic_track = cohort_person.join(
      | ((academic_track.fieldOfStudyActionDate == to_date(lit('9999-09-09'), 'YYYY-MM-DD')) & (
                     academic_track.recordActivityDate == to_date(lit('9999-09-09'), 'YYYY-MM-DD'))))
     & (academic_track.snapshotDate <= cohort_person.stuRefCensusDate), 'left').join(
-    academic_term_out,
-    (academic_term_out.termCode == academic_track.termCodeEffective) &
-    (academic_term_out.termCodeOrder <= cohort_person.stuRefTermCodeOrder), 'left').select(
+    academic_term,
+    (academic_term.termCode == academic_track.termCodeEffective) &
+    (academic_term.termCodeOrder <= cohort_person.stuRefTermCodeOrder), 'left').select(
     cohort_person["*"],
     upper(academic_track.degreeProgram).alias('acadTrkDegreeProgram'),
     academic_track.academicTrackStatus.alias('acadTrkAcademicTrackStatus'),
     coalesce(academic_track.fieldOfStudyPriority, lit(1)).alias('acadTrkFieldOfStudyPriority'),
     upper(academic_track.termCodeEffective).alias('acadTrkAcademicTrackTermCodeEffective'),
-    academic_term_out.termCodeOrder.alias('acadTrkTermOrder'),
+    academic_term.termCodeOrder.alias('acadTrkTermOrder'),
     to_timestamp(academic_track.fieldOfStudyActionDate).alias('acadTrkFieldOfStudyActionDate'),
     to_timestamp(academic_track.recordActivityDate).alias('acadTrkRecordActivityDate'),
     to_timestamp(academic_track.snapshotDate).alias('acadTrkSnapshotDate')
@@ -1054,9 +1054,9 @@ degree_program = academic_track.join(
         & (to_date(degree_program.recordActivityDate, 'YYYY-MM-DD') <= to_date(academic_track.stuRefCensusDate,
                                                                                'YYYY-MM-DD'))))
     & (degree_program.snapshotDate <= academic_track.stuRefCensusDate), 'left').join(
-    academic_term_out,
-    (academic_term_out.termCode == degree_program.termCodeEffective) &
-    (academic_term_out.termCodeOrder <= academic_track.stuRefTermCodeOrder), 'left').select(
+    academic_term,
+    (academic_term.termCode == degree_program.termCodeEffective) &
+    (academic_term.termCodeOrder <= academic_track.stuRefTermCodeOrder), 'left').select(
     academic_track["*"],
     upper(degree_program.degreeProgram).alias('degProgDegreeProgram'),
     upper(degree_program.degree).alias('degProgDegree'),
@@ -1064,7 +1064,7 @@ degree_program = academic_track.join(
     degree_program.startDate.alias('degProgStartDate'),
     coalesce(degree_program.isESL, lit(False)).alias('degProgIsESL'),
     upper(degree_program.termCodeEffective).alias('degProgTermCodeEffective'),
-    academic_term_out.termCodeOrder.alias('degProgTermOrder'),
+    academic_term.termCodeOrder.alias('degProgTermOrder'),
     to_timestamp(degree_program.recordActivityDate).alias('degProgRecordActivityDate'),
     to_timestamp(degree_program.snapshotDate).alias('degProgSnapshotDate')
 ).withColumn(
