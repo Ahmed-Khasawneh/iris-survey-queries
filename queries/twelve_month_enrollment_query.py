@@ -182,7 +182,7 @@ academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
 ipeds_client_config_out = query_helpers.ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
                             ipeds_client_config_partition_filter)
 
-academic_term = academic_term_mcr(
+academic_term = query_helpers.academic_term_mcr(
     academic_term_partition,
     academic_term_order,
     academic_term_partition_filter).cache()
