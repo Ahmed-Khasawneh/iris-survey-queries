@@ -282,7 +282,7 @@ def academic_term_reporting_refactor(
     academic_term_order, 
     academic_term_partition_filter):
     
-    acadeemic_term = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
+    academic_term = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
     
     ipeds_reporting_period_in = spark.sql("select * from ipedsReportingPeriod")
 
