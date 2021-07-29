@@ -209,3 +209,68 @@ def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_o
         col('clientConfigRowNum') <= 1).limit(1).cache()
 
     return ipeds_client_config
+
+def academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter):
+    academic_term_in = spark.sql('select * from academicTerm')
+
+    # Should be able to switch to this\/ and remove this /\ when moving to a script
+    academic_term_2 = academic_term_in.filter(expr(f"{academic_term_partition_filter}")).select(
+        academic_term_in.academicYear,
+        to_timestamp(academic_term_in.censusDate).alias('censusDate'),
+        to_timestamp(academic_term_in.endDate).alias('endDate'),
+        academic_term_in.financialAidYear,
+        # academic_term_in.isIPEDSReportable,
+        upper(academic_term_in.partOfTermCode).alias('partOfTermCode'),
+        academic_term_in.partOfTermCodeDescription,
+        to_timestamp(academic_term_in.recordActivityDate).alias('recordActivityDate'),
+        academic_term_in.requiredFTCreditHoursGR,
+        academic_term_in.requiredFTCreditHoursUG,
+        academic_term_in.requiredFTClockHoursUG,
+        # expr(col("requiredFTCreditHoursUG")/coalesce(col("requiredFTClockHoursUG"), col("requiredFTCreditHoursUG"))).alias("equivCRHRFactor"),
+        to_timestamp(academic_term_in.startDate).alias('startDate'),
+        academic_term_in.termClassification,
+        upper(academic_term_in.termCode).alias('termCode'),
+        # academic_term_in.termCodeDescription,
+        academic_term_in.termType,
+        to_timestamp(academic_term_in.snapshotDate).alias('snapshotDate'),
+        academic_term_in.tags).withColumn(
+        'acadTermRowNum',
+        row_number().over(Window.partitionBy(
+            expr(f"({academic_term_partition})")).orderBy(expr(f"{academic_term_order}")))).filter(
+        col('acadTermRowNum') == 1)
+
+    academic_term_order = academic_term_2.select(
+        academic_term_2.termCode,
+        academic_term_2.partOfTermCode,
+        academic_term_2.censusDate,
+        academic_term_2.startDate,
+        academic_term_2.endDate).distinct()
+
+    part_of_term_order = academic_term_order.select(
+        academic_term_order["*"],
+        rank().over(Window.orderBy(col('censusDate').asc(), col('startDate').asc())).alias('partOfTermOrder')).where(
+        (col("termCode").isNotNull()) & (col("partOfTermCode").isNotNull()))
+
+    academic_term_order_max = part_of_term_order.groupBy('termCode').agg(
+        max(part_of_term_order.partOfTermOrder).alias('termCodeOrder'),
+        max(part_of_term_order.censusDate).alias('maxCensus'),
+        min(part_of_term_order.startDate).alias('minStart'),
+        max("endDate").alias("maxEnd"))
+
+    academic_term_3 = academic_term_2.join(
+        part_of_term_order,
+        (academic_term_2.termCode == part_of_term_order.termCode) &
+        (academic_term_2.partOfTermCode == part_of_term_order.partOfTermCode), 'inner').select(
+        academic_term_2["*"],
+        part_of_term_order.partOfTermOrder).where(col("termCode").isNotNull())
+
+    academic_term = academic_term_3.join(
+        academic_term_order_max,
+        (academic_term_3.termCode == academic_term_order_max.termCode), 'inner').select(
+        academic_term_3["*"],
+        academic_term_order_max.termCodeOrder,
+        academic_term_order_max.maxCensus,
+        academic_term_order_max.minStart,
+        academic_term_order_max.maxEnd).distinct()  # .cache()
+
+    return academic_term

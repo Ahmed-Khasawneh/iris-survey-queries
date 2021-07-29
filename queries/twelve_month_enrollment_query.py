@@ -182,67 +182,10 @@ academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
 ipeds_client_config_out = query_helpers.ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
                             ipeds_client_config_partition_filter)
 
-academic_term = spark.sql('select * from academicTerm').filter(col('isIpedsReportable') == True)
-
-# Should be able to switch to this\/ and remove this /\ when moving to a script
-academic_term_2 = academic_term.filter(expr(f"{academic_term_partition_filter}")).select(
-    academic_term.academicYear,
-    to_timestamp(academic_term.censusDate).alias('censusDate'),
-    to_timestamp(academic_term.endDate).alias('endDate'),
-    academic_term.financialAidYear,
-    # academic_term.isIPEDSReportable,
-    upper(academic_term.partOfTermCode).alias('partOfTermCode'),
-    academic_term.partOfTermCodeDescription,
-    to_timestamp(academic_term.recordActivityDate).alias('recordActivityDate'),
-    academic_term.requiredFTCreditHoursGR,
-    academic_term.requiredFTCreditHoursUG,
-    academic_term.requiredFTClockHoursUG,
-    # expr(col("requiredFTCreditHoursUG")/coalesce(col("requiredFTClockHoursUG"), col("requiredFTCreditHoursUG"))).alias("equivCRHRFactor"),
-    to_timestamp(academic_term.startDate).alias('startDate'),
-    academic_term.termClassification,
-    upper(academic_term.termCode).alias('termCode'),
-    # academic_term.termCodeDescription,
-    academic_term.termType,
-    to_timestamp(academic_term.snapshotDate).alias('snapshotDate'),
-    academic_term.tags).withColumn(
-    'acadTermRowNum',
-    row_number().over(Window.partitionBy(
-        expr(f"({academic_term_partition})")).orderBy(expr(f"{academic_term_order}")))).filter(
-    col('acadTermRowNum') == 1)
-
-academic_term_order = academic_term_2.select(
-    academic_term_2.termCode,
-    academic_term_2.partOfTermCode,
-    academic_term_2.censusDate,
-    academic_term_2.startDate,
-    academic_term_2.endDate).distinct()
-
-part_of_term_order = academic_term_order.select(
-    academic_term_order["*"],
-    rank().over(Window.orderBy(col('censusDate').asc(), col('startDate').asc())).alias('partOfTermOrder')).where(
-    (col("termCode").isNotNull()) & (col("partOfTermCode").isNotNull()))
-
-academic_term_order_max = part_of_term_order.groupBy('termCode').agg(
-    max(part_of_term_order.partOfTermOrder).alias('termCodeOrder'),
-    max(part_of_term_order.censusDate).alias('maxCensus'),
-    min(part_of_term_order.startDate).alias('minStart'),
-    max("endDate").alias("maxEnd"))
-
-academic_term_3 = academic_term_2.join(
-    part_of_term_order,
-    (academic_term_2.termCode == part_of_term_order.termCode) &
-    (academic_term_2.partOfTermCode == part_of_term_order.partOfTermCode), 'inner').select(
-    academic_term_2["*"],
-    part_of_term_order.partOfTermOrder).where(col("termCode").isNotNull())
-
-academic_term_out = academic_term_3.join(
-    academic_term_order_max,
-    (academic_term_3.termCode == academic_term_order_max.termCode), 'inner').select(
-    academic_term_3["*"],
-    academic_term_order_max.termCodeOrder,
-    academic_term_order_max.maxCensus,
-    academic_term_order_max.minStart,
-    academic_term_order_max.maxEnd).distinct().cache()
+academic_term = query_helpers.academic_term_mcr(
+    academic_term_partition,
+    academic_term_order,
+    academic_term_partition_filter).cache()
 
 ipeds_reporting_period = spark.sql("select * from ipedsReportingPeriod")
 
