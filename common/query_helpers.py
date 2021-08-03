@@ -211,6 +211,7 @@ def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_o
 
 
 def academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter):
+    
     academic_term_in = spark.sql('select * from academicTerm')
 
     # Should be able to switch to this\/ and remove this /\ when moving to a script
@@ -275,7 +276,6 @@ def academic_term_mcr(academic_term_partition, academic_term_order, academic_ter
 
     return academic_term
 
-
 def academic_term_reporting_refactor(
         ipeds_reporting_period_partition, ipeds_reporting_period_order,
         ipeds_reporting_period_partition_filter,
@@ -283,15 +283,15 @@ def academic_term_reporting_refactor(
         academic_term_order,
         academic_term_partition_filter):
             
-    academic_term = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
+    academic_term_in = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
 
     ipeds_reporting_period_in = spark.sql("select * from ipedsReportingPeriod")
 
-    # ipeds_reporting_period_2 = academic_term.join(broadcast(ipeds_reporting_period_in),
-    ipeds_reporting_period_2 = academic_term.join(ipeds_reporting_period_in,
-                                                  ((academic_term.termCode == upper(
+    # ipeds_reporting_period_2 = academic_term_in.join(broadcast(ipeds_reporting_period_in),
+    ipeds_reporting_period_2 = academic_term_in.join(ipeds_reporting_period_in,
+                                                  ((academic_term_in.termCode == upper(
                                                       ipeds_reporting_period_in.termCode)) &
-                                                   (academic_term.partOfTermCode == coalesce(
+                                                   (academic_term_in.partOfTermCode == coalesce(
                                                        upper(ipeds_reporting_period_in.partOfTermCode), lit('1')))),
                                                   'inner').filter(
         expr(f"{ipeds_reporting_period_partition_filter}")).select(
@@ -307,20 +307,20 @@ def academic_term_reporting_refactor(
         when(upper(ipeds_reporting_period_in.surveySection).isin('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER'),
              'PY').when(
             upper(ipeds_reporting_period_in.surveySection).isin('COHORT', 'PRIOR SUMMER'), 'CY').alias('yearType'),
-        academic_term.termCodeOrder,
-        academic_term.partOfTermOrder,
-        academic_term.maxCensus,
-        academic_term.minStart,
-        academic_term.maxEnd,
-        academic_term.censusDate,
-        academic_term.termClassification,
-        academic_term.termType,
-        academic_term.startDate,
-        academic_term.endDate,
-        academic_term.requiredFTCreditHoursGR,
-        academic_term.requiredFTCreditHoursUG,
-        academic_term.requiredFTClockHoursUG,
-        academic_term.financialAidYear
+        academic_term_in.termCodeOrder,
+        academic_term_in.partOfTermOrder,
+        academic_term_in.maxCensus,
+        academic_term_in.minStart,
+        academic_term_in.maxEnd,
+        academic_term_in.censusDate,
+        academic_term_in.termClassification,
+        academic_term_in.termType,
+        academic_term_in.startDate,
+        academic_term_in.endDate,
+        academic_term_in.requiredFTCreditHoursGR,
+        academic_term_in.requiredFTCreditHoursUG,
+        academic_term_in.requiredFTClockHoursUG,
+        academic_term_in.financialAidYear
     ).withColumn(
         'fullTermOrder',
         expr("""       
@@ -372,6 +372,23 @@ def academic_term_reporting_refactor(
     return academic_term_reporting_refactor
     
 def ipeds_course_type_counts():
+    
+    ipeds_client_config_in = ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
+                            ipeds_client_config_partition_filter)
+    
+    academic_term_in = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
+    
+    academic_term_reporting_refactor_in = academic_term_reporting_refactor(
+        ipeds_reporting_period_partition, ipeds_reporting_period_order,
+        ipeds_reporting_period_partition_filter,
+        academic_term_partition,
+        academic_term_order,
+        academic_term_partition_filter)
+    
+    #ipeds_client_config_in = ipeds_client_config
+    #academic_term_in = academic_term
+    #academic_term_reporting_refactor_in = academic_term_reporting_refactor
+    
     registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
     course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
     course_section_schedule_in = spark.sql("select * from courseSectionSchedule").filter(
@@ -380,18 +397,18 @@ def ipeds_course_type_counts():
     campus_in = spark.sql("select * from campus").filter(col('isIpedsReportable') == True)
 
     registration = registration_in.join(
-        #broadcast(academic_term_reporting_refactor),
-        academic_term_reporting_refactor,
-        (registration_in.termCode == academic_term_reporting_refactor.termCode) &
-        (coalesce(registration_in.partOfTermCode, lit('1')) == academic_term_reporting_refactor.partOfTermCode) &
+        #broadcast(academic_term_reporting_refactor_in),
+        academic_term_reporting_refactor_in,
+        (registration_in.termCode == academic_term_reporting_refactor_in.termCode) &
+        (coalesce(registration_in.partOfTermCode, lit('1')) == academic_term_reporting_refactor_in.partOfTermCode) &
         (((registration_in.registrationStatusActionDate != to_timestamp(lit('9999-09-09'))) & (
-                registration_in.registrationStatusActionDate <= academic_term_reporting_refactor.censusDate))
+                registration_in.registrationStatusActionDate <= academic_term_reporting_refactor_in.censusDate))
          | ((registration_in.registrationStatusActionDate == to_timestamp(lit('9999-09-09')))
             & (registration_in.recordActivityDate != to_timestamp(lit('9999-09-09')))
-            & (registration_in.recordActivityDate <= academic_term_reporting_refactor.censusDate))
+            & (registration_in.recordActivityDate <= academic_term_reporting_refactor_in.censusDate))
          | ((registration_in.registrationStatusActionDate == to_timestamp(lit('9999-09-09')))
             & (registration_in.recordActivityDate == to_timestamp(lit('9999-09-09'))))) &
-        (registration_in.snapshotDate <= academic_term_reporting_refactor.censusDate) &
+        (registration_in.snapshotDate <= academic_term_reporting_refactor_in.censusDate) &
         (coalesce(registration_in.isIPEDSReportable, lit(True))), 'inner').select(
         registration_in.personId.alias('regPersonId'),
         to_timestamp(registration_in.snapshotDate).alias('regSnapshotDate'),
@@ -406,17 +423,17 @@ def ipeds_course_type_counts():
             'regStatusActionDate'),
         coalesce(registration_in.recordActivityDate, to_timestamp(lit('9999-09-09'))).alias('regRecordActivityDate'),
         registration_in.enrollmentHoursOverride.alias('regEnrollmentHoursOverride'),
-        academic_term_reporting_refactor.snapshotDate.alias('repRefSnapshotDate'),
-        academic_term_reporting_refactor.yearType.alias('repRefYearType'),
-        academic_term_reporting_refactor.surveySection.alias('repRefSurveySection'),
-        academic_term_reporting_refactor.financialAidYear.alias('repRefFinancialAidYear'),
-        academic_term_reporting_refactor.termCodeOrder.alias('repRefTermCodeOrder'),
-        academic_term_reporting_refactor.maxCensus.alias('repRefMaxCensus'),
-        academic_term_reporting_refactor.fullTermOrder.alias('repRefFullTermOrder'),
-        academic_term_reporting_refactor.termTypeNew.alias('repRefTermTypeNew'),
-        academic_term_reporting_refactor.startDate.alias('repRefStartDate'),
-        academic_term_reporting_refactor.censusDate.alias('repRefCensusDate'),
-        academic_term_reporting_refactor.equivCRHRFactor.alias('repRefEquivCRHRFactor')).withColumn(
+        academic_term_reporting_refactor_in.snapshotDate.alias('repRefSnapshotDate'),
+        academic_term_reporting_refactor_in.yearType.alias('repRefYearType'),
+        academic_term_reporting_refactor_in.surveySection.alias('repRefSurveySection'),
+        academic_term_reporting_refactor_in.financialAidYear.alias('repRefFinancialAidYear'),
+        academic_term_reporting_refactor_in.termCodeOrder.alias('repRefTermCodeOrder'),
+        academic_term_reporting_refactor_in.maxCensus.alias('repRefMaxCensus'),
+        academic_term_reporting_refactor_in.fullTermOrder.alias('repRefFullTermOrder'),
+        academic_term_reporting_refactor_in.termTypeNew.alias('repRefTermTypeNew'),
+        academic_term_reporting_refactor_in.startDate.alias('repRefStartDate'),
+        academic_term_reporting_refactor_in.censusDate.alias('repRefCensusDate'),
+        academic_term_reporting_refactor_in.equivCRHRFactor.alias('repRefEquivCRHRFactor')).withColumn(
         'regRowNum',
         row_number().over(
             Window.partitionBy(
@@ -579,10 +596,10 @@ def ipeds_course_type_counts():
                 course_in.recordActivityDate <= registration_course_section_schedule.repRefCensusDate))
          | (course_in.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
         (coalesce(course_in.isIPEDSReportable, lit(True)) == lit(True)), 'left').join(
-        #broadcast(academic_term),
-        academic_term,
-        (academic_term.termCode == course_in.termCodeEffective) &
-        (academic_term.termCodeOrder <= registration_course_section_schedule.repRefTermCodeOrder), 'left').select(
+        #broadcast(academic_term_in),
+        academic_term_in,
+        (academic_term_in.termCode == course_in.termCodeEffective) &
+        (academic_term_in.termCodeOrder <= registration_course_section_schedule.repRefTermCodeOrder), 'left').select(
         to_timestamp(course_in.snapshotDate).alias('crseSnapshotDate'),
         upper(course_in.termCodeEffective).alias('crseTermCodeEffective'),
         # upper(course_in.courseCollege).alias('crseCourseCollege'),
@@ -628,7 +645,7 @@ def ipeds_course_type_counts():
         coalesce(registration_course_section_schedule.crseSectDivision, course_in.courseDivision).alias('newDivision'),
         coalesce(registration_course_section_schedule.crseSectDepartment, course_in.courseDepartment).alias(
             'newDepartment'),
-        academic_term.termCodeOrder.alias('crseEffectiveTermCodeOrder')).withColumn(
+        academic_term_in.termCodeOrder.alias('crseEffectiveTermCodeOrder')).withColumn(
         'crseRowNum',
         row_number().over(
             Window.partitionBy(
@@ -680,7 +697,7 @@ def ipeds_course_type_counts():
                 col('campSnapshotDate').desc(),
                 col('campRecordActivityDate').desc()))).filter(col('campRowNum') == 1)
 
-    course_type_counts = registration_course_campus.crossJoin(ipeds_client_config).select(
+    course_type_counts = registration_course_campus.crossJoin(ipeds_client_config_in).select(
         registration_course_campus.repRefSurveySection,
         registration_course_campus.repRefYearType,
         registration_course_campus.regTermCode,
@@ -698,7 +715,7 @@ def ipeds_course_type_counts():
         registration_course_campus.crseSectSchedInstructionType,
         registration_course_campus.crseSectSchedDistanceEducationType,
         registration_course_campus.repRefEquivCRHRFactor,
-        ipeds_client_config.instructionalActivityType
+        ipeds_client_config_in.instructionalActivityType
     ).withColumn(
         'newCourseSectionLevelUGGR',
         when(col('newCourseSectionLevel').isin('UNDERGRADUATE', 'CONTINUING EDUCATION', 'OTHER'), lit('UG')).otherwise(
