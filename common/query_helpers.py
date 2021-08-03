@@ -801,6 +801,8 @@ def cohort():
         academic_term_order,
         academic_term_partition_filter)
 
+    course_type_counts_in = ipeds_course_type_counts()
+    
     student_in = spark.sql("select * from student")
     person_in = spark.sql("select * from person")
     academic_track_in = spark.sql("select * from academicTrack")
