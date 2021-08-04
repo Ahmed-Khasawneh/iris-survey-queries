@@ -168,8 +168,8 @@ spark_refresh_entity_views_v2()
 #academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
 #academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
 
-def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
-                            ipeds_client_config_partition_filter):
+def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order, ipeds_client_config_partition_filter):
+    
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
 
     ipeds_client_config = ipeds_client_config_in.filter(expr(f"{ipeds_client_config_partition_filter}")).select(
@@ -300,7 +300,8 @@ def academic_term_mcr(academic_term_partition, academic_term_order, academic_ter
     return academic_term
 
 def academic_term_reporting_refactor(
-        ipeds_reporting_period_partition, ipeds_reporting_period_order,
+        ipeds_reporting_period_partition, 
+        ipeds_reporting_period_order,
         ipeds_reporting_period_partition_filter,
         academic_term_partition,
         academic_term_order,
@@ -394,33 +395,37 @@ def academic_term_reporting_refactor(
 
     return academic_term_reporting_refactor
     
-def ipeds_course_type_counts(ipeds_client_config_partition, 
-                             ipeds_client_config_order,
-                             ipeds_client_config_partition_filter,
-                             academic_term_partition, 
-                             academic_term_order, 
-                             academic_term_partition_filter,
-                             ipeds_reporting_period_partition, 
-                             ipeds_reporting_period_order,
-                             ipeds_reporting_period_partition_filter,
-                             academic_term_partition,
-                             academic_term_order,
-                             academic_term_partition_filter):
+def ipeds_course_type_counts(
+    ipeds_client_config_partition, 
+    ipeds_client_config_order,
+    ipeds_client_config_partition_filter,
+    academic_term_partition, 
+    academic_term_order, 
+    academic_term_partition_filter,
+    ipeds_reporting_period_partition, 
+    ipeds_reporting_period_order,
+    ipeds_reporting_period_partition_filter,
+    academic_term_partition,
+    academic_term_order,
+    academic_term_partition_filter):
     
-    ipeds_client_config_in = ipeds_client_config_mcr(ipeds_client_config_partition = ipeds_client_config_partition, 
-                             ipeds_client_config_order = ipeds_client_config_order,
-                             ipeds_client_config_partition_filter = ipeds_client_config_partition_filter)
+    ipeds_client_config_in = ipeds_client_config_mcr(
+        ipeds_client_config_partition, 
+        ipeds_client_config_order,
+        ipeds_client_config_partition_filter)
     
-    academic_term_in = academic_term_mcr(academic_term_partition = academic_term_partition, 
-                             academic_term_order = academic_term_order, 
-                             academic_term_partition_filter = academic_term_partition_filter,)
+    academic_term_in = academic_term_mcr(
+        academic_term_partition, 
+        academic_term_order, 
+        academic_term_partition_filter)
     
-    academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_partition = ipeds_reporting_period_partition, 
-                             ipeds_reporting_period_order = ipeds_reporting_period_order,
-                             ipeds_reporting_period_partition_filter = ipeds_reporting_period_partition_filter,
-                             academic_term_partition = academic_term_partition,
-                             academic_term_order = academic_term_order,
-                             academic_term_partition_filter = academic_term_partition_filter)
+    academic_term_reporting_refactor_in = academic_term_reporting_refactor(
+        ipeds_reporting_period_partition, 
+        ipeds_reporting_period_order,
+        ipeds_reporting_period_partition_filter,
+        academic_term_partition,
+        academic_term_order,
+        academic_term_partition_filter)
     
     #ipeds_client_config_in = ipeds_client_config
     #academic_term_in = academic_term
@@ -801,46 +806,51 @@ def ipeds_course_type_counts(ipeds_client_config_partition,
 
     return course_type_counts
     
-def cohort(ipeds_client_config_partition, 
-           ipeds_client_config_order,
-           ipeds_client_config_partition_filter,
-           academic_term_partition, 
-           academic_term_order, 
-           academic_term_partition_filter,
-           ipeds_reporting_period_partition, 
-           ipeds_reporting_period_order,
-           ipeds_reporting_period_partition_filter,
-           academic_term_partition,
-           academic_term_order,
-           academic_term_partition_filter):
+def cohort(
+    ipeds_client_config_partition, 
+    ipeds_client_config_order,
+    ipeds_client_config_partition_filter,
+    academic_term_partition, 
+    academic_term_order, 
+    academic_term_partition_filter,
+    ipeds_reporting_period_partition, 
+    ipeds_reporting_period_order,
+    ipeds_reporting_period_partition_filter,
+    academic_term_partition,
+    academic_term_order,
+    academic_term_partition_filter):
     
-    ipeds_client_config_in = ipeds_client_config_mcr(ipeds_client_config_partition = ipeds_client_config_partition, 
-                             ipeds_client_config_order = ipeds_client_config_order,
-                             ipeds_client_config_partition_filter = ipeds_client_config_partition_filter)
+    ipeds_client_config_in = ipeds_client_config_mcr(
+        ipeds_client_config_partition, 
+        ipeds_client_config_order,
+        ipeds_client_config_partition_filter)
     
-    academic_term_in = academic_term_mcr(academic_term_partition = academic_term_partition, 
-                             academic_term_order = academic_term_order, 
-                             academic_term_partition_filter = academic_term_partition_filter,)
+    academic_term_in = academic_term_mcr(
+        academic_term_partition, 
+        academic_term_order, 
+        academic_term_partition_filter)
     
-    academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_partition = ipeds_reporting_period_partition, 
-                             ipeds_reporting_period_order = ipeds_reporting_period_order,
-                             ipeds_reporting_period_partition_filter = ipeds_reporting_period_partition_filter,
-                             academic_term_partition = academic_term_partition,
-                             academic_term_order = academic_term_order,
-                             academic_term_partition_filter = academic_term_partition_filter)
+    academic_term_reporting_refactor_in = academic_term_reporting_refactor(
+        ipeds_reporting_period_partition, 
+        ipeds_reporting_period_order,
+        ipeds_reporting_period_partition_filter,
+        academic_term_partition,
+        academic_term_order,
+        academic_term_partition_filter)
 
-    course_type_counts_in = ipeds_course_type_counts(ipeds_client_config_partition = ipeds_client_config_partition, 
-                            ipeds_client_config_order = ipeds_client_config_order,
-                            ipeds_client_config_partition_filter = ipeds_client_config_partition_filter,
-                            academic_term_partition = academic_term_partition, 
-                            academic_term_order = academic_term_order, 
-                            academic_term_partition_filter = academic_term_partition_filter,
-                            ipeds_reporting_period_partition = ipeds_reporting_period_partition, 
-                            ipeds_reporting_period_order = ipeds_reporting_period_order,
-                            ipeds_reporting_period_partition_filter = ipeds_reporting_period_partition_filter,
-                            academic_term_partition = academic_term_partition,
-                            academic_term_order = academic_term_order,
-                            academic_term_partition_filter = academic_term_partition_filter)
+    course_type_counts_in = ipeds_course_type_counts(
+        ipeds_client_config_partition, 
+        ipeds_client_config_order,
+        ipeds_client_config_partition_filter,
+        academic_term_partition, 
+        academic_term_order, 
+        academic_term_partition_filter,
+        ipeds_reporting_period_partition, 
+        ipeds_reporting_period_order,
+        ipeds_reporting_period_partition_filter,
+        academic_term_partition,
+        academic_term_order,
+        academic_term_partition_filter)
     
     student_in = spark.sql("select * from student")
     person_in = spark.sql("select * from person")
