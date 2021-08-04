@@ -3,7 +3,7 @@ import sys
 import boto3
 import json
 from uuid import uuid4
-from common import query_helpers
+from queries.run_query import get_options
 from pyspark.sql.window import Window
 # from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
@@ -21,20 +21,15 @@ sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
-optionNames = [
-    'survey_type',
-    'year'
-    'sql',
-    'tenant_id',
-    'stage',
-    'user_id',
-    'sql_script_s3_output_bucket',
-]
+options = get_options()
 
-# args = getResolvedOptions(sys.argv, optionNames)
-
-# Default survey values
-# var_surveyYear = '2021' #args['year']
+stage = options['stage']
+year = options['calendarYear']
+user_id = options['userId']
+tenant_id = options['tenantId']
+survey_type = options['surveyType']
+    
+var_surveyYear = four_digit_to_ipeds_year(year)
 
 """
 survey_id_map = {
