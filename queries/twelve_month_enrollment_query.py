@@ -48,7 +48,7 @@ stage = options['stage']
 year = options['calendarYear']
 user_id = options['userId']
 tenant_id = options['tenantId']
-survey_type = options['surveyType'
+survey_type = options['surveyType']
 
 # Default survey values
 var_surveyYear = query_helpers.four_digit_to_ipeds_year(year)
