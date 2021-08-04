@@ -34,11 +34,14 @@ optionNames = [
 
 options = getResolvedOptions(sys.argv, optionNames)
 stage = options['stage']
-year = options['calendarYear']
 user_id = options['userId']
 tenant_id = options['tenantId']
 survey_type = options['surveyType']    
-var_surveyYear = four_digit_to_ipeds_year(year)
+
+year = options['calendarYear']
+year1 = str(year[2:4])
+year2 = str(int(year1) + 1)
+var_surveyYear = year1 + year2
 
 """
 survey_id_map = {
@@ -58,11 +61,11 @@ survey_id_map = {
 # var_repPeriodTag4 = 'Fall Census'
 # var_repPeriodTag5 = 'Fall Census'
 
-def four_digit_to_ipeds_year(year):
-    year1 = str(year[2:4])
-    year2 = str(int(year1) + 1)
-    var_surveyYear = year1 + year2
-    return var_surveyYear
+#def four_digit_to_ipeds_year(year):
+#    year1 = str(year[2:4])
+#    year2 = str(int(year1) + 1)
+#    var_surveyYear = year1 + year2
+#    return var_surveyYear
 
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
