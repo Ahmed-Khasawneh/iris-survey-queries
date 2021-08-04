@@ -5,7 +5,7 @@ import json
 from uuid import uuid4
 from common import query_helpers
 from pyspark.sql.window import Window
-#from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
+# from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
     to_date, when, coalesce, count, rank
 from pyspark.sql.utils import AnalysisException
@@ -16,7 +16,7 @@ from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
 spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
-#spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).config("spark.dynamicAllocation.enabled", 'true').getOrCreate()
+# spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).config("spark.dynamicAllocation.enabled", 'true').getOrCreate()
 sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
@@ -31,10 +31,10 @@ optionNames = [
     'sql_script_s3_output_bucket',
 ]
 
-#args = getResolvedOptions(sys.argv, optionNames)
+# args = getResolvedOptions(sys.argv, optionNames)
 
-#Default survey values
-#var_surveyYear = '2021' #args['year']
+# Default survey values
+# var_surveyYear = '2021' #args['year']
 
 """
 survey_id_map = {
@@ -44,13 +44,15 @@ survey_id_map = {
     'TWELVE_MONTH_ENROLLMENT_4': 'E1F'
 }
 """
-#var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
-#var_surveyType = '12ME'
-#var_repPeriodTag1 = 'Academic Year End'
-#var_repPeriodTag2 = 'June End'
-#var_repPeriodTag3 = 'Fall Census'
-#var_repPeriodTag4 = 'Fall Census'
-#var_repPeriodTag5 = 'Fall Census'
+
+
+# var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
+# var_surveyType = '12ME'
+# var_repPeriodTag1 = 'Academic Year End'
+# var_repPeriodTag2 = 'June End'
+# var_repPeriodTag3 = 'Fall Census'
+# var_repPeriodTag4 = 'Fall Census'
+# var_repPeriodTag5 = 'Fall Census'
 
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
@@ -58,6 +60,7 @@ def spark_read_s3_source(s3_paths, format="parquet"):
     """
     s3_data = glueContext.getSource(format, paths=s3_paths)
     return s3_data.getFrame()
+
 
 def add_snapshot_metadata_columns(entity_df, snapshot_metadata):
     snapshot_date_col = f.lit(None)
@@ -70,7 +73,8 @@ def add_snapshot_metadata_columns(entity_df, snapshot_metadata):
         iterator = 0
         for guid, metadata in snapshot_metadata.items():
             snapshot_date_value = fromisodate(metadata['snapshotDate']) if 'snapshotDate' in metadata else None
-            snapshot_tags_values = f.array(list(map(lambda v: f.lit(v), metadata['tags'] if 'tags' in metadata else [])))
+            snapshot_tags_values = f.array(
+                list(map(lambda v: f.lit(v), metadata['tags'] if 'tags' in metadata else [])))
             if iterator == 0:
                 iterator = 1
                 snapshot_date_col = f.when(f.col('snapshotGuid') == guid, snapshot_date_value)
@@ -84,12 +88,14 @@ def add_snapshot_metadata_columns(entity_df, snapshot_metadata):
 
     return entity_df
 
+
 def has_column(df, col):
     try:
         df[col]
         return True
     except AnalysisException:
         return False
+
 
 def fromisodate(iso_date_str):
     # example format: 2020-07-27T18:18:54.123Z
@@ -98,7 +104,8 @@ def fromisodate(iso_date_str):
         return datetime.strptime(date_str_with_timezone, "%Y-%m-%dT%H:%M:%S.%f%z")
     except:
         return datetime.strptime(iso_date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-        
+
+
 def spark_create_json_format(data_frame):
     column_name = str(uuid.uuid4())
     df = data_frame.withColumn(column_name, f.lit(0))
@@ -106,13 +113,17 @@ def spark_create_json_format(data_frame):
     result = result.drop(column_name)
     return result
 
-def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420', survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2020, user_id=None):
+
+def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420',
+                                  survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2020, user_id=None):
     lambda_client = boto3.client('lambda', 'us-east-1')
     invoke_response = lambda_client.invoke(
-        FunctionName = "iris-connector-doris-{}-getReportPayload".format(stage),
-        InvocationType = 'RequestResponse', 
-        LogType = "None",
-        Payload = json.dumps({ 'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year, 'userId': user_id }).encode('utf-8')
+        FunctionName="iris-connector-doris-{}-getReportPayload".format(stage),
+        InvocationType='RequestResponse',
+        LogType="None",
+        Payload=json.dumps(
+            {'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year,
+             'userId': user_id}).encode('utf-8')
     )
     view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
 
@@ -120,10 +131,10 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
 
     view_metadata_without_s3_paths["tenantId"] = tenant_id
     invoke_response = lambda_client.invoke(
-        FunctionName = "doris-data-access-apis-{}-GetEntitySnapshotPaths".format(stage),
-        InvocationType = 'RequestResponse', 
-        LogType = "None",
-        Payload = json.dumps(view_metadata_without_s3_paths)
+        FunctionName="doris-data-access-apis-{}-GetEntitySnapshotPaths".format(stage),
+        InvocationType='RequestResponse',
+        LogType="None",
+        Payload=json.dumps(view_metadata_without_s3_paths)
     )
     view_metadata = json.loads(invoke_response['Payload'].read().decode("utf-8"))
     snapshot_metadata = view_metadata.get('snapshotMetadata', {})
@@ -141,35 +152,38 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
         else:
             print("No snapshots found for {}".format(view_name))
 
+
 spark_refresh_entity_views_v2()
-#spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
 
-#ipeds_client_config_partition = "surveyCollectionYear"
-#ipeds_client_config_order = f"""
+
+# spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
+
+# ipeds_client_config_partition = "surveyCollectionYear"
+# ipeds_client_config_order = f"""
 #    ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
 #         when array_contains(tags, '{var_repPeriodTag2}') then 2
 #         else 3 end) asc,
 #    snapshotDate desc,
 #    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
 #     """
-#ipeds_client_config_partition_filter = f"surveyCollectionYear = '{var_surveyYear}'"  # f"surveyId = '{var_surveyId}' and var_surveyYear = '{var_surveyYear}"
+# ipeds_client_config_partition_filter = f"surveyCollectionYear = '{var_surveyYear}'"  # f"surveyId = '{var_surveyId}' and var_surveyYear = '{var_surveyYear}"
 
-#ipeds_reporting_period_partition = "surveyCollectionYear, surveyId, surveySection, termCode, partOfTermCode"
-#ipeds_reporting_period_order = f"""
+# ipeds_reporting_period_partition = "surveyCollectionYear, surveyId, surveySection, termCode, partOfTermCode"
+# ipeds_reporting_period_order = f"""
 #    ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
 #         when array_contains(tags, '{var_repPeriodTag2}') then 2
 #         else 3 end) asc,
 #    snapshotDate desc,
 #    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
 #     """
-#ipeds_reporting_period_partition_filter = f"surveyId = '{var_surveyId}'"
+# ipeds_reporting_period_partition_filter = f"surveyId = '{var_surveyId}'"
 
-#academic_term_partition = "termCode, partOfTermCode"
-#academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
-#academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
+# academic_term_partition = "termCode, partOfTermCode"
+# academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
+# academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
 
-def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order, ipeds_client_config_partition_filter):
-    
+def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
+                            ipeds_client_config_partition_filter):
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
 
     ipeds_client_config = ipeds_client_config_in.filter(expr(f"{ipeds_client_config_partition_filter}")).select(
@@ -234,7 +248,6 @@ def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_o
 
 
 def academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter):
-    
     academic_term_in = spark.sql('select * from academicTerm')
 
     # Should be able to switch to this\/ and remove this /\ when moving to a script
@@ -299,25 +312,26 @@ def academic_term_mcr(academic_term_partition, academic_term_order, academic_ter
 
     return academic_term
 
+
 def academic_term_reporting_refactor(
-        ipeds_reporting_period_partition, 
+        ipeds_reporting_period_partition,
         ipeds_reporting_period_order,
         ipeds_reporting_period_partition_filter,
         academic_term_partition,
         academic_term_order,
         academic_term_partition_filter):
-            
+    
     academic_term_in = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)
 
     ipeds_reporting_period_in = spark.sql("select * from ipedsReportingPeriod")
 
     # ipeds_reporting_period_2 = academic_term_in.join(broadcast(ipeds_reporting_period_in),
     ipeds_reporting_period_2 = academic_term_in.join(ipeds_reporting_period_in,
-                                                  ((academic_term_in.termCode == upper(
-                                                      ipeds_reporting_period_in.termCode)) &
-                                                   (academic_term_in.partOfTermCode == coalesce(
-                                                       upper(ipeds_reporting_period_in.partOfTermCode), lit('1')))),
-                                                  'inner').filter(
+                                                     ((academic_term_in.termCode == upper(
+                                                         ipeds_reporting_period_in.termCode)) &
+                                                      (academic_term_in.partOfTermCode == coalesce(
+                                                          upper(ipeds_reporting_period_in.partOfTermCode), lit('1')))),
+                                                     'inner').filter(
         expr(f"{ipeds_reporting_period_partition_filter}")).select(
         upper(ipeds_reporting_period_in.partOfTermCode).alias('partOfTermCode'),
         to_timestamp(ipeds_reporting_period_in.recordActivityDate).alias('recordActivityDate'),
@@ -394,43 +408,41 @@ def academic_term_reporting_refactor(
     # ipeds_reporting_period_2.unpersist()
 
     return academic_term_reporting_refactor
-    
+
+
 def ipeds_course_type_counts(
-    ipeds_client_config_partition, 
-    ipeds_client_config_order,
-    ipeds_client_config_partition_filter,
-    academic_term_partition, 
-    academic_term_order, 
-    academic_term_partition_filter,
-    ipeds_reporting_period_partition, 
-    ipeds_reporting_period_order,
-    ipeds_reporting_period_partition_filter,
-    academic_term_partition,
-    academic_term_order,
-    academic_term_partition_filter):
+        ipeds_client_config_partition,
+        ipeds_client_config_order,
+        ipeds_client_config_partition_filter,
+        ipeds_reporting_period_partition,
+        ipeds_reporting_period_order,
+        ipeds_reporting_period_partition_filter,
+        academic_term_partition,
+        academic_term_order,
+        academic_term_partition_filter):
     
     ipeds_client_config_in = ipeds_client_config_mcr(
-        ipeds_client_config_partition, 
+        ipeds_client_config_partition,
         ipeds_client_config_order,
         ipeds_client_config_partition_filter)
-    
+
     academic_term_in = academic_term_mcr(
-        academic_term_partition, 
-        academic_term_order, 
+        academic_term_partition,
+        academic_term_order,
         academic_term_partition_filter)
-    
+
     academic_term_reporting_refactor_in = academic_term_reporting_refactor(
-        ipeds_reporting_period_partition, 
+        ipeds_reporting_period_partition,
         ipeds_reporting_period_order,
         ipeds_reporting_period_partition_filter,
         academic_term_partition,
         academic_term_order,
         academic_term_partition_filter)
-    
-    #ipeds_client_config_in = ipeds_client_config
-    #academic_term_in = academic_term
-    #academic_term_reporting_refactor_in = academic_term_reporting_refactor
-    
+
+    # ipeds_client_config_in = ipeds_client_config
+    # academic_term_in = academic_term
+    # academic_term_reporting_refactor_in = academic_term_reporting_refactor
+
     registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
     course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
     course_section_schedule_in = spark.sql("select * from courseSectionSchedule").filter(
@@ -439,7 +451,7 @@ def ipeds_course_type_counts(
     campus_in = spark.sql("select * from campus").filter(col('isIpedsReportable') == True)
 
     registration = registration_in.join(
-        #broadcast(academic_term_reporting_refactor_in),
+        # broadcast(academic_term_reporting_refactor_in),
         academic_term_reporting_refactor_in,
         (registration_in.termCode == academic_term_reporting_refactor_in.termCode) &
         (coalesce(registration_in.partOfTermCode, lit('1')) == academic_term_reporting_refactor_in.partOfTermCode) &
@@ -638,7 +650,7 @@ def ipeds_course_type_counts(
                 course_in.recordActivityDate <= registration_course_section_schedule.repRefCensusDate))
          | (course_in.recordActivityDate == to_timestamp(lit('9999-09-09')))) &
         (coalesce(course_in.isIPEDSReportable, lit(True)) == lit(True)), 'left').join(
-        #broadcast(academic_term_in),
+        # broadcast(academic_term_in),
         academic_term_in,
         (academic_term_in.termCode == course_in.termCodeEffective) &
         (academic_term_in.termCodeOrder <= registration_course_section_schedule.repRefTermCodeOrder), 'left').select(
@@ -710,7 +722,7 @@ def ipeds_course_type_counts(
 
     registration_course_campus = registration_course.join(
         campus_in,
-        #broadcast(campus_in),
+        # broadcast(campus_in),
         (registration_course.newCampus == campus_in.campus) &
         (((campus_in.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (
                 campus_in.recordActivityDate <= registration_course.repRefCensusDate))
@@ -805,33 +817,31 @@ def ipeds_course_type_counts(
             lit(0))).alias('DPPCreditHours')).cache()
 
     return course_type_counts
-    
+
+
 def cohort(
-    ipeds_client_config_partition, 
-    ipeds_client_config_order,
-    ipeds_client_config_partition_filter,
-    academic_term_partition, 
-    academic_term_order, 
-    academic_term_partition_filter,
-    ipeds_reporting_period_partition, 
-    ipeds_reporting_period_order,
-    ipeds_reporting_period_partition_filter,
-    academic_term_partition,
-    academic_term_order,
-    academic_term_partition_filter):
+        ipeds_client_config_partition,
+        ipeds_client_config_order,
+        ipeds_client_config_partition_filter,
+        ipeds_reporting_period_partition,
+        ipeds_reporting_period_order,
+        ipeds_reporting_period_partition_filter,
+        academic_term_partition,
+        academic_term_order,
+        academic_term_partition_filter):
     
     ipeds_client_config_in = ipeds_client_config_mcr(
-        ipeds_client_config_partition, 
+        ipeds_client_config_partition,
         ipeds_client_config_order,
         ipeds_client_config_partition_filter)
-    
+
     academic_term_in = academic_term_mcr(
-        academic_term_partition, 
-        academic_term_order, 
+        academic_term_partition,
+        academic_term_order,
         academic_term_partition_filter)
-    
+
     academic_term_reporting_refactor_in = academic_term_reporting_refactor(
-        ipeds_reporting_period_partition, 
+        ipeds_reporting_period_partition,
         ipeds_reporting_period_order,
         ipeds_reporting_period_partition_filter,
         academic_term_partition,
@@ -839,26 +849,23 @@ def cohort(
         academic_term_partition_filter)
 
     course_type_counts_in = ipeds_course_type_counts(
-        ipeds_client_config_partition, 
+        ipeds_client_config_partition,
         ipeds_client_config_order,
         ipeds_client_config_partition_filter,
-        academic_term_partition, 
-        academic_term_order, 
-        academic_term_partition_filter,
-        ipeds_reporting_period_partition, 
+        ipeds_reporting_period_partition,
         ipeds_reporting_period_order,
         ipeds_reporting_period_partition_filter,
         academic_term_partition,
         academic_term_order,
         academic_term_partition_filter)
-    
+
     student_in = spark.sql("select * from student")
     person_in = spark.sql("select * from person")
     academic_track_in = spark.sql("select * from academicTrack")
     degree_program_in = spark.sql("select * from degreeProgram")
     degree_in = spark.sql("select * from degree")
     field_of_study_in = spark.sql("select * from fieldOfStudy")
-    
+
     student = student_in.join(
         academic_term_reporting_refactor_in,
         ((upper(student_in.termCode) == academic_term_reporting_refactor_in.termCode)
@@ -909,7 +916,7 @@ def cohort(
                 col('stuSnapshotDate').desc(),
                 col('stuRecordActivityDate').desc()))
     ).filter(col('studentRowNum') == 1)
-    
+
     student_reg = student.join(
         course_type_counts_in,
         (student.stuPersonId == course_type_counts_in.regPersonId) &
@@ -993,7 +1000,8 @@ def cohort(
         when(col('FFTRn') == 1, course_type_counts_in.totalESLCourses).otherwise(None).alias("stuRefTotalESLCourses"),
         when(col('FFTRn') == 1, course_type_counts_in.totalRemCourses).otherwise(None).alias("stuRefTotalRemCourses"),
         when(col('FFTRn') == 1, course_type_counts_in.totalIntlCourses).otherwise(None).alias("stuRefTotalIntlCourses"),
-        when(col('FFTRn') == 1, course_type_counts_in.totalAuditCourses).otherwise(None).alias("stuRefTotalAuditCourses"),
+        when(col('FFTRn') == 1, course_type_counts_in.totalAuditCourses).otherwise(None).alias(
+            "stuRefTotalAuditCourses"),
         when(col('FFTRn') == 1, course_type_counts_in.totalThesisCourses).otherwise(None).alias(
             "stuRefTotalThesisCourses"),
         when(col('FFTRn') == 1, course_type_counts_in.totalProfResidencyCourses).otherwise(None).alias(
@@ -1003,7 +1011,7 @@ def cohort(
         when(col('FFTRn') == 1, course_type_counts_in.UGClockHours).otherwise(None).alias("stuRefUGClockHours"),
         when(col('FFTRn') == 1, course_type_counts_in.GRCreditHours).otherwise(None).alias("stuRefGRCreditHours"),
         when(col('FFTRn') == 1, course_type_counts_in.DPPCreditHours).otherwise(None).alias("stuRefDPPCreditHours"))
-    
+
     student_fft = student_reg.groupBy(student_reg.regPersonId, student_reg.repRefYearType).agg(
         min(student_reg.stuRefIsNonDegreeSeeking).alias("stuRefIsNonDegreeSeeking"),
         max(student_reg.stuRefStudentType).alias("stuRefStudentType"),
@@ -1043,7 +1051,7 @@ def cohort(
         sum(student_reg.stuRefUGClockHours).alias("stuRefUGClockHours"),
         sum(student_reg.stuRefGRCreditHours).alias("stuRefGRCreditHours"),
         sum(student_reg.stuRefDPPCreditHours).alias("stuRefDPPCreditHours"))
-    
+
     student_fft_out = student_fft.crossJoin(ipeds_client_config_in).select(
         student_fft['*'],
         ipeds_client_config_in.acadOrProgReporter.alias('configAcadOrProgReporter'),
@@ -1116,7 +1124,7 @@ def cohort(
     #    when(student_fft.stuRefTotalDECourses == student_fft.stuRefTotalCourses, 'Exclusive DE')
     #        .when(student_fft.stuRefTotalDECourses > 0, 'Some DE')
     #        .otherwise('None'))
-    
+
     cohort_person = student_fft_out.join(
         person_in,
         (student_fft_out.regPersonId == person_in.personId) &
@@ -1191,7 +1199,7 @@ def cohort(
                     to_timestamp(lit('1900-09-09'))).desc(),
                 col('persSnapshotDate').desc(),
                 col('persRecordActivityDate').desc()))).filter(col('persRowNum') == 1)
-    
+
     academic_track = cohort_person.join(
         academic_track_in,
         (cohort_person.regPersonId == academic_track_in.personId) &
@@ -1233,7 +1241,7 @@ def cohort(
                 col('acadTrkRecordActivityDate').desc(),
                 when(col('acadTrkAcademicTrackStatus') == lit('In Progress'), lit(1)).otherwise(lit(2)).asc()))).filter(
         col('acadTrkTrackRowNum') == 1)
-    
+
     degree_program = academic_track.join(
         degree_program_in,
         (academic_track.acadTrkDegreeProgram == degree_program_in.degreeProgram) &
@@ -1243,7 +1251,7 @@ def cohort(
          | ((coalesce(to_date(degree_program_in.recordActivityDate, 'YYYY-MM-DD'),
                       to_date(lit('9999-09-09'), 'YYYY-MM-DD')) != to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
             & (to_date(degree_program_in.recordActivityDate, 'YYYY-MM-DD') <= to_date(academic_track.stuRefCensusDate,
-                                                                                   'YYYY-MM-DD'))))
+                                                                                      'YYYY-MM-DD'))))
         & (degree_program_in.snapshotDate <= academic_track.stuRefCensusDate), 'left').join(
         academic_term_in,
         (academic_term_in.termCode == degree_program_in.termCodeEffective) &
@@ -1275,7 +1283,7 @@ def cohort(
                 col('degProgTermOrder').desc(),
                 col('degProgStartDate').desc(),
                 col('degProgRecordActivityDate').desc()))).filter(col('degProgRowNum') <= 1)
-    
+
     degree = degree_program.join(
         degree_in,
         (degree_program.degProgDegree == degree_in.degree) &
@@ -1286,7 +1294,7 @@ def cohort(
          | ((coalesce(to_date(degree_in.recordActivityDate, 'YYYY-MM-DD'),
                       to_date(lit('9999-09-09'), 'YYYY-MM-DD')) != to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
             & (to_date(degree_in.recordActivityDate, 'YYYY-MM-DD') <= to_date(degree_program.stuRefCensusDate,
-                                                                           'YYYY-MM-DD'))))
+                                                                              'YYYY-MM-DD'))))
         & (degree_in.snapshotDate <= degree_program.stuRefCensusDate), 'left').select(
         degree_program["*"],
         upper(degree_in.awardLevel).alias('degAwardLevel'),
@@ -1307,7 +1315,7 @@ def cohort(
                     to_timestamp(lit('1900-09-09'))).desc(),
                 col('degSnapshotDate').desc(),
                 col('degRecordActivityDate').desc()))).filter(col('degRowNum') <= 1)
-    
+
     field_of_study = degree.join(
         field_of_study_in,
         (degree.degProgMajor == field_of_study_in.fieldOfStudy) &
@@ -1318,7 +1326,7 @@ def cohort(
          | ((coalesce(to_date(field_of_study_in.recordActivityDate, 'YYYY-MM-DD'),
                       to_date(lit('9999-09-09'), 'YYYY-MM-DD')) != to_date(lit('9999-09-09'), 'YYYY-MM-DD'))
             & (to_date(field_of_study_in.recordActivityDate, 'YYYY-MM-DD') <= to_date(degree.stuRefCensusDate,
-                                                                                   'YYYY-MM-DD'))))
+                                                                                      'YYYY-MM-DD'))))
         & (field_of_study_in.snapshotDate <= degree.stuRefCensusDate), 'left').select(
         degree["*"],
         field_of_study_in.cipCode.alias('fldOfStdyCipCode'),
@@ -1339,7 +1347,7 @@ def cohort(
                     to_timestamp(lit('1900-09-09'))).desc(),
                 col('fldOfStdySnapshotDate').desc(),
                 col('fldOfStdyRecordActivityDate').desc()))).filter(col('fldOfStdyRowNum') <= 1)
-    
+
     cohort = field_of_study.withColumn(
         'ipedsInclude',
         #    when((col('stuRefTotalCECourses') == col('stuRefTotalCourses'))
@@ -1367,5 +1375,5 @@ def cohort(
         end) 
         """)
     )
-        
+
     return cohort
