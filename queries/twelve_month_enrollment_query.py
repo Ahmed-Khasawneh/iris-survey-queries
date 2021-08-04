@@ -21,20 +21,37 @@ sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
-optionNames = [
-    'survey_type',
-    'year'
-    'sql',
-    'tenant_id',
-    'stage',
-    'user_id',
-    'sql_script_s3_output_bucket',
-]
+def get_options():
+    optionNames = [
+      'debugLogging',
+      'calendarYear',
+      'surveyType',
+      'stage',
+      's3Bucket',
+      's3Key',
+      'tenantId',
+      'userId',
+    ]
 
-args = getResolvedOptions(sys.argv, optionNames)
+    options = getResolvedOptions(sys.argv, optionNames)
+#    options['calendarYear'] = convert_four_digit_year_to_two_year_range(options['calendarYear'])
+
+    return options
+
+options = get_options()
+
+set_logger_level(options)
+
+logger.info(options)
+
+stage = options['stage']
+year = options['calendarYear']
+user_id = options['userId']
+tenant_id = options['tenantId']
+survey_type = options['surveyType'
 
 # Default survey values
-var_surveyYear = four_digit_to_ipeds_year(args['calendarYear'])
+var_surveyYear = query_helpers.four_digit_to_ipeds_year(args['year'])
 
 """
 survey_id_map = {
