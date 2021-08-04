@@ -38,7 +38,7 @@ year = options['calendarYear']
 user_id = options['userId']
 tenant_id = options['tenantId']
 survey_type = options['surveyType']    
-var_surveyYear = four_digit_to_ipeds_year(year)
+var_surveyYear = query_helpers.four_digit_to_ipeds_year(year)
 
 """
 survey_id_map = {
