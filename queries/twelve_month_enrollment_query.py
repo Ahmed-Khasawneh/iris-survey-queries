@@ -40,9 +40,9 @@ def get_options():
 
 options = get_options()
 
-set_logger_level(options)
+#set_logger_level(options)
 
-logger.info(options)
+#logger.info(options)
 
 stage = options['stage']
 year = options['calendarYear']
