@@ -34,7 +34,7 @@ optionNames = [
 #args = getResolvedOptions(sys.argv, optionNames)
 
 #Default survey values
-var_surveyYear = '2021' #args['year']
+#var_surveyYear = '2021' #args['year']
 
 """
 survey_id_map = {
@@ -44,13 +44,13 @@ survey_id_map = {
     'TWELVE_MONTH_ENROLLMENT_4': 'E1F'
 }
 """
-var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
-var_surveyType = '12ME'
-var_repPeriodTag1 = 'Academic Year End'
-var_repPeriodTag2 = 'June End'
-var_repPeriodTag3 = 'Fall Census'
-var_repPeriodTag4 = 'Fall Census'
-var_repPeriodTag5 = 'Fall Census'
+#var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
+#var_surveyType = '12ME'
+#var_repPeriodTag1 = 'Academic Year End'
+#var_repPeriodTag2 = 'June End'
+#var_repPeriodTag3 = 'Fall Census'
+#var_repPeriodTag4 = 'Fall Census'
+#var_repPeriodTag5 = 'Fall Census'
 
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
@@ -144,29 +144,29 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
 spark_refresh_entity_views_v2()
 #spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
 
-ipeds_client_config_partition = "surveyCollectionYear"
-ipeds_client_config_order = f"""
-    ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
-         when array_contains(tags, '{var_repPeriodTag2}') then 2
-         else 3 end) asc,
-    snapshotDate desc,
-    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
-     """
-ipeds_client_config_partition_filter = f"surveyCollectionYear = '{var_surveyYear}'"  # f"surveyId = '{var_surveyId}' and var_surveyYear = '{var_surveyYear}"
+#ipeds_client_config_partition = "surveyCollectionYear"
+#ipeds_client_config_order = f"""
+#    ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
+#         when array_contains(tags, '{var_repPeriodTag2}') then 2
+#         else 3 end) asc,
+#    snapshotDate desc,
+#    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
+#     """
+#ipeds_client_config_partition_filter = f"surveyCollectionYear = '{var_surveyYear}'"  # f"surveyId = '{var_surveyId}' and var_surveyYear = '{var_surveyYear}"
 
-ipeds_reporting_period_partition = "surveyCollectionYear, surveyId, surveySection, termCode, partOfTermCode"
-ipeds_reporting_period_order = f"""
-    ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
-         when array_contains(tags, '{var_repPeriodTag2}') then 2
-         else 3 end) asc,
-    snapshotDate desc,
-    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
-     """
-ipeds_reporting_period_partition_filter = f"surveyId = '{var_surveyId}'"
+#ipeds_reporting_period_partition = "surveyCollectionYear, surveyId, surveySection, termCode, partOfTermCode"
+#ipeds_reporting_period_order = f"""
+#    ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
+#         when array_contains(tags, '{var_repPeriodTag2}') then 2
+#         else 3 end) asc,
+#    snapshotDate desc,
+#    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
+#     """
+#ipeds_reporting_period_partition_filter = f"surveyId = '{var_surveyId}'"
 
-academic_term_partition = "termCode, partOfTermCode"
-academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
-academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
+#academic_term_partition = "termCode, partOfTermCode"
+#academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
+#academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
 
 def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
                             ipeds_client_config_partition_filter):
