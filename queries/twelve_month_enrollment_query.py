@@ -31,10 +31,10 @@ optionNames = [
     'sql_script_s3_output_bucket',
 ]
 
-# args = getResolvedOptions(sys.argv, optionNames)
+args = getResolvedOptions(sys.argv, optionNames)
 
 # Default survey values
-var_surveyYear = '2021'  # args['year']
+var_surveyYear = four_digit_to_ipeds_year(args['calendarYear'])
 
 """
 survey_id_map = {
