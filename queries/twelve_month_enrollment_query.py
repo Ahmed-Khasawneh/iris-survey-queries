@@ -51,7 +51,7 @@ tenant_id = options['tenantId']
 survey_type = options['surveyType'
 
 # Default survey values
-var_surveyYear = query_helpers.four_digit_to_ipeds_year(args['year'])
+var_surveyYear = query_helpers.four_digit_to_ipeds_year(year)
 
 """
 survey_id_map = {
