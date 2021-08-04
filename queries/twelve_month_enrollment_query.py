@@ -195,9 +195,27 @@ academic_term_reporting_refactor_in = query_helpers.academic_term_reporting_refa
     academic_term_order,
     academic_term_partition_filter).cache()
 
-course_type_counts_in = query_helpers.ipeds_course_type_counts()
+course_type_counts_in = query_helpers.ipeds_course_type_counts(
+    ipeds_client_config_partition,
+    ipeds_client_config_order,
+    ipeds_client_config_partition_filter,
+    ipeds_reporting_period_partition,
+    ipeds_reporting_period_order,
+    ipeds_reporting_period_partition_filter,
+    academic_term_partition,
+    academic_term_order,
+    academic_term_partition_filter)
 
-cohort_in = query_helpers.cohort()
+cohort_in = query_helpers.cohort(
+    ipeds_client_config_partition,
+    ipeds_client_config_order,
+    ipeds_client_config_partition_filter,
+    ipeds_reporting_period_partition,
+    ipeds_reporting_period_order,
+    ipeds_reporting_period_partition_filter,
+    academic_term_partition,
+    academic_term_order,
+    academic_term_partition_filter)
 
 def run_twelve_month_enrollment_query():
     
