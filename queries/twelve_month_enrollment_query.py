@@ -34,11 +34,14 @@ optionNames = [
 
 options = getResolvedOptions(sys.argv, optionNames)
 stage = options['stage']
-year = options['calendarYear']
 user_id = options['userId']
 tenant_id = options['tenantId']
 survey_type = options['surveyType']    
-var_surveyYear = query_helpers.four_digit_to_ipeds_year(year)
+
+year = options['calendarYear']
+year1 = str(year[2:4])
+year2 = str(int(year1) + 1)
+var_surveyYear = year1 + year2
 
 """
 survey_id_map = {
