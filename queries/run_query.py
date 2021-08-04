@@ -3,6 +3,7 @@ import sys
 import boto3
 import json
 from uuid import uuid4
+from common import query_helpers
 from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.utils import AnalysisException
 from datetime import datetime
