@@ -43,29 +43,6 @@ year1 = str(year[2:4])
 year2 = str(int(year1) + 1)
 var_surveyYear = year1 + year2
 
-"""
-survey_id_map = {
-    'TWELVE_MONTH_ENROLLMENT_1': 'E1D', 
-    'TWELVE_MONTH_ENROLLMENT_2': 'E12',
-    'TWELVE_MONTH_ENROLLMENT_3': 'E1E',
-    'TWELVE_MONTH_ENROLLMENT_4': 'E1F'
-}
-"""
-
-
-# var_surveyId = 'E1D' #survey_id_map[args['survey_type']]
-# var_surveyType = '12ME'
-# var_repPeriodTag1 = 'Academic Year End'
-# var_repPeriodTag2 = 'June End'
-# var_repPeriodTag3 = 'Fall Census'
-# var_repPeriodTag4 = 'Fall Census'
-# var_repPeriodTag5 = 'Fall Census'
-
-#def four_digit_to_ipeds_year(year):
-#    year1 = str(year[2:4])
-#    year2 = str(int(year1) + 1)
-#    var_surveyYear = year1 + year2
-#    return var_surveyYear
 
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
@@ -169,34 +146,9 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
 spark_refresh_entity_views_v2()
 
 
-# spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
-
-# ipeds_client_config_partition = "surveyCollectionYear"
-# ipeds_client_config_order = f"""
-#    ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
-#         when array_contains(tags, '{var_repPeriodTag2}') then 2
-#         else 3 end) asc,
-#    snapshotDate desc,
-#    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
-#     """
-# ipeds_client_config_partition_filter = f"surveyCollectionYear = '{var_surveyYear}'"  # f"surveyId = '{var_surveyId}' and var_surveyYear = '{var_surveyYear}"
-
-# ipeds_reporting_period_partition = "surveyCollectionYear, surveyId, surveySection, termCode, partOfTermCode"
-# ipeds_reporting_period_order = f"""
-#    ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
-#         when array_contains(tags, '{var_repPeriodTag2}') then 2
-#         else 3 end) asc,
-#    snapshotDate desc,
-#    coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
-#     """
-# ipeds_reporting_period_partition_filter = f"surveyId = '{var_surveyId}'"
-
-# academic_term_partition = "termCode, partOfTermCode"
-# academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
-# academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
-
 def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
                             ipeds_client_config_partition_filter):
+                            
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
 
     ipeds_client_config = ipeds_client_config_in.filter(expr(f"{ipeds_client_config_partition_filter}")).select(
@@ -261,9 +213,9 @@ def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_o
 
 
 def academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter):
+
     academic_term_in = spark.sql('select * from academicTerm')
 
-    # Should be able to switch to this\/ and remove this /\ when moving to a script
     academic_term_2 = academic_term_in.filter(expr(f"{academic_term_partition_filter}")).select(
         academic_term_in.academicYear,
         to_timestamp(academic_term_in.censusDate).alias('censusDate'),
@@ -332,11 +284,8 @@ def academic_term_reporting_refactor(
         ipeds_reporting_period_partition_filter,
         academic_term_in):
     
-    #academic_term_in = academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter)    
-
     ipeds_reporting_period_in = spark.sql("select * from ipedsReportingPeriod")
 
-    # ipeds_reporting_period_2 = academic_term_in.join(broadcast(ipeds_reporting_period_in),
     ipeds_reporting_period_2 = academic_term_in.join(ipeds_reporting_period_in,
                                                      ((academic_term_in.termCode == upper(
                                                          ipeds_reporting_period_in.termCode)) &
@@ -410,7 +359,7 @@ def academic_term_reporting_refactor(
     max_term_order_fall = ipeds_reporting_period_2.filter(ipeds_reporting_period_2.termType == 'Fall').select(
         max(ipeds_reporting_period_2.termCodeOrder).alias('maxFallTerm'))
 
-    academic_term_reporting_refactor = ipeds_reporting_period_2.crossJoin(max_term_order_summer).crossJoin(
+    academic_term_reporting_refactor_out = ipeds_reporting_period_2.crossJoin(max_term_order_summer).crossJoin(
         max_term_order_fall).withColumn(
         'termTypeNew',
         expr(
@@ -418,41 +367,15 @@ def academic_term_reporting_refactor(
 
     # ipeds_reporting_period_2.unpersist()
 
-    return academic_term_reporting_refactor
+    return academic_term_reporting_refactor_out
 
 
 def ipeds_course_type_counts(
-        ipeds_client_config_partition,
-        ipeds_client_config_order,
-        ipeds_client_config_partition_filter,
-        ipeds_reporting_period_partition,
-        ipeds_reporting_period_order,
-        ipeds_reporting_period_partition_filter,
-        academic_term_partition,
-        academic_term_order,
-        academic_term_partition_filter):
+        ipeds_client_config_in,
+        academic_term_in,
+        academic_term_reporting_refactor_in):
     
-    ipeds_client_config_in = ipeds_client_config_mcr(
-        ipeds_client_config_partition,
-        ipeds_client_config_order,
-        ipeds_client_config_partition_filter)
-
-    academic_term_in = academic_term_mcr(
-        academic_term_partition,
-        academic_term_order,
-        academic_term_partition_filter)
-
-    academic_term_reporting_refactor_in = academic_term_reporting_refactor(
-        ipeds_reporting_period_partition,
-        ipeds_reporting_period_order,
-        ipeds_reporting_period_partition_filter,
-        academic_term_in)
-
-    # ipeds_client_config_in = ipeds_client_config
-    # academic_term_in = academic_term
-    # academic_term_reporting_refactor_in = academic_term_reporting_refactor
-
-    registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
+    egistration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
     course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
     course_section_schedule_in = spark.sql("select * from courseSectionSchedule").filter(
         col('isIpedsReportable') == True)
@@ -516,7 +439,7 @@ def ipeds_course_type_counts(
                 col('regRecordActivityDate').desc(),
                 col('regStatusActionDate').desc()))).filter(
         (col('regRowNum') == 1) & col('regIsEnrolled') == lit('True'))
-
+        
     registration_course_section = registration.join(
         course_section_in,
         (registration.regTermCode == course_section_in.termCode) &
@@ -829,42 +752,10 @@ def ipeds_course_type_counts(
 
 
 def cohort(
-        ipeds_client_config_partition,
-        ipeds_client_config_order,
-        ipeds_client_config_partition_filter,
-        ipeds_reporting_period_partition,
-        ipeds_reporting_period_order,
-        ipeds_reporting_period_partition_filter,
-        academic_term_partition,
-        academic_term_order,
-        academic_term_partition_filter):
-    
-    ipeds_client_config_in = ipeds_client_config_mcr(
-        ipeds_client_config_partition,
-        ipeds_client_config_order,
-        ipeds_client_config_partition_filter)
-
-    academic_term_in = academic_term_mcr(
-        academic_term_partition,
-        academic_term_order,
-        academic_term_partition_filter)
-
-    academic_term_reporting_refactor_in = academic_term_reporting_refactor(
-        ipeds_reporting_period_partition,
-        ipeds_reporting_period_order,
-        ipeds_reporting_period_partition_filter,
-        academic_term_in)
-
-    course_type_counts_in = ipeds_course_type_counts(
-        ipeds_client_config_partition,
-        ipeds_client_config_order,
-        ipeds_client_config_partition_filter,
-        ipeds_reporting_period_partition,
-        ipeds_reporting_period_order,
-        ipeds_reporting_period_partition_filter,
-        academic_term_partition,
-        academic_term_order,
-        academic_term_partition_filter)
+        ipeds_client_config_in,
+        academic_term_in,
+        academic_term_reporting_refactor_in,
+        course_type_counts_in):
 
     student_in = spark.sql("select * from student")
     person_in = spark.sql("select * from person")
@@ -1383,4 +1274,4 @@ def cohort(
         """)
     )
 
-    return cohort
+    return cohort    
