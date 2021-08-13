@@ -189,18 +189,16 @@ academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
 ipeds_client_config_in = query_helpers.ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
                             ipeds_client_config_partition_filter)
 
-academic_term_in = query_helpers.academic_term_mcr(
+academic_term_df = academic_term_mcr(
     academic_term_partition,
     academic_term_order,
     academic_term_partition_filter).cache()
 
-academic_term_reporting_refactor_in = query_helpers.academic_term_reporting_refactor(
+academic_term_reporting_refactor_in = academic_term_reporting_refactor(
     ipeds_reporting_period_partition,
     ipeds_reporting_period_order,
     ipeds_reporting_period_partition_filter,
-    academic_term_partition,
-    academic_term_order,
-    academic_term_partition_filter).cache()
+    academic_term_df).cache()
 
 course_type_counts_in = query_helpers.ipeds_course_type_counts(
     ipeds_client_config_partition,
