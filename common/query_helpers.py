@@ -446,9 +446,7 @@ def ipeds_course_type_counts(
         ipeds_reporting_period_partition,
         ipeds_reporting_period_order,
         ipeds_reporting_period_partition_filter,
-        academic_term_partition,
-        academic_term_order,
-        academic_term_partition_filter)
+        academic_term_in)
 
     # ipeds_client_config_in = ipeds_client_config
     # academic_term_in = academic_term
@@ -855,9 +853,7 @@ def cohort(
         ipeds_reporting_period_partition,
         ipeds_reporting_period_order,
         ipeds_reporting_period_partition_filter,
-        academic_term_partition,
-        academic_term_order,
-        academic_term_partition_filter)
+        academic_term_in)
 
     course_type_counts_in = ipeds_course_type_counts(
         ipeds_client_config_partition,
