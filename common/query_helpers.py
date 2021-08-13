@@ -375,7 +375,7 @@ def ipeds_course_type_counts(
         academic_term_in,
         academic_term_reporting_refactor_in):
     
-    egistration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
+    registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
     course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
     course_section_schedule_in = spark.sql("select * from courseSectionSchedule").filter(
         col('isIpedsReportable') == True)
