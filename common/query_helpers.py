@@ -771,7 +771,7 @@ def ipeds_course_type_counts(
 
     return course_type_counts
 
-def cohort(
+def ipeds_cohort(
         ipeds_client_config_in = None, ipeds_reporting_period_in = None, academic_term_in = None, academic_term_reporting_refactor_in = None, course_type_counts_in = None,
         surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
 
