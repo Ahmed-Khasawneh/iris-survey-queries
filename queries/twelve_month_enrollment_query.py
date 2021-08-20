@@ -150,59 +150,31 @@ def run_twelve_month_enrollment_query():
 # ********** Survey Default Values
 
 #Zep differences: var_surveyYear, add query_helpers. before each function call
-
+#testing - uncomment next two lines, comment the 3rd
+    #survey_type = 'TWELVE_MONTH_ENROLLMENT_1'
     #var_surveyYear = '1415'
+
     var_surveyYear = year1 + year2
-    var_surveyId = 'E1D'  # survey_id_map[args['survey_type']]
     var_surveyType = '12ME'
-    var_repPeriodTag1 = 'Academic Year End'
-    var_repPeriodTag2 = 'June End'
-    var_repPeriodTag3 = 'Fall Census'
-    var_repPeriodTag4 = 'Fall Census'
-    var_repPeriodTag5 = 'Fall Census'
-    
-    ###IPEDSClientConfig partition
-    ipeds_client_config_partition = "surveyCollectionYear"
-    ipeds_client_config_order = f"""
-        ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
-             when array_contains(tags, '{var_repPeriodTag2}') then 2
-             else 3 end) asc,
-        snapshotDate desc,
-        coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
-         """
-    ipeds_client_config_partition_filter = f"surveyCollectionYear = '{var_surveyYear}'"  # f"surveyId = '{var_surveyId}' and var_surveyYear = '{var_surveyYear}"
 
-    ###IPEDSReportingPeriod partition
-    ipeds_reporting_period_partition = "surveyCollectionYear, surveyId, surveySection, termCode, partOfTermCode"
-    ipeds_reporting_period_order = f"""
-        ((case when array_contains(tags, '{var_repPeriodTag1}') then 1
-             when array_contains(tags, '{var_repPeriodTag2}') then 2
-             else 3 end) asc,
-        snapshotDate desc,
-        coalesce(recordActivityDate, CAST('9999-09-09' as DATE)) desc)
-         """
-    ipeds_reporting_period_partition_filter = f"surveyId = '{var_surveyId}'"
-
-    ###AcademicTerm partition
-    academic_term_partition = "termCode, partOfTermCode"
-    academic_term_order = "(snapshotDate desc, recordActivityDate desc)"
-    academic_term_partition_filter = "coalesce(isIpedsReportable, true) = true"
-
-    if var_surveyId == 'E1D':
+    if survey_type == 'TWELVE_MONTH_ENROLLMENT_1':
+        var_surveyId = 'E1D'
         A_UgGrBoth = ["1", "2", "3", "7", "15", "16", "17", "21", "99"]
         A_UgOnly = ["1", "2", "3", "7", "15", "16", "17", "21"]
         A_GrOnly = ["99"]
         C_UgGrBoth = ["1", "2", "3"]
         C_UgOnly = ["1", "2"]
         C_GrOnly = ["3"]
-    elif var_surveyId == 'E12':
+    elif survey_type == 'TWELVE_MONTH_ENROLLMENT_2':
+        var_surveyId = 'E12'
         A_UgGrBoth = ["1", "2", "3", "7", "15", "16", "17", "21"]
         A_UgOnly = ["1", "2", "3", "7", "15", "16", "17", "21"]
         A_GrOnly = [""]
         C_UgGrBoth = ["1", "2"]
         C_UgOnly = ["1", "2"]
         C_GrOnly = [""]
-    elif var_surveyId == 'E1E':
+    elif survey_type == 'TWELVE_MONTH_ENROLLMENT_3':
+        var_surveyId = 'E1E'
         A_UgGrBoth = ["1", "3", "7", "15", "17", "21"]
         A_UgOnly = ["1", "3", "7", "15", "17", "21"]
         A_GrOnly = [""]
@@ -210,43 +182,39 @@ def run_twelve_month_enrollment_query():
         C_UgOnly = ["1", "2"]
         C_GrOnly = [""]
     else:  # V4
+        var_surveyId = 'E1F'
         A_UgGrBoth = ["1", "3", "15", "17"]
         A_UgOnly = ["1", "3", "15", "17"]
         A_GrOnly = [""]
         C_UgGrBoth = ["1", "2", "3"]
         C_UgOnly = ["1", "2"]
         C_GrOnly = ["3"]
+
+    cohortAcademicTag1 = 'Fall Census'
+    cohortAcademicTag1 = 'Pre-Fall Summer Census'
+    cohortAcademicTag1 = 'Spring Census'
+    cohortAcademicTag1 = 'Post-Spring Summer Census'
+    cohortProgramTag1 = 'Academic Year End'
+    statusTag1 = 'June End'
+    statusTag2 = 'Academic Year End'
+    surveySections = ['COHORT']
+    #Figure out how to build these timestamps using the year1, year2 input parameters
+    #ipedsReportingStartDate = to_timestamp(lit('2019-07-01')
+    #ipedsReportingEndDate = to_timestamp(lit('2020-06-30') 
         
 # ********** Survey Reporting Period
-    ipeds_client_config_df = query_helpers.ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
-                            ipeds_client_config_partition_filter)
-
-    academic_term_df = query_helpers.academic_term_mcr(
-        academic_term_partition,
-        academic_term_order,
-        academic_term_partition_filter).cache()
-
-    academic_term_reporting_refactor_df = query_helpers.academic_term_reporting_refactor(
-        ipeds_reporting_period_partition,
-        ipeds_reporting_period_order,
-        ipeds_reporting_period_partition_filter,
-        academic_term_df).cache()
+    peds_client_config = query_helpers.ipeds_client_config_mcr(var_surveyYear)
+    all_academic_terms = query_helpers.academic_term_mcr()
+    reporting_period_terms = query_helpers.academic_term_reporting_refactor(None, all_academic_terms, var_surveyYear, var_surveyId, surveySections)
 
 # ********** Course Type Counts
-    course_type_counts_df = query_helpers.ipeds_course_type_counts(
-        ipeds_client_config_df,
-        academic_term_df,
-        academic_term_reporting_refactor_df)
+    course_type_counts = query_helpers.ipeds_course_type_counts(ipeds_client_config, None, all_academic_terms, reporting_period_terms, var_surveyYear, var_surveyId, surveySections)
 
 # ********** Cohort
-    cohort_df = query_helpers.cohort(
-        ipeds_client_config_df,
-        academic_term_df,
-        academic_term_reporting_refactor_df,
-        course_type_counts_df)
+    cohort = query_helpers.ipeds_cohort(ipeds_client_config, None, all_academic_terms, reporting_period_terms, course_type_counts, var_surveyYear, var_surveyId, surveySections)
 
 # ********** Survey Data Transformations    
-    cohort_out = cohort_df.withColumn('ipedsPartAStudentLevel',
+    cohort_out = cohort.withColumn('ipedsPartAStudentLevel',
         expr("""
         (case when studentLevelUGGR = 'GR' then '99' 
         when isNonDegreeSeeking_calc = true and timeStatus_calc = 'Full Time' then '7'
@@ -270,22 +238,17 @@ def run_twelve_month_enrollment_query():
              else null
         end
         """)
-        ).filter(cohort_df.ipedsInclude == 1)
+        ).filter(cohort.ipedsInclude == 1)
 
-    course_type_counts_out = course_type_counts_df.join(
+    course_type_counts_out = course_type_counts.join(
         cohort_out,
-        (cohort_out.regPersonId == course_type_counts_df.regPersonId), 'inner').select(
-        course_type_counts_df["*"]).agg(
+        (cohort_out.regPersonId == course_type_counts.regPersonId), 'inner').select(
+        course_type_counts["*"]).agg(
         sum("UGCreditHours").alias("UGCreditHours"),
         sum("UGClockHours").alias("UGClockHours"),
         sum("GRCreditHours").alias("GRCreditHours"),
-        sum("DPPCreditHours").alias("DPPCreditHours"))
-
-#course_type_counts_out.show()       
-#cohort_df.show() 1m 6s
-#cohort_out.count() #777
-#cohort_out.show() #1m 10s
-
+        sum("DPPCreditHours").alias("DPPCreditHours"))        
+    
 # ********** Survey Formatting
 
     # Part A
@@ -382,7 +345,7 @@ def run_twelve_month_enrollment_query():
         partA_out = spark.createDataFrame(partA_out).toDF(*a_columns)
 
     # Part A output filter
-    partA_out = partA_out.crossJoin(ipeds_client_config_df).filter(
+    partA_out = partA_out.crossJoin(ipeds_client_config).filter(
         (((col('icOfferUndergradAwardLevel') == 'Y') & (col('icOfferGraduateAwardLevel') == 'Y') & (
             col('field1').isin(A_UgGrBoth)))
          | ((col('icOfferUndergradAwardLevel') == 'Y') & (col('icOfferGraduateAwardLevel') == 'N') & (
@@ -423,7 +386,7 @@ def run_twelve_month_enrollment_query():
 
     # Part B
     if course_type_counts_out.rdd.isEmpty() == False:
-        partB_out = course_type_counts_out.crossJoin(ipeds_client_config_df).withColumn('part', lit('B')).select(
+        partB_out = course_type_counts_out.crossJoin(ipeds_client_config).withColumn('part', lit('B')).select(
             'part',
             # CREDHRSU - credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.
             when(((col('icOfferUndergradAwardLevel') == lit('Y')) & (col('instructionalActivityType') != lit('CL'))),
