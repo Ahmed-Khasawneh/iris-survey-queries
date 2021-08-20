@@ -38,12 +38,6 @@ user_id = options['userId']
 tenant_id = options['tenantId']
 survey_type = options['surveyType']    
 
-year = options['calendarYear']
-year1 = str(year[2:4])
-year2 = str(int(year1) + 1)
-var_surveyYear = year1 + year2
-
-
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
     s3 path and format
@@ -145,13 +139,11 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
 
 spark_refresh_entity_views_v2()
 
-
-def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_order,
-                            ipeds_client_config_partition_filter):
-                            
+def ipeds_client_config_mcr(surveyYear = ''):
+    
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
 
-    ipeds_client_config = ipeds_client_config_in.filter(expr(f"{ipeds_client_config_partition_filter}")).select(
+    ipeds_client_config = ipeds_client_config_in.filter(col('surveyCollectionYear') == surveyYear).select(
         coalesce(upper(col('acadOrProgReporter')), lit('A')).alias('acadOrProgReporter'),  # 'A'
         coalesce(upper(col('admAdmissionTestScores')), lit('R')).alias('admAdmissionTestScores'),  # 'R'
         coalesce(upper(col('admCollegePrepProgram')), lit('R')).alias('admCollegePrepProgram'),  # 'R'
@@ -206,23 +198,57 @@ def ipeds_client_config_mcr(ipeds_client_config_partition, ipeds_client_config_o
         ipeds_client_config_in.tags).withColumn(
         'clientConfigRowNum',
         row_number().over(Window.partitionBy(
-            expr(f"({ipeds_client_config_partition})")).orderBy(expr(f"{ipeds_client_config_order}")))).filter(
-        col('clientConfigRowNum') <= 1).limit(1).cache()
+            col('surveyCollectionYear')).orderBy(
+            col('snapshotDate').desc(),
+                col('recordActivityDate').desc()))).filter(
+        col('clientConfigRowNum') <= 1).limit(1) #.cache()
 
     return ipeds_client_config
 
 
-def academic_term_mcr(academic_term_partition, academic_term_order, academic_term_partition_filter):
+def ipeds_reporting_period_mcr(surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
+    
+    CurrentYearSurveySection = ['COHORT', 'PRIOR SUMMER']
+    PriorYear1SurveySection = ['PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER']
+    PriorYear2SurveySection = ['PRIOR YEAR 2 COHORT', 'PRIOR YEAR 2 PRIOR SUMMER']
+    
+    ipeds_reporting_period_in = spark.sql('select * from ipedsReportingPeriod')
 
-    academic_term_in = spark.sql('select * from academicTerm')
+    ipeds_reporting_period = ipeds_reporting_period_in.filter(
+        (ipeds_reporting_period_in.surveyCollectionYear == surveyYear) & (ipeds_reporting_period_in.surveyId == surveyVersionId) &
+        (upper(ipeds_reporting_period_in.surveySection).isin(surveySectionValues) == True)).select(
+        coalesce(upper(ipeds_reporting_period_in.partOfTermCode), lit('1')).alias('partOfTermCode'),
+        to_timestamp(ipeds_reporting_period_in.recordActivityDate).alias('recordActivityDate'),
+        ipeds_reporting_period_in.surveyCollectionYear,
+        upper(ipeds_reporting_period_in.surveyId).alias('surveyId'),
+        upper(ipeds_reporting_period_in.surveyName).alias('surveyName'),
+        upper(ipeds_reporting_period_in.surveySection).alias('surveySection'),
+        upper(ipeds_reporting_period_in.termCode).alias('termCode'),
+        to_timestamp(ipeds_reporting_period_in.snapshotDate).alias('snapshotDate'),
+        when(upper(ipeds_reporting_period_in.surveySection).isin(CurrentYearSurveySection), 'CY').when(
+            upper(ipeds_reporting_period_in.surveySection).isin(PriorYear1SurveySection), 'PY1').when(
+            upper(ipeds_reporting_period_in.surveySection).isin(PriorYear1SurveySection), 'PY2').alias('yearType'),
+        ipeds_reporting_period_in.tags).withColumn(
+        'ipedsRepPerRowNum',
+        row_number().over(Window.partitionBy(
+            col('surveySection'), col('termCode'), col('partOfTermCode')).orderBy(
+            col('snapshotDate').desc(),
+            col('recordActivityDate').desc()))).filter(
+         (col('ipedsRepPerRowNum') == 1) & (col('termCode').isNotNull())) #.cache()
+    
+    return ipeds_reporting_period
 
-    academic_term_2 = academic_term_in.filter(expr(f"{academic_term_partition_filter}")).select(
+    
+def academic_term_mcr():
+
+    academic_term_in = spark.sql('select * from academicTerm').filter(col('isIpedsReportable') == True)
+
+    academic_term_2 = academic_term_in.select(
         academic_term_in.academicYear,
         to_timestamp(academic_term_in.censusDate).alias('censusDate'),
         to_timestamp(academic_term_in.endDate).alias('endDate'),
         academic_term_in.financialAidYear,
-        # academic_term_in.isIPEDSReportable,
-        upper(academic_term_in.partOfTermCode).alias('partOfTermCode'),
+        coalesce(upper(academic_term_in.partOfTermCode), lit('1')).alias('partOfTermCode'),
         academic_term_in.partOfTermCodeDescription,
         to_timestamp(academic_term_in.recordActivityDate).alias('recordActivityDate'),
         academic_term_in.requiredFTCreditHoursGR,
@@ -232,13 +258,15 @@ def academic_term_mcr(academic_term_partition, academic_term_order, academic_ter
         to_timestamp(academic_term_in.startDate).alias('startDate'),
         academic_term_in.termClassification,
         upper(academic_term_in.termCode).alias('termCode'),
-        # academic_term_in.termCodeDescription,
+        academic_term_in.termCodeDescription,
         academic_term_in.termType,
         to_timestamp(academic_term_in.snapshotDate).alias('snapshotDate'),
         academic_term_in.tags).withColumn(
         'acadTermRowNum',
         row_number().over(Window.partitionBy(
-            expr(f"({academic_term_partition})")).orderBy(expr(f"{academic_term_order}")))).filter(
+            col('termCode'), col('partOfTermCode')).orderBy(
+            col('snapshotDate').desc(),
+            col('recordActivityDate').desc()))).filter(
         col('acadTermRowNum') == 1)
 
     academic_term_order = academic_term_2.select(
@@ -279,32 +307,24 @@ def academic_term_mcr(academic_term_partition, academic_term_order, academic_ter
 
 
 def academic_term_reporting_refactor(
-        ipeds_reporting_period_partition,
-        ipeds_reporting_period_order,
-        ipeds_reporting_period_partition_filter,
-        academic_term_in):
-    
-    ipeds_reporting_period_in = spark.sql("select * from ipedsReportingPeriod")
+        ipeds_reporting_period_in = None, academic_term_in = None, surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
+
+    if ipeds_reporting_period_in is None:
+       ipeds_reporting_period_in = ipeds_reporting_period_mcr(surveyYear, surveyVersionId, surveySectionValues)
+       
+    if academic_term_in is None:
+       academic_term_in = academic_term_mcr() 
 
     ipeds_reporting_period_2 = academic_term_in.join(ipeds_reporting_period_in,
-                                                     ((academic_term_in.termCode == upper(
-                                                         ipeds_reporting_period_in.termCode)) &
-                                                      (academic_term_in.partOfTermCode == coalesce(
-                                                          upper(ipeds_reporting_period_in.partOfTermCode), lit('1')))),
-                                                     'inner').filter(
-        expr(f"{ipeds_reporting_period_partition_filter}")).select(
-        upper(ipeds_reporting_period_in.partOfTermCode).alias('partOfTermCode'),
-        to_timestamp(ipeds_reporting_period_in.recordActivityDate).alias('recordActivityDate'),
-        ipeds_reporting_period_in.surveyCollectionYear,
-        upper(ipeds_reporting_period_in.surveyId).alias('surveyId'),
-        upper(ipeds_reporting_period_in.surveyName).alias('surveyName'),
-        upper(ipeds_reporting_period_in.surveySection).alias('surveySection'),
-        upper(ipeds_reporting_period_in.termCode).alias('termCode'),
-        to_timestamp(ipeds_reporting_period_in.snapshotDate).alias('snapshotDate'),
+                                                     ((academic_term_in.termCode == ipeds_reporting_period_in.termCode) &
+                                                      (academic_term_in.partOfTermCode == ipeds_reporting_period_in.partOfTermCode)),
+                                                     'inner').select(
+        ipeds_reporting_period_in.partOfTermCode,
+        ipeds_reporting_period_in.surveySection,
+        ipeds_reporting_period_in.termCode,
+        ipeds_reporting_period_in.snapshotDate,
         ipeds_reporting_period_in.tags,
-        when(upper(ipeds_reporting_period_in.surveySection).isin('PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER'),
-             'PY').when(
-            upper(ipeds_reporting_period_in.surveySection).isin('COHORT', 'PRIOR SUMMER'), 'CY').alias('yearType'),
+        ipeds_reporting_period_in.yearType,
         academic_term_in.termCodeOrder,
         academic_term_in.partOfTermOrder,
         academic_term_in.maxCensus,
@@ -330,12 +350,7 @@ def academic_term_reporting_refactor(
     ).withColumn(
         'equivCRHRFactor',
         expr("(coalesce(requiredFTCreditHoursUG/coalesce(requiredFTClockHoursUG, requiredFTCreditHoursUG), 1))")
-    ).withColumn(
-        'ipedsRepPerRowNum',
-        row_number().over(Window.partitionBy(
-            expr(f"({ipeds_reporting_period_partition})")).orderBy(expr(f"{ipeds_reporting_period_order}")))).filter(
-        (col('ipedsRepPerRowNum') == 1) & (col('termCode').isNotNull()) & (col('partOfTermCode').isNotNull())
-    ).withColumn(
+     ).withColumn(
         'rowNum',
         row_number().over(Window.partitionBy(
             expr("(termCode, partOfTermCode)")).orderBy(
@@ -365,16 +380,24 @@ def academic_term_reporting_refactor(
         expr(
             "(case when termType = 'Summer' and termClassification != 'Standard Length' then (case when maxSummerTerm < maxFallTerm then 'Pre-Fall Summer' else 'Post-Spring Summer' end) else termType end)")).cache()
 
-    # ipeds_reporting_period_2.unpersist()
-
     return academic_term_reporting_refactor_out
 
+###  Modify ipeds_course_type_counts to accept a dataframe with personId to join to Registration - this is needed for Admissions
+###  an empty dataframe would imply that records from Registration should be pulled as-is now (no join or filter on personId)
 
 def ipeds_course_type_counts(
-        ipeds_client_config_in,
-        academic_term_in,
-        academic_term_reporting_refactor_in):
+        ipeds_client_config_in = None, ipeds_reporting_period_in = None, academic_term_in = None, academic_term_reporting_refactor_in = None, 
+        surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
+
+    if ipeds_client_config_in is None:
+        ipeds_client_config_in = ipeds_client_config_mcr(surveyYear)
+       
+    if academic_term_in is None:
+       academic_term_in = academic_term_mcr() 
     
+    if academic_term_reporting_refactor_in is None:
+        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in, academic_term_in, surveyYear, surveyVersionId, surveySectionValues)
+       
     registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
     course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
     course_section_schedule_in = spark.sql("select * from courseSectionSchedule").filter(
@@ -383,7 +406,6 @@ def ipeds_course_type_counts(
     campus_in = spark.sql("select * from campus").filter(col('isIpedsReportable') == True)
 
     registration = registration_in.join(
-        # broadcast(academic_term_reporting_refactor_in),
         academic_term_reporting_refactor_in,
         (registration_in.termCode == academic_term_reporting_refactor_in.termCode) &
         (coalesce(registration_in.partOfTermCode, lit('1')) == academic_term_reporting_refactor_in.partOfTermCode) &
@@ -654,7 +676,6 @@ def ipeds_course_type_counts(
 
     registration_course_campus = registration_course.join(
         campus_in,
-        # broadcast(campus_in),
         (registration_course.newCampus == campus_in.campus) &
         (((campus_in.recordActivityDate != to_timestamp(lit('9999-09-09'))) & (
                 campus_in.recordActivityDate <= registration_course.repRefCensusDate))
@@ -750,12 +771,21 @@ def ipeds_course_type_counts(
 
     return course_type_counts
 
-
 def cohort(
-        ipeds_client_config_in,
-        academic_term_in,
-        academic_term_reporting_refactor_in,
-        course_type_counts_in):
+        ipeds_client_config_in = None, ipeds_reporting_period_in = None, academic_term_in = None, academic_term_reporting_refactor_in = None, course_type_counts_in = None,
+        surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
+
+    if ipeds_client_config_in is None:
+        ipeds_client_config_in = ipeds_client_config_mcr(surveyYear)
+       
+    if academic_term_in is None:
+       academic_term_in = academic_term_mcr() 
+    
+    if academic_term_reporting_refactor_in is None:
+        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in, academic_term_in, surveyYear, surveyVersionId, surveySectionValues)
+    
+    if course_type_counts_in is None:
+        course_type_counts_in = ipeds_course_type_counts(ipeds_client_config_in, ipeds_reporting_period_in, academic_term_in, academic_term_reporting_refactor_in, surveyYear, surveyVersionId, surveySectionValues)
 
     student_in = spark.sql("select * from student")
     person_in = spark.sql("select * from person")
@@ -768,7 +798,6 @@ def cohort(
         academic_term_reporting_refactor_in,
         ((upper(student_in.termCode) == academic_term_reporting_refactor_in.termCode)
          & (coalesce(student_in.isIPEDSReportable, lit(True)) == True)), 'inner').select(
-        # academic_term_reporting_refactor_in['*'],
         academic_term_reporting_refactor_in.yearType.alias('repRefYearType'),
         academic_term_reporting_refactor_in.financialAidYear.alias('repRefFinancialAidYear'),
         academic_term_reporting_refactor_in.surveySection.alias('repRefSurveySection'),
