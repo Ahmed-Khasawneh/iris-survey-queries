@@ -97,48 +97,6 @@ def spark_create_json_format(data_frame):
     result = result.drop(column_name)
     return result
 
-
-def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb233420',
-                                  survey_type='TWELVE_MONTH_ENROLLMENT_1', stage='DEV', year=2020, user_id=None):
-    lambda_client = boto3.client('lambda', 'us-east-1')
-    invoke_response = lambda_client.invoke(
-        FunctionName="iris-connector-doris-{}-getReportPayload".format(stage),
-        InvocationType='RequestResponse',
-        LogType="None",
-        Payload=json.dumps(
-            {'tenantId': tenant_id, 'surveyType': survey_type, 'stateMachineExecutionId': '', 'calendarYear': year,
-             'userId': user_id}).encode('utf-8')
-    )
-    view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
-
-    print(json.dumps(view_metadata_without_s3_paths, indent=2))
-
-    view_metadata_without_s3_paths["tenantId"] = tenant_id
-    invoke_response = lambda_client.invoke(
-        FunctionName="doris-data-access-apis-{}-GetEntitySnapshotPaths".format(stage),
-        InvocationType='RequestResponse',
-        LogType="None",
-        Payload=json.dumps(view_metadata_without_s3_paths)
-    )
-    view_metadata = json.loads(invoke_response['Payload'].read().decode("utf-8"))
-    snapshot_metadata = view_metadata.get('snapshotMetadata', {})
-
-    print(json.dumps(view_metadata, indent=2))
-
-    for view in view_metadata.get('views', []):
-        s3_paths = view.get('s3Paths', [])
-        view_name = view.get('viewName')
-        if len(s3_paths) > 0:
-            print("{}: ({})".format(view_name, ','.join(s3_paths)))
-            df = spark_read_s3_source(s3_paths).toDF()
-            df = add_snapshot_metadata_columns(df, snapshot_metadata)
-            df.createOrReplaceTempView(view_name)
-        else:
-            print("No snapshots found for {}".format(view_name))
-
-
-spark_refresh_entity_views_v2()
-
 def ipeds_client_config_mcr(surveyYear = ''):
     
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
