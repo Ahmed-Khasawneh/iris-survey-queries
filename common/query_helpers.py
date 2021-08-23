@@ -17,7 +17,7 @@ from awsglue.utils import getResolvedOptions
 
 #spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
 # spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).config("spark.dynamicAllocation.enabled", 'true').getOrCreate()
-#sparkContext = SparkContext.getOrCreate()
+sparkContext = SparkContext.getOrCreate()
 #sqlContext = SQLContext(sparkContext)
 #glueContext = GlueContext(sparkContext)
 
