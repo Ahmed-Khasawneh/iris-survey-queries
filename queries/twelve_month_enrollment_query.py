@@ -203,7 +203,7 @@ def run_twelve_month_enrollment_query():
     #ipedsReportingEndDate = to_timestamp(lit('2020-06-30') 
         
 # ********** Survey Reporting Period
-    peds_client_config = query_helpers.ipeds_client_config_mcr(var_surveyYear)
+    ipeds_client_config = query_helpers.ipeds_client_config_mcr(var_surveyYear)
     all_academic_terms = query_helpers.academic_term_mcr()
     reporting_period_terms = query_helpers.academic_term_reporting_refactor(None, all_academic_terms, var_surveyYear, var_surveyId, surveySections)
 
