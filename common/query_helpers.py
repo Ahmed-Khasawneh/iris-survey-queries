@@ -21,57 +21,6 @@ sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
-optionNames = [
-    'debugLogging',
-    'calendarYear',
-    'surveyType',
-    'stage',
-    's3Bucket',
-    's3Key',
-    'tenantId',
-    'userId',
-]
-
-options = getResolvedOptions(sys.argv, optionNames)
-stage = options['stage']
-user_id = options['userId']
-tenant_id = options['tenantId']
-survey_type = options['surveyType']    
-
-def spark_read_s3_source(s3_paths, format="parquet"):
-    """Reads data from s3 on the basis of
-    s3 path and format
-    """
-    s3_data = glueContext.getSource(format, paths=s3_paths)
-    return s3_data.getFrame()
-
-
-def add_snapshot_metadata_columns(entity_df, snapshot_metadata):
-    snapshot_date_col = f.lit(None)
-    snapshot_tags_col = f.lit(f.array([]))
-
-    if not has_column(entity_df, 'snapshotGuid'):
-        entity_df = entity_df.withColumn('snapshotGuid', f.lit(None))
-
-    if snapshot_metadata is not None:
-        iterator = 0
-        for guid, metadata in snapshot_metadata.items():
-            snapshot_date_value = fromisodate(metadata['snapshotDate']) if 'snapshotDate' in metadata else None
-            snapshot_tags_values = f.array(
-                list(map(lambda v: f.lit(v), metadata['tags'] if 'tags' in metadata else [])))
-            if iterator == 0:
-                iterator = 1
-                snapshot_date_col = f.when(f.col('snapshotGuid') == guid, snapshot_date_value)
-                snapshot_tags_col = f.when(f.col('snapshotGuid') == guid, snapshot_tags_values)
-            else:
-                snapshot_date_col = snapshot_date_col.when(f.col('snapshotGuid') == guid, snapshot_date_value)
-                snapshot_tags_col = snapshot_tags_col.when(f.col('snapshotGuid') == guid, snapshot_tags_values)
-
-    entity_df = entity_df.withColumn('snapshotDate', snapshot_date_col)
-    entity_df = entity_df.withColumn('tags', snapshot_tags_col)
-
-    return entity_df
-
 
 def ipeds_client_config_mcr(surveyYear = ''):
     
