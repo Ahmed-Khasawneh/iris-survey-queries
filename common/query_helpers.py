@@ -73,30 +73,6 @@ def add_snapshot_metadata_columns(entity_df, snapshot_metadata):
     return entity_df
 
 
-def has_column(df, col):
-    try:
-        df[col]
-        return True
-    except AnalysisException:
-        return False
-
-
-def fromisodate(iso_date_str):
-    # example format: 2020-07-27T18:18:54.123Z
-    try:
-        date_str_with_timezone = str(iso_date_str).replace('Z', '+00:00')
-        return datetime.strptime(date_str_with_timezone, "%Y-%m-%dT%H:%M:%S.%f%z")
-    except:
-        return datetime.strptime(iso_date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-
-
-def spark_create_json_format(data_frame):
-    column_name = str(uuid.uuid4())
-    df = data_frame.withColumn(column_name, f.lit(0))
-    result = df.groupBy(column_name).agg(f.collect_list(f.struct(data_frame.columns)).alias("Items"))
-    result = result.drop(column_name)
-    return result
-
 def ipeds_client_config_mcr(surveyYear = ''):
     
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
