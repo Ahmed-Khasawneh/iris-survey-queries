@@ -15,11 +15,11 @@ from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
-#spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
+spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
 # spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).config("spark.dynamicAllocation.enabled", 'true').getOrCreate()
 sparkContext = SparkContext.getOrCreate()
-#sqlContext = SQLContext(sparkContext)
-#glueContext = GlueContext(sparkContext)
+sqlContext = SQLContext(sparkContext)
+glueContext = GlueContext(sparkContext)
 
 
 def ipeds_client_config_mcr(surveyYear = ''):
