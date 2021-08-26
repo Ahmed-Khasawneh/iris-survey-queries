@@ -7,7 +7,7 @@ from common import query_helpers
 from pyspark.sql.window import Window
 # from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
-    to_date, when, coalesce, count, rank
+    to_date, when, coalesce, count, rank, round
 from pyspark.sql.utils import AnalysisException
 from datetime import datetime
 from pyspark import SparkContext
@@ -41,6 +41,7 @@ survey_type = options['surveyType']
 year = options['calendarYear']
 year1 = str(year[2:4])
 year2 = str(int(year1) + 1)
+survey_year = year1 + year2
 
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
@@ -152,93 +153,59 @@ def run_twelve_month_enrollment_query():
 #Zep differences: var_surveyYear, add query_helpers. before each function call
 #testing - uncomment next two lines, comment the 3rd
     #survey_type = 'TWELVE_MONTH_ENROLLMENT_1'
-    #var_surveyYear = '1415'
+    #survey_year = '1415'
 
-    var_surveyYear = year1 + year2
-    var_surveyType = '12ME'
+    survey_type_abbreviation = '12ME'
 
     if survey_type == 'TWELVE_MONTH_ENROLLMENT_1':
-        var_surveyId = 'E1D'
-        A_UgGrBoth = ["1", "2", "3", "7", "15", "16", "17", "21", "99"]
-        A_UgOnly = ["1", "2", "3", "7", "15", "16", "17", "21"]
-        A_GrOnly = ["99"]
-        C_UgGrBoth = ["1", "2", "3"]
-        C_UgOnly = ["1", "2"]
-        C_GrOnly = ["3"]
+        survey_id = 'E1D'
     elif survey_type == 'TWELVE_MONTH_ENROLLMENT_2':
-        var_surveyId = 'E12'
-        A_UgGrBoth = ["1", "2", "3", "7", "15", "16", "17", "21"]
-        A_UgOnly = ["1", "2", "3", "7", "15", "16", "17", "21"]
-        A_GrOnly = [""]
-        C_UgGrBoth = ["1", "2"]
-        C_UgOnly = ["1", "2"]
-        C_GrOnly = [""]
+        survey_id = 'E12'
     elif survey_type == 'TWELVE_MONTH_ENROLLMENT_3':
-        var_surveyId = 'E1E'
-        A_UgGrBoth = ["1", "3", "7", "15", "17", "21"]
-        A_UgOnly = ["1", "3", "7", "15", "17", "21"]
-        A_GrOnly = [""]
-        C_UgGrBoth = ["1", "2"]
-        C_UgOnly = ["1", "2"]
-        C_GrOnly = [""]
+        survey_id = 'E1E'
     else:  # V4
-        var_surveyId = 'E1F'
-        A_UgGrBoth = ["1", "3", "15", "17"]
-        A_UgOnly = ["1", "3", "15", "17"]
-        A_GrOnly = [""]
-        C_UgGrBoth = ["1", "2", "3"]
-        C_UgOnly = ["1", "2"]
-        C_GrOnly = ["3"]
+        survey_id = 'E1F'
 
-    cohortAcademicTag1 = 'Fall Census'
-    cohortAcademicTag1 = 'Pre-Fall Summer Census'
-    cohortAcademicTag1 = 'Spring Census'
-    cohortAcademicTag1 = 'Post-Spring Summer Census'
-    cohortProgramTag1 = 'Academic Year End'
-    statusTag1 = 'June End'
-    statusTag2 = 'Academic Year End'
-    surveySections = ['COHORT']
+    cohort_academic_fall_tag = 'Fall Census'
+    cohort_academic_pre_fall_summer_tag = 'Pre-Fall Summer Census'
+    cohort_academic_spring_tag = 'Spring Census'
+    cohort_academic_post_spring_summer_tag = 'Post-Spring Summer Census'
+    cohort_program_tag_1 = 'Academic Year End'
+    cohort_status_tag_1 = 'June End'
+    cohort_status_tag_2 = 'Academic Year End'
+    survey_sections = ['COHORT']
     #Figure out how to build these timestamps using the year1, year2 input parameters
     #ipedsReportingStartDate = to_timestamp(lit('2019-07-01')
     #ipedsReportingEndDate = to_timestamp(lit('2020-06-30') 
-        
+    
 # ********** Survey Reporting Period
-    ipeds_client_config = query_helpers.ipeds_client_config_mcr(var_surveyYear)
+    ipeds_client_config = query_helpers.ipeds_client_config_mcr(survey_year_in = survey_year).withColumn('survey_id', lit(survey_id))
     all_academic_terms = query_helpers.academic_term_mcr()
-    reporting_period_terms = query_helpers.academic_term_reporting_refactor(None, all_academic_terms, var_surveyYear, var_surveyId, surveySections)
+    reporting_period_terms = query_helpers.academic_term_reporting_refactor(academic_term_in = all_academic_terms, survey_year_in = survey_year, survey_id_in = survey_id, survey_sections_in = survey_sections)
 
 # ********** Course Type Counts
-    course_type_counts = query_helpers.ipeds_course_type_counts(ipeds_client_config, None, all_academic_terms, reporting_period_terms, var_surveyYear, var_surveyId, surveySections)
+    course_type_counts = query_helpers.ipeds_course_type_counts(ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, academic_term_reporting_refactor_in = reporting_period_terms)
 
 # ********** Cohort
-    cohort = query_helpers.ipeds_cohort(ipeds_client_config, None, all_academic_terms, reporting_period_terms, course_type_counts, var_surveyYear, var_surveyId, surveySections)
+    cohort = query_helpers.ipeds_cohort(ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, academic_term_reporting_refactor_in = reporting_period_terms, course_type_counts_in = course_type_counts)
 
 # ********** Survey Data Transformations    
-    cohort_out = cohort.withColumn('ipedsPartAStudentLevel',
-        expr("""
-        (case when studentLevelUGGR = 'GR' then '99' 
-        when isNonDegreeSeeking_calc = true and timeStatus_calc = 'Full Time' then '7'
-        when isNonDegreeSeeking_calc = true and timeStatus_calc = 'Part Time' then '21'
-        when studentLevelUGGR = 'UG' then 
-                (case when studentType_calc = 'First Time' and timeStatus_calc = 'Full Time' then '1' 
-                        when studentType_calc = 'Transfer' and timeStatus_calc = 'Full Time' then '2'
-                        when studentType_calc = 'Returning' and timeStatus_calc = 'Full Time' then '3'
-                        when studentType_calc = 'First Time' and timeStatus_calc = 'Part Time' then '15' 
-                        when studentType_calc = 'Transfer' and timeStatus_calc = 'Part Time' then '16'
-                        when studentType_calc = 'Returning' and timeStatus_calc = 'Part Time' then '17' else '1' 
-                 end)
-            else null
-        end)
-        """)
-        ).withColumn('ipedsPartCStudentLevel',
-        expr("""
-        case when studentLevelUGGR = 'GR' then '3'
-             when isNonDegreeSeeking_calc = 1 then '2'
-             when studentLevelUGGR = 'UG' then '1'
-             else null
-        end
-        """)
-        ).filter(cohort.ipedsInclude == 1)
+    cohort_out = cohort.select(
+        cohort["*"],
+        (when(cohort.studentLevelUGGR == 'GR', lit('99'))
+            .when((cohort.isNonDegreeSeeking_calc == True) & (cohort.timeStatus_calc == 'Full Time'), lit('7'))
+            .when((cohort.isNonDegreeSeeking_calc == True) & (cohort.timeStatus_calc == 'Part Time'), lit('21'))
+            .when((cohort.studentType_calc == 'First Time') & (cohort.timeStatus_calc == 'Full Time'), lit('1'))
+            .when((cohort.studentType_calc == 'First Time') & (cohort.timeStatus_calc == 'Part Time'), lit('15'))
+            .when((cohort.studentType_calc == 'Transfer') & (cohort.timeStatus_calc == 'Full Time'), lit('2'))
+            .when((cohort.studentType_calc == 'Transfer') & (cohort.timeStatus_calc == 'Part Time'), lit('16'))
+            .when((cohort.studentType_calc == 'Continuing') & (cohort.timeStatus_calc == 'Full Time'), lit('3'))
+            .when((cohort.studentType_calc == 'Continuing') & (cohort.timeStatus_calc == 'Part Time'), lit('17'))
+            .otherwise(lit('1'))).alias('ipedsPartAStudentLevel'), 
+        (when(cohort.studentLevelUGGR == 'GR', lit('3'))
+            .when(cohort.isNonDegreeSeeking_calc == True, lit('2'))
+            .when(cohort.studentLevelUGGR == 'UG', lit('1'))
+            .otherwise(lit('1'))).alias('ipedsPartCStudentLevel')).filter(cohort.ipedsInclude == 1)
 
     course_type_counts_out = course_type_counts.join(
         cohort_out,
@@ -250,166 +217,276 @@ def run_twelve_month_enrollment_query():
         sum("DPPCreditHours").alias("DPPCreditHours"))        
     
 # ********** Survey Formatting
+    offer_undergraduate_award = ipeds_client_config.first()['icOfferUndergradAwardLevel']
+    offer_graduate_award = ipeds_client_config.first()['icOfferGraduateAwardLevel']
+    offer_doctor_award = ipeds_client_config.first()['icOfferDoctorAwardLevel']
+    instructional_activity_type = ipeds_client_config.first()['instructionalActivityType']
+    dpp_fte = ipeds_client_config.first()['tmAnnualDPPCreditHoursFTE']
+    
+    b_columns = ["part", "field2", "field3", "field4", "field5"]
 
-    # Part A
+    if survey_id == 'E1D':
+        if cohort_out.rdd.isEmpty() == False:
+            a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
+            c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
+            if offer_undergraduate_award == 'Y':
+                if offer_graduate_award == 'Y': 
+                    a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21", "99"]
+                    a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
+                        ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", ""), ("", "99", "", "")]
+                    c_level_values = ["1", "2", "3"]
+                    c_data = [("", "1", ""), ("", "2", ""), ("", "3", "")]
+                else: 
+                    a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21"]
+                    a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
+                        ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", "")]
+                    c_level_values = ["1", "2"]
+                    c_data = [("", "1", ""), ("", "2", "")]
+            elif offer_graduate_award == 'Y':  
+                a_level_values = ["99"]
+                a_data = [("", "99", "", "")]
+                c_level_values = ["3"]
+                c_data = [("", "3", "")]  
+        else:
+            a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
+                                "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
+                                "field19"]
+            c_columns = ["part", "field1", "field2", "field3"]
+            if offer_undergraduate_award == 'Y':
+                if offer_graduate_award == 'Y':
+                    a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+                    c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0"), ("C", "3", "0", "0")]                   
+                    if offer_doctor_award == 'Y':
+                        if instructional_activity_type == 'CR':
+                            b_data = [("B", "0", "", "0", "0")]
+                        elif instructional_activity_type == 'CL':
+                            b_data = [("B", "", "0", "0", "0")]
+                        else: # instructional_activity_type == 'B':
+                            b_data = [("B", "0", "0", "0", "0")]
+                    else: 
+                        if instructional_activity_type == 'CR':
+                            b_data = [("B", "0", "", "0", "")]
+                        elif instructional_activity_type == 'CL':
+                            b_data = [("B", "", "0", "0", "")]
+                        else: # instructional_activity_type == 'B':
+                            b_data = [("B", "0", "0", "0", "")]
+                else:
+                    a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                              ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+                    c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")] 
+                    if instructional_activity_type == 'CR':
+                        b_data = [("B", "0", "", "", "")]
+                    elif instructional_activity_type == 'CL':
+                        b_data = [("B", "", "0", "", "")]
+                    else: # instructional_activity_type == 'B':
+                        b_data = [("B", "0", "0", "", "")]
+            elif offer_graduate_award == 'Y': 
+                a_data = [("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+                c_data = [("C", "3", "0", "0")]  
+                if offer_doctor_award == 'Y':
+                    b_data = [("B", "", "", "0", "0")]
+                else: 
+                    b_data = [("B", "", "", "0", "")]
+    elif survey_id == 'E12':
+        if cohort_out.rdd.isEmpty() == False:
+            a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
+            c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
+            a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21"]
+            a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
+                        ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", "")]
+            c_level_values = ["1", "2"]
+            c_data = [("", "1", ""), ("", "2", "")]
+        else:
+            a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
+                                "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
+                                "field19"]                
+            c_columns = ["part", "field1", "field2", "field3"]
+            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
+            c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")] 
+            if instructional_activity_type == 'CR':
+                b_data = [("B", "0", "", "", "")]
+            elif instructional_activity_type == 'CL':
+                b_data = [("B", "", "0", "", "")]
+            else: # instructional_activity_type == 'B':
+                b_data = [("B", "0", "0", "", "")]
+    elif survey_id == 'E1E':
+        if cohort_out.rdd.isEmpty() == False:
+            a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
+            c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
+            a_level_values = ["1", "3", "7", "15", "17", "21"]
+            a_data = [("", "1", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
+                  ("", "17", "", ""), ("", "21", "", "")]
+            c_level_values = ["1", "2"]
+            c_data = [("", "1", ""), ("", "2", "")]
+        else:
+            a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
+                                "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
+                                "field19"]                
+            c_columns = ["part", "field1", "field2", "field3"]
+            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
+            c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")] 
+            if instructional_activity_type == 'CR':
+                b_data = [("B", "0", "", "", "")]
+            elif instructional_activity_type == 'CL':
+                b_data = [("B", "", "0", "", "")]
+            else: # instructional_activity_type == 'B':
+                b_data = [("B", "0", "0", "", "")]
+    else:  # survey_id == 'E1F'
+        if cohort_out.rdd.isEmpty() == False:
+            a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
+            c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
+            a_level_values = ["1", "3", "15", "17"]
+            a_data = [("", "1", "", ""), ("", "3", "", ""), ("", "15", "", ""), ("", "17", "", "")]
+            c_level_values = ["1"]
+            c_data = [("", "1", "")]
+        else:
+            a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
+                                "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
+                                "field19"]                
+            c_columns = ["part", "field1", "field2", "field3"]
+            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                      ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
+            c_data = [("C", "1", "0", "0")] 
+            if instructional_activity_type == 'CR':
+                b_data = [("B", "0", "", "", "")]
+            elif instructional_activity_type == 'CL':
+                b_data = [("B", "", "0", "", "")]
+            else: # instructional_activity_type == 'B':
+                b_data = [("B", "0", "0", "", "")]
+
+# Part A
+
+    FormatPartA = sparkContext.parallelize(a_data)
+    FormatPartA = spark.createDataFrame(FormatPartA).toDF(*a_columns)
+
     if cohort_out.rdd.isEmpty() == False:
-        # FormatPartA
-        a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-        a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                  ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", ""), ("", "99", "", "")]
-        FormatPartA = sparkContext.parallelize(a_data)
-        FormatPartA = spark.createDataFrame(FormatPartA).toDF(*a_columns)
-
-        partA_out = cohort_out.select("regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue",
-                                      "persIpedsGender").filter(
-            (cohort_out.ipedsPartAStudentLevel.isNotNull()) &
-            (cohort_out.ipedsPartAStudentLevel != '')).union(FormatPartA)
+        partA_out = cohort_out.select("regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender").filter(
+            (cohort_out.ipedsPartAStudentLevel).isin(a_level_values)).union(FormatPartA)
 
         partA_out = partA_out.select(
             partA_out.ipedsPartAStudentLevel.alias("field1"),
-            when(((col('persIpedsEthnValue') == lit('1')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field2"),  # FYRACE01 - Nonresident alien - Men (1), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('1')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field3"),  # FYRACE02 - Nonresident alien - Women (2), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('2')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field4"),  # FYRACE25 - Hispanic/Latino - Men (25), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('2')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field5"),  # FYRACE26 - Hispanic/Latino - Women (26), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('3')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field6"),  # FYRACE27 - American Indian or Alaska Native - Men (27), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('3')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field7"),  # FYRACE28 - American Indian or Alaska Native - Women (28), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('4')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field8"),  # FYRACE29 - Asian - Men (29), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('4')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field9"),  # FYRACE30 - Asian - Women (30), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('5')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field10"),  # FYRACE31 - Black or African American - Men (31), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('5')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field11"),  # FYRACE32 - Black or African American - Women (32), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('6')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field12"),
-            # FYRACE33 - Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('6')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field13"),
-            # FYRACE34 - Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('7')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field14"),  # FYRACE35 - White - Men (35), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('7')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field15"),  # FYRACE36 - White - Women (36), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('8')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field16"),  # FYRACE37 - Two or more races - Men (37), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('8')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field17"),  # FYRACE38 - Two or more races - Women (38), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('9')) & (col('persIpedsGender') == lit('M'))), lit('1')).otherwise(
-                lit('0')).alias("field18"),  # FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
-            when(((col('persIpedsEthnValue') == lit('9')) & (col('persIpedsGender') == lit('F'))), lit('1')).otherwise(
-                lit('0')).alias("field19"))  # FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
+            when(((col('persIpedsEthnValue') == '1') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field2"),  # FYRACE01 - Nonresident alien - Men (1), 0 to 999999
+            when(((col('persIpedsEthnValue') == '1') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field3"),  # FYRACE02 - Nonresident alien - Women (2), 0 to 999999
+            when(((col('persIpedsEthnValue') == '2') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field4"),  # FYRACE25 - Hispanic/Latino - Men (25), 0 to 999999
+            when(((col('persIpedsEthnValue') == '2') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field5"),  # FYRACE26 - Hispanic/Latino - Women (26), 0 to 999999
+            when(((col('persIpedsEthnValue') == '3') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field6"),  # FYRACE27 - American Indian or Alaska Native - Men (27), 0 to 999999
+            when(((col('persIpedsEthnValue') == '3') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field7"),  # FYRACE28 - American Indian or Alaska Native - Women (28), 0 to 999999
+            when(((col('persIpedsEthnValue') == '4') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field8"),  # FYRACE29 - Asian - Men (29), 0 to 999999
+            when(((col('persIpedsEthnValue') == '4') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field9"),  # FYRACE30 - Asian - Women (30), 0 to 999999
+            when(((col('persIpedsEthnValue') == '5') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field10"),  # FYRACE31 - Black or African American - Men (31), 0 to 999999
+            when(((col('persIpedsEthnValue') == '5') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field11"),  # FYRACE32 - Black or African American - Women (32), 0 to 999999
+            when(((col('persIpedsEthnValue') == '6') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field12"),# FYRACE33 - Native Hawaiian or Other Pacific Islander - Men (33), 0 to 999999
+            when(((col('persIpedsEthnValue') == '6') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field13"),# FYRACE34 - Native Hawaiian or Other Pacific Islander - Women (34), 0 to 999999
+            when(((col('persIpedsEthnValue') == '7') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field14"),  # FYRACE35 - White - Men (35), 0 to 999999
+            when(((col('persIpedsEthnValue') == '7') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field15"),  # FYRACE36 - White - Women (36), 0 to 999999
+            when(((col('persIpedsEthnValue') == '8') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field16"),  # FYRACE37 - Two or more races - Men (37), 0 to 999999
+            when(((col('persIpedsEthnValue') == '8') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field17"),  # FYRACE38 - Two or more races - Women (38), 0 to 999999
+            when(((col('persIpedsEthnValue') == '9') & (col('persIpedsGender') == 'M')), lit(1)).otherwise(
+                lit(0)).alias("field18"),  # FYRACE13 - Race and ethnicity unknown - Men (13), 0 to 999999
+            when(((col('persIpedsEthnValue') == '9') & (col('persIpedsGender') == 'F')), lit(1)).otherwise(
+                lit(0)).alias("field19"))  # FYRACE14 - Race and ethnicity unknown - Women (14), 0 to 999999
 
         partA_out = partA_out.withColumn('part', lit('A')).groupBy("part", "field1").agg(
-            sum("field2").alias("field2"),
-            sum("field3").alias("field3"),
-            sum("field4").alias("field4"),
-            sum("field5").alias("field5"),
-            sum("field6").alias("field6"),
-            sum("field7").alias("field7"),
-            sum("field8").alias("field8"),
-            sum("field9").alias("field9"),
-            sum("field10").alias("field10"),
-            sum("field11").alias("field11"),
-            sum("field12").alias("field12"),
-            sum("field13").alias("field13"),
-            sum("field14").alias("field14"),
-            sum("field15").alias("field15"),
-            sum("field16").alias("field16"),
-            sum("field17").alias("field17"),
-            sum("field18").alias("field18"),
-            sum("field19").alias("field19")
+            sum("field2").cast('int').alias("field2"),
+            sum("field3").cast('int').alias("field3"),
+            sum("field4").cast('int').alias("field4"),
+            sum("field5").cast('int').alias("field5"),
+            sum("field6").cast('int').alias("field6"),
+            sum("field7").cast('int').alias("field7"),
+            sum("field8").cast('int').alias("field8"),
+            sum("field9").cast('int').alias("field9"),
+            sum("field10").cast('int').alias("field10"),
+            sum("field11").cast('int').alias("field11"),
+            sum("field12").cast('int').alias("field12"),
+            sum("field13").cast('int').alias("field13"),
+            sum("field14").cast('int').alias("field14"),
+            sum("field15").cast('int').alias("field15"),
+            sum("field16").cast('int').alias("field16"),
+            sum("field17").cast('int').alias("field17"),
+            sum("field18").cast('int').alias("field18"),
+            sum("field19").cast('int').alias("field19")
         )
 
-    else:
-        a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
-                     "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
-                     "field19"]
-        a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                  ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                  ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                  ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                  ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                  ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                  ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                  ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                  ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+# Part C
 
-        partA_out = sparkContext.parallelize(a_data)
-        partA_out = spark.createDataFrame(partA_out).toDF(*a_columns)
+    FormatPartC = sparkContext.parallelize(c_data)
+    FormatPartC = spark.createDataFrame(FormatPartC).toDF(*c_columns)
 
-    # Part A output filter
-    partA_out = partA_out.crossJoin(ipeds_client_config).filter(
-        (((col('icOfferUndergradAwardLevel') == 'Y') & (col('icOfferGraduateAwardLevel') == 'Y') & (
-            col('field1').isin(A_UgGrBoth)))
-         | ((col('icOfferUndergradAwardLevel') == 'Y') & (col('icOfferGraduateAwardLevel') == 'N') & (
-                    col('field1').isin(A_UgOnly)))
-         | ((col('icOfferUndergradAwardLevel') == 'N') & (col('icOfferGraduateAwardLevel') == 'Y') & (
-                    col('field1').isin(A_GrOnly)))
-         | ((col('icOfferUndergradAwardLevel') == 'N') & (col('icOfferGraduateAwardLevel') == 'N')))).select(
-        partA_out['*'])
-
-    # Part C
     if cohort_out.rdd.isEmpty() == False:
-        # FormatPartC
-        c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-        c_data = [("", "1", ""), ("", "2", ""), ("", "3", "")]
-        FormatPartC = sparkContext.parallelize(c_data)
-        FormatPartC = spark.createDataFrame(FormatPartC).toDF(*c_columns)
-
-        # Part C
         partC_out = cohort_out.select("regPersonId", "ipedsPartCStudentLevel", "distanceEdInd_calc").filter(
-            (cohort_out.ipedsPartCStudentLevel.isNotNull()) & (cohort_out.ipedsPartCStudentLevel != '') & (
-                    cohort_out.distanceEdInd_calc != 'None')).union(FormatPartC)
+            (cohort_out.ipedsPartCStudentLevel).isin(c_level_values) & (cohort_out.distanceEdInd_calc != 'None')).union(FormatPartC)
+            
         partC_out = partC_out.select(
             partC_out.ipedsPartCStudentLevel.alias("field1"),
-            when((col('distanceEdInd_calc') == lit('Exclusive DE')), lit('1')).otherwise(lit('0')).alias("field2"),
-            # Enrolled exclusively in distance education courses
-            when((col('distanceEdInd_calc') == lit('Some DE')), lit('1')).otherwise(lit('0')).alias(
-                "field3"))  # Enrolled in at least one but not all distance education courses
+            when((col('distanceEdInd_calc') == 'Exclusive DE'), lit(1)).otherwise(lit(0)).alias("field2"),
+            when((col('distanceEdInd_calc') == 'Some DE'), lit(1)).otherwise(lit(0)).alias("field3")) 
 
         partC_out = partC_out.withColumn('part', lit('C')).groupBy("part", "field1").agg(
-            sum("field2").alias("field2"),
-            sum("field3").alias("field3"))
+            sum("field2").cast('int').alias("field2"),
+            sum("field3").cast('int').alias("field3"))
+            
+# Part B
 
-    else:
-        c_columns = ["part", "field1", "field2", "field3"]
-        c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0"), ("C", "3", "0", "0")]
-        partC_out = sparkContext.parallelize(c_data)
-        partC_out = spark.createDataFrame(partC_out).toDF(*c_columns)
-
-    # Part B
     if course_type_counts_out.rdd.isEmpty() == False:
         partB_out = course_type_counts_out.crossJoin(ipeds_client_config).withColumn('part', lit('B')).select(
             'part',
-            # CREDHRSU - credit hour instructional activity at the undergraduate level, 0 to 99999999, blank = not applicable, if no undergraduate level programs are measured in credit hours.
-            when(((col('icOfferUndergradAwardLevel') == lit('Y')) & (col('instructionalActivityType') != lit('CL'))),
-                 coalesce(col('UGCreditHours'), lit(0))).alias('field2'),
-            # CONTHRS  - clock hour instructional activity at the undergraduate level, 0 to 9999999, blank = not applicable, if no undergraduate programs are measured in clock hours.
-            when(((col('icOfferUndergradAwardLevel') == lit('Y')) & (col('instructionalActivityType') != lit('CR'))),
-                 coalesce(col('UGClockHours'), lit(0))).alias('field3'),
-            # CREDHRSG - credit hour instructional activity at the graduate level, 0 to 99999999, blank = not applicable
-            expr(
-                f"round((case when icOfferGraduateAwardLevel = 'Y' and '{var_surveyId}' = 'E1D' then coalesce(GRCreditHours, 0) else null end))").cast(
-                'int').alias("field4"),
-            # RDOCFTE  - reported Doctor'92s degree-professional practice student FTE, 0 to 99999999, blank = not applicable
-            expr(f"""round((case when icOfferDoctorAwardLevel = 'Y' and '{var_surveyId}' = 'E1D' then 
-                                (case when coalesce(DPPCreditHours, 0) > 0 then coalesce(cast(round(DPPCreditHours / tmAnnualDPPCreditHoursFTE, 0) as string), '0') 
-                            else '0' end) else null end))""").cast('int').alias("field5"))
-
+            when((ipeds_client_config.icOfferUndergradAwardLevel == 'Y') & (ipeds_client_config.instructionalActivityType != 'CL'),
+                 coalesce(course_type_counts_out.UGCreditHours, lit(0))).cast('int').alias('field2'),
+            when((ipeds_client_config.icOfferUndergradAwardLevel == 'Y') & (ipeds_client_config.instructionalActivityType != 'CR'),
+                 coalesce(course_type_counts_out.UGCreditHours, lit(0))).cast('int').alias('field3'),
+            when((ipeds_client_config.icOfferGraduateAwardLevel == 'Y') & (ipeds_client_config.survey_id == 'E1D'),
+                 coalesce(course_type_counts_out.GRCreditHours, lit(0))).cast('int').alias('field4'),
+            round(when((ipeds_client_config.icOfferDoctorAwardLevel == 'Y') & (ipeds_client_config.survey_id == 'E1D'),
+                 when(coalesce(course_type_counts_out.DPPCreditHours, lit(0)) > 0, course_type_counts_out.DPPCreditHours/ipeds_client_config.tmAnnualDPPCreditHoursFTE).otherwise(lit(0))), 0).cast('int').alias('field5'))
     else:
-        b_columns = ["part", "field2", "field3", "field4", "field5"]
-        b_data = [("B", "0", "", "0", "0")]
         partB_out = sparkContext.parallelize(b_data)
         partB_out = spark.createDataFrame(partB_out).toDF(*b_columns)
 
-    # Survey out formatting
+# Survey out formatting
     for column in [column for column in partB_out.columns if column not in partA_out.columns]:
         partA_out = partA_out.withColumn(column, lit(None))
 
@@ -419,9 +496,15 @@ def run_twelve_month_enrollment_query():
     for column in [column for column in partA_out.columns if column not in partB_out.columns]:
         partB_out = partB_out.withColumn(column, lit(None))
 
-    surveyOutput = partA_out.unionByName(partC_out).unionByName(partB_out)
-
-    return surveyOutput
+    survey_output = partA_out.unionByName(partC_out).unionByName(partB_out) 
     
+    return survey_output
+    
+# Testing output    
 #test = run_twelve_month_enrollment_query()
-#test.show() #3m 31s
+#if test is None: # and isinstance(test,DataFrame): #exists(test): #test.isEmpty:
+#    test = test
+#else:
+#    test.createOrReplaceTempView('test')
+#test.show()
+#print(test)
