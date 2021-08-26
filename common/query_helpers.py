@@ -21,12 +21,11 @@ sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
-
-def ipeds_client_config_mcr(surveyYear = ''):
+def ipeds_client_config_mcr(survey_year_in = ''):
     
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
 
-    ipeds_client_config = ipeds_client_config_in.filter(col('surveyCollectionYear') == surveyYear).select(
+    ipeds_client_config = ipeds_client_config_in.filter(col('surveyCollectionYear') == survey_year_in).select(
         coalesce(upper(col('acadOrProgReporter')), lit('A')).alias('acadOrProgReporter'),  # 'A'
         coalesce(upper(col('admAdmissionTestScores')), lit('R')).alias('admAdmissionTestScores'),  # 'R'
         coalesce(upper(col('admCollegePrepProgram')), lit('R')).alias('admCollegePrepProgram'),  # 'R'
@@ -89,7 +88,7 @@ def ipeds_client_config_mcr(surveyYear = ''):
     return ipeds_client_config
 
 
-def ipeds_reporting_period_mcr(surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
+def ipeds_reporting_period_mcr(survey_year_in = '', survey_id_in = '', survey_sections_in = ''):
     
     CurrentYearSurveySection = ['COHORT', 'PRIOR SUMMER']
     PriorYear1SurveySection = ['PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER']
@@ -98,8 +97,8 @@ def ipeds_reporting_period_mcr(surveyYear = '', surveyVersionId = '', surveySect
     ipeds_reporting_period_in = spark.sql('select * from ipedsReportingPeriod')
 
     ipeds_reporting_period = ipeds_reporting_period_in.filter(
-        (ipeds_reporting_period_in.surveyCollectionYear == surveyYear) & (ipeds_reporting_period_in.surveyId == surveyVersionId) &
-        (upper(ipeds_reporting_period_in.surveySection).isin(surveySectionValues) == True)).select(
+        (ipeds_reporting_period_in.surveyCollectionYear == survey_year_in) & (ipeds_reporting_period_in.surveyId == survey_id_in) &
+        (upper(ipeds_reporting_period_in.surveySection).isin(survey_sections_in) == True)).select(
         coalesce(upper(ipeds_reporting_period_in.partOfTermCode), lit('1')).alias('partOfTermCode'),
         to_timestamp(ipeds_reporting_period_in.recordActivityDate).alias('recordActivityDate'),
         ipeds_reporting_period_in.surveyCollectionYear,
@@ -190,10 +189,10 @@ def academic_term_mcr():
 
 
 def academic_term_reporting_refactor(
-        ipeds_reporting_period_in = None, academic_term_in = None, surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
+        ipeds_reporting_period_in = None, academic_term_in = None, survey_year_in = '', survey_id_in = '', survey_sections_in = ''):
 
     if ipeds_reporting_period_in is None:
-       ipeds_reporting_period_in = ipeds_reporting_period_mcr(surveyYear, surveyVersionId, surveySectionValues)
+       ipeds_reporting_period_in = ipeds_reporting_period_mcr(survey_year_in, survey_id_in, survey_sections_in)
        
     if academic_term_in is None:
        academic_term_in = academic_term_mcr() 
@@ -270,16 +269,16 @@ def academic_term_reporting_refactor(
 
 def ipeds_course_type_counts(
         ipeds_client_config_in = None, ipeds_reporting_period_in = None, academic_term_in = None, academic_term_reporting_refactor_in = None, 
-        surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
+        survey_year_in = '', survey_id_in = '', survey_sections_in = ''):
 
     if ipeds_client_config_in is None:
-        ipeds_client_config_in = ipeds_client_config_mcr(surveyYear)
+        ipeds_client_config_in = ipeds_client_config_mcr(survey_year_in)
        
     if academic_term_in is None:
        academic_term_in = academic_term_mcr() 
     
     if academic_term_reporting_refactor_in is None:
-        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in, academic_term_in, surveyYear, surveyVersionId, surveySectionValues)
+        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in, academic_term_in, survey_year_in, survey_id_in, survey_sections_in)
        
     registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
     course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
@@ -656,19 +655,19 @@ def ipeds_course_type_counts(
 
 def ipeds_cohort(
         ipeds_client_config_in = None, ipeds_reporting_period_in = None, academic_term_in = None, academic_term_reporting_refactor_in = None, course_type_counts_in = None,
-        surveyYear = '', surveyVersionId = '', surveySectionValues = ''):
+        survey_year_in = '', survey_id_in = '', survey_sections_in = ''):
 
     if ipeds_client_config_in is None:
-        ipeds_client_config_in = ipeds_client_config_mcr(surveyYear)
+        ipeds_client_config_in = ipeds_client_config_mcr(survey_year_in)
        
     if academic_term_in is None:
        academic_term_in = academic_term_mcr() 
     
     if academic_term_reporting_refactor_in is None:
-        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in, academic_term_in, surveyYear, surveyVersionId, surveySectionValues)
+        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in, academic_term_in, survey_year_in, survey_id_in, survey_sections_in)
     
     if course_type_counts_in is None:
-        course_type_counts_in = ipeds_course_type_counts(ipeds_client_config_in, ipeds_reporting_period_in, academic_term_in, academic_term_reporting_refactor_in, surveyYear, surveyVersionId, surveySectionValues)
+        course_type_counts_in = ipeds_course_type_counts(ipeds_client_config_in, ipeds_reporting_period_in, academic_term_in, academic_term_reporting_refactor_in, survey_year_in, survey_id_in, survey_sections_in)
 
     student_in = spark.sql("select * from student")
     person_in = spark.sql("select * from person")
