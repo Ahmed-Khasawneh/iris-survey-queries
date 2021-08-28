@@ -189,10 +189,10 @@ def academic_term_mcr():
 
 
 def academic_term_reporting_refactor(
-        ipeds_reporting_period_in = None, academic_term_in = None, survey_year_in = '', survey_id_in = '', survey_sections_in = ''):
+        ipeds_reporting_period_in = None, academic_term_in = None, survey_year_in = '', survey_id_in = '', survey_sections_in = '', survey_type_in = ''):
 
     if ipeds_reporting_period_in is None:
-       ipeds_reporting_period_in = ipeds_reporting_period_mcr(survey_year_in, survey_id_in, survey_sections_in)
+       ipeds_reporting_period_in = ipeds_reporting_period_mcr(survey_year_in = survey_year_in, survey_id_in = survey_id_in, survey_sections_in = survey_sections_in)
        
     if academic_term_in is None:
        academic_term_in = academic_term_mcr() 
@@ -264,21 +264,21 @@ def academic_term_reporting_refactor(
 
     return academic_term_reporting_refactor_out
 
-###  Modify ipeds_course_type_counts to accept a dataframe with personId to join to Registration - this is needed for Admissions
+###  Modify course_type_counts to accept a dataframe with personId to join to Registration - this is needed for Admissions
 ###  an empty dataframe would imply that records from Registration should be pulled as-is now (no join or filter on personId)
 
-def ipeds_course_type_counts(
+def course_type_counts(
         ipeds_client_config_in = None, ipeds_reporting_period_in = None, academic_term_in = None, academic_term_reporting_refactor_in = None, 
-        survey_year_in = '', survey_id_in = '', survey_sections_in = ''):
+        survey_year_in = '', survey_id_in = '', survey_sections_in = '', survey_type_in = ''):
 
     if ipeds_client_config_in is None:
-        ipeds_client_config_in = ipeds_client_config_mcr(survey_year_in)
+        ipeds_client_config_in = ipeds_client_config_mcr(survey_year_in = survey_year_in)
        
     if academic_term_in is None:
        academic_term_in = academic_term_mcr() 
     
     if academic_term_reporting_refactor_in is None:
-        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in, academic_term_in, survey_year_in, survey_id_in, survey_sections_in)
+        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in, survey_year_in = survey_year_in, survey_id_in = survey_id_in, survey_sections_in = survey_sections_in, survey_type_in = survey_type_in)
        
     registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
     course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
@@ -306,7 +306,7 @@ def ipeds_course_type_counts(
         coalesce(upper(registration_in.partOfTermCode), lit('1')).alias('regPartOfTermCode'),
         upper(registration_in.courseSectionNumber).alias('regCourseSectionNumber'),
         upper(registration_in.courseSectionCampusOverride).alias('regCourseSectionCampusOverride'),
-        upper(registration_in.courseSectionLevelOverride).alias('regCourseSectionLevelOverride'),
+        registration_in.courseSectionLevelOverride.alias('regCourseSectionLevelOverride'),
         coalesce(registration_in.isAudited, lit(False)).alias('regIsAudited'),
         coalesce(registration_in.isEnrolled, lit(True)).alias('regIsEnrolled'),
         coalesce(registration_in.registrationStatusActionDate, to_timestamp(lit('9999-09-09'))).alias(
@@ -604,12 +604,10 @@ def ipeds_course_type_counts(
         registration_course_campus.crseSectSchedInstructionType,
         registration_course_campus.crseSectSchedDistanceEducationType,
         registration_course_campus.repRefEquivCRHRFactor,
-        ipeds_client_config_in.instructionalActivityType
-    ).withColumn(
-        'newCourseSectionLevelUGGR',
-        when(col('newCourseSectionLevel').isin('UNDERGRADUATE', 'CONTINUING EDUCATION', 'OTHER'), lit('UG')).otherwise(
-            when(col('newCourseSectionLevel') == 'PROFESSIONAL PRACTICE DOCTORATE', lit('GR')).otherwise(
-                when(col('newCourseSectionLevel').isin('MASTERS', 'DOCTORATE'), lit('DPP'))))
+        ipeds_client_config_in.instructionalActivityType,
+        when(col('newCourseSectionLevel').isin('Undergraduate', 'Continuing Education', 'Other'), lit('UG')).when(
+            col('newCourseSectionLevel') == 'Masters', lit('GR')).when(
+            col('newCourseSectionLevel').isin('Professional Practice Doctorate', 'Doctorate'), lit('DPP')).alias('newCourseSectionLevelUGGR')
     ).withColumn(
         'newEnrollmentHoursCalc',
         when(col('instructionalActivityType') == 'CR', col('newEnrollmentHours')).otherwise(
@@ -653,22 +651,26 @@ def ipeds_course_type_counts(
 
     return course_type_counts
 
-def ipeds_cohort(
+def student_cohort(
         ipeds_client_config_in = None, ipeds_reporting_period_in = None, academic_term_in = None, academic_term_reporting_refactor_in = None, course_type_counts_in = None,
-        survey_year_in = '', survey_id_in = '', survey_sections_in = ''):
+        survey_year_in = '', survey_id_in = '', survey_sections_in = '', survey_type_in = ''):
 
     if ipeds_client_config_in is None:
-        ipeds_client_config_in = ipeds_client_config_mcr(survey_year_in)
+        ipeds_client_config_in = ipeds_client_config_mcr(survey_year_in = survey_year_in)
        
     if academic_term_in is None:
        academic_term_in = academic_term_mcr() 
     
     if academic_term_reporting_refactor_in is None:
-        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in, academic_term_in, survey_year_in, survey_id_in, survey_sections_in)
+        academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in, survey_year_in = survey_year_in, survey_id_in = survey_id_in, survey_sections_in = survey_sections_in, survey_type_in = survey_type_in)
     
     if course_type_counts_in is None:
-        course_type_counts_in = ipeds_course_type_counts(ipeds_client_config_in, ipeds_reporting_period_in, academic_term_in, academic_term_reporting_refactor_in, survey_year_in, survey_id_in, survey_sections_in)
-
+        course_type_counts_in = course_type_counts(ipeds_client_config_in = ipeds_client_config_in, ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in, academic_term_reporting_refactor_in = academic_term_reporting_refactor_in, survey_year_in = survey_year_in, survey_id_in = survey_id_in, survey_sections_in = survey_sections_in, survey_type_in = survey_type_in)
+    
+    study_abroad_filter_surveys = ['FE', 'OM', 'GR', '200GR']
+    esl_enroll_surveys = ['12ME', 'ADM', 'SFA', 'FE']
+    graduate_enroll_surveys = ['12ME', 'FE']
+    
     student_in = spark.sql("select * from student")
     person_in = spark.sql("select * from person")
     academic_track_in = spark.sql("select * from academicTrack")
@@ -769,8 +771,8 @@ def ipeds_cohort(
             end) 
         end)
         """).alias('stuRefStudentType'),
-        #    when((student.stuIsNonDegreeSeeking == False) & (student.stuStudentLevel != 'Undergraduate'), None)
-        #        .when((student.stuIsNonDegreeSeeking == False) & (col('NDSRn') == 1) & (col('FFTRn') == 1),
+        #when((student.stuStudentLevel.isnotin('Masters', 'Doctorate', 'Professional Practice Doctorate')) & (student.stuStudentType == None), lit('First Time').when(
+        #(student.stuIsNonDegreeSeeking == False) & (col('NDSRn') == 1) & (col('FFTRn') == 1),
         #              student.stuStudentType)
         #        .when((student.stuIsNonDegreeSeeking == False) & (col('NDSRn') == 1), 'Continuing')
         #        .otherwise(None).alias('stuRefStudentType'),
@@ -884,7 +886,7 @@ def ipeds_cohort(
         ipeds_client_config_in.sfaReportSecondPriorYear.alias('configSfaReportSecondPriorYear'),
         ipeds_client_config_in.surveyCollectionYear.alias('configSurveyCollectionYear'),
         ipeds_client_config_in.tmAnnualDPPCreditHoursFTE.alias('configTmAnnualDPPCreditHoursFTE')
-    ).withColumn(
+    ).withColumn('survey_type', lit(survey_type_in)).withColumn(
         "isNonDegreeSeeking_calc",
         when(student_fft.stuRefStudyAbroadStatus != 'Study Abroad - Home Institution',
              student_fft.stuRefIsNonDegreeSeeking)
@@ -973,10 +975,7 @@ def ipeds_cohort(
             end) ipedsEthnicity
             """).alias('persIpedsEthnValue'),
         person_in.ethnicity.alias('ethnicity'),
-        #    (when(coalesce(person_in.isUSCitizen, lit(True)) == True, 'Y')
-        #     .when(((coalesce(person_in.isInUSOnVisa, lit(False)) == True) |
-        #            ((student_fft.stuRefCensusDate >= to_date(person_in.visaStartDate)) & (
-        #                    student_fft.stuRefCensusDate <= to_date(person_in.visaEndDate)) & (
+        #(when((person_in.isUSCitizen == True) | ((person_in.isInUSOnVisa == True) | (student_fft_out.stuRefCensusDate.between(person_in.visaStartDate, person_in.visaEndDate)) & (
         #                 person_in.visaType.isin('Employee Resident', 'Other Resident')))), 'Y')
         #     .when(((person_in.isInUSOnVisa == 1) | ((student_fft.stuRefCensusDate >= to_date(person_in.visaStartDate)) & (
         #            student_fft.stuRefCensusDate <= to_date(person_in.visaEndDate))))
@@ -1159,30 +1158,17 @@ def ipeds_cohort(
 
     cohort = field_of_study.withColumn(
         'ipedsInclude',
-        #    when((col('stuRefTotalCECourses') == col('stuRefTotalCourses'))
-        #         | (col('stuRefTotalIntlCourses') == col('stuRefTotalCourses'))
-        #         | (col('stuRefTotalAuditCourses') == col('stuRefTotalCourses'))
-        #         | ((col('stuRefTotalRemCourses') == col('stuRefTotalCourses')) & (
-        #            col('isNonDegreeSeeking_calc') == lit(False)))
-        #         # | {ESLFilter}
-        #         # | {GradFilter}
-        #         | (col('stuRefTotalSAHomeCourses') > lit(0))
-        #         | (col('stuRefTotalCreditHrs') > lit(0))
-        #         | (col('stuRefTotalClockHrs') > lit(0)), lit(1)).otherwise(0))
-        expr("""     
-        (case when stuRefTotalCECourses = stuRefTotalCourses then 0 
-            when stuRefTotalIntlCourses = stuRefTotalCourses then 0 
-            when stuRefTotalAuditCourses = stuRefTotalCourses then 0 
-            when stuRefTotalProfResidencyCourses > 0 then 0 
-            when stuRefTotalThesisCourses > 0 then 0 
-            when stuRefTotalRemCourses = stuRefTotalCourses and isNonDegreeSeeking_calc = false then 1 
-            when stuRefTotalESLCourses = stuRefTotalCourses and isNonDegreeSeeking_calc = false then 1 
-            when stuRefTotalSAHomeCourses > 0 then 1 
-            when stuRefTotalCreditHrs > 0 then 1
-            when stuRefTotalClockHrs > 0 then 1
-            else 0
-        end) 
-        """)
+        when(col('stuRefTotalCECourses') == col('stuRefTotalCourses'), lit(0)).when(
+        col('stuRefTotalIntlCourses') == col('stuRefTotalCourses'), lit(0)).when(
+        col('stuRefTotalAuditCourses') == col('stuRefTotalCourses'), lit(0)).when(
+        ((col('stuRefTotalRemCourses') == col('stuRefTotalCourses')) & (col('isNonDegreeSeeking_calc') == True)), lit(0)).when(
+        (col('degProgIsESL') == True) & (col('survey_type').isin(esl_enroll_surveys)), lit(0)).when(
+        (col('stuRefTotalThesisCourses') > 0) & (col('survey_type').isin(graduate_enroll_surveys)), lit(1)).when(
+        (col('stuRefTotalProfResidencyCourses') > 0) & (col('survey_type').isin(graduate_enroll_surveys)), lit(0)).when( 
+        ((col('stuRefTotalESLCourses') == col('stuRefTotalCourses')) & (col('isNonDegreeSeeking_calc') == True)), lit(0)).when(
+        col('stuRefTotalSAHomeCourses') > 0, lit(1)).when(
+        col('stuRefTotalCreditHrs') > 0, lit(1)).when(
+        col('stuRefTotalClockHrs') > 0, lit(1)).otherwise(lit(0))
     )
 
-    return cohort    
+    return cohort 
