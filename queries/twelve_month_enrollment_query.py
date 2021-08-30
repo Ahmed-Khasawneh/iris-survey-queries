@@ -4,6 +4,7 @@ import boto3
 import json
 from uuid import uuid4
 from common import query_helpers
+from common import survey_format
 from pyspark.sql.window import Window
 # from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
@@ -141,195 +142,10 @@ def spark_refresh_entity_views_v2(tenant_id='11702b15-8db2-4a35-8087-b560bb23342
 spark_refresh_entity_views_v2()
 # spark_refresh_entity_views_v2(tenant_id=args['tenant_id'], survey_type=args['survey_type'], stage=args['stage'], year=args['year'], user_id=args['user_id'])
 
-def get_part_format_string(part_in = '', part_type_in = '', survey_id_in = '', ipeds_client_config_in = None, cohort_flag_in = True, course_flag_in = True):
-
-    offer_undergraduate_award = ipeds_client_config_in.first()['icOfferUndergradAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    offer_graduate_award = ipeds_client_config_in.first()['icOfferGraduateAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    offer_doctor_award = ipeds_client_config_in.first()['icOfferDoctorAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    instructional_activity_type = ipeds_client_config_in.first()['instructionalActivityType'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    dpp_fte = ipeds_client_config_in.first()['tmAnnualDPPCreditHoursFTE'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    
-    a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
-                                "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
-                                "field19"]
-    
-    c_columns = ["part", "field1", "field2", "field3"] 
-    b_columns = ["part", "field2", "field3", "field4", "field5"]
-    
-    if survey_id_in == 'E1D':
-        a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-        a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21", "99"]
-        c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0"), ("C", "3", "0", "0")]
-        c_level_values = ["1", "2", "3"]
-        b_data = [("B", "0", "0", "0", "0")]
-        if cohort_flag_in == False:
-            a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-            c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-            if offer_undergraduate_award == 'Y':
-                if offer_graduate_award == 'Y': 
-                    a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                        ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", ""), ("", "99", "", "")]
-                    c_data = [("", "1", ""), ("", "2", ""), ("", "3", "")]
-                else: 
-                    a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21"]
-                    a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                        ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", "")]
-                    c_level_values = ["1", "2"]
-                    c_data = [("", "1", ""), ("", "2", "")]
-            elif (offer_undergraduate_award != 'Y') & (offer_graduate_award == 'Y'):  
-                a_level_values = ["99"]
-                a_data = [("", "99", "", "")]
-                c_level_values = ["3"]
-                c_data = [("", "3", "")]  
-        else:
-            if (offer_undergraduate_award == 'Y') and (offer_graduate_award != 'Y'):
-                    a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-                    c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")] 
-            elif (offer_undergraduate_award != 'Y') and (offer_graduate_award == 'Y'):
-                a_data = [("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-                c_data = [("C", "3", "0", "0")]
-        
-    elif survey_id_in == 'E12':
-        a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                              ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-        a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21"]
-        c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")]
-        c_level_values = ["1", "2"]
-        b_columns = ["part", "field2", "field3"]
-        b_data = [("B", "0", "0")]
-        if cohort_flag_in == False:
-            a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-            c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-            a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                        ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", "")]
-            c_data = [("", "1", ""), ("", "2", "")]
-
-    elif survey_id_in == 'E1E':
-        a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                      ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                      ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                      ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                      ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                      ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
-        a_level_values = ["1", "3", "7", "15", "17", "21"]
-        c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")]
-        c_level_values = ["1", "2"]
-        b_columns = ["part", "field2", "field3"]
-        b_data = [("B", "0", "0")]
-        if cohort_flag_in == False:
-            a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-            c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-            a_data = [("", "1", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                  ("", "17", "", ""), ("", "21", "", "")]
-            c_data = [("", "1", ""), ("", "2", "")]
-            
-    else:  # survey_id_in == 'E1F'
-        a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                      ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                      ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                      ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
-        a_level_values = ["1", "3", "15", "17"]
-        c_data = [("C", "1", "0", "0")]
-        c_level_values = ["1"]
-        b_columns = ["part", "field2", "field3"]
-        b_data = [("B", "0", "0")]
-        if cohort_flag_in == False:
-            a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-            c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-            a_data = [("", "1", "", ""), ("", "3", "", ""), ("", "15", "", ""), ("", "17", "", "")]
-            c_data = [("", "1", "")]
-
-    if course_flag_in:
-        if (survey_id_in == 'E1D') & (offer_undergraduate_award == 'Y'):
-            if offer_graduate_award == 'Y':
-                if offer_doctor_award == 'Y':
-                    if instructional_activity_type == 'CR':
-                        b_columns = ["part", "field2", "field4", "field5"]
-                        b_data = [("B", "0", "0", "0")]
-                    elif instructional_activity_type == 'CL':
-                        b_columns = ["part", "field3", "field4", "field5"]
-                        b_data = [("B", "0", "0", "0")]
-                else: 
-                    if instructional_activity_type == 'CR':
-                        b_columns = ["part", "field2",  "field4"]
-                        b_data = [("B", "0", "0")]
-                    elif instructional_activity_type == 'CL':
-                        b_columns = ["part", "field3", "field4"]
-                        b_data = [("B", "0", "0")]
-                    else: # instructional_activity_type == 'B':
-                        b_columns = ["part", "field2", "field3", "field4"]
-                        b_data = [("B", "0", "0", "0")]
-            else: 
-                if instructional_activity_type == 'CR':
-                    b_columns = ["part", "field2"]
-                    b_data = [("B", "0")]
-                elif instructional_activity_type == 'CL':
-                    b_columns = ["part", "field3"]
-                    b_data = [("B", "0")]
-                else: # instructional_activity_type == 'B':
-                    b_columns = ["part", "field2", "field3"]
-                    b_data = [("B", "0", "0")] 
-
-        elif (survey_id_in == 'E1D') & (offer_undergraduate_award != 'Y') & (offer_graduate_award == 'Y'):
-            if offer_doctor_award == 'Y':
-                b_columns = ["part", "field4", "field5"]
-                b_data = [("B", "0", "0")]
-            else: 
-                b_columns = ["part", "field4"]
-                b_data = [("B", "", "", "0", "")]
-                
-        elif (survey_id_in != 'E1D') & (offer_undergraduate_award == 'Y'):
-            if instructional_activity_type == 'CR':
-                b_columns = ["part", "field2"]
-                b_data = [("B", "0")]
-            elif instructional_activity_type == 'CL':
-                b_columns = ["part", "field3"]
-                b_data = [("B", "0")]
-            else: # instructional_activity_type == 'B':
-                b_columns = ["part", "field2", "field3"]
-                b_data = [("B", "0", "0")]
-        else:
-            b_columns = ["part", "field2", "field3"]
-            b_data = [("B", "0", "0")]
-    
-    if part_in == 'A':
-        if part_type_in == 'columns': return a_columns
-        elif part_type_in == 'levels': return a_level_values
-        else: return a_data
-    elif part_in == 'B':
-        if part_type_in == 'columns': return b_columns
-        else: return b_data
-    elif part_in == 'C':
-        if part_type_in == 'columns': return c_columns
-        elif part_type_in == 'levels': return c_level_values
-        else: return c_data
-
 
 def run_twelve_month_enrollment_query():
     
 # ********** Survey Default Values
-
     survey_type = options['surveyType']
     #survey_type = 'TWELVE_MONTH_ENROLLMENT_1'
     year = options['calendarYear']
@@ -401,11 +217,10 @@ def run_twelve_month_enrollment_query():
 # ********** Survey Formatting
 
 # Part A
-
-    a_data = get_part_format_string(part_in = 'A', part_type_in = 'data', survey_id_in = survey_id, ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty(), course_flag_in = course_type_counts_out.rdd.isEmpty())
-    a_columns = get_part_format_string(part_in = 'A', part_type_in = 'columns', survey_id_in = survey_id, ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty(), course_flag_in = course_type_counts_out.rdd.isEmpty())
-    a_level_values = get_part_format_string(part_in = 'A', part_type_in = 'levels', survey_id_in = survey_id, ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty(), course_flag_in = course_type_counts_out.rdd.isEmpty())
-
+    a_data = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
+    a_columns = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
+    a_level_values = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'levels', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
+    
     FormatPartA = sparkContext.parallelize(a_data)
     FormatPartA = spark.createDataFrame(FormatPartA).toDF(*a_columns)
 
@@ -476,10 +291,9 @@ def run_twelve_month_enrollment_query():
         partA_out = FormatPartA
         
 # Part C
-
-    c_data = get_part_format_string(part_in = 'C', part_type_in = 'data', survey_id_in = survey_id, ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty(), course_flag_in = course_type_counts_out.rdd.isEmpty())
-    c_columns = get_part_format_string(part_in = 'C', part_type_in = 'columns', survey_id_in = survey_id, ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty(), course_flag_in = course_type_counts_out.rdd.isEmpty())
-    c_level_values = get_part_format_string(part_in = 'C', part_type_in = 'levels', survey_id_in = survey_id, ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty(), course_flag_in = course_type_counts_out.rdd.isEmpty())
+    c_data = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
+    c_columns = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
+    c_level_values = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'levels', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
 
     FormatPartC = sparkContext.parallelize(c_data)
     FormatPartC = spark.createDataFrame(FormatPartC).toDF(*c_columns)
@@ -500,7 +314,6 @@ def run_twelve_month_enrollment_query():
         partC_out = FormatPartC
         
 # Part B
-
     if (course_type_counts_out.rdd.isEmpty() == False) & (ipeds_client_config.rdd.isEmpty() == False):
         partB_out = course_type_counts_out.crossJoin(ipeds_client_config).withColumn('part', lit('B')).select(
             'part',
@@ -513,13 +326,13 @@ def run_twelve_month_enrollment_query():
             round(when((ipeds_client_config.icOfferDoctorAwardLevel == 'Y') & (ipeds_client_config.survey_id == 'E1D'),
                  when(coalesce(course_type_counts_out.DPPCreditHours, lit(0)) > 0, course_type_counts_out.DPPCreditHours/ipeds_client_config.tmAnnualDPPCreditHoursFTE).otherwise(lit(0))), 0).cast('int').alias('field5'))
     else:
-        b_data = get_part_format_string(part_in = 'B', part_type_in = 'data', survey_id_in = survey_id, ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty(), course_flag_in = course_type_counts_out.rdd.isEmpty())
-        b_columns = get_part_format_string(part_in = 'B', part_type_in = 'columns', survey_id_in = survey_id, ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty(), course_flag_in = course_type_counts_out.rdd.isEmpty())
+        b_data = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'B', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config, course_flag_in = course_type_counts_out.rdd.isEmpty())
+        b_columns = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'B', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config, course_flag_in = course_type_counts_out.rdd.isEmpty())
 
         partB_out = sparkContext.parallelize(b_data)
         partB_out = spark.createDataFrame(partB_out).toDF(*b_columns)
 
-# Survey out formatting
+# Output column formatting
     for column in [column for column in partB_out.columns if column not in partA_out.columns]:
         partA_out = partA_out.withColumn(column, lit(None))
 
@@ -529,9 +342,12 @@ def run_twelve_month_enrollment_query():
     for column in [column for column in partA_out.columns if column not in partB_out.columns]:
         partB_out = partB_out.withColumn(column, lit(None))
 
-    survey_output = partA_out.unionByName(partC_out).unionByName(partB_out)        
-    return survey_output
+    survey_output = partA_out.unionByName(partC_out).unionByName(partB_out)   
     
+    return survey_output
+
+# Testing
+
 #test = run_twelve_month_enrollment_query()
 
 #if test is None: # and isinstance(test,DataFrame): #exists(test): #test.isEmpty:
