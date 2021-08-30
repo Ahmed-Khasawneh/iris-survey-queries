@@ -1,0 +1,4031 @@
+---
+# ----------------------------------------------------------------------------------------------------------------------
+# DORIS Entity Snapshot View Properties IPEDS Survey Year 2021-22
+#
+# This file defines the set of DORIS entities to be included in an IPEDS report for a specific survey type.  For each
+# IPEDS survey type, a collection of one or more DORIS entity snapshot view configurations is defined.  Each entity
+# snapshot view configuration is defined by the following properties:
+#
+#   viewName          - a user-defined label used to differentiate snapshots of the same entity type; allows a report
+#                       to include data from different sets of snapshots for the same DORIS entity; this label will be
+#                       referenced in the corresponding DORIS report query (REQUIRED)
+#   entityName        - the name of a DORIS entity to include in the report (REQUIRED)
+#   tagNames          - a list of one or more DORIS tag names used to constrain the entity snapshots that will be
+#                       included in the report query (REQUIRED)
+#   snapshotDateRange - the range of dates (inclusive) to constrain the entity snapshots that will be included in the
+#                       report query; if defined, you must provide a start and/or end date (OPTIONAL)
+#
+#
+# NOTE: Please keep this file arranged alphabetically by IPEDS Survey Type and DORIS Entity name.
+#
+#
+# SUMMARY OF CHANGES
+#
+# Date      Author                Tag                 Comments
+# --------  --------------------  -------------       ------------------------------------------------------------------
+# 20210830  jhanicak                                  Modified for 21-22 versions of surveys
+# 20210519  akhasawneh                                Updating 12-Mo Enrollment v2-4 entity list. PF-2192
+# 20200503  akhasawneh                                Updating AcademicLibraries entity list. PF-1960
+# 20210427  jhanicak                                  Added AcademicTrack and DegreeProgram to enrollment surveys, FieldOfStudy to SFA
+# 20210331  jhanicak                                  Increased snapshot date range for Finance 
+# 20210212  akhasawneh                                Updating HR v1 entry ('October End' tag and new 'FacultyAppointment' entity) 
+# 20200201  akhasawneh                                Added GR200 v1,2
+# 20210108  jhanicak                                  Added GR v1
+# 20210108  jhanicak                                  Added OM and make other mods, as needed
+# 20201202  jhanicak                                  Moved Student Financial Aid to before 12ME;
+#                                                     Removed AcademicTrack and Degree from 12ME v2 - v4;
+#                                                     Removed Retention views from Fall Enrollment and widened DateRange;
+#                                                     Removed Post-Spring Summer Census tag from Admissions
+# 20201118  akhasawneh                                Added all Admissions versions
+# 20201110  jhanicak                                  Added all Financial Aid versions
+# 20201026  akhasawneh                                Added new entry for Financial Aid
+# 20200914  jhanicak                                  Added twelvemonthenrollment_v3 and _v4
+# 20200813  akhasawneh                                Adding new tags
+# 20200810  akhasawneh                                Updated for IPEDS 2020-21
+# 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2019-20
+# 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
+#
+# ----------------------------------------------------------------------------------------------------------------------
+
+ACADEMIC_LIBRARIES_1:
+  # reporting period: fiscal year ending prior to 2021-10-01
+
+  - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2021-01-01
+      end: 2021-10-01
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2021-01-01
+      end: 2021-10-01
+
+  - viewName: LibraryBranch
+    entityName: LibraryBranch
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2021-01-01
+      end: 2021-10-01
+
+  - viewName: LibraryInventory
+    entityName: LibraryInventory
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2021-01-01
+      end: 2021-10-01
+
+  - viewName: LibraryCollectionStatistic
+    entityName: LibraryCollectionStatistic
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2021-01-01
+      end: 2021-10-01
+
+  - viewName: LibraryCirculationStatistic
+    entityName: LibraryCirculationStatistic
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2021-01-01
+      end: 2021-10-01
+
+  - viewName: LibraryExpenses
+    entityName: LibraryExpenses
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2021-01-01
+      end: 2021-10-01
+
+  - viewName: InterlibraryLoanStatistic
+    entityName: InterlibraryLoanStatistic
+    tagNames:
+      - Fiscal Year Lockdown
+      - August End
+    snapshotDateRange:
+      start: 2021-01-01
+      end: 2021-10-01
+
+ADMISSIONS_1:
+  # reporting period for Cohort: Fall Census 2021 and prior summer
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-08-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: TestScore
+    entityName: TestScore
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+COMPLETIONS_1:
+  # reporting period: terms within 2020-07-01 to 2021-06-30; as-of date 2021-06-30
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Major
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+FALL_ENROLLMENT_1:
+  # reporting period for Cohort: Fall Census 2021 and prior summer
+  # reporting period for Retention: Fall Census 2020 and prior summer
+  # reporting period for HR: as of 10/31/19
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: InstructionalAssignment
+    entityName: InstructionalAssignment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Major
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+FALL_ENROLLMENT_2:
+  # reporting period for Cohort: Fall Census 2021 and prior summer
+  # reporting period for Retention: Fall Census 2020 and prior summer
+  # reporting period for HR: as of 10/31/19
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: InstructionalAssignment
+    entityName: InstructionalAssignment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Major
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+FALL_ENROLLMENT_3:
+  # reporting period for Cohort: Fall Census 2021 and prior summer
+  # reporting period for Retention: Fall Census 2020 and prior summer
+  # reporting period for HR: as of 10/31/19
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: InstructionalAssignment
+    entityName: InstructionalAssignment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Major
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+FALL_ENROLLMENT_4:
+  # reporting period for Cohort: Fall Census 2021 and prior summer
+  # reporting period for Retention: Fall Census 2020 and prior summer
+  # reporting period for HR: as of 10/31/19
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Admission
+    entityName: Admission
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: InstructionalAssignment
+    entityName: InstructionalAssignment
+    tagNames:
+      - HR Reporting End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Major
+    entityName: Major
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-12-31
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2021-12-31
+
+FINANCE_1:
+  # reporting period: fiscal year ending prior to 2021-10-01
+
+  - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: GeneralLedgerReporting
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: OperatingLedgerReporting
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+FINANCE_2:
+  # reporting period: fiscal year ending prior to 2021-10-01
+
+  - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: GeneralLedgerReporting
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: OperatingLedgerReporting
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+FINANCE_3:
+  # reporting period: fiscal year ending prior to 2021-10-01
+
+  - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: GeneralLedgerReporting
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: OperatingLedgerReporting
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+FINANCE_4:
+  # reporting period: fiscal year ending prior to 2021-10-01
+
+  - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: GeneralLedgerReporting
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: OperatingLedgerReporting
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+FINANCE_5:
+  # reporting period: fiscal year ending prior to 2021-10-01
+
+  - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: GeneralLedgerReporting
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: OperatingLedgerReporting
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+FINANCE_6:
+  # reporting period: fiscal year ending prior to 2021-10-01
+
+  - viewName: ChartOfAccounts
+    entityName: ChartOfAccounts
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: FiscalYear
+    entityName: FiscalYear
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: GeneralLedgerReporting
+    entityName: GeneralLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+  - viewName: OperatingLedgerReporting
+    entityName: OperatingLedgerReporting
+    tagNames:
+      - Fiscal Year Lockdown
+    snapshotDateRange:
+      start: 2020-10-02
+      end: 2021-10-01
+
+GRADUATION_RATES_1:
+  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2021-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2015-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2019-08-01
+      end: 2021-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2015-10-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2015-10-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2015-10-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2015-10-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2021-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2021-10-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2016-03-01
+      end: 2016-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2015-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2021-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2015-05-01
+      end: 2015-10-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2022-02-10
+
+GRADUATION_RATES_3:
+  # reporting period: terms within 2018-07-01 to 2021-08-31;
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2021-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-10-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2019-03-01
+      end: 2019-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2022-02-10
+
+GRADUATION_RATES_5:
+  # reporting period: terms within 2018-07-01 to 2021-08-31;
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2020-08-01
+      end: 2021-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-10-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2019-03-01
+      end: 2019-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2018-10-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2022-02-10
+      
+GRADUATION_RATES_200_1:
+  # reporting period: terms within 2013-07-01 to 2021-06-30
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2021-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2019-08-01
+      end: 2021-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-10-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-10-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-10-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-10-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2021-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2021-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2021-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2013-10-01
+
+GRADUATION_RATES_200_2:
+  # reporting period: terms within 2017-07-01 to 2021-06-30
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2021-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2019-08-01
+      end: 2021-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2021-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2021-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2021-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2017-05-01
+      end: 2017-10-01
+
+HUMAN_RESOURCES_1:
+  # reporting period: as of 10/31/20
+
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: Faculty
+    entityName: Faculty
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+HUMAN_RESOURCES_2:
+  # reporting period: as of 10/31/20
+
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: Faculty
+    entityName: Faculty
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: FacultyAppointment
+    entityName: FacultyAppointment
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+HUMAN_RESOURCES_3:
+  # reporting period: as of 10/31/19
+
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: Faculty
+    entityName: Faculty
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+HUMAN_RESOURCES_4:
+  # reporting period: as of 10/31/19
+
+  - viewName: Employee
+    entityName: Employee
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeeAssignment
+    entityName: EmployeeAssignment
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: EmployeePosition
+    entityName: EmployeePosition
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - HR Reporting End
+      - October End
+    snapshotDateRange:
+      start: 2021-10-15
+      end: 2021-11-15
+
+INSTITUTIONAL_CHARACTERISTICS_1:
+  # reporting period: survey reporting date
+
+  - viewName: InstitCharDoctorate
+    entityName: InstitCharDoctorate
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+  - viewName: InstitCharUndergradGrad
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+INSTITUTIONAL_CHARACTERISTICS_3:
+  # reporting period: survey reporting date
+
+  - viewName: InstitCharDoctorate
+    entityName: InstitCharDoctorate
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+  - viewName: InstitCharUndergradGrad
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+INSTITUTIONAL_CHARACTERISTICS_5:
+  # reporting period: survey reporting date
+
+  - viewName: InstitCharDoctorate
+    entityName: InstitCharDoctorate
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+  - viewName: InstitCharUndergradGrad
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+INSTITUTIONAL_CHARACTERISTICS_7:
+  # reporting period: survey reporting date
+
+  - viewName: InstitCharDoctorate
+    entityName: InstitCharDoctorate
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+  - viewName: InstitCharUndergradGrad
+    entityName: InstitCharUndergradGrad
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - IC Reporting Start
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-15
+
+OUTCOME_MEASURES_1:
+  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - August End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2021-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2015-08-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2017-08-01
+      end: 2021-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2015-08-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2015-08-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2015-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2017-08-01
+      end: 2021-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2017-08-01
+      end: 2021-10-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2015-08-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+      - August End
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2021-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - June End
+    snapshotDateRange:
+      start: 2014-05-01
+      end: 2015-08-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2021-08-01
+      end: 2021-10-01
+
+STUDENT_FINANCIAL_AID_1:
+  # reporting period for Cohort: Fall Census 2020 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2019 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2018 and prior summer
+  # reporting period for GI Bill: July 1, 2020 - June 30, 2021
+  # reporting period for Dept Of Defense: October 1, 2020 - September 30, 2021
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - Financial Aid Year End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+STUDENT_FINANCIAL_AID_2:
+  # reporting period for Cohort: Fall Census 2020 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2019 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2018 and prior summer
+  # reporting period for GI Bill: July 1, 2020 - June 30, 2021
+  # reporting period for Dept Of Defense: October 1, 2020 - September 30, 2021
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - Financial Aid Year End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2020-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+STUDENT_FINANCIAL_AID_3:
+  # reporting period for Cohort: Fall Census 2020 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2019 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2018 and prior summer
+  # reporting period for GI Bill: July 1, 2020 - June 30, 2021
+  # reporting period for Dept Of Defense: October 1, 2020 - September 30, 2021
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Financial Aid Year End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - June End
+      - Financial Aid Year End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+STUDENT_FINANCIAL_AID_4:
+  # reporting period for Cohort: Fall Census 2020 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2019 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2018 and prior summer
+  # reporting period for GI Bill: July 1, 2020 - June 30, 2021
+  # reporting period for Dept Of Defense: October 1, 2020 - September 30, 2021
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - October End
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Financial Aid Year End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - June End
+      - Financial Aid Year End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+STUDENT_FINANCIAL_AID_5:
+  # reporting period for Cohort: Fall Census 2020 and prior summer (October 15 )
+  # reporting period for Prior Year 1: Fall Census 2019 and prior summer
+  # reporting period for Prior Year 2: Fall Census 2018 and prior summer
+  # reporting period for GI Bill: July 1, 2020 - June 30, 2021
+  # reporting period for Dept Of Defense: October 1, 2020 - September 30, 2021
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - June End
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+  - viewName: MilitaryBenefit
+    entityName: MilitaryBenefit
+    tagNames:
+      - Financial Aid Year End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2021-05-01
+      end: 2021-12-31
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - June End
+      - Financial Aid Year End
+      - Department of Defense
+      - GI Bill
+    snapshotDateRange:
+      start: 2018-05-01
+      end: 2021-12-31
+
+TWELVE_MONTH_ENROLLMENT_1:
+  # reporting period: terms within 2020-07-01 to 2021-06-30; as-of date 2021-06-30
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+TWELVE_MONTH_ENROLLMENT_2:
+  # reporting period: terms within 2020-07-01 to 2021-06-30; as-of date 2021-06-30
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+TWELVE_MONTH_ENROLLMENT_3:
+  # reporting period: terms within 2020-07-01 to 2021-06-30; as-of date 2021-06-30
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+TWELVE_MONTH_ENROLLMENT_4:
+  # reporting period: terms within 2020-07-01 to 2021-06-30; as-of date 2021-06-30
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
