@@ -22,6 +22,7 @@ phases:
       - environment=$(echo $STAGE | tr '[:upper:]' '[:lower:]')
       - aws s3 sync sql/2019 "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src/2019" --delete
       - aws s3 sync sql/2020 "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src/2020" --delete
+      - aws s3 sync sql/2021 "s3://iris-survey-file-report-store-${environment}/iris-report-queries/src/2021" --delete
       - python setup.py bdist_egg
       - cd dist
       - mv iris_report_queries*.egg iris_report_queries.egg
