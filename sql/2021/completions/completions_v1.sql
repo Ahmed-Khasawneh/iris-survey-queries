@@ -4,7 +4,7 @@ EVI PRODUCT:    DORIS 2021-22 IPEDS Survey Fall Collection
 FILE NAME:      Completions
 FILE DESC:      Completions for all institutions
 AUTHOR:         Ahmed Khasawneh
-CREATED:        20210914
+CREATED:        20210826
 
 SECTIONS:
 Reporting Dates/Terms
@@ -17,7 +17,7 @@ SUMMARY OF CHANGES
 Date(yyyymmdd)      	Author             	Tag             	Comments
 -----------------   --------------------	-------------   	-------------------------------------------------
 
-20211209            akhasawneh          			    		Initial version (Run time 14m)
+20210826            akhasawneh          			    		Initial version (Run time 14m)
 
 SNAPSHOT REQUIREMENTS
 One of the following is required:
@@ -538,7 +538,7 @@ from (
             and ((coalesce(to_date(fosENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' as DATE)
             and to_date(fosENT.recordActivityDate,'YYYY-MM-DD') <= degprog.compReportingDateEnd)
             or coalesce(to_date(fosENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' as DATE))
-         --   and SUBSTR(CAST(fosENT.cipCodeVersion as STRING), 3, 2) >= 20 -- Current CIPCode standard was released 2021. new specs introduced per decade.
+         --   and SUBSTR(CAST(fosENT.cipCodeVersion as STRING), 3, 2) >= 20 -- Current CIPCode standard was released 2020. new specs introduced per decade.
     )
 where fosRn = 1
     and cipCode is not null
