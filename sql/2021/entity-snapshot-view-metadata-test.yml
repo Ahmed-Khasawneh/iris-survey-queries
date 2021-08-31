@@ -24,26 +24,6 @@
 # Date      Author                Tag                 Comments
 # --------  --------------------  -------------       ------------------------------------------------------------------
 # 20210830  jhanicak                                  Modified for 21-22 versions of surveys
-# 20210519  akhasawneh                                Updating 12-Mo Enrollment v2-4 entity list. PF-2192
-# 20200503  akhasawneh                                Updating AcademicLibraries entity list. PF-1960
-# 20210427  jhanicak                                  Added AcademicTrack and DegreeProgram to enrollment surveys, FieldOfStudy to SFA
-# 20210331  jhanicak                                  Increased snapshot date range for Finance 
-# 20210212  akhasawneh                                Updating HR v1 entry ('October End' tag and new 'FacultyAppointment' entity) 
-# 20200201  akhasawneh                                Added GR200 v1,2
-# 20210108  jhanicak                                  Added GR v1
-# 20210108  jhanicak                                  Added OM and make other mods, as needed
-# 20201202  jhanicak                                  Moved Student Financial Aid to before 12ME;
-#                                                     Removed AcademicTrack and Degree from 12ME v2 - v4;
-#                                                     Removed Retention views from Fall Enrollment and widened DateRange;
-#                                                     Removed Post-Spring Summer Census tag from Admissions
-# 20201118  akhasawneh                                Added all Admissions versions
-# 20201110  jhanicak                                  Added all Financial Aid versions
-# 20201026  akhasawneh                                Added new entry for Financial Aid
-# 20200914  jhanicak                                  Added twelvemonthenrollment_v3 and _v4
-# 20200813  akhasawneh                                Adding new tags
-# 20200810  akhasawneh                                Updated for IPEDS 2020-21
-# 20200710  jhanicak/akhasawneh                       Updated for IPEDS 2019-20
-# 20200701  jhall                 jah 20200701        Created this file with placeholders for tags and date ranges
 #
 # ----------------------------------------------------------------------------------------------------------------------
 #
@@ -57,7 +37,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: IPEDSClientConfig
@@ -78,7 +58,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2008-01-01
+      start: 2007-01-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -99,7 +79,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2008-01-01
+      start: 2007-01-01
       end: 2015-12-31
 
   - viewName: InterlibraryLoanStatistic
@@ -107,7 +87,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: LibraryBranch
@@ -115,7 +95,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: LibraryCirculationStatistic
@@ -123,7 +103,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: LibraryCollectionStatistic
@@ -131,7 +111,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: LibraryExpenses
@@ -139,7 +119,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: LibraryInventory
@@ -147,7 +127,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: LibraryItemTransaction
@@ -155,7 +135,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   # Adding all views for testing purposes
@@ -178,7 +158,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: AcademicTrack
@@ -199,7 +179,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: Admission
@@ -220,7 +200,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: Award
@@ -241,7 +221,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: AwardStatusEarliest
@@ -249,7 +229,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2013-12-31
 
   - viewName: AwardStatusMid
@@ -257,7 +237,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: AwardStatusLatest
@@ -265,7 +245,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -286,7 +266,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: ChartOfAccounts
@@ -294,7 +274,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: CohortExclusion
@@ -315,7 +295,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: Course
@@ -336,7 +316,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -357,7 +337,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -378,7 +358,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: Degree
@@ -399,7 +379,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: DegreeStatusEarliest
@@ -407,7 +387,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2013-12-31
 
   - viewName: DegreeStatusMid
@@ -415,7 +395,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: DegreeStatusLatest
@@ -423,7 +403,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-12-31
 
   - viewName: DegreeProgram
@@ -444,7 +424,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: DegreeProgramStatusEarliest
@@ -452,7 +432,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2013-12-31
 
   - viewName: DegreeProgramStatusMid
@@ -460,7 +440,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: DegreeProgramStatusLatest
@@ -468,7 +448,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-12-31
 
   - viewName: Employee
@@ -477,7 +457,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: EmployeeAssignment
@@ -486,7 +466,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: EmployeePosition
@@ -495,7 +475,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: Faculty
@@ -504,7 +484,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: FacultyAppointment
@@ -513,7 +493,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: FieldOfStudy
@@ -534,7 +514,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: FinancialAid
@@ -555,7 +535,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2008-01-01
+      start: 2007-01-01
       end: 2015-12-31
 
   - viewName: GeneralLedgerReporting
@@ -563,7 +543,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: InstitCharDoctorate
@@ -571,7 +551,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: InstitCharUndergradGrad
@@ -579,7 +559,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: InstructionalAssignment
@@ -592,7 +572,7 @@ ACADEMIC_LIBRARIES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: Major
@@ -610,7 +590,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: MilitaryBenefit
@@ -619,7 +599,7 @@ ACADEMIC_LIBRARIES_1:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: OperatingLedgerReporting
@@ -627,7 +607,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: Person
@@ -648,7 +628,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -669,7 +649,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: RegistrationStatusEarliest
@@ -677,7 +657,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2013-12-31
 
   - viewName: RegistrationStatusMid
@@ -685,7 +665,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: RegistrationStatusLatest
@@ -693,7 +673,7 @@ ACADEMIC_LIBRARIES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-12-31
 
   - viewName: Student
@@ -714,7 +694,7 @@ ACADEMIC_LIBRARIES_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: TestScore
@@ -724,7 +704,7 @@ ACADEMIC_LIBRARIES_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-01-01
+      start: 2012-01-01
       end: 2015-12-31
 
   - viewName: Transfer
@@ -733,7 +713,7 @@ ACADEMIC_LIBRARIES_1:
       - Student Transfer Data
       - August End
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-12-31
 
 ADMISSIONS_1:
@@ -746,7 +726,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Admission
@@ -756,7 +736,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -766,7 +746,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Course
@@ -776,7 +756,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -786,7 +766,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -796,7 +776,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: IPEDSClientConfig
@@ -806,7 +786,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -816,7 +796,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Person
@@ -826,7 +806,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-08-01
 
   - viewName: Registration
@@ -836,7 +816,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -846,7 +826,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: TestScore
@@ -856,7 +836,7 @@ ADMISSIONS_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
 COMPLETIONS_1:
@@ -872,7 +852,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: AcademicTrack
@@ -885,7 +865,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Award
@@ -898,7 +878,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Campus
@@ -911,7 +891,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Degree
@@ -924,7 +904,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: DegreeProgram
@@ -937,7 +917,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: FieldOfStudy
@@ -950,7 +930,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: IPEDSClientConfig
@@ -963,7 +943,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: IPEDSReportingPeriod
@@ -976,7 +956,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Major
@@ -989,7 +969,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Person
@@ -1002,7 +982,7 @@ COMPLETIONS_1:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
 FALL_ENROLLMENT_1:
@@ -1017,7 +997,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-12-31
 
   - viewName: AcademicTrack
@@ -1027,7 +1007,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: Admission
@@ -1037,7 +1017,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -1047,7 +1027,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-12-31
 
   - viewName: CohortExclusion
@@ -1057,7 +1037,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: Course
@@ -1067,7 +1047,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -1077,7 +1057,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -1087,7 +1067,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: Degree
@@ -1097,7 +1077,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: DegreeProgram
@@ -1107,7 +1087,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: Employee
@@ -1115,7 +1095,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeeAssignment
@@ -1123,7 +1103,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeePosition
@@ -1131,7 +1111,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: FieldOfStudy
@@ -1141,7 +1121,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: InstructionalAssignment
@@ -1149,7 +1129,7 @@ FALL_ENROLLMENT_1:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: IPEDSClientConfig
@@ -1159,7 +1139,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -1169,7 +1149,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-12-31
 
   - viewName: Major
@@ -1179,7 +1159,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-12-31
 
   - viewName: Person
@@ -1189,7 +1169,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -1199,7 +1179,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -1209,7 +1189,7 @@ FALL_ENROLLMENT_1:
       - Fall Census
       - October End
     snapshotDateRange:
-      start: 2013-05-01
+      start: 2012-05-01
       end: 2015-12-31
 
 FALL_ENROLLMENT_2:
@@ -1224,7 +1204,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: AcademicTrack
@@ -1234,7 +1214,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -1244,7 +1224,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CohortExclusion
@@ -1254,7 +1234,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2014-12-31
 
   - viewName: Course
@@ -1264,7 +1244,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -1274,7 +1254,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -1284,7 +1264,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Degree
@@ -1294,7 +1274,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: DegreeProgram
@@ -1304,7 +1284,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Employee
@@ -1312,7 +1292,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeeAssignment
@@ -1320,7 +1300,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeePosition
@@ -1328,7 +1308,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: FieldOfStudy
@@ -1338,7 +1318,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: InstructionalAssignment
@@ -1346,7 +1326,7 @@ FALL_ENROLLMENT_2:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: IPEDSClientConfig
@@ -1356,7 +1336,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -1366,7 +1346,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Major
@@ -1376,7 +1356,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Person
@@ -1386,7 +1366,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -1396,7 +1376,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -1406,7 +1386,7 @@ FALL_ENROLLMENT_2:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
 FALL_ENROLLMENT_3:
@@ -1421,7 +1401,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: AcademicTrack
@@ -1431,7 +1411,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -1441,7 +1421,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CohortExclusion
@@ -1451,7 +1431,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2014-12-31
 
   - viewName: Course
@@ -1461,7 +1441,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -1471,7 +1451,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -1481,7 +1461,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Degree
@@ -1491,7 +1471,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: DegreeProgram
@@ -1501,7 +1481,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Employee
@@ -1509,7 +1489,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeeAssignment
@@ -1517,7 +1497,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeePosition
@@ -1525,7 +1505,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: FieldOfStudy
@@ -1535,7 +1515,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: InstructionalAssignment
@@ -1543,7 +1523,7 @@ FALL_ENROLLMENT_3:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: IPEDSClientConfig
@@ -1553,7 +1533,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -1563,7 +1543,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Major
@@ -1573,7 +1553,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Person
@@ -1583,7 +1563,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -1593,7 +1573,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -1603,7 +1583,7 @@ FALL_ENROLLMENT_3:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
 FALL_ENROLLMENT_4:
@@ -1618,7 +1598,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: AcademicTrack
@@ -1628,7 +1608,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -1638,7 +1618,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CohortExclusion
@@ -1648,7 +1628,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2014-12-31
 
   - viewName: Course
@@ -1658,7 +1638,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -1668,7 +1648,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -1678,7 +1658,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Degree
@@ -1688,7 +1668,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: DegreeProgram
@@ -1698,7 +1678,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Employee
@@ -1706,7 +1686,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeeAssignment
@@ -1714,7 +1694,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeePosition
@@ -1722,7 +1702,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: FieldOfStudy
@@ -1732,7 +1712,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: InstructionalAssignment
@@ -1740,7 +1720,7 @@ FALL_ENROLLMENT_4:
     tagNames:
       - HR Reporting End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: IPEDSClientConfig
@@ -1750,7 +1730,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -1760,7 +1740,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Major
@@ -1770,7 +1750,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Person
@@ -1780,7 +1760,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -1790,7 +1770,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -1800,7 +1780,7 @@ FALL_ENROLLMENT_4:
       - Fall Census
       - Post-Spring Summer Census
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
 FINANCE_1:
@@ -1811,7 +1791,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: FiscalYear
@@ -1819,7 +1799,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1827,7 +1807,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSClientConfig
@@ -1835,7 +1815,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1843,7 +1823,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1851,7 +1831,7 @@ FINANCE_1:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
 FINANCE_2:
@@ -1862,7 +1842,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: FiscalYear
@@ -1870,7 +1850,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1878,7 +1858,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSClientConfig
@@ -1886,7 +1866,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1894,7 +1874,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1902,7 +1882,7 @@ FINANCE_2:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
 FINANCE_3:
@@ -1913,7 +1893,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: FiscalYear
@@ -1921,7 +1901,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1929,7 +1909,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSClientConfig
@@ -1937,7 +1917,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1945,7 +1925,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: OperatingLedgerReporting
@@ -1953,7 +1933,7 @@ FINANCE_3:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
 FINANCE_4:
@@ -1964,7 +1944,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: FiscalYear
@@ -1972,7 +1952,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: GeneralLedgerReporting
@@ -1980,7 +1960,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSClientConfig
@@ -1988,7 +1968,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -1996,7 +1976,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: OperatingLedgerReporting
@@ -2004,7 +1984,7 @@ FINANCE_4:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
 FINANCE_5:
@@ -2015,7 +1995,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: FiscalYear
@@ -2023,7 +2003,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: GeneralLedgerReporting
@@ -2031,7 +2011,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSClientConfig
@@ -2039,7 +2019,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -2047,7 +2027,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: OperatingLedgerReporting
@@ -2055,7 +2035,7 @@ FINANCE_5:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
 FINANCE_6:
@@ -2066,7 +2046,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: FiscalYear
@@ -2074,7 +2054,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: GeneralLedgerReporting
@@ -2082,7 +2062,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSClientConfig
@@ -2090,7 +2070,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -2098,7 +2078,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
   - viewName: OperatingLedgerReporting
@@ -2106,7 +2086,7 @@ FINANCE_6:
     tagNames:
       - Fiscal Year Lockdown
     snapshotDateRange:
-      start: 2015-01-01
+      start: 2014-01-01
       end: 2015-10-01
 
 GRADUATION_RATES_1:
@@ -2119,7 +2099,7 @@ GRADUATION_RATES_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2009-05-01
+      start: 2008-05-01
       end: 2015-10-01
 
   - viewName: AcademicTrack
@@ -2129,8 +2109,178 @@ GRADUATION_RATES_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2009-05-01
+      start: 2008-05-01
       end: 2009-10-01
+
+  - viewName: Award
+    entityName: Award
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2012-08-01
+      end: 2015-10-01
+
+  - viewName: Campus
+    entityName: Campus
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2009-10-01
+
+  - viewName: CohortExclusion
+    entityName: CohortExclusion
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2015-10-01
+
+  - viewName: Course
+    entityName: Course
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2009-10-01
+
+  - viewName: CourseSection
+    entityName: CourseSection
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2009-10-01
+
+  - viewName: CourseSectionSchedule
+    entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2009-10-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2015-10-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2015-10-01
+
+  - viewName: FinancialAid
+    entityName: FinancialAid
+    tagNames:
+      - Financial Aid Year End
+    snapshotDateRange:
+      start: 2009-03-01
+      end: 2010-10-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2015-10-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2015-10-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2009-10-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2015-10-01
+
+  - viewName: RegistrationStatus
+    entityName: Registration
+    tagNames:
+      - August End
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2015-10-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2008-05-01
+      end: 2009-10-01
+
+  - viewName: Transfer
+    entityName: Transfer
+    tagNames:
+      - August End
+      - Student Transfer Data
+    snapshotDateRange:
+      start: 2014-08-01
+      end: 2015-10-01
+
+GRADUATION_RATES_3:
+  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
+
+  - viewName: AcademicTerm
+    entityName: AcademicTerm
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2015-10-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - August End
+    snapshotDateRange:
+      start: 2011-05-01
+      end: 2012-10-01
 
   - viewName: Award
     entityName: Award
@@ -2147,187 +2297,17 @@ GRADUATION_RATES_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2009-05-01
-      end: 2009-10-01
+      start: 2011-05-01
+      end: 2012-10-01
 
   - viewName: CohortExclusion
     entityName: CohortExclusion
-    tagNames:
-      - August End
-    snapshotDateRange:
-      start: 2015-08-01
-      end: 2015-10-01
-
-  - viewName: Course
-    entityName: Course
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2009-05-01
-      end: 2009-10-01
-
-  - viewName: CourseSection
-    entityName: CourseSection
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2009-05-01
-      end: 2009-10-01
-
-  - viewName: CourseSectionSchedule
-    entityName: CourseSectionSchedule
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2009-05-01
-      end: 2009-10-01
-
-  - viewName: Degree
-    entityName: Degree
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2009-05-01
-      end: 2015-10-01
-
-  - viewName: DegreeProgram
-    entityName: DegreeProgram
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2009-05-01
-      end: 2015-10-01
-
-  - viewName: FinancialAid
-    entityName: FinancialAid
-    tagNames:
-      - Financial Aid Year End
-    snapshotDateRange:
-      start: 2010-03-01
-      end: 2010-10-01
-
-  - viewName: IPEDSClientConfig
-    entityName: IPEDSClientConfig
-    tagNames:
-      - August End
-    snapshotDateRange:
-      start: 2015-08-01
-      end: 2015-10-01
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - August End
-    snapshotDateRange:
-      start: 2015-08-01
-      end: 2015-10-01
-
-  - viewName: Person
-    entityName: Person
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2009-05-01
-      end: 2009-10-01
-
-  - viewName: Registration
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2009-05-01
-      end: 2015-10-01
-
-  - viewName: RegistrationStatus
-    entityName: Registration
-    tagNames:
-      - August End
-    snapshotDateRange:
-      start: 2015-08-01
-      end: 2015-10-01
-
-  - viewName: Student
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2009-05-01
-      end: 2009-10-01
-
-  - viewName: Transfer
-    entityName: Transfer
-    tagNames:
-      - August End
-      - Student Transfer Data
-    snapshotDateRange:
-      start: 2015-08-01
-      end: 2015-10-01
-
-GRADUATION_RATES_3:
-  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
-
-  - viewName: AcademicTerm
-    entityName: AcademicTerm
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2012-05-01
-      end: 2015-10-01
-
-  - viewName: AcademicTrack
-    entityName: AcademicTrack
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2012-05-01
-      end: 2012-10-01
-
-  - viewName: Award
-    entityName: Award
     tagNames:
       - August End
     snapshotDateRange:
       start: 2014-08-01
       end: 2015-10-01
 
-  - viewName: Campus
-    entityName: Campus
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - August End
-    snapshotDateRange:
-      start: 2012-05-01
-      end: 2012-10-01
-
-  - viewName: CohortExclusion
-    entityName: CohortExclusion
-    tagNames:
-      - August End
-    snapshotDateRange:
-      start: 2015-08-01
-      end: 2015-10-01
-
   - viewName: Course
     entityName: Course
     tagNames:
@@ -2335,7 +2315,7 @@ GRADUATION_RATES_3:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: CourseSection
@@ -2345,7 +2325,7 @@ GRADUATION_RATES_3:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: CourseSectionSchedule
@@ -2355,7 +2335,7 @@ GRADUATION_RATES_3:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: Degree
@@ -2365,7 +2345,7 @@ GRADUATION_RATES_3:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-10-01
 
   - viewName: DegreeProgram
@@ -2375,7 +2355,7 @@ GRADUATION_RATES_3:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-10-01
 
   - viewName: FinancialAid
@@ -2383,7 +2363,7 @@ GRADUATION_RATES_3:
     tagNames:
       - Financial Aid Year End
     snapshotDateRange:
-      start: 2012-03-01
+      start: 2011-03-01
       end: 2012-10-01
 
   - viewName: IPEDSClientConfig
@@ -2391,7 +2371,7 @@ GRADUATION_RATES_3:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -2399,7 +2379,7 @@ GRADUATION_RATES_3:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Person
@@ -2409,7 +2389,7 @@ GRADUATION_RATES_3:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: Registration
@@ -2419,7 +2399,7 @@ GRADUATION_RATES_3:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-10-01
 
   - viewName: RegistrationStatus
@@ -2427,7 +2407,7 @@ GRADUATION_RATES_3:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Student
@@ -2437,7 +2417,7 @@ GRADUATION_RATES_3:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: Transfer
@@ -2446,7 +2426,7 @@ GRADUATION_RATES_3:
       - August End
       - Student Transfer Data
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2016-02-10
 
 GRADUATION_RATES_5:
@@ -2459,7 +2439,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-10-01
 
   - viewName: AcademicTrack
@@ -2469,7 +2449,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: Award
@@ -2477,7 +2457,7 @@ GRADUATION_RATES_5:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2014-08-01
+      start: 2013-08-01
       end: 2015-10-01
 
   - viewName: Campus
@@ -2487,7 +2467,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: CohortExclusion
@@ -2495,7 +2475,7 @@ GRADUATION_RATES_5:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Course
@@ -2505,7 +2485,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: CourseSection
@@ -2515,7 +2495,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: CourseSectionSchedule
@@ -2525,7 +2505,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: Degree
@@ -2535,7 +2515,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-10-01
 
   - viewName: DegreeProgram
@@ -2545,7 +2525,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-10-01
 
   - viewName: FinancialAid
@@ -2553,7 +2533,7 @@ GRADUATION_RATES_5:
     tagNames:
       - Financial Aid Year End
     snapshotDateRange:
-      start: 2012-03-01
+      start: 2011-03-01
       end: 2012-10-01
 
   - viewName: IPEDSClientConfig
@@ -2561,7 +2541,7 @@ GRADUATION_RATES_5:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -2569,7 +2549,7 @@ GRADUATION_RATES_5:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Registration
@@ -2579,7 +2559,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-10-01
 
   - viewName: RegistrationStatus
@@ -2587,7 +2567,7 @@ GRADUATION_RATES_5:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Student
@@ -2597,7 +2577,7 @@ GRADUATION_RATES_5:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2012-10-01
 
   - viewName: Transfer
@@ -2606,7 +2586,7 @@ GRADUATION_RATES_5:
       - August End
       - Student Transfer Data
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2016-02-10
 
 GRADUATION_RATES_200_1:
@@ -2619,7 +2599,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2015-10-01
 
   - viewName: AcademicTrack
@@ -2629,7 +2609,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2007-10-01
 
   - viewName: Award
@@ -2637,7 +2617,7 @@ GRADUATION_RATES_200_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2014-08-01
+      start: 2013-08-01
       end: 2015-10-01
 
   - viewName: Campus
@@ -2647,7 +2627,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2007-10-01
 
   - viewName: CohortExclusion
@@ -2655,7 +2635,7 @@ GRADUATION_RATES_200_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Course
@@ -2665,7 +2645,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2007-10-01
 
   - viewName: CourseSection
@@ -2675,7 +2655,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2007-10-01
 
   - viewName: CourseSectionSchedule
@@ -2685,7 +2665,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2007-10-01
 
   - viewName: Degree
@@ -2695,7 +2675,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2015-10-01
 
   - viewName: DegreeProgram
@@ -2705,7 +2685,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2015-10-01
 
   - viewName: IPEDSClientConfig
@@ -2713,7 +2693,7 @@ GRADUATION_RATES_200_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -2721,7 +2701,7 @@ GRADUATION_RATES_200_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Registration
@@ -2731,7 +2711,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2015-10-01
 
   - viewName: RegistrationStatus
@@ -2739,7 +2719,7 @@ GRADUATION_RATES_200_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Student
@@ -2749,7 +2729,7 @@ GRADUATION_RATES_200_1:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2007-10-01
 
 GRADUATION_RATES_200_2:
@@ -2762,7 +2742,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2015-10-01
 
   - viewName: AcademicTrack
@@ -2772,7 +2752,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2011-10-01
 
   - viewName: Award
@@ -2780,7 +2760,7 @@ GRADUATION_RATES_200_2:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2014-08-01
+      start: 2013-08-01
       end: 2015-10-01
 
   - viewName: Campus
@@ -2790,7 +2770,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2011-10-01
 
   - viewName: CohortExclusion
@@ -2798,7 +2778,7 @@ GRADUATION_RATES_200_2:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Course
@@ -2808,7 +2788,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2011-10-01
 
   - viewName: CourseSection
@@ -2818,7 +2798,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2011-10-01
 
   - viewName: CourseSectionSchedule
@@ -2828,7 +2808,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2011-10-01
 
   - viewName: Degree
@@ -2838,7 +2818,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2015-10-01
 
   - viewName: DegreeProgram
@@ -2848,7 +2828,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2015-10-01
 
   - viewName: IPEDSClientConfig
@@ -2856,7 +2836,7 @@ GRADUATION_RATES_200_2:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -2864,7 +2844,7 @@ GRADUATION_RATES_200_2:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Registration
@@ -2874,7 +2854,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2015-10-01
 
   - viewName: RegistrationStatus
@@ -2882,7 +2862,7 @@ GRADUATION_RATES_200_2:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Student
@@ -2892,7 +2872,7 @@ GRADUATION_RATES_200_2:
       - Fall Census
       - August End
     snapshotDateRange:
-      start: 2011-05-01
+      start: 2010-05-01
       end: 2011-10-01
 
 HUMAN_RESOURCES_1:
@@ -2904,7 +2884,7 @@ HUMAN_RESOURCES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeeAssignment
@@ -2913,7 +2893,7 @@ HUMAN_RESOURCES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeePosition
@@ -2922,7 +2902,7 @@ HUMAN_RESOURCES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: Faculty
@@ -2931,7 +2911,7 @@ HUMAN_RESOURCES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: FacultyAppointment
@@ -2940,7 +2920,7 @@ HUMAN_RESOURCES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: IPEDSClientConfig
@@ -2949,7 +2929,7 @@ HUMAN_RESOURCES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: Person
@@ -2958,7 +2938,7 @@ HUMAN_RESOURCES_1:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
 HUMAN_RESOURCES_2:
@@ -2970,7 +2950,7 @@ HUMAN_RESOURCES_2:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeeAssignment
@@ -2979,7 +2959,7 @@ HUMAN_RESOURCES_2:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeePosition
@@ -2988,7 +2968,7 @@ HUMAN_RESOURCES_2:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: Faculty
@@ -2997,7 +2977,7 @@ HUMAN_RESOURCES_2:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: FacultyAppointment
@@ -3006,7 +2986,7 @@ HUMAN_RESOURCES_2:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: IPEDSClientConfig
@@ -3015,7 +2995,7 @@ HUMAN_RESOURCES_2:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: Person
@@ -3024,7 +3004,7 @@ HUMAN_RESOURCES_2:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
 HUMAN_RESOURCES_3:
@@ -3036,7 +3016,7 @@ HUMAN_RESOURCES_3:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeeAssignment
@@ -3045,7 +3025,7 @@ HUMAN_RESOURCES_3:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeePosition
@@ -3054,7 +3034,7 @@ HUMAN_RESOURCES_3:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: Faculty
@@ -3063,7 +3043,7 @@ HUMAN_RESOURCES_3:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: IPEDSClientConfig
@@ -3072,7 +3052,7 @@ HUMAN_RESOURCES_3:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: Person
@@ -3081,7 +3061,7 @@ HUMAN_RESOURCES_3:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
 HUMAN_RESOURCES_4:
@@ -3093,7 +3073,7 @@ HUMAN_RESOURCES_4:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeeAssignment
@@ -3102,7 +3082,7 @@ HUMAN_RESOURCES_4:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: EmployeePosition
@@ -3111,7 +3091,7 @@ HUMAN_RESOURCES_4:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: IPEDSClientConfig
@@ -3120,7 +3100,7 @@ HUMAN_RESOURCES_4:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
   - viewName: Person
@@ -3129,7 +3109,7 @@ HUMAN_RESOURCES_4:
       - HR Reporting End
       - October End
     snapshotDateRange:
-      start: 2015-10-15
+      start: 2014-10-15
       end: 2015-11-15
 
 INSTITUTIONAL_CHARACTERISTICS_1:
@@ -3140,7 +3120,7 @@ INSTITUTIONAL_CHARACTERISTICS_1:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
   - viewName: InstitCharUndergradGrad
@@ -3148,7 +3128,7 @@ INSTITUTIONAL_CHARACTERISTICS_1:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
   - viewName: IPEDSClientConfig
@@ -3156,7 +3136,7 @@ INSTITUTIONAL_CHARACTERISTICS_1:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_3:
@@ -3167,7 +3147,7 @@ INSTITUTIONAL_CHARACTERISTICS_3:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
   - viewName: InstitCharUndergradGrad
@@ -3175,7 +3155,7 @@ INSTITUTIONAL_CHARACTERISTICS_3:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
   - viewName: IPEDSClientConfig
@@ -3183,7 +3163,7 @@ INSTITUTIONAL_CHARACTERISTICS_3:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_5:
@@ -3194,7 +3174,7 @@ INSTITUTIONAL_CHARACTERISTICS_5:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
   - viewName: InstitCharUndergradGrad
@@ -3202,7 +3182,7 @@ INSTITUTIONAL_CHARACTERISTICS_5:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
   - viewName: IPEDSClientConfig
@@ -3210,7 +3190,7 @@ INSTITUTIONAL_CHARACTERISTICS_5:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_7:
@@ -3221,7 +3201,7 @@ INSTITUTIONAL_CHARACTERISTICS_7:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
   - viewName: InstitCharUndergradGrad
@@ -3229,7 +3209,7 @@ INSTITUTIONAL_CHARACTERISTICS_7:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
   - viewName: IPEDSClientConfig
@@ -3237,7 +3217,7 @@ INSTITUTIONAL_CHARACTERISTICS_7:
     tagNames:
       - IC Reporting Start
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-15
 
 OUTCOME_MEASURES_1:
@@ -3253,7 +3233,7 @@ OUTCOME_MEASURES_1:
       - June End
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2015-10-01
 
   - viewName: Award
@@ -3261,7 +3241,7 @@ OUTCOME_MEASURES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2011-08-01
+      start: 2010-08-01
       end: 2015-10-01
 
   - viewName: Campus
@@ -3273,7 +3253,7 @@ OUTCOME_MEASURES_1:
       - Post-Spring Summer Census
       - June End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2008-08-01
 
   - viewName: CohortExclusion
@@ -3281,7 +3261,7 @@ OUTCOME_MEASURES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Course
@@ -3293,7 +3273,7 @@ OUTCOME_MEASURES_1:
       - Post-Spring Summer Census
       - June End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2008-08-01
 
   - viewName: CourseSection
@@ -3305,7 +3285,7 @@ OUTCOME_MEASURES_1:
       - Post-Spring Summer Census
       - June End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2008-08-01
 
   - viewName: CourseSectionSchedule
@@ -3317,7 +3297,7 @@ OUTCOME_MEASURES_1:
       - Post-Spring Summer Census
       - June End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2008-08-01
 
   - viewName: Degree
@@ -3325,7 +3305,7 @@ OUTCOME_MEASURES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2011-08-01
+      start: 2010-08-01
       end: 2015-10-01
 
   - viewName: FinancialAid
@@ -3333,7 +3313,7 @@ OUTCOME_MEASURES_1:
     tagNames:
       - Financial Aid Year End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2008-08-01
 
   - viewName: IPEDSClientConfig
@@ -3341,7 +3321,7 @@ OUTCOME_MEASURES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: IPEDSReportingPeriod
@@ -3349,7 +3329,7 @@ OUTCOME_MEASURES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Registration
@@ -3362,7 +3342,7 @@ OUTCOME_MEASURES_1:
       - June End
       - August End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2015-10-01
 
   - viewName: RegistrationStatus
@@ -3370,7 +3350,7 @@ OUTCOME_MEASURES_1:
     tagNames:
       - August End
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
   - viewName: Student
@@ -3382,7 +3362,7 @@ OUTCOME_MEASURES_1:
       - Post-Spring Summer Census
       - June End
     snapshotDateRange:
-      start: 2007-05-01
+      start: 2006-05-01
       end: 2008-08-01
 
   - viewName: Transfer
@@ -3391,7 +3371,7 @@ OUTCOME_MEASURES_1:
       - August End
       - Student Transfer Data
     snapshotDateRange:
-      start: 2015-08-01
+      start: 2014-08-01
       end: 2015-10-01
 
 STUDENT_FINANCIAL_AID_1:
@@ -3409,7 +3389,7 @@ STUDENT_FINANCIAL_AID_1:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -3420,7 +3400,7 @@ STUDENT_FINANCIAL_AID_1:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Course
@@ -3431,7 +3411,7 @@ STUDENT_FINANCIAL_AID_1:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -3442,7 +3422,7 @@ STUDENT_FINANCIAL_AID_1:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -3453,7 +3433,7 @@ STUDENT_FINANCIAL_AID_1:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: FinancialAid
@@ -3461,7 +3441,7 @@ STUDENT_FINANCIAL_AID_1:
     tagNames:
       - Financial Aid Year End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSClientConfig
@@ -3472,7 +3452,7 @@ STUDENT_FINANCIAL_AID_1:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -3483,7 +3463,7 @@ STUDENT_FINANCIAL_AID_1:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: MilitaryBenefit
@@ -3492,7 +3472,7 @@ STUDENT_FINANCIAL_AID_1:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -3503,7 +3483,7 @@ STUDENT_FINANCIAL_AID_1:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -3516,7 +3496,7 @@ STUDENT_FINANCIAL_AID_1:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
 STUDENT_FINANCIAL_AID_2:
@@ -3534,7 +3514,7 @@ STUDENT_FINANCIAL_AID_2:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -3545,7 +3525,7 @@ STUDENT_FINANCIAL_AID_2:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Course
@@ -3556,7 +3536,7 @@ STUDENT_FINANCIAL_AID_2:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -3567,7 +3547,7 @@ STUDENT_FINANCIAL_AID_2:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -3578,7 +3558,7 @@ STUDENT_FINANCIAL_AID_2:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: FinancialAid
@@ -3586,7 +3566,7 @@ STUDENT_FINANCIAL_AID_2:
     tagNames:
       - Financial Aid Year End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSClientConfig
@@ -3597,7 +3577,7 @@ STUDENT_FINANCIAL_AID_2:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -3608,7 +3588,7 @@ STUDENT_FINANCIAL_AID_2:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: MilitaryBenefit
@@ -3617,7 +3597,7 @@ STUDENT_FINANCIAL_AID_2:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -3628,7 +3608,7 @@ STUDENT_FINANCIAL_AID_2:
       - October End
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -3641,7 +3621,7 @@ STUDENT_FINANCIAL_AID_2:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
 STUDENT_FINANCIAL_AID_3:
@@ -3656,7 +3636,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -3664,7 +3644,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Course
@@ -3672,7 +3652,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -3680,7 +3660,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -3688,7 +3668,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: FinancialAid
@@ -3696,7 +3676,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - Financial Aid Year End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSClientConfig
@@ -3704,7 +3684,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -3712,7 +3692,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: MilitaryBenefit
@@ -3723,7 +3703,7 @@ STUDENT_FINANCIAL_AID_3:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -3731,7 +3711,7 @@ STUDENT_FINANCIAL_AID_3:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -3742,7 +3722,7 @@ STUDENT_FINANCIAL_AID_3:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
 STUDENT_FINANCIAL_AID_4:
@@ -3757,7 +3737,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -3765,7 +3745,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Course
@@ -3773,7 +3753,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -3781,7 +3761,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -3789,7 +3769,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: FinancialAid
@@ -3797,7 +3777,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - Financial Aid Year End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSClientConfig
@@ -3805,7 +3785,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -3813,7 +3793,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: MilitaryBenefit
@@ -3824,7 +3804,7 @@ STUDENT_FINANCIAL_AID_4:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -3832,7 +3812,7 @@ STUDENT_FINANCIAL_AID_4:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -3843,7 +3823,7 @@ STUDENT_FINANCIAL_AID_4:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
 STUDENT_FINANCIAL_AID_5:
@@ -3858,7 +3838,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -3866,7 +3846,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Course
@@ -3874,7 +3854,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -3882,7 +3862,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -3890,7 +3870,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: FinancialAid
@@ -3898,7 +3878,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - Financial Aid Year End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSClientConfig
@@ -3906,7 +3886,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -3914,7 +3894,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: MilitaryBenefit
@@ -3925,7 +3905,7 @@ STUDENT_FINANCIAL_AID_5:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2015-05-01
+      start: 2014-05-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -3933,7 +3913,7 @@ STUDENT_FINANCIAL_AID_5:
     tagNames:
       - June End
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
   - viewName: Student
@@ -3944,7 +3924,7 @@ STUDENT_FINANCIAL_AID_5:
       - Department of Defense
       - GI Bill
     snapshotDateRange:
-      start: 2012-05-01
+      start: 2011-05-01
       end: 2015-12-31
 
 TWELVE_MONTH_ENROLLMENT_1:
@@ -3968,7 +3948,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2008-01-01
+      start: 2007-01-01
       end: 2015-12-31
 
   - viewName: IPEDSReportingPeriod
@@ -3989,7 +3969,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2008-01-01
+      start: 2007-01-01
       end: 2015-12-31
 
   # Adding all views for testing purposes
@@ -4012,7 +3992,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: AcademicTrack
@@ -4033,7 +4013,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: Campus
@@ -4054,7 +4034,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: Course
@@ -4075,7 +4055,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: CourseSection
@@ -4096,7 +4076,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: CourseSectionSchedule
@@ -4117,7 +4097,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: Degree
@@ -4138,7 +4118,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: DegreeProgram
@@ -4159,7 +4139,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: FieldOfStudy
@@ -4180,7 +4160,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2011-01-01
+      start: 2010-01-01
       end: 2015-12-31
 
   - viewName: Person
@@ -4201,7 +4181,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: Registration
@@ -4222,7 +4202,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
   - viewName: Student
@@ -4243,7 +4223,7 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Academic Year End
       - October End
     snapshotDateRange:
-      start: 2007-01-01
+      start: 2006-01-01
       end: 2015-12-31
 
 TWELVE_MONTH_ENROLLMENT_2:
@@ -4259,7 +4239,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Campus
@@ -4272,7 +4252,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Course
@@ -4285,7 +4265,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: CourseSection
@@ -4298,7 +4278,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: CourseSectionSchedule
@@ -4311,7 +4291,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: IPEDSClientConfig
@@ -4324,7 +4304,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: IPEDSReportingPeriod
@@ -4337,7 +4317,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Person
@@ -4350,7 +4330,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Registration
@@ -4363,7 +4343,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Student
@@ -4376,7 +4356,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
 TWELVE_MONTH_ENROLLMENT_3:
@@ -4392,7 +4372,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Campus
@@ -4405,7 +4385,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Course
@@ -4418,7 +4398,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: CourseSection
@@ -4431,7 +4411,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: CourseSectionSchedule
@@ -4444,7 +4424,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: IPEDSClientConfig
@@ -4457,7 +4437,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: IPEDSReportingPeriod
@@ -4470,7 +4450,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Person
@@ -4483,7 +4463,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Registration
@@ -4496,7 +4476,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Student
@@ -4509,7 +4489,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
 TWELVE_MONTH_ENROLLMENT_4:
@@ -4525,7 +4505,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Campus
@@ -4538,7 +4518,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Course
@@ -4551,7 +4531,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: CourseSection
@@ -4564,7 +4544,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: CourseSectionSchedule
@@ -4577,7 +4557,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: IPEDSClientConfig
@@ -4590,7 +4570,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: IPEDSReportingPeriod
@@ -4603,7 +4583,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Person
@@ -4616,7 +4596,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Registration
@@ -4629,7 +4609,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
 
   - viewName: Student
@@ -4642,5 +4622,5 @@ TWELVE_MONTH_ENROLLMENT_4:
       - Academic Year End
       - June End
     snapshotDateRange:
-      start: 2014-05-01
+      start: 2013-05-01
       end: 2015-08-01
