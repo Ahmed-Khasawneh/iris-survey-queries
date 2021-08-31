@@ -1,0 +1,5 @@
+PART,MAJORNUM,CIPC_LEVL,AWLEVEL,isDistanceED,FIELD1,FIELD2,FIELD3,FIELD4,FIELD5,FIELD6,FIELD7,FIELD8,FIELD9,FIELD10,FIELD11,FIELD12,FIELD13,FIELD14,FIELD15,FIELD16,FIELD17,FIELD18
+A,1,1.0101,3,null,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+B,1,1.0101,3,1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null
+C,null,null,null,null,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+D,null,null,3,null,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,null,null
