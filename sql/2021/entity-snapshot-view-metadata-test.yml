@@ -30,7 +30,6 @@
 # ---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---TEST FILE---
 
 ACADEMIC_LIBRARIES_1:
-  # reporting period: fiscal year ending prior to 2015-10-01
 
   - viewName: FiscalYear
     entityName: FiscalYear
@@ -717,7 +716,6 @@ ACADEMIC_LIBRARIES_1:
       end: 2015-12-31
 
 ADMISSIONS_1:
-  # reporting period for Cohort: Fall Census 2015 and prior summer
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -840,7 +838,6 @@ ADMISSIONS_1:
       end: 2015-12-31
 
 COMPLETIONS_1:
-  # reporting period: terms within 2014-07-01 to 2015-06-30; as-of date 2015-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -986,9 +983,6 @@ COMPLETIONS_1:
       end: 2015-08-01
 
 FALL_ENROLLMENT_1:
-  # reporting period for Cohort: Fall Census 2015 and prior summer
-  # reporting period for Retention: Fall Census 2014 and prior summer
-  # reporting period for HR: as of 10/31/13
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -1193,9 +1187,6 @@ FALL_ENROLLMENT_1:
       end: 2015-12-31
 
 FALL_ENROLLMENT_2:
-  # reporting period for Cohort: Fall Census 2015 and prior summer
-  # reporting period for Retention: Fall Census 2014 and prior summer
-  # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -1390,9 +1381,6 @@ FALL_ENROLLMENT_2:
       end: 2015-12-31
 
 FALL_ENROLLMENT_3:
-  # reporting period for Cohort: Fall Census 2015 and prior summer
-  # reporting period for Retention: Fall Census 2014 and prior summer
-  # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -1587,9 +1575,6 @@ FALL_ENROLLMENT_3:
       end: 2015-12-31
 
 FALL_ENROLLMENT_4:
-  # reporting period for Cohort: Fall Census 2015 and prior summer
-  # reporting period for Retention: Fall Census 2014 and prior summer
-  # reporting period for HR: as of 10/31/19
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -1784,7 +1769,6 @@ FALL_ENROLLMENT_4:
       end: 2015-12-31
 
 FINANCE_1:
-  # reporting period: fiscal year ending prior to 2015-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1835,7 +1819,6 @@ FINANCE_1:
       end: 2015-10-01
 
 FINANCE_2:
-  # reporting period: fiscal year ending prior to 2015-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1886,7 +1869,6 @@ FINANCE_2:
       end: 2015-10-01
 
 FINANCE_3:
-  # reporting period: fiscal year ending prior to 2015-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1937,7 +1919,6 @@ FINANCE_3:
       end: 2015-10-01
 
 FINANCE_4:
-  # reporting period: fiscal year ending prior to 2015-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -1988,7 +1969,6 @@ FINANCE_4:
       end: 2015-10-01
 
 FINANCE_5:
-  # reporting period: fiscal year ending prior to 2015-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -2039,7 +2019,6 @@ FINANCE_5:
       end: 2015-10-01
 
 FINANCE_6:
-  # reporting period: fiscal year ending prior to 2015-10-01
 
   - viewName: ChartOfAccounts
     entityName: ChartOfAccounts
@@ -2090,7 +2069,6 @@ FINANCE_6:
       end: 2015-10-01
 
 GRADUATION_RATES_1:
-  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -2260,7 +2238,6 @@ GRADUATION_RATES_1:
       end: 2015-10-01
 
 GRADUATION_RATES_3:
-  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -2430,7 +2407,6 @@ GRADUATION_RATES_3:
       end: 2016-02-10
 
 GRADUATION_RATES_5:
-  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -2590,7 +2566,6 @@ GRADUATION_RATES_5:
       end: 2016-02-10
 
 GRADUATION_RATES_200_1:
-  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -2733,7 +2708,6 @@ GRADUATION_RATES_200_1:
       end: 2007-10-01
 
 GRADUATION_RATES_200_2:
-  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -2876,7 +2850,6 @@ GRADUATION_RATES_200_2:
       end: 2011-10-01
 
 HUMAN_RESOURCES_1:
-  # reporting period: as of 10/31/14
 
   - viewName: Employee
     entityName: Employee
@@ -2942,7 +2915,6 @@ HUMAN_RESOURCES_1:
       end: 2015-11-15
 
 HUMAN_RESOURCES_2:
-  # reporting period: as of 10/31/14
 
   - viewName: Employee
     entityName: Employee
@@ -3008,7 +2980,6 @@ HUMAN_RESOURCES_2:
       end: 2015-11-15
 
 HUMAN_RESOURCES_3:
-  # reporting period: as of 10/31/14
 
   - viewName: Employee
     entityName: Employee
@@ -3065,7 +3036,6 @@ HUMAN_RESOURCES_3:
       end: 2015-11-15
 
 HUMAN_RESOURCES_4:
-  # reporting period: as of 10/31/14
 
   - viewName: Employee
     entityName: Employee
@@ -3113,7 +3083,6 @@ HUMAN_RESOURCES_4:
       end: 2015-11-15
 
 INSTITUTIONAL_CHARACTERISTICS_1:
-  # reporting period: survey reporting date
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
@@ -3140,7 +3109,6 @@ INSTITUTIONAL_CHARACTERISTICS_1:
       end: 2015-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_3:
-  # reporting period: survey reporting date
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
@@ -3167,7 +3135,6 @@ INSTITUTIONAL_CHARACTERISTICS_3:
       end: 2015-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_5:
-  # reporting period: survey reporting date
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
@@ -3194,7 +3161,6 @@ INSTITUTIONAL_CHARACTERISTICS_5:
       end: 2015-10-15
 
 INSTITUTIONAL_CHARACTERISTICS_7:
-  # reporting period: survey reporting date
 
   - viewName: InstitCharDoctorate
     entityName: InstitCharDoctorate
@@ -3221,7 +3187,6 @@ INSTITUTIONAL_CHARACTERISTICS_7:
       end: 2015-10-15
 
 OUTCOME_MEASURES_1:
-  # reporting period: terms within 2007-07-01 to 2008-06-30; as-of dates 2011-08-31, 2013-08-31, 2015-08-31
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -3375,11 +3340,6 @@ OUTCOME_MEASURES_1:
       end: 2015-10-01
 
 STUDENT_FINANCIAL_AID_1:
-  # reporting period for Cohort: Fall Census 2014 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2013 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2012 and prior summer
-  # reporting period for GI Bill: July 1, 2014 - June 30, 2016
-  # reporting period for Dept Of Defense: October 1, 2014 - September 30, 2016
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -3500,11 +3460,6 @@ STUDENT_FINANCIAL_AID_1:
       end: 2015-12-31
 
 STUDENT_FINANCIAL_AID_2:
-  # reporting period for Cohort: Fall Census 2015 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2013 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2012 and prior summer
-  # reporting period for GI Bill: July 1, 2015 - June 30, 2016
-  # reporting period for Dept Of Defense: October 1, 2015 - September 30, 2016
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -3625,11 +3580,6 @@ STUDENT_FINANCIAL_AID_2:
       end: 2015-12-31
 
 STUDENT_FINANCIAL_AID_3:
-  # reporting period for Cohort: Fall Census 2015 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2013 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2012 and prior summer
-  # reporting period for GI Bill: July 1, 2015 - June 30, 2016
-  # reporting period for Dept Of Defense: October 1, 2015 - September 30, 2016
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -3726,11 +3676,6 @@ STUDENT_FINANCIAL_AID_3:
       end: 2015-12-31
 
 STUDENT_FINANCIAL_AID_4:
-  # reporting period for Cohort: Fall Census 2015 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2013 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2012 and prior summer
-  # reporting period for GI Bill: July 1, 2015 - June 30, 2016
-  # reporting period for Dept Of Defense: October 1, 2015 - September 30, 2016
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -3827,11 +3772,6 @@ STUDENT_FINANCIAL_AID_4:
       end: 2015-12-31
 
 STUDENT_FINANCIAL_AID_5:
-  # reporting period for Cohort: Fall Census 2015 and prior summer (October 15 )
-  # reporting period for Prior Year 1: Fall Census 2013 and prior summer
-  # reporting period for Prior Year 2: Fall Census 2012 and prior summer
-  # reporting period for GI Bill: July 1, 2015 - June 30, 2016
-  # reporting period for Dept Of Defense: October 1, 2015 - September 30, 2016
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -3928,7 +3868,6 @@ STUDENT_FINANCIAL_AID_5:
       end: 2015-12-31
 
 TWELVE_MONTH_ENROLLMENT_1:
-  # reporting period: terms within 2014-07-01 to 2015-06-30; as-of date 2015-06-30
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -4227,7 +4166,6 @@ TWELVE_MONTH_ENROLLMENT_1:
       end: 2015-12-31
 
 TWELVE_MONTH_ENROLLMENT_2:
-  # reporting period: terms within 2014-07-01 to 2015-06-30; as-of date 2015-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -4360,7 +4298,6 @@ TWELVE_MONTH_ENROLLMENT_2:
       end: 2015-08-01
 
 TWELVE_MONTH_ENROLLMENT_3:
-  # reporting period: terms within 2014-07-01 to 2015-06-30; as-of date 2015-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -4493,7 +4430,6 @@ TWELVE_MONTH_ENROLLMENT_3:
       end: 2015-08-01
 
 TWELVE_MONTH_ENROLLMENT_4:
-  # reporting period: terms within 2014-07-01 to 2015-06-30; as-of date 2015-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
