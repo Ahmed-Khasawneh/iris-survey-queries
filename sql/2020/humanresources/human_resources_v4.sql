@@ -17,6 +17,7 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
+20210907            akhasawneh                 		PF-2289 Update join Faculty/FacultyAppointment
 20210428            jhanicak                            PF-2161 Add coalesce, upper and default values
 20210426            jhanicak                            PF-2153/PF-2161 Fix errors, add newest updates
 20210420            akhasawneh                 			PF-2153 Correction to boolean field filters. Correction to surveyId.
