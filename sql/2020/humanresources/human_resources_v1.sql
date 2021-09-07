@@ -17,11 +17,12 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
+20210407            akhasawneh                 		PF-2289 Update join Faculty/FacultyAppointment
 20210428            jhanicak                            PF-2161 Add coalesce, upper and default values
 20210408            jhanicak                            PF-2140 Modify boolean filters to use 1 or 0 (no null, false, true)
-20210407            akhasawneh                 			PF-2137 Add OccCat5 is null to correct counts
+20210407            akhasawneh                 		PF-2137 Add OccCat5 is null to correct counts
 20210330            jhanicak                            PF-2099 Add new fields, modify logic in views
-20210203            akhasawneh                 			Initial version - 1m 58s (prod), 1m 49s (test)
+20210203            akhasawneh                 		Initial version - 1m 58s (prod), 1m 49s (test)
 
 ********************/
 
