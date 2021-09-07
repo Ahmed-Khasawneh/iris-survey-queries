@@ -231,7 +231,7 @@ from (
                 empassignENT.recordActivityDate desc
          ), 1) jobRn
     from EmployeeMCR emp
-		left join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
+		inner join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
 			and ((coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
 				and to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') <= emp.asOfDate)
 			        or coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
@@ -497,12 +497,10 @@ from (
 			    and (facappENT.appointmentEndDate is null 
 				    or to_date(facappENT.appointmentEndDate, 'YYYY-MM-DD') >= fac.asOfDate)			    
 			    and coalesce(facappENT.isIpedsReportable, true) = true
+			    and facappENT.appointmentDecision = 'Accepted'
 	)
 ) 
 where facappRn = 1
-and ((recordActivityDate is null 
-        or (recordActivityDate != CAST('9999-09-09' AS DATE) and appointmentDecision = 'Accepted')
-            or recordActivityDate = CAST('9999-09-09' AS DATE)))
 ),
 
 PersonMCR as ( 
