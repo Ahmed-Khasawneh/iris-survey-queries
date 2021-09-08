@@ -35,14 +35,14 @@ def run_query():
   survey_type = options['surveyType']
 
 
-  spark_refresh_entity_views_v2(tenant_id=tenant_id, survey_type=survey_type, stage=stage, year=year, user_id=user_id)
+  spark_refresh_entity_views_v2(tenant_id=tenant_id, survey_type=survey_type, stage=stage, year=year, user_id=user_id)  
 
   if (survey_type == 'TWELVE_MONTH_ENROLLMENT_1' 
     or survey_type == 'TWELVE_MONTH_ENROLLMENT_2' 
     or survey_type == 'TWELVE_MONTH_ENROLLMENT_3' 
     or survey_type == 'TWELVE_MONTH_ENROLLMENT_4'):
     #surveyOutput = run_twelve_month_enrollment_query(options, spark, sparkContext)
-    surveyOutput = run_twelve_month_enrollment_query()
+    surveyOutput = run_twelve_month_enrollment_query(spark, survey_type, year)
   else:
     raise Exception(f'Unsupported survey type: {survey_type}')
   
