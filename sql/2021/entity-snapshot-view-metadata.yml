@@ -3578,6 +3578,19 @@ TWELVE_MONTH_ENROLLMENT_2:
       start: 2020-05-01
       end: 2021-08-01
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3619,6 +3632,32 @@ TWELVE_MONTH_ENROLLMENT_2:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3723,6 +3762,19 @@ TWELVE_MONTH_ENROLLMENT_3:
       start: 2020-05-01
       end: 2021-08-01
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3764,6 +3816,32 @@ TWELVE_MONTH_ENROLLMENT_3:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3868,6 +3946,19 @@ TWELVE_MONTH_ENROLLMENT_4:
       start: 2020-05-01
       end: 2021-08-01
 
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
   - viewName: Campus
     entityName: Campus
     tagNames:
@@ -3909,6 +4000,32 @@ TWELVE_MONTH_ENROLLMENT_4:
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2020-05-01
+      end: 2021-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
