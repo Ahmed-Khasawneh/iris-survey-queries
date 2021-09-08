@@ -3630,6 +3630,19 @@ TWELVE_MONTH_ENROLLMENT_1:
       start: 2019-05-01
       end: 2020-08-01
 
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
 TWELVE_MONTH_ENROLLMENT_2:
   # reporting period: terms within 2019-07-01 to 2020-06-30; as-of date 2020-06-30
 
@@ -3752,6 +3765,19 @@ TWELVE_MONTH_ENROLLMENT_2:
 
   - viewName: Student
     entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
@@ -3896,6 +3922,19 @@ TWELVE_MONTH_ENROLLMENT_3:
       start: 2019-05-01
       end: 2020-08-01
 
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
 TWELVE_MONTH_ENROLLMENT_4:
   # reporting period: terms within 2019-07-01 to 2020-06-30; as-of date 2020-06-30
 
@@ -4018,6 +4057,19 @@ TWELVE_MONTH_ENROLLMENT_4:
 
   - viewName: Student
     entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2019-05-01
+      end: 2020-08-01
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
     tagNames:
       - Pre-Fall Summer Census
       - Fall Census
