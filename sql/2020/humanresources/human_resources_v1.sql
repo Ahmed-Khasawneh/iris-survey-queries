@@ -17,11 +17,12 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
+20210907            akhasawneh                 		PF-2289 Update join Faculty/FacultyAppointment
 20210428            jhanicak                            PF-2161 Add coalesce, upper and default values
 20210408            jhanicak                            PF-2140 Modify boolean filters to use 1 or 0 (no null, false, true)
-20210407            akhasawneh                 			PF-2137 Add OccCat5 is null to correct counts
+20210407            akhasawneh                 		PF-2137 Add OccCat5 is null to correct counts
 20210330            jhanicak                            PF-2099 Add new fields, modify logic in views
-20210203            akhasawneh                 			Initial version - 1m 58s (prod), 1m 49s (test)
+20210203            akhasawneh                 		Initial version - 1m 58s (prod), 1m 49s (test)
 
 ********************/
 
@@ -232,7 +233,7 @@ from (
                 empassignENT.recordActivityDate desc
          ), 1) jobRn
     from EmployeeMCR emp
-		left join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
+		inner join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
 			and ((coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
 				and to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') <= emp.asOfDate)
 			        or coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
@@ -440,11 +441,14 @@ FacultyAppointmentMCR as (
 select *
 from (
     select *,
-		(case when tenureStatus = 'Tenured' and tenureEffectiveDate <= reportingDateEnd then 'Tenured'
-				when tenureStatus = 'Tenured' and tenureEffectiveDate >= reportingDateEnd then 'On Tenure Track'
-				when tenureStatus = 'On Tenure Track' and tenureTrackStartDate <= reportingDateEnd then 'On Tenure Track'
-				else 'Not on Tenure Track'
-			end) tenure
+	(case when appointmentDecision = 'Accepted' then
+			(case when tenureStatus = 'Tenured' and tenureEffectiveDate <= reportingDateEnd then 'Tenured'
+					when tenureStatus = 'Tenured' and tenureEffectiveDate >= reportingDateEnd then 'On Tenure Track'
+					when tenureStatus = 'On Tenure Track' and tenureTrackStartDate <= reportingDateEnd then 'On Tenure Track'
+					else 'Not on Tenure Track'
+			end)
+			else 'Not on Tenure Track'
+		end) tenure
 	from(
 		select distinct
             fac.personId personId, 
@@ -505,9 +509,6 @@ from (
 	)
 ) 
 where facappRn = 1
-and ((recordActivityDate is null 
-        or (recordActivityDate != CAST('9999-09-09' AS DATE) and appointmentDecision = 'Accepted')
-            or recordActivityDate = CAST('9999-09-09' AS DATE)))
 ),
 
 PersonMCR as ( 

@@ -17,6 +17,7 @@ SUMMARY OF CHANGES
 
 Date(yyyymmdd)      Author              Tag             Comments
 -----------------   ----------------    -------------   ----------------------------------------------------------------------
+20210907            akhasawneh                 		PF-2289 Update join Faculty/FacultyAppointment
 20210428            jhanicak                            PF-2161 Add coalesce, upper and default values
 20210420            akhasawneh                 		    PF-2153 Correction to boolean field filters. Correction to surveyId.
 20210203            akhasawneh                 		    Initial version - 1m 30s (prod), 1m 2s (test)
@@ -230,7 +231,7 @@ from (
                 empassignENT.recordActivityDate desc
          ), 1) jobRn
     from EmployeeMCR emp
-		left join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
+		inner join EmployeeAssignment empassignENT on emp.personId = empassignENT.personId
 			and ((coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) != CAST('9999-09-09' AS DATE)
 				and to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD') <= emp.asOfDate)
 			        or coalesce(to_date(empassignENT.recordActivityDate, 'YYYY-MM-DD'), CAST('9999-09-09' AS DATE)) = CAST('9999-09-09' AS DATE)) 
