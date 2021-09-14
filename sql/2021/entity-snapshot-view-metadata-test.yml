@@ -3868,50 +3868,7 @@ STUDENT_FINANCIAL_AID_5:
       end: 2015-12-31
 
 TWELVE_MONTH_ENROLLMENT_1:
-
-  - viewName: IPEDSClientConfig
-    entityName: IPEDSClientConfig
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
-    snapshotDateRange:
-      start: 2007-01-01
-      end: 2015-12-31
-
-  - viewName: IPEDSReportingPeriod
-    entityName: IPEDSReportingPeriod
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
-    snapshotDateRange:
-      start: 2007-01-01
-      end: 2015-12-31
-
-  # Adding all views for testing purposes
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -3920,19 +3877,11 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
+      - June End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: AcademicTrack
     entityName: AcademicTrack
@@ -3941,19 +3890,11 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
+      - June End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
@@ -3962,19 +3903,11 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
+      - June End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Course
     entityName: Course
@@ -3983,19 +3916,11 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
+      - June End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -4004,19 +3929,11 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
+      - June End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -4025,19 +3942,11 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
+      - June End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Degree
     entityName: Degree
@@ -4046,19 +3955,11 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
+      - June End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: DegreeProgram
     entityName: DegreeProgram
@@ -4067,19 +3968,76 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
+      - June End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: IPEDSClientConfig
+    entityName: IPEDSClientConfig
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: IPEDSReportingPeriod
+    entityName: IPEDSReportingPeriod
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: Person
+    entityName: Person
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: Registration
+    entityName: Registration
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: Student
+    entityName: Student
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: FieldOfStudy
     entityName: FieldOfStudy
@@ -4088,84 +4046,14 @@ TWELVE_MONTH_ENROLLMENT_1:
       - Fall Census
       - Spring Census
       - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
       - Academic Year End
-      - October End
-    snapshotDateRange:
-      start: 2010-01-01
-      end: 2015-12-31
-
-  - viewName: Person
-    entityName: Person
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
       - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
     snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
-
-  - viewName: Registration
-    entityName: Registration
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
-    snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
-
-  - viewName: Student
-    entityName: Student
-    tagNames:
-      - Pre-Fall Summer Census
-      - Fall Census
-      - Spring Census
-      - Post-Spring Summer Census
-      - June End
-      - Full Year Term End
-      - Full Year June End
-      - IC Reporting Start
-      - HR Reporting End
-      - Fiscal Year Lockdown
-      - August End
-      - Financial Aid Year End
-      - Academic Year End
-      - October End
-    snapshotDateRange:
-      start: 2006-01-01
-      end: 2015-12-31
+      start: 2013-05-01
+      end: 2014-08-01
 
 TWELVE_MONTH_ENROLLMENT_2:
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -4178,7 +4066,20 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
@@ -4191,7 +4092,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Course
     entityName: Course
@@ -4204,7 +4105,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -4217,7 +4118,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -4230,7 +4131,33 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -4243,7 +4170,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -4256,7 +4183,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Person
     entityName: Person
@@ -4269,7 +4196,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Registration
     entityName: Registration
@@ -4282,7 +4209,7 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Student
     entityName: Student
@@ -4295,9 +4222,23 @@ TWELVE_MONTH_ENROLLMENT_2:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
 TWELVE_MONTH_ENROLLMENT_3:
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -4310,7 +4251,20 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
@@ -4323,7 +4277,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Course
     entityName: Course
@@ -4336,7 +4290,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -4349,7 +4303,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -4362,7 +4316,33 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -4375,7 +4355,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -4388,7 +4368,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Person
     entityName: Person
@@ -4401,7 +4381,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Registration
     entityName: Registration
@@ -4414,7 +4394,7 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Student
     entityName: Student
@@ -4427,9 +4407,23 @@ TWELVE_MONTH_ENROLLMENT_3:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
 TWELVE_MONTH_ENROLLMENT_4:
+  # reporting period: terms within 2013-07-01 to 2014-06-30; as-of date 2014-06-30
 
   - viewName: AcademicTerm
     entityName: AcademicTerm
@@ -4442,7 +4436,20 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: AcademicTrack
+    entityName: AcademicTrack
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: Campus
     entityName: Campus
@@ -4455,7 +4462,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Course
     entityName: Course
@@ -4468,7 +4475,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: CourseSection
     entityName: CourseSection
@@ -4481,7 +4488,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: CourseSectionSchedule
     entityName: CourseSectionSchedule
@@ -4494,7 +4501,33 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: Degree
+    entityName: Degree
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
+
+  - viewName: DegreeProgram
+    entityName: DegreeProgram
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
 
   - viewName: IPEDSClientConfig
     entityName: IPEDSClientConfig
@@ -4507,7 +4540,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: IPEDSReportingPeriod
     entityName: IPEDSReportingPeriod
@@ -4520,7 +4553,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Person
     entityName: Person
@@ -4533,7 +4566,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Registration
     entityName: Registration
@@ -4546,7 +4579,7 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
 
   - viewName: Student
     entityName: Student
@@ -4559,4 +4592,17 @@ TWELVE_MONTH_ENROLLMENT_4:
       - June End
     snapshotDateRange:
       start: 2013-05-01
-      end: 2015-08-01
+      end: 2014-08-01
+
+  - viewName: FieldOfStudy
+    entityName: FieldOfStudy
+    tagNames:
+      - Pre-Fall Summer Census
+      - Fall Census
+      - Spring Census
+      - Post-Spring Summer Census
+      - Academic Year End
+      - June End
+    snapshotDateRange:
+      start: 2013-05-01
+      end: 2014-08-01
