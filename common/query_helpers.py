@@ -3,9 +3,7 @@ import sys
 import boto3
 import json
 from uuid import uuid4
-#from queries.run_query import get_options
 from pyspark.sql.window import Window
-# from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
     to_date, when, coalesce, count, rank
 from pyspark.sql.utils import AnalysisException
@@ -16,14 +14,13 @@ from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
 spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
-# spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).config("spark.dynamicAllocation.enabled", 'true').getOrCreate()
 sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
 def ipeds_client_config_mcr(survey_year_in = ''):
     
-    ipeds_client_config_in = spark.sql('select * from ipedsClientConfig')
+    ipeds_client_config_in = spark.sql('select * from IPEDSClientConfig')
 
     ipeds_client_config = ipeds_client_config_in.filter(col('surveyCollectionYear') == survey_year_in).select(
         coalesce(upper(col('acadOrProgReporter')), lit('A')).alias('acadOrProgReporter'),  # 'A'
@@ -94,7 +91,7 @@ def ipeds_reporting_period_mcr(survey_year_in = '', survey_id_in = '', survey_se
     PriorYear1SurveySection = ['PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER']
     PriorYear2SurveySection = ['PRIOR YEAR 2 COHORT', 'PRIOR YEAR 2 PRIOR SUMMER']
     
-    ipeds_reporting_period_in = spark.sql('select * from ipedsReportingPeriod')
+    ipeds_reporting_period_in = spark.sql('select * from IPEDSReportingPeriod')
 
     ipeds_reporting_period = ipeds_reporting_period_in.filter(
         (ipeds_reporting_period_in.surveyCollectionYear == survey_year_in) & (ipeds_reporting_period_in.surveyId == survey_id_in) &
@@ -126,7 +123,7 @@ def ipeds_reporting_period_mcr(survey_year_in = '', survey_id_in = '', survey_se
     
 def academic_term_mcr():
 
-    academic_term_in = spark.sql('select * from academicTerm').filter(col('isIpedsReportable') == True)
+    academic_term_in = spark.sql('select * from AcademicTerm').filter(col('isIpedsReportable') == True)
 
     if academic_term_in.rdd.isEmpty() == False:
         academic_term_2 = academic_term_in.select(
@@ -296,11 +293,11 @@ def course_type_counts(
     if academic_term_reporting_refactor_in is None:
         academic_term_reporting_refactor_in = academic_term_reporting_refactor(ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in, survey_year_in = survey_year_in, survey_id_in = survey_id_in, survey_sections_in = survey_sections_in, survey_type_in = survey_type_in)
        
-    registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
-    course_section_in = spark.sql("select * from courseSection").filter(col('isIpedsReportable') == True)
-    course_section_schedule_in = spark.sql("select * from courseSectionSchedule").filter(col('isIpedsReportable') == True)
-    course_in = spark.sql("select * from course").filter(col('isIpedsReportable') == True)
-    campus_in = spark.sql("select * from campus").filter(col('isIpedsReportable') == True)
+    registration_in = spark.sql("select * from Registration").filter(col('isIpedsReportable') == True)
+    course_section_in = spark.sql("select * from CourseSection").filter(col('isIpedsReportable') == True)
+    course_section_schedule_in = spark.sql("select * from CourseSectionSchedule").filter(col('isIpedsReportable') == True)
+    course_in = spark.sql("select * from Course").filter(col('isIpedsReportable') == True)
+    campus_in = spark.sql("select * from Campus").filter(col('isIpedsReportable') == True)
 
     if (academic_term_reporting_refactor_in is not None) and (registration_in.rdd.isEmpty() == False):
         registration = registration_in.join(
@@ -722,12 +719,12 @@ def student_cohort(
     graduate_enroll_surveys = ['12ME', 'FE']
     academic_year_surveys = ['12ME', 'OM']
     
-    student_in = spark.sql("select * from student")
-    person_in = spark.sql("select * from person")
-    academic_track_in = spark.sql("select * from academicTrack")
-    degree_program_in = spark.sql("select * from degreeProgram")
-    degree_in = spark.sql("select * from degree")
-    field_of_study_in = spark.sql("select * from fieldOfStudy")
+    student_in = spark.sql("select * from Student")
+    person_in = spark.sql("select * from Person")
+    academic_track_in = spark.sql("select * from AcademicTrack")
+    degree_program_in = spark.sql("select * from DegreeProgram")
+    degree_in = spark.sql("select * from Degree")
+    field_of_study_in = spark.sql("select * from FieldOfStudy")
 
     if (academic_term_reporting_refactor_in is not None) and (student_in.rdd.isEmpty() == False):
         student = student_in.join(
@@ -1254,4 +1251,3 @@ def student_cohort(
         return cohort
         
     else: return
-    
