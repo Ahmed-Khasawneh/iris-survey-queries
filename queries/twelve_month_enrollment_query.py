@@ -31,7 +31,7 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
     #year = '2014'        #'2019' = 1920, '2020' = 2021, '2021' = 2122, '2022 = 2223
     year1 = str(year[2:4])
     year2 = str(int(year1) + 1)
-    survey_year = '1415' #year1 + year2
+    survey_year = year1 + year2
 
     if survey_type == 'TWELVE_MONTH_ENROLLMENT_1':
         survey_id = 'E1D'
