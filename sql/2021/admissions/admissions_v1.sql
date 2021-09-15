@@ -3,8 +3,8 @@
 EVI PRODUCT:    DORIS 2021-22 IPEDS Survey Winter Collection
 FILE NAME:      Admissions v1 (ADM)
 FILE DESC:      Admissions for all institutions
-AUTHOR:         jhanicak/akhasawneh
-CREATED:        20200909
+AUTHOR:         akhasawneh
+CREATED:        20210915
 
 SECTIONS:
 Reporting Dates/Terms
@@ -18,7 +18,7 @@ SUMMARY OF CHANGES
 Date(yyyymmdd)   Author             	Tag             	Comments
 ----------- 	--------------------	-------------   	-------------------------------------------------
 
-20200909    	jhanicak/akhasawneh 						Initial version (runtime test data 21m 54s prod data 22m 3s)
+20210915    	akhasawneh 						Initial version (runtime test data 21m 54s prod data 22m 3s)
 	
 ********************/
 
