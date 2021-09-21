@@ -14,305 +14,291 @@ from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
 spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
-# spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).config("spark.dynamicAllocation.enabled", 'true').getOrCreate()
 sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
-def get_part_format_string(survey_type_in = '', survey_id_in = '', part_in = '', part_type_in = '',  ipeds_client_config_in = None, cohort_flag_in = None, course_flag_in = None):
+#***************************************************************
+#*
+#***  get_part_data_string 
+#*
+#***************************************************************
 
-    offer_undergraduate_award = ipeds_client_config_in.first()['icOfferUndergradAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    offer_graduate_award = ipeds_client_config_in.first()['icOfferGraduateAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    offer_doctor_award = ipeds_client_config_in.first()['icOfferDoctorAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    instructional_activity_type = ipeds_client_config_in.first()['instructionalActivityType'] if ipeds_client_config_in.rdd.isEmpty() == False else None
-    dpp_fte = ipeds_client_config_in.first()['tmAnnualDPPCreditHoursFTE'] if ipeds_client_config_in.rdd.isEmpty() == False else None
+def get_part_data_string(survey_info_in, part_in = '', part_type_in = '', ipeds_client_config_in = None):
+
+    if 'survey_year_doris' in survey_info_in:
+        survey_year = survey_info_in['survey_year_doris']
+    else: survey_year = 'xxxx'
     
-    a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
-                                "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
-                                "field19"]
+    if 'survey_ver_id' in survey_info_in:
+        survey_ver_id = survey_info_in['survey_ver_id']
+    else: survey_ver_id = 'xxx'
     
-    c_columns = ["part", "field1", "field2", "field3"] 
-    b_columns = ["part", "field2", "field3", "field4", "field5"]
+    if 'survey_type' in survey_info_in:
+        survey_type = survey_info_in['survey_type']
+    else: survey_type = 'xxx'
+    
+    offer_undergraduate_award = ipeds_client_config_in.first()['icOfferUndergradAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
+    offer_graduate_award = ipeds_client_config_in.first()['icOfferGraduateAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
+    offer_doctor_award = ipeds_client_config_in.first()['icOfferDoctorAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
+    instructional_activity_type = ipeds_client_config_in.first()['instructionalActivityType'] if ipeds_client_config_in.rdd.isEmpty() == False else 'CR'
+    
+    if survey_type == '12ME': 
 
-    if survey_type_in == '12ME':    
-        if survey_id_in == 'E1D':
-        
-            # default formatting values
-            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-            a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21", "99"]
-            c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0"), ("C", "3", "0", "0")]
-            c_level_values = ["1", "2", "3"]
-            b_data = [("B", "0", "0", "0", "0")]
+            if part_in == 'A':
+                a_columns = ["personId", "ipedsPartAStudentLevel", "ethnicity", "gender"]                 
+                if part_type_in == 'columns': return a_columns
 
-            # cohort for parts A and C           
-            if cohort_flag_in == False:
-                a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-                c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
+                #formatting based on client config values
                 if offer_undergraduate_award == 'Y':
-                    if offer_graduate_award == 'Y': 
+                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                            ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", ""), ("", "99", "", "")]
+                                ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", ""), ("", "99", "", "")]
+                        a_levels = ["1", "2", "3", "7", "15", "16", "17", "21", "99"]
+                    elif (survey_ver_id == 'E1D') | (survey_ver_id == 'E12'): 
+                        a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
+                                ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", "")]
+                        a_levels = ["1", "2", "3", "7", "15", "16", "17", "21"]
+                    elif (survey_ver_id == 'E1E'): 
+                        a_data = [("", "1", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""), ("", "17", "", ""), ("", "21", "", "")]
+                        a_levels = ["1", "3", "7", "15", "17", "21"]
+                    elif (survey_ver_id == 'E1F'):
+                        a_data = [("", "1", "", ""), ("", "3", "", ""), ("", "15", "", ""), ("", "17", "", "")]
+                        a_levels = ["1", "3", "15", "17"]
+                elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
+                        a_data = [("", "99", "", "")]
+                        a_levels = ["99"]
+
+                if part_type_in == 'data': return a_data
+                else: return a_levels
+
+            elif part_in == 'C':
+                c_columns = ["personId", "ipedsPartCStudentLevel", "distanceEducationType"] 
+                if part_type_in == 'columns': return c_columns
+
+                #formatting based on client config values
+                if offer_undergraduate_award == 'Y':
+                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         c_data = [("", "1", ""), ("", "2", ""), ("", "3", "")]
-                    else: 
-                        a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21"]
-                        a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                            ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", "")]
-                        c_level_values = ["1", "2"]
+                        c_levels = ["1", "2", "3"]
+                    else:
                         c_data = [("", "1", ""), ("", "2", "")]
-                elif (offer_undergraduate_award != 'Y') & (offer_graduate_award == 'Y'):  
-                    a_level_values = ["99"]
-                    a_data = [("", "99", "", "")]
-                    c_level_values = ["3"]
-                    c_data = [("", "3", "")] 
-            else:
-                if (offer_undergraduate_award == 'Y') and (offer_graduate_award != 'Y'):
+                        c_levels = ["1", "2"]
+                elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
+                        c_data = [("", "3", "")]
+                        c_levels = ["3"]
+
+                if part_type_in == 'data': return c_data
+                else: return c_levels
+
+
+#***************************************************************
+#*
+#***  get_part_format_string 
+#*
+#***************************************************************
+
+def get_part_format_string(survey_info_in, part_in = '', part_type_in = '', ipeds_client_config_in = None):
+
+    if 'survey_year_doris' in survey_info_in:
+        survey_year = survey_info_in['survey_year_doris']
+    else: survey_year = 'xxxx'
+    
+    if 'survey_ver_id' in survey_info_in:
+        survey_ver_id = survey_info_in['survey_ver_id']
+    else: survey_ver_id = 'xxx'
+    
+    if 'survey_type' in survey_info_in:
+        survey_type = survey_info_in['survey_type']
+    else: survey_type = 'xxx'
+    
+    offer_undergraduate_award = ipeds_client_config_in.first()['icOfferUndergradAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
+    offer_graduate_award = ipeds_client_config_in.first()['icOfferGraduateAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
+    offer_doctor_award = ipeds_client_config_in.first()['icOfferDoctorAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
+    instructional_activity_type = ipeds_client_config_in.first()['instructionalActivityType'] if ipeds_client_config_in.rdd.isEmpty() == False else 'CR'
+    
+    if survey_type == '12ME': 
+
+            if part_in == 'A':
+                a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
+                                "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
+                                "field19"]  
+                if part_type_in == 'columns': return a_columns
+
+                #formatting based on client config values
+                if offer_undergraduate_award == 'Y':
+                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-                        c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")] 
-                elif (offer_undergraduate_award != 'Y') and (offer_graduate_award == 'Y'):
+                                    ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+                    elif (survey_ver_id == 'E1D') | (survey_ver_id == 'E12'):
+                        a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+                    elif (survey_ver_id == 'E1E'):
+                        a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
+                    elif (survey_ver_id == 'E1F'):
+                        a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                                    ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
+                elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                     a_data = [("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+
+                return a_data
+
+            elif part_in == 'C':
+                c_columns = ["part", "field1", "field2", "field3"]  
+                if part_type_in == 'columns': return c_columns
+
+                #formatting based on client config values
+                if offer_undergraduate_award == 'Y':
+                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
+                        c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0"), ("C", "3", "0", "0")]
+                    else:
+                        c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")]
+                elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                     c_data = [("C", "3", "0", "0")]
 
-            # course counts for part B                    
-            if course_flag_in:
+                return c_data
+
+            else: # part_in == 'B':
+                b_columns = ["part", "field2", "field3", "field4", "field5"]  
+                if part_type_in == 'columns': return b_columns
+
+                #formatting based on client config values
                 if offer_undergraduate_award == 'Y':
-                    if offer_graduate_award == 'Y':
-                        if offer_doctor_award == 'Y':
+                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'):
+                        if (offer_doctor_award == 'Y') & (survey_ver_id == 'E1D'): 
                             if instructional_activity_type == 'CR':
-                                b_columns = ["part", "field2", "field4", "field5"]
-                                b_data = [("B", "0", "0", "0")]
+                                b_data = [("B", "", "0", "0", "0")]
                             elif instructional_activity_type == 'CL':
-                                b_columns = ["part", "field3", "field4", "field5"]
-                                b_data = [("B", "0", "0", "0")]
-                        else: 
-                            if instructional_activity_type == 'CR':
-                                b_columns = ["part", "field2",  "field4"]
-                                b_data = [("B", "0", "0")]
-                            elif instructional_activity_type == 'CL':
-                                b_columns = ["part", "field3", "field4"]
-                                b_data = [("B", "0", "0")]
+                                b_data = [("B", "0", "", "0", "0")]
                             else: # instructional_activity_type == 'B':
-                                b_columns = ["part", "field2", "field3", "field4"]
-                                b_data = [("B", "0", "0", "0")]
-                    else: 
+                                b_data = [("B", "0", "0", "0", "0")]
+                        else:
+                            if instructional_activity_type == 'CR':
+                                b_data = [("B", "", "0", "0", "")]
+                            elif instructional_activity_type == 'CL':
+                                b_data = [("B", "0", "", "0", "")]
+                            else: # instructional_activity_type == 'B':
+                                b_data = [("B", "0", "0", "0", "")]
+                    else:
                         if instructional_activity_type == 'CR':
-                            b_columns = ["part", "field2"]
-                            b_data = [("B", "0")]
+                            b_data = [("B", "", "0", "", "")]
                         elif instructional_activity_type == 'CL':
-                            b_columns = ["part", "field3"]
-                            b_data = [("B", "0")]
+                            b_data = [("B", "0", "", "", "")]
                         else: # instructional_activity_type == 'B':
-                            b_columns = ["part", "field2", "field3"]
-                            b_data = [("B", "0", "0")] 
-                elif (offer_undergraduate_award != 'Y') & (offer_graduate_award == 'Y'):
-                    if offer_doctor_award == 'Y':
-                        b_columns = ["part", "field4", "field5"]
-                        b_data = [("B", "0", "0")]
-                    else: 
-                        b_columns = ["part", "field4"]
-                        b_data = [("B", "", "", "0", "")] 
-                        
-        elif survey_id_in == 'E12':
-        
-            # default formatting values
-            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-            a_level_values = ["1", "2", "3", "7", "15", "16", "17", "21"]
-            c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")]
-            c_level_values = ["1", "2"]
-            b_columns = ["part", "field2", "field3"]
-            b_data = [("B", "0", "0")]
-            
-            # cohort for parts A and C 
-            if cohort_flag_in == False:
-                a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-                c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-                a_data = [("", "1", "", ""), ("", "2", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                            ("", "16", "", ""), ("", "17", "", ""), ("", "21", "", "")]
-                c_data = [("", "1", ""), ("", "2", "")]
+                            b_data = [("B", "0", "0", "", "")]
+                elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
+                    b_data = [("B", "", "", "0", "")]
+                elif (offer_doctor__award == 'Y') & (survey_ver_id == 'E1D'): 
+                    b_data = [("B", "", "", "", "0")]
 
-            # course counts for part B                    
-            if course_flag_in:
-                if instructional_activity_type == 'CR':
-                    b_columns = ["part", "field2"]
-                    b_data = [("B", "0")]
-                elif instructional_activity_type == 'CL':
-                    b_columns = ["part", "field3"]
-                    b_data = [("B", "0")]
-                else: # instructional_activity_type == 'B':
-                    b_columns = ["part", "field2", "field3"]
-                    b_data = [("B", "0", "0")]
-                    
-        elif survey_id_in == 'E1E':
-                
-            # default formatting values
-            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
-            a_level_values = ["1", "3", "7", "15", "17", "21"]
-            c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")]
-            c_level_values = ["1", "2"]
-            b_columns = ["part", "field2", "field3"]
-            b_data = [("B", "0", "0")]
-            
-            # cohort for parts A and C 
-            if cohort_flag_in == False:          
-                a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-                c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-                a_data = [("", "1", "", ""), ("", "3", "", ""), ("", "7", "", ""), ("", "15", "", ""),
-                      ("", "17", "", ""), ("", "21", "", "")]
-                c_data = [("", "1", ""), ("", "2", "")]
+                return b_data
 
-            # course counts for part B                    
-            if course_flag_in:
-                if instructional_activity_type == 'CR':
-                    b_columns = ["part", "field2"]
-                    b_data = [("B", "0")]
-                elif instructional_activity_type == 'CL':
-                    b_columns = ["part", "field3"]
-                    b_data = [("B", "0")]
-                else: # instructional_activity_type == 'B':
-                    b_columns = ["part", "field2", "field3"]
-                    b_data = [("B", "0", "0")]
-                    
-        else:  # survey_id_in == 'E1F'
-                        
-            # default formatting values 
-            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
-            a_level_values = ["1", "3", "15", "17"]
-            c_data = [("C", "1", "0", "0")]
-            c_level_values = ["1"]
-            b_columns = ["part", "field2", "field3"]
-            b_data = [("B", "0", "0")]
-            
-            # cohort for parts A and C 
-            if cohort_flag_in == False:
-                a_columns = ["regPersonId", "ipedsPartAStudentLevel", "persIpedsEthnValue", "persIpedsGender"]
-                c_columns = ["regPersonId", "ipedsLevel", "distanceEdInd"]
-                a_data = [("", "1", "", ""), ("", "3", "", ""), ("", "15", "", ""), ("", "17", "", "")]
-                c_data = [("", "1", "")]
+#***************************************************************
+#*
+#***  get_default_part_format_string  
+#*
+#***************************************************************
 
-            # course counts for part B                    
-            if course_flag_in:
-                if instructional_activity_type == 'CR':
-                    b_columns = ["part", "field2"]
-                    b_data = [("B", "0")]
-                elif instructional_activity_type == 'CL':
-                    b_columns = ["part", "field3"]
-                    b_data = [("B", "0")]
-                else: # instructional_activity_type == 'B':
-                    b_columns = ["part", "field2", "field3"]
-                    b_data = [("B", "0", "0")]
+def get_default_part_format_string(survey_info_in, part_in = '', part_type_in = ''):
+
+    if 'survey_year_doris' in survey_info_in:
+        survey_year = survey_info_in['survey_year_doris']
+    else: survey_year = 'xxxx'
     
+    if 'survey_ver_id' in survey_info_in:
+        survey_ver_id = survey_info_in['survey_ver_id']
+    else: survey_ver_id = 'xxx'
+    
+    if 'survey_type' in survey_info_in:
+        survey_type = survey_info_in['survey_type']
+    else: survey_type = 'xxx'
+
+    if survey_type == '12ME': 
+
         if part_in == 'A':
+            a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
+                            "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
+                            "field19"]
             if part_type_in == 'columns': return a_columns
-            elif part_type_in == 'levels': return a_level_values
-            else: return a_data
-        elif part_in == 'B':
-            if part_type_in == 'columns': return b_columns
-            else: return b_data
-        elif part_in == 'C':
+
+            #formatting based on version
+            if survey_ver_id == 'E1D': 
+                a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+            elif survey_ver_id == 'E12':
+                a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+            elif survey_ver_id == 'E1E':
+                a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
+            else: #survey_ver_id == 'E1F':
+                a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+                            ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
+
+            return a_data
+
+        elif part_in == 'C':    
+            c_columns = ["part", "field1", "field2", "field3"] 
             if part_type_in == 'columns': return c_columns
-            elif part_type_in == 'levels': return c_level_values
-            else: return c_data
-
-def get_default_format_string(survey_type_in = '', survey_id_in = '', part_in = '', part_type_in = ''):
-    
-    a_columns = ["part", "field1", "field2", "field3", "field4", "field5", "field6", "field7", "field8", "field9",
-                                "field10", "field11", "field12", "field13", "field14", "field15", "field16", "field17", "field18",
-                                "field19"]
-    
-    c_columns = ["part", "field1", "field2", "field3"] 
-    b_columns = ["part", "field2", "field3", "field4", "field5"]
-
-    if survey_type_in == '12ME':    
-        if survey_id_in == 'E1D':
         
-            # default formatting values
-            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "99", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-            c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0"), ("C", "3", "0", "0")]
-            b_data = [("B", "0", "0", "0", "0")]
+            #formatting based on client config values
+            if survey_ver_id == 'E1D': 
+                    c_data = [("C", "1", "0", "0"),
+                                ("C", "2", "0", "0"),
+                                ("C", "3", "0", "0")]
+            else:
+                c_data = [("C", "1", "0", "0"),
+                            ("C", "2", "0", "0")]
 
-        elif survey_id_in == 'E12':
+            return c_data
+
+        else: # part_in == 'B':
+            b_columns = ["part", "field2", "field3", "field4", "field5"]    
+            if part_type_in == 'columns': return b_columns
         
-            # default formatting values
-            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "16", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                                  ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")]
-            c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")]
-            b_columns = ["part", "field2", "field3"]
-            b_data = [("B", "0", "0")]
-            
-        elif survey_id_in == 'E1E':
-                
-            # default formatting values
-            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "7", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "21", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
-            c_data = [("C", "1", "0", "0"), ("C", "2", "0", "0")]
-            b_columns = ["part", "field2", "field3"]
-            b_data = [("B", "0", "0")]
-            
-        else:  # survey_id_in == 'E1F'
-                        
-            # default formatting values 
-            a_data = [("A", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "3", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "15", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
-                          ("A", "17", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")] 
-            c_data = [("C", "1", "0", "0")]
-            b_columns = ["part", "field2", "field3"]
-            b_data = [("B", "0", "0")]
-    
-    if part_in == 'A':
-        if part_type_in == 'columns': return a_columns
-        else: return a_data
-    elif part_in == 'B':
-        if part_type_in == 'columns': return b_columns
-        else: return b_data
-    elif part_in == 'C':
-        if part_type_in == 'columns': return c_columns
-        else: return c_data
-        
+            #formatting based on client config values
+            if survey_ver_id == 'E1D': 
+                b_data = [("B", "0", "0", "0", "0")]
+            else:
+                b_data = [("B", "0", "0", "", "")]
+
+            return b_data
