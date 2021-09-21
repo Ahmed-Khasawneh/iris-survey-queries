@@ -18,13 +18,35 @@ sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
+
+#***************************************************************
+#*
+#***  get_survey_tags 
+#*
+#***************************************************************
+
 def get_survey_tags(survey_info_in):
     
-    survey_type = survey_info_in['survey_type'] 
-    survey_id = survey_info_in['survey_id'] 
-    survey_ver_id = survey_info_in['survey_ver_id']
-    year = survey_info_in['survey_year_iris']
-
+    if 'survey_year_doris' in survey_info_in:
+        survey_year = survey_info_in['survey_year_doris']
+    else: survey_year = 'xxxx'
+    
+    if 'survey_ver_id' in survey_info_in:
+        survey_ver_id = survey_info_in['survey_ver_id']
+    else: survey_ver_id = 'xxx'
+    
+    if 'survey_type' in survey_info_in:
+        survey_type = survey_info_in['survey_type']
+    else: survey_type = 'xxx'
+    
+    if 'survey_id' in survey_info_in:
+        survey_id = survey_info_in['survey_id']
+    else: survey_id = 'xxx'
+    
+    if 'survey_year_iris' in survey_info_in:
+        year = survey_info_in['survey_year_iris']
+    else: year = 'xxxx'
+    
     cohort_academic_fall_tag = 'Fall Census'
     cohort_academic_pre_fall_summer_tag = 'Pre-Fall Summer Census'
     cohort_academic_spring_tag = 'Spring Census'
@@ -39,8 +61,6 @@ def get_survey_tags(survey_info_in):
     transfer_tag = 'Student Transfer Data'
     fiscal_year_tag = 'Fiscal Year Lockdown'
     hr_tag = 'HR Reporting End'
-####****TEST
-    #current_survey_sections = ['FALL', 'COHORT', 'PRIOR SUMMER']
     current_survey_sections = ['COHORT', 'PRIOR SUMMER']
     prior_survey_sections = ['PRIOR YEAR 1 COHORT', 'PRIOR YEAR 1 PRIOR SUMMER']
     prior_2_survey_sections = ['PRIOR YEAR 2 COHORT', 'PRIOR YEAR 2 PRIOR SUMMER']
@@ -104,14 +124,36 @@ def get_survey_tags(survey_info_in):
         'prior_2_survey_sections' : prior_2_survey_sections}
  
     return tag_dictionary
-    
+
+
+#***************************************************************
+#*
+#***  get_survey_dates  
+#*
+#***************************************************************
+
 def get_survey_dates(survey_info_in):
     
-    survey_type = survey_info_in['survey_type'] 
-    survey_id = survey_info_in['survey_id'] 
-    survey_ver_id = survey_info_in['survey_ver_id']
-    year = survey_info_in['survey_year_iris']
-
+    if 'survey_year_doris' in survey_info_in:
+        survey_year = survey_info_in['survey_year_doris']
+    else: survey_year = 'xxxx'
+    
+    if 'survey_ver_id' in survey_info_in:
+        survey_ver_id = survey_info_in['survey_ver_id']
+    else: survey_ver_id = 'xxx'
+    
+    if 'survey_type' in survey_info_in:
+        survey_type = survey_info_in['survey_type']
+    else: survey_type = 'xxx'
+    
+    if 'survey_id' in survey_info_in:
+        survey_id = survey_info_in['survey_id']
+    else: survey_id = 'xxx'
+    
+    if 'survey_year_iris' in survey_info_in:
+        year = survey_info_in['survey_year_iris']
+    else: year = '1900' 
+    
     year2 = str(int(year) + 1) 
     prior_year = str(int(year) - 1) 
 
