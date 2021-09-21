@@ -5,6 +5,7 @@ import json
 from uuid import uuid4
 from common import query_helpers
 from common import survey_format
+from common import default_values
 from pyspark.sql.window import Window
 # from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
@@ -41,32 +42,33 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
         survey_id = 'E1E'
     else:  # V4
         survey_id = 'E1F'
-    survey_type = '12ME'
+    #survey_type = '12ME'
 
-    cohort_academic_fall_tag = 'Fall Census'
-    cohort_academic_pre_fall_summer_tag = 'Pre-Fall Summer Census'
-    cohort_academic_spring_tag = 'Spring Census'
-    cohort_academic_post_spring_summer_tag = 'Post-Spring Summer Census'
-    cohort_program_tag_1 = 'Academic Year End'
-    cohort_status_tag_1 = 'June End'
-    cohort_status_tag_2 = 'Academic Year End'
-    survey_sections = ['COHORT']
-    #Figure out how to build these timestamps using the year1, year2 input parameters
-    #ipedsReportingStartDate = to_timestamp(lit('2019-07-01'))
-    #ipedsReportingEndDate = to_timestamp(lit('2020-06-30')) 
-    
-    # ********** Survey Reporting Period
-    ipeds_client_config = query_helpers.ipeds_client_config_mcr(survey_year_in = survey_year).withColumn('survey_id', lit(survey_id))
+    survey_info = {'survey_type' : '12ME',
+        'survey_long_type' : survey_type,
+        'survey_id' : survey_id,
+        'survey_ver_id' : survey_id,
+        'survey_year_iris' : year,
+        'survey_year_doris' : year1 + year2}
         
-    if ipeds_client_config.rdd.isEmpty() == False:
-        all_academic_terms = query_helpers.academic_term_mcr()
-        reporting_period_terms = query_helpers.academic_term_reporting_refactor(academic_term_in = all_academic_terms, survey_year_in = survey_year, survey_id_in = survey_id, survey_sections_in = survey_sections, survey_type_in = survey_type)
+    survey_tags = default_values.get_survey_tags(survey_info)
 
+    survey_dates = default_values.get_survey_dates(survey_info)
+
+    # ********** Survey Reporting Period
+    
+    ipeds_client_config = query_helpers.ipeds_client_config_mcr(survey_info_in = survey_info)
+    
+    if ipeds_client_config.rdd.isEmpty() == False:
+        ipeds_reporting_period = query_helpers.ipeds_reporting_period_mcr(survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config,  survey_tags_in = survey_tags)
+        all_academic_terms = query_helpers.academic_term_mcr()    
+        reporting_period_terms = query_helpers.reporting_periods(survey_info_in = survey_info, ipeds_reporting_period_in = ipeds_reporting_period, academic_term_in = all_academic_terms, survey_tags_in = survey_tags, survey_dates_in = survey_dates)
+            
         # ********** Course Type Counts
-        course_counts = query_helpers.course_type_counts(ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, academic_term_reporting_refactor_in = reporting_period_terms, survey_type_in = survey_type)
+        course_counts = query_helpers.course_type_counts(survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, survey_tags_in = survey_tags, survey_dates_in = survey_dates)
 
         # ********** Cohort
-        cohort_all = query_helpers.student_cohort(ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, academic_term_reporting_refactor_in = reporting_period_terms, course_type_counts_in = course_counts, survey_year_in = survey_year, survey_id_in = survey_id, survey_type_in = survey_type).withColumn('survey_year', lit(survey_year)).cache()
+        cohort_all = query_helpers.student_cohort(survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, course_type_counts_in = course_counts, survey_tags_in = survey_tags, survey_dates_in = survey_dates).cache()
 
         # ********** Survey Data Transformations  
 
@@ -88,9 +90,9 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
             cohort_first_full_term = cohort_all.filter(col('FFTRn') == 1).select(
                 col('personId'),
                 col('studentLevelUGGRDPP'),
-                coalesce(when(col('survey_year') < 2122, col('isNonDegreeSeekingFirstDegreeSeeking')), col('isNonDegreeSeeking')).alias('isNonDegreeSeeking'),
+                coalesce(when(col('surveyYear') < 2122, col('isNonDegreeSeekingFirstDegreeSeeking')), col('isNonDegreeSeeking')).alias('isNonDegreeSeeking'),
                 col('timeStatus'),
-                coalesce(when(col('survey_year') < 2122, col('studentTypeFirstDegreeSeeking')), when((col('termType') == 'Fall') & (col('studentType') == 'Continuing'), col('studentTypePreFallSummer')), col('studentType')).alias('studentType'),
+                coalesce(when(col('surveyYear') < 2122, col('studentTypeFirstDegreeSeeking')), when((col('termType') == 'Fall') & (col('studentType') == 'Continuing'), col('studentTypePreFallSummer')), col('studentType')).alias('studentType'),
                 col('ethnicity'),
                 col('gender'),
                 col('distanceEducationType')
@@ -111,13 +113,13 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
                 (when(col('studentLevelUGGRDPP') != 'UG', lit('3'))
                     .when(col('isNonDegreeSeeking') == True, lit('2'))
                     .otherwise(lit('1'))).alias('ipedsPartCStudentLevel'))
-        
-            # ********** Survey Formatting
+                    
+             # ********** Survey Formatting
         
             # Part A
-            a_data = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
-            a_columns = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
-            a_level_values = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'levels', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
+            a_data = survey_format.get_part_data_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config)
+            a_columns = survey_format.get_part_data_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config)
+            a_level_values = survey_format.get_part_data_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'levels', ipeds_client_config_in = ipeds_client_config)
             
             FormatPartA = sparkContext.parallelize(a_data)
             FormatPartA = spark.createDataFrame(FormatPartA).toDF(*a_columns)
@@ -185,9 +187,9 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
                 sum(col('field19')).cast('int').alias('field19'))
                 
             # Part C
-            c_data = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
-            c_columns = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
-            c_level_values = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'levels', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = cohort_out.rdd.isEmpty())
+            c_data = survey_format.get_part_data_string(survey_info_in = survey_info, part_in = 'C', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config)
+            c_columns = survey_format.get_part_data_string(survey_info_in = survey_info, part_in = 'C', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config)
+            c_level_values = survey_format.get_part_data_string(survey_info_in = survey_info, part_in = 'C', part_type_in = 'levels', ipeds_client_config_in = ipeds_client_config)
         
             FormatPartC = sparkContext.parallelize(c_data)
             FormatPartC = spark.createDataFrame(FormatPartC).toDF(*c_columns)
@@ -204,8 +206,7 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
                 sum(col('field2')).cast('int').alias('field2'),
                 sum(col('field3')).cast('int').alias('field3'))
                 
-            # Part B
-        
+            # Part B       
             partB_out = cohort_course_counts_out.withColumn('part', lit('B')).select(
                 col('part'),
                 when((col('icOfferUndergradAwardLevel') == 'Y') & (col('instructionalActivityType') != 'CL'),
@@ -218,24 +219,24 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
                         when(coalesce(col('DPPCreditHours'), lit(0)) > 0, round(col('DPPCreditHours')/col('tmAnnualDPPCreditHoursFTE'), 0)).otherwise(lit(0))).cast('int').alias('field5'))
                 
         else:
-
+ 
             # Part A    
-            a_data = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = True)
-            a_columns = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = True)
+            a_data = survey_format.get_part_format_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config)
+            a_columns = survey_format.get_part_format_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config)
             
             partA_out = sparkContext.parallelize(a_data)
             partA_out = spark.createDataFrame(partA_out).toDF(*a_columns)
             
             # Part C
-            c_data = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = True)
-            c_columns = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config, cohort_flag_in = True)
+            c_data = survey_format.get_part_format_string(survey_info_in = survey_info, part_in = 'C', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config)
+            c_columns = survey_format.get_part_format_string(survey_info_in = survey_info, part_in = 'C', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config)
         
             partC_out = sparkContext.parallelize(c_data)
             partC_out = spark.createDataFrame(partC_out).toDF(*c_columns)
             
             # Part B
-            b_data = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'B', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config, course_flag_in = True)
-            b_columns = survey_format.get_part_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'B', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config, course_flag_in = True)
+            b_data = survey_format.get_part_format_string(survey_info_in = survey_info, part_in = 'B', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config)
+            b_columns = survey_format.get_part_format_string(survey_info_in = survey_info, part_in = 'B', part_type_in = 'columns', ipeds_client_config_in = ipeds_client_config)
 
             partB_out = sparkContext.parallelize(b_data)
             partB_out = spark.createDataFrame(partB_out).toDF(*b_columns)
@@ -243,26 +244,26 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
     else:
 
         # Part A    
-        a_data = survey_format.get_default_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'data')
-        a_columns = survey_format.get_default_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'A', part_type_in = 'columns')
+        a_data = survey_format.get_default_part_format_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'data')
+        a_columns = survey_format.get_default_part_format_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'columns')
         
         partA_out = sparkContext.parallelize(a_data)
         partA_out = spark.createDataFrame(partA_out).toDF(*a_columns)
         
         # Part C
-        c_data = survey_format.get_default_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'data')
-        c_columns = survey_format.get_default_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'C', part_type_in = 'columns')
+        c_data = survey_format.get_default_part_format_string(survey_info_in = survey_info, part_in = 'C', part_type_in = 'data')
+        c_columns = survey_format.get_default_part_format_string(survey_info_in = survey_info, part_in = 'C', part_type_in = 'columns')
 
         partC_out = sparkContext.parallelize(c_data)
         partC_out = spark.createDataFrame(c_data).toDF(*c_columns)
         
         # Part B
-        b_data = survey_format.get_default_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'B', part_type_in = 'data')
-        b_columns = survey_format.get_default_format_string(survey_type_in = survey_type, survey_id_in = survey_id, part_in = 'B', part_type_in = 'columns')
+        b_data = survey_format.get_default_part_format_string(survey_info_in = survey_info, part_in = 'B', part_type_in = 'data')
+        b_columns = survey_format.get_default_part_format_string(survey_info_in = survey_info, part_in = 'B', part_type_in = 'columns')
 
         partB_out = sparkContext.parallelize(b_data)
         partB_out = spark.createDataFrame(partB_out).toDF(*b_columns)
-
+        
     # Survey out formatting
     for column in [column for column in partB_out.columns if column not in partA_out.columns]:
         partA_out = partA_out.withColumn(column, lit(None))
@@ -278,10 +279,6 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
     return surveyOutput 
     
 #test = run_twelve_month_enrollment_query()
-#if test is None: # and isinstance(test,DataFrame): #exists(test): #test.isEmpty:
-#    test = test
-#else:
-#    test.createOrReplaceTempView('test')
-#test.show() #3m 31s
-#test.print
+#test.explain()
+#test.show()
 #print(test)
