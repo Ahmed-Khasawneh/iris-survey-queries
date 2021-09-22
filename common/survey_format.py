@@ -17,14 +17,18 @@ spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).
 sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
+#*  survey_info_in is required in all survey format functions
 
-#***************************************************************
+#***************************************************************************************************
 #*
 #***  get_part_data_string 
 #*
-#***************************************************************
+#* use function if IPEDSClientConfig and other entities contain data
+#* returns formatting strings based on survey, config values, part, and type of data requested
+#*
+#***************************************************************************************************
 
-def get_part_data_string(survey_info_in, part_in = '', part_type_in = '', ipeds_client_config_in = None):
+def get_part_data_string(survey_info_in, part_in = None, part_type_in = None, ipeds_client_config_in = None):
 
     if 'survey_year_doris' in survey_info_in:
         survey_year = survey_info_in['survey_year_doris']
@@ -81,9 +85,12 @@ def get_part_data_string(survey_info_in, part_in = '', part_type_in = '', ipeds_
                     if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         c_data = [('', '1', ''), ('', '2', ''), ('', '3', '')]
                         c_levels = ['1', '2', '3']
-                    else:
+                    elif survey_ver_id != 'E1F':
                         c_data = [('', '1', ''), ('', '2', '')]
                         c_levels = ['1', '2']
+                    else: # survey_ver_id == 'E1F':
+                        c_data = [('', '1', '')]
+                        c_levels = ['1']
                 elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         c_data = [('', '3', '')]
                         c_levels = ['3']
@@ -91,14 +98,16 @@ def get_part_data_string(survey_info_in, part_in = '', part_type_in = '', ipeds_
                 if part_type_in == 'data': return c_data
                 else: return c_levels
 
-
-#***************************************************************
+#***************************************************************************************************
 #*
 #***  get_part_format_string 
 #*
-#***************************************************************
+#* use function if IPEDSClientConfig returns a record but other entities don't
+#* returns formatting strings based on survey, config values, part, and type of data requested
+#*
+#***************************************************************************************************
 
-def get_part_format_string(survey_info_in, part_in = '', part_type_in = '', ipeds_client_config_in = None):
+def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, ipeds_client_config_in = None):
 
     if 'survey_year_doris' in survey_info_in:
         survey_year = survey_info_in['survey_year_doris']
@@ -171,8 +180,10 @@ def get_part_format_string(survey_info_in, part_in = '', part_type_in = '', iped
                 if offer_undergraduate_award == 'Y':
                     if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         c_data = [('C', '1', '0', '0'), ('C', '2', '0', '0'), ('C', '3', '0', '0')]
-                    else:
+                    elif survey_ver_id != 'E1F':
                         c_data = [('C', '1', '0', '0'), ('C', '2', '0', '0')]
+                    else: #survey_ver_id == 'E1F'
+                        c_data = [('C', '1', '0', '0')]
                 elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                     c_data = [('C', '3', '0', '0')]
 
@@ -226,14 +237,17 @@ def get_part_format_string(survey_info_in, part_in = '', part_type_in = '', iped
                 if part_type_in == 'columns': 
                     return b_columns
                 else: return b_data
-                
-#***************************************************************
+
+#***************************************************************************************************
 #*
 #***  get_default_part_format_string  
 #*
-#***************************************************************
+#* use function if IPEDSClientConfig does NOT return a record
+#* returns formatting strings based on survey, part, and type of data requested
+#*
+#***************************************************************************************************
 
-def get_default_part_format_string(survey_info_in, part_in = '', part_type_in = ''):
+def get_default_part_format_string(survey_info_in, part_in = None, part_type_in = None):
 
     if 'survey_year_doris' in survey_info_in:
         survey_year = survey_info_in['survey_year_doris']
@@ -299,9 +313,11 @@ def get_default_part_format_string(survey_info_in, part_in = '', part_type_in = 
                 c_data = [('C', '1', '0', '0'),
                             ('C', '2', '0', '0'),
                             ('C', '3', '0', '0')]
-            else:
+            elif survey_ver_id != 'E1F':
                 c_data = [('C', '1', '0', '0'),
                             ('C', '2', '0', '0')]
+            else: # survey_ver_id == 'E1F'
+                c_data = [('C', '1', '0', '0')]
 
             return c_data
 
@@ -318,4 +334,3 @@ def get_default_part_format_string(survey_info_in, part_in = '', part_type_in = 
             if part_type_in == 'columns': 
                 return b_columns
             else: return b_data
-            
