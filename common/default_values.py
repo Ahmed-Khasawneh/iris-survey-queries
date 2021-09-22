@@ -18,6 +18,8 @@ sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
+#*  survey_info_in is required in all default values functions
+#*  all functions will return a dictionary
 
 #***************************************************************
 #*
