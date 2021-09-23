@@ -17,6 +17,7 @@ spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).
 sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
+
 #*  survey_info_in is required in all survey format functions
 
 #***************************************************************************************************
@@ -32,7 +33,7 @@ def get_part_data_string(survey_info_in, part_in = None, part_type_in = None, ip
 
     if 'survey_year_doris' in survey_info_in:
         survey_year = survey_info_in['survey_year_doris']
-    else: survey_year = 'xxxx'
+    else: survey_year = '9999' 
     
     if 'survey_ver_id' in survey_info_in:
         survey_ver_id = survey_info_in['survey_ver_id']
@@ -41,6 +42,10 @@ def get_part_data_string(survey_info_in, part_in = None, part_type_in = None, ip
     if 'survey_type' in survey_info_in:
         survey_type = survey_info_in['survey_type']
     else: survey_type = 'xxx'
+    
+####****TEST uncomment first line to use test data for survey years > 2019-20   
+    #survey_year_int = 2021
+    survey_year_int = int(survey_year)
     
     offer_undergraduate_award = ipeds_client_config_in.first()['icOfferUndergradAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
     offer_graduate_award = ipeds_client_config_in.first()['icOfferGraduateAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
@@ -53,12 +58,17 @@ def get_part_data_string(survey_info_in, part_in = None, part_type_in = None, ip
                 a_columns = ['personId', 'ipedsPartAStudentLevel', 'ethnicity', 'gender']                 
                 if part_type_in == 'columns': return a_columns
 
-                #formatting based on client config values
                 if offer_undergraduate_award == 'Y':
-                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
+                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D') & (survey_year_int < 2021): 
+                        a_data = [('', '1', '', ''), ('', '3', '', '')]
+                        a_levels = ['1', '3']
+                    elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         a_data = [('', '1', '', ''), ('', '2', '', ''), ('', '3', '', ''), ('', '7', '', ''), ('', '15', '', ''),
                                 ('', '16', '', ''), ('', '17', '', ''), ('', '21', '', ''), ('', '99', '', '')]
                         a_levels = ['1', '2', '3', '7', '15', '16', '17', '21', '99']
+                    elif ((survey_ver_id == 'E1D') | (survey_ver_id == 'E12')) & (survey_year_int < 2021): 
+                        a_data = [('', '1', '', '')]
+                        a_levels = ['1']
                     elif (survey_ver_id == 'E1D') | (survey_ver_id == 'E12'): 
                         a_data = [('', '1', '', ''), ('', '2', '', ''), ('', '3', '', ''), ('', '7', '', ''), ('', '15', '', ''),
                                 ('', '16', '', ''), ('', '17', '', ''), ('', '21', '', '')]
@@ -69,6 +79,9 @@ def get_part_data_string(survey_info_in, part_in = None, part_type_in = None, ip
                     elif (survey_ver_id == 'E1F'):
                         a_data = [('', '1', '', ''), ('', '3', '', ''), ('', '15', '', ''), ('', '17', '', '')]
                         a_levels = ['1', '3', '15', '17']
+                elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D') & (survey_year_int < 2021): 
+                        a_data = [('', '3', '', '')]
+                        a_levels = ['3']
                 elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         a_data = [('', '99', '', '')]
                         a_levels = ['99']
@@ -80,7 +93,6 @@ def get_part_data_string(survey_info_in, part_in = None, part_type_in = None, ip
                 c_columns = ['personId', 'ipedsPartCStudentLevel', 'distanceEducationType'] 
                 if part_type_in == 'columns': return c_columns
 
-                #formatting based on client config values
                 if offer_undergraduate_award == 'Y':
                     if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         c_data = [('', '1', ''), ('', '2', ''), ('', '3', '')]
@@ -111,7 +123,7 @@ def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, 
 
     if 'survey_year_doris' in survey_info_in:
         survey_year = survey_info_in['survey_year_doris']
-    else: survey_year = 'xxxx'
+    else: survey_year = '9999' 
     
     if 'survey_ver_id' in survey_info_in:
         survey_ver_id = survey_info_in['survey_ver_id']
@@ -120,6 +132,10 @@ def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, 
     if 'survey_type' in survey_info_in:
         survey_type = survey_info_in['survey_type']
     else: survey_type = 'xxx'
+
+####****TEST uncomment first line to use test data for survey years > 2019-20   
+    #survey_year_int = 2021
+    survey_year_int = int(survey_year)
     
     offer_undergraduate_award = ipeds_client_config_in.first()['icOfferUndergradAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
     offer_graduate_award = ipeds_client_config_in.first()['icOfferGraduateAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
@@ -128,15 +144,17 @@ def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, 
     
     if survey_type == '12ME': 
 
-            if part_in == 'A':
+            if (part_in == 'A'):
                 a_columns = ['part', 'field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7', 'field8', 'field9',
                                 'field10', 'field11', 'field12', 'field13', 'field14', 'field15', 'field16', 'field17', 'field18',
-                                'field19']  
+                                'field19'] 
                 if part_type_in == 'columns': return a_columns
 
-                #formatting based on client config values
                 if offer_undergraduate_award == 'Y':
-                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
+                    if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D') & (survey_year_int < 2021):
+                        a_data = [('A', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
+                                    ('A', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')]
+                    elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         a_data = [('A', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                                     ('A', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                                     ('A', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
@@ -146,6 +164,8 @@ def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, 
                                     ('A', '17', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                                     ('A', '21', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                                     ('A', '99', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')]
+                    elif (survey_ver_id == 'E1D') | (survey_ver_id == 'E12') & (survey_year_int < 2021):
+                        a_data = [('A', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')]
                     elif (survey_ver_id == 'E1D') | (survey_ver_id == 'E12'):
                         a_data = [('A', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                                     ('A', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
@@ -167,6 +187,8 @@ def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, 
                                     ('A', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                                     ('A', '15', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                                     ('A', '17', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')] 
+                elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D') & (survey_year_int < 2021):
+                    a_data = [('A', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')]
                 elif (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                     a_data = [('A', '99', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')]
 
@@ -176,7 +198,6 @@ def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, 
                 c_columns = ['part', 'field1', 'field2', 'field3']  
                 if part_type_in == 'columns': return c_columns
 
-                #formatting based on client config values
                 if offer_undergraduate_award == 'Y':
                     if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'): 
                         c_data = [('C', '1', '0', '0'), ('C', '2', '0', '0'), ('C', '3', '0', '0')]
@@ -191,7 +212,6 @@ def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, 
 
             else: # part_in == 'B':
 
-                #formatting based on client config values
                 if offer_undergraduate_award == 'Y':
                     if (offer_graduate_award == 'Y') & (survey_ver_id == 'E1D'):
                         if (offer_doctor_award == 'Y') & (survey_ver_id == 'E1D'): 
@@ -251,7 +271,7 @@ def get_default_part_format_string(survey_info_in, part_in = None, part_type_in 
 
     if 'survey_year_doris' in survey_info_in:
         survey_year = survey_info_in['survey_year_doris']
-    else: survey_year = 'xxxx'
+    else: survey_year = '9999' 
     
     if 'survey_ver_id' in survey_info_in:
         survey_ver_id = survey_info_in['survey_ver_id']
@@ -260,6 +280,10 @@ def get_default_part_format_string(survey_info_in, part_in = None, part_type_in 
     if 'survey_type' in survey_info_in:
         survey_type = survey_info_in['survey_type']
     else: survey_type = 'xxx'
+    
+####****TEST uncomment first line to use test data for survey years > 2019-20   
+    #survey_year_int = 2021
+    survey_year_int = int(survey_year)
 
     if survey_type == '12ME': 
 
@@ -269,8 +293,10 @@ def get_default_part_format_string(survey_info_in, part_in = None, part_type_in 
                             'field19']
             if part_type_in == 'columns': return a_columns
 
-            #formatting based on version
-            if survey_ver_id == 'E1D': 
+            if (survey_ver_id == 'E1D') & (survey_year_int < 2021): 
+                a_data = [('A', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
+                            ('A', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')]
+            elif (survey_ver_id == 'E1D'): 
                 a_data = [('A', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                             ('A', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                             ('A', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
@@ -280,6 +306,8 @@ def get_default_part_format_string(survey_info_in, part_in = None, part_type_in 
                             ('A', '17', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                             ('A', '21', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                             ('A', '99', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')]
+            elif (survey_ver_id == 'E12') & (survey_year_int < 2021): 
+                a_data = [('A', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')]
             elif survey_ver_id == 'E12':
                 a_data = [('A', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
                             ('A', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
@@ -308,7 +336,6 @@ def get_default_part_format_string(survey_info_in, part_in = None, part_type_in 
             c_columns = ['part', 'field1', 'field2', 'field3'] 
             if part_type_in == 'columns': return c_columns
         
-            #formatting based on client config values
             if survey_ver_id == 'E1D': 
                 c_data = [('C', '1', '0', '0'),
                             ('C', '2', '0', '0'),
@@ -323,7 +350,6 @@ def get_default_part_format_string(survey_info_in, part_in = None, part_type_in 
 
         else: # part_in == 'B':
                
-            #formatting based on client config values
             if survey_ver_id == 'E1D': 
                 b_columns = ['part', 'field2', 'field3', 'field4', 'field5'] 
                 b_data = [('B', '0', '0', '0', '0')]
