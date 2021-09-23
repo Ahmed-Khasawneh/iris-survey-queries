@@ -1310,6 +1310,7 @@ def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_
             col('yearType'),
             col('surveySection'),
             col('surveyYear'),
+            col('surveyYear').cast('int').alias('surveyYear_int'),
             col('surveyType'),
             col('surveyId'),
             col('personId'),
