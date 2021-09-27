@@ -7,7 +7,6 @@ from common import query_helpers
 from common import survey_format
 from common import default_values
 from pyspark.sql.window import Window
-# from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
     to_date, when, coalesce, count, rank, round
 from pyspark.sql.utils import AnalysisException
@@ -17,8 +16,6 @@ from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
-# spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).config(
-#     "spark.dynamicAllocation.enabled", 'true').getOrCreate()
 sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
@@ -75,29 +72,69 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
     
     # ********** Survey Reporting Period
     
-    ipeds_client_config = query_helpers.ipeds_client_config_mcr(survey_info_in = survey_info)
+    ipeds_client_config = query_helpers.ipeds_client_config_mcr(spark, survey_info_in = survey_info)
     
     if ipeds_client_config.rdd.isEmpty() == False:
-        ipeds_reporting_period = query_helpers.ipeds_reporting_period_mcr(survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config,  survey_tags_in = survey_tags)  
+        ipeds_reporting_period = query_helpers.ipeds_reporting_period_mcr(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config,  survey_tags_in = survey_tags)  
 
         if ipeds_reporting_period.rdd.isEmpty() == False:
-            all_academic_terms = query_helpers.academic_term_mcr()    
+            all_academic_terms = query_helpers.academic_term_mcr(spark)    
             
             if all_academic_terms.rdd.isEmpty() == False:  
-                reporting_period_terms = query_helpers.reporting_periods(survey_info_in = survey_info, ipeds_reporting_period_in = ipeds_reporting_period, academic_term_in = all_academic_terms, survey_tags_in = survey_tags, survey_dates_in = survey_dates)
+                reporting_period_terms = query_helpers.reporting_periods(spark, survey_info_in = survey_info, ipeds_reporting_period_in = ipeds_reporting_period, academic_term_in = all_academic_terms, survey_tags_in = survey_tags, survey_dates_in = survey_dates)
                 
                 # ********** Course Type Counts
                 if reporting_period_terms.rdd.isEmpty() == False: 
-                    course_counts = query_helpers.course_type_counts(survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, survey_tags_in = survey_tags, survey_dates_in = survey_dates)
+                    course_counts = query_helpers.course_type_counts(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, survey_tags_in = survey_tags, survey_dates_in = survey_dates)
 
                     # ********** Cohort
                     if course_counts.rdd.isEmpty() == False: 
-                        cohort_all = query_helpers.student_cohort(survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, course_type_counts_in = course_counts, survey_tags_in = survey_tags, survey_dates_in = survey_dates).cache()
+                        cohort_all = query_helpers.student_cohort(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, course_type_counts_in = course_counts, survey_tags_in = survey_tags, survey_dates_in = survey_dates).cache()
 
                         # ********** Survey Data Transformations  
-
-                        if cohort_all.rdd.isEmpty() == False:
-                            cohort_course_counts_out = cohort_all.select(
+                        if cohort_all.rdd.isEmpty() == False:                           
+                            cohort_first_full_term = cohort_all.filter(col('FFTRn') == 1).select(
+                                col('surveyId'),
+                                col('surveyYear_int'),
+                                col('personId'),
+                                coalesce(when(col('surveyYear_int') == 1920, col('maxStudentLevel')), col('studentLevelUGGRDPP')).alias('studentLevelUGGRDPP'),
+                                coalesce(when(col('surveyYear_int') <= 2021, col('isNonDegreeSeekingFirstDegreeSeeking')), col('isNonDegreeSeeking')).alias('isNonDegreeSeeking'),
+                                coalesce(when(col('surveyYear_int') == 2021, col('studentTypeFirstDegreeSeeking')), when((col('termType') == 'Fall') & (col('studentType') == 'Continuing'), col('studentTypePreFallSummer')), col('studentType')).alias('studentType'),
+                                when(col('surveyYear_int') > 1920, lit('Y')).otherwise(col('includeNonDegreeAsUG')).alias('includeNonDegreeAsUG'),
+                                col('icOfferUndergradAwardLevel'),
+                                col('icOfferGraduateAwardLevel'),
+                                col('icOfferDoctorAwardLevel'),
+                                col('timeStatus'),
+                                col('ethnicity'),
+                                col('gender'),
+                                col('distanceEducationType'))
+                            
+                            if survey_year_int > 1920:    
+                                cohort_out = cohort_first_full_term.select(
+                                    cohort_first_full_term['*'],
+                                    (when((col('studentLevelUGGRDPP') != 'UG') & (col('surveyId') == 'E1D') & ((col('icOfferGraduateAwardLevel') == 'Y') | (col('icOfferDoctorAwardLevel') == 'Y')), lit('99'))
+                                    .when(col('icOfferUndergradAwardLevel') == 'Y', (when((col('studentType') == 'First Time') & (col('timeStatus') == 'Full Time'), lit('1'))
+                                        .when((col('studentType') == 'First Time') & (col('timeStatus') == 'Part Time'), lit('15'))
+                                        .when((col('studentType') == 'Continuing') & (col('timeStatus') == 'Full Time') & (col('surveyId') != 'E1F'), lit('3'))
+                                        .when((col('studentType') == 'Continuing') & (col('timeStatus') == 'Part Time') & (col('surveyId') != 'E1F'), lit('17'))
+                                        .when((col('timeStatus') == 'Full Time') & (col('surveyId') == 'E1F'), lit('3'))
+                                        .when((col('timeStatus') == 'Part Time') & (col('surveyId') == 'E1F'), lit('17'))
+                                        .when((col('isNonDegreeSeeking') == True) & (col('timeStatus') == 'Full Time') & (col('surveyId') != 'E1F'), lit('7'))
+                                        .when((col('isNonDegreeSeeking') == True) & (col('timeStatus') == 'Part Time') & (col('surveyId') != 'E1F'), lit('21'))
+                                        .when((col('studentType') == 'Transfer') & (col('timeStatus') == 'Full Time') & (col('surveyId').isin('E1D', 'E12')), lit('2'))
+                                        .when((col('studentType') == 'Transfer') & (col('timeStatus') == 'Part Time') & (col('surveyId').isin('E1D', 'E12')), lit('16'))))
+                                    .otherwise(lit('1'))).alias('ipedsPartAStudentLevel'), 
+                                    (when((col('studentLevelUGGRDPP') != 'UG') & (col('surveyId') == 'E1D') & ((col('icOfferGraduateAwardLevel') == 'Y') | (col('icOfferDoctorAwardLevel') == 'Y')), lit('3'))
+                                    .when(col('icOfferUndergradAwardLevel') == 'Y', (when((col('isNonDegreeSeeking') == True) & (col('surveyId') != 'E1F'), lit('2'))))
+                                    .otherwise(lit('1'))).alias('ipedsPartCStudentLevel'))  
+                                
+                            else: # survey_year_int <= 1920:     
+                                cohort_out = cohort_first_full_term.filter((col('includeNonDegreeAsUG') == 'Y') | ((col('includeNonDegreeAsUG') == 'N') & (col('isNonDegreeSeeking') == False))).select(
+                                    cohort_first_full_term['*'],
+                                    (when((col('studentLevelUGGRDPP') != 'UG') & (col('surveyId') == 'E1D') & ((col('icOfferGraduateAwardLevel') == 'Y') | (col('icOfferDoctorAwardLevel') == 'Y')), lit('3'))
+                                    .otherwise(lit('1'))).alias('ipedsPartAStudentLevel')) 
+                            
+                            cohort_course_counts_out = cohort_all.filter((col('includeNonDegreeAsUG') == 'Y') | ((col('includeNonDegreeAsUG') == 'N') & (col('isNonDegreeSeeking') == False))).select(
                                 cohort_all['*']).groupBy(
                                 col('yearType'),
                                 col('surveyId'),
@@ -109,42 +146,8 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
                                 sum(col('UGCreditHours')).alias('UGCreditHours'),
                                 sum(col('UGClockHours')).alias('UGClockHours'),
                                 sum(col('GRCreditHours')).alias('GRCreditHours'),
-                                sum(col('DPPCreditHours')).alias('DPPCreditHours'))
-                
-                            cohort_first_full_term = cohort_all.filter(col('FFTRn') == 1).select(
-                                col('surveyId'),
-                                col('surveyYear_int'),
-                                col('personId'),
-                                col('icOfferGraduateAwardLevel'),
-                                col('studentLevelUGGRDPP'),
-                                coalesce(when(col('surveyYear_int') < 2122, col('isNonDegreeSeekingFirstDegreeSeeking')), col('isNonDegreeSeeking')).alias('isNonDegreeSeeking'),
-                                col('timeStatus'),
-                                coalesce(when(col('surveyYear_int') < 2122, col('studentTypeFirstDegreeSeeking')), when((col('termType') == 'Fall') & (col('studentType') == 'Continuing'), col('studentTypePreFallSummer')), col('studentType')).alias('studentType'),
-                                col('ethnicity'),
-                                col('gender'),
-                                col('distanceEducationType')
-                                )
+                                sum(col('DPPCreditHours')).alias('DPPCreditHours'))  
                                 
-                            cohort_out = cohort_first_full_term.select(
-                                cohort_first_full_term['*'],
-                                (when((col('studentLevelUGGRDPP') != 'UG') & (col('surveyId') == 'E1D') & (col('surveyYear_int') < 2021) & (col('icOfferGraduateAwardLevel') == 'Y'), lit('3'))
-                                    .when((col('studentLevelUGGRDPP') == 'UG') & (col('surveyYear_int') < 2021), lit('1'))
-                                    .when((col('studentLevelUGGRDPP') != 'UG') & (col('surveyId') == 'E1D') & (col('icOfferGraduateAwardLevel') == 'Y'), lit('99'))
-                                    .when((col('studentType') == 'First Time') & (col('timeStatus') == 'Full Time'), lit('1'))
-                                    .when((col('studentType') == 'First Time') & (col('timeStatus') == 'Part Time'), lit('15'))
-                                    .when((col('studentType') == 'Continuing') & (col('timeStatus') == 'Full Time') & (col('surveyId') != 'E1F'), lit('3'))
-                                    .when((col('studentType') == 'Continuing') & (col('timeStatus') == 'Part Time') & (col('surveyId') != 'E1F'), lit('17'))
-                                    .when((col('timeStatus') == 'Full Time') & (col('surveyId') == 'E1F'), lit('3'))
-                                    .when((col('timeStatus') == 'Part Time') & (col('surveyId') == 'E1F'), lit('17'))
-                                    .when((col('isNonDegreeSeeking') == True) & (col('timeStatus') == 'Full Time') & (col('surveyId') != 'E1F'), lit('7'))
-                                    .when((col('isNonDegreeSeeking') == True) & (col('timeStatus') == 'Part Time') & (col('surveyId') != 'E1F'), lit('21'))
-                                    .when((col('studentType') == 'Transfer') & (col('timeStatus') == 'Full Time') & (col('surveyId').isin('E1D', 'E12')), lit('2'))
-                                    .when((col('studentType') == 'Transfer') & (col('timeStatus') == 'Part Time') & (col('surveyId').isin('E1D', 'E12')), lit('16'))
-                                    .otherwise(lit('1'))).alias('ipedsPartAStudentLevel'), 
-                                (when((col('studentLevelUGGRDPP') != 'UG') & (col('surveyId') == 'E1D') & (col('icOfferGraduateAwardLevel') == 'Y'), lit('3'))
-                                    .when((col('isNonDegreeSeeking') == True) & (col('surveyId') != 'E1F'), lit('2'))
-                                    .otherwise(lit('1'))).alias('ipedsPartCStudentLevel'))
-                                    
                             # ********** Survey Formatting
                         
                             # Part A
@@ -308,14 +311,15 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
     for column in [column for column in partA_out.columns if column not in partB_out.columns]:
         partB_out = partB_out.withColumn(column, lit(None))
 
-    if survey_year_int < 2021:
-        surveyOutput = partA_out.unionByName(partB_out)
-    else:
+    if survey_year_int > 1920:
         surveyOutput = partA_out.unionByName(partC_out).unionByName(partB_out)
+    else:
+        surveyOutput = partA_out.unionByName(partB_out)
 
     return surveyOutput 
     
 #test = run_twelve_month_enrollment_query()
 #test.explain()
 #test.show()
-#print(test)
+#print(test)    
+
