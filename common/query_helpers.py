@@ -14,9 +14,9 @@ from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
 spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
-sparkContext = SparkContext.getOrCreate()
-sqlContext = SQLContext(sparkContext)
-glueContext = GlueContext(sparkContext)
+#sparkContext = SparkContext.getOrCreate()
+#sqlContext = SQLContext(sparkContext)
+#glueContext = GlueContext(sparkContext)
 
 #*  survey_info_in is required in all helper functions
 #*  all functions will always return a dataframe, even if empty
