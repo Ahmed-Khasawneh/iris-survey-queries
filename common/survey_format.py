@@ -13,13 +13,6 @@ from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
-spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
-sparkContext = SparkContext.getOrCreate()
-sqlContext = SQLContext(sparkContext)
-glueContext = GlueContext(sparkContext)
-
-#*  survey_info_in is required in all survey format functions
-
 #***************************************************************************************************
 #*
 #***  get_part_data_string 
@@ -31,21 +24,13 @@ glueContext = GlueContext(sparkContext)
 
 def get_part_data_string(survey_info_in, part_in = None, part_type_in = None, ipeds_client_config_in = None):
 
-    if 'survey_year_doris' in survey_info_in:
-        survey_year = survey_info_in['survey_year_doris']
-    else: survey_year = '9999' 
+    survey_year = survey_info_in['survey_year_doris']
+    survey_ver_id = survey_info_in['survey_ver_id']
+    survey_type = survey_info_in['survey_type']
     
-    if 'survey_ver_id' in survey_info_in:
-        survey_ver_id = survey_info_in['survey_ver_id']
-    else: survey_ver_id = 'xxx'
-    
-    if 'survey_type' in survey_info_in:
-        survey_type = survey_info_in['survey_type']
-    else: survey_type = 'xxx'
-    
+    survey_year_int = int(survey_year)   
 ####****TEST uncomment first line to use test data for survey years > 2019-20   
     #survey_year_int = 2021
-    survey_year_int = int(survey_year)
     
     offer_undergraduate_award = ipeds_client_config_in.first()['icOfferUndergradAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
     offer_graduate_award = ipeds_client_config_in.first()['icOfferGraduateAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
