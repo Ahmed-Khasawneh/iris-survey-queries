@@ -13,33 +13,11 @@ from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
-spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
-#sparkContext = SparkContext.getOrCreate()
-#sqlContext = SQLContext(sparkContext)
-#glueContext = GlueContext(sparkContext)
+def ipeds_client_config_mcr(spark, survey_info_in):
 
-#*  survey_info_in is required in all helper functions
-#*  all functions will always return a dataframe, even if empty
-
-#***************************************************************
-#*
-#***  ipeds_client_config_mcr 
-#*
-#***************************************************************
-
-def ipeds_client_config_mcr(survey_info_in):
-
-    if 'survey_year_doris' in survey_info_in:
-        survey_year = survey_info_in['survey_year_doris']
-    else: survey_year = 'xxxx'
-
-    if 'survey_id' in survey_info_in:
-            survey_id = survey_info_in['survey_id']
-    else: survey_id = 'xxx'
-        
-    if 'survey_type' in survey_info_in:
-            survey_type = survey_info_in['survey_type']
-    else: survey_type = 'xxx'    
+    survey_year = survey_info_in['survey_year_doris']
+    survey_id = survey_info_in['survey_id']
+    survey_type = survey_info_in['survey_type']   
             
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig').filter(col('surveyCollectionYear') == survey_year)
 
@@ -104,29 +82,15 @@ def ipeds_client_config_mcr(survey_info_in):
                 col('surveyCollectionYear')).orderBy(
                 col('snapshotDate').desc(),
                 col('recordActivityDate').desc()))).filter(
-            col('clientConfigRowNum') <= 1).limit(1) #.cache()
+            col('clientConfigRowNum') <= 1).limit(1)
             
     return ipeds_client_config_in
 
-#***************************************************************
-#*
-#***  ipeds_reporting_period_mcr  
-#*
-#***************************************************************
+def ipeds_reporting_period_mcr(spark, survey_info_in, ipeds_client_config_in = None, survey_tags_in = None):
 
-def ipeds_reporting_period_mcr(survey_info_in, ipeds_client_config_in = None, survey_tags_in = None):
-
-    if 'survey_year_doris' in survey_info_in:
-        survey_year = survey_info_in['survey_year_doris']
-    else: survey_year = 'xxxx'
-    
-    if 'survey_id' in survey_info_in:
-        survey_id = survey_info_in['survey_id']
-    else: survey_id = 'xxx'
-    
-    if 'survey_type' in survey_info_in:
-        survey_type = survey_info_in['survey_type']
-    else: survey_type = 'xxx'
+    survey_year = survey_info_in['survey_year_doris']
+    survey_id = survey_info_in['survey_id']
+    survey_type = survey_info_in['survey_type']
         
     ipeds_reporting_period_in = spark.sql('select * from ipedsReportingPeriod').filter(
             (col('surveyCollectionYear') == survey_year) & (col('surveyId') == survey_id))
@@ -136,29 +100,13 @@ def ipeds_reporting_period_mcr(survey_info_in, ipeds_client_config_in = None, su
         if not ipeds_client_config_in:
             ipeds_client_config_in = ipeds_client_config_mcr(survey_info_in = survey_info_in)
         
-        if ipeds_client_config_in:
+        if survey_id == 'SFA':
             report_prior = ipeds_client_config_in.first()['sfaReportPriorYear']
             report_prior_2 = ipeds_client_config_in.first()['sfaReportSecondPriorYear']
-        else:
-            report_prior = 'Y'
-            report_prior_2 = 'Y'
             
-        if survey_tags_in:
-            if 'current_survey_sections' in survey_tags_in:
-                current_survey_sections = survey_tags_in['current_survey_sections']
-            else: current_survey_sections = 'COHORT'
-            
-            if ('prior_survey_sections' in survey_tags_in) & (report_prior == 'Y'):
-                prior_survey_sections = survey_tags_in['prior_survey_sections']
-            else: prior_survey_sections = 'xxx'
-            
-            if ('prior_2_survey_sections' in survey_tags_in) & (report_prior_2 == 'Y'):
-                prior_2_survey_sections = survey_tags_in['prior_2_survey_sections']
-            else: prior_2_survey_sections = 'xxx'
-        else:
-            current_survey_sections = 'COHORT'
-            prior_survey_sections = 'xxx'
-            prior_2_survey_sections = 'xxx'
+        current_survey_sections = survey_tags_in['current_survey_sections']
+        prior_survey_sections = survey_tags_in['prior_survey_sections']
+        prior_2_survey_sections = survey_tags_in['prior_2_survey_sections']
             
         ipeds_reporting_period_in = ipeds_reporting_period_in.filter(
             ((upper(ipeds_reporting_period_in.surveySection).isin(current_survey_sections) == True) |
@@ -184,17 +132,11 @@ def ipeds_reporting_period_mcr(survey_info_in, ipeds_client_config_in = None, su
                 col('partOfTermCode')).orderBy(
                 col('snapshotDate').desc(),
                 col('recordActivityDate').desc()))).filter(
-            (col('ipedsRepPerRowNum') == 1) & (col('termCode').isNotNull())) #.cache()
+            (col('ipedsRepPerRowNum') == 1) & (col('termCode').isNotNull())) 
             
     return ipeds_reporting_period_in
 
-#***************************************************************
-#*
-#***  academic_term_mcr  
-#*
-#***************************************************************
-
-def academic_term_mcr():
+def academic_term_mcr(spark):
 
     academic_term_in = spark.sql('select * from academicTerm').filter((col('isIpedsReportable') == True))
     
@@ -262,17 +204,11 @@ def academic_term_mcr():
             academic_term_order_max.termCodeOrder,
             academic_term_order_max.maxCensus,
             academic_term_order_max.minStart,
-            academic_term_order_max.maxEnd).distinct()  # .cache()
+            academic_term_order_max.maxEnd).distinct()
 
     return academic_term_in
 
-#***************************************************************
-#*
-#***  reporting_periods 
-#*
-#***************************************************************
-
-def reporting_periods(survey_info_in, ipeds_reporting_period_in = None, academic_term_in = None, survey_tags_in = None, survey_dates_in = None):
+def reporting_periods(spark, survey_info_in, ipeds_reporting_period_in = None, academic_term_in = None, survey_tags_in = None, survey_dates_in = None):
 
     if not ipeds_reporting_period_in:
         ipeds_reporting_period_in = ipeds_reporting_period_mcr(survey_info_in = survey_info_in, survey_tags_in = survey_tags_in)
@@ -280,7 +216,6 @@ def reporting_periods(survey_info_in, ipeds_reporting_period_in = None, academic
     if not academic_term_in:
        academic_term_in = academic_term_mcr() 
        
-    #if (academic_term_in is not None) & (ipeds_reporting_period_in is not None):
     if (academic_term_in.rdd.isEmpty() == False) & (ipeds_reporting_period_in.rdd.isEmpty() == False):
         ipeds_reporting_period_2 = academic_term_in.join(
             ipeds_reporting_period_in,
@@ -335,7 +270,7 @@ def reporting_periods(survey_info_in, ipeds_reporting_period_in = None, academic
                                     else 3 end) asc,
                                 (case when snapshotDate > censusDate then snapshotDate else snapShotMaxDummyDate end) asc,
                                 (case when snapshotDate < censusDate then snapshotDate else snapShotMinDummyDate end) desc)
-                            """)))).filter(col('rowNum') == 1) #.cache()
+                            """)))).filter(col('rowNum') == 1)
     
         max_term_order_summer = ipeds_reporting_period_2.filter(ipeds_reporting_period_2.termType == 'Summer').select(
             max(ipeds_reporting_period_2.termCodeOrder).alias('maxSummerTerm'))
@@ -347,7 +282,7 @@ def reporting_periods(survey_info_in, ipeds_reporting_period_in = None, academic
             max_term_order_fall).withColumn(
             'termTypeNew',
             expr(
-                "(case when termType = 'Summer' and termClassification != 'Standard Length' then (case when maxSummerTerm < maxFallTerm then 'Pre-Fall Summer' else 'Post-Spring Summer' end) else termType end)")) #.cache()
+                "(case when termType = 'Summer' and termClassification != 'Standard Length' then (case when maxSummerTerm < maxFallTerm then 'Pre-Fall Summer' else 'Post-Spring Summer' end) else termType end)"))
     
         return academic_term_reporting_refactor_out
     
@@ -356,13 +291,7 @@ def reporting_periods(survey_info_in, ipeds_reporting_period_in = None, academic
             return ipeds_reporting_period_in 
         else: return academic_term_in
     
-#***************************************************************
-#*
-#***  course_type_counts  
-#*
-#***************************************************************
-
-def course_type_counts(survey_info_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, survey_tags_in = None, survey_dates_in = None):
+def course_type_counts(spark, survey_info_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, survey_tags_in = None, survey_dates_in = None):
 
     if not ipeds_client_config_in:
         ipeds_client_config_in = ipeds_client_config_mcr(survey_info_in = survey_info_in)
@@ -775,7 +704,7 @@ def course_type_counts(survey_info_in, ipeds_client_config_in = None, academic_t
             sum(when((col('newCourseSectionLevelUGGRDPP') == 'GR'), col('newEnrollmentHoursCalc')).otherwise(
                 lit(0))).alias('GRCreditHours'),
             sum(when((col('newCourseSectionLevelUGGRDPP') == 'DPP'), col('newEnrollmentHoursCalc')).otherwise(
-                lit(0))).alias('DPPCreditHours'))  #.cache()
+                lit(0))).alias('DPPCreditHours'))
                                     
         return course_type_counts
     
@@ -784,13 +713,7 @@ def course_type_counts(survey_info_in, ipeds_client_config_in = None, academic_t
             return registration_in 
         else: return reporting_periods_in
     
-#***************************************************************
-#*
-#***  student_cohort 
-#*
-#***************************************************************
-
-def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, course_type_counts_in = None, survey_tags_in = None, survey_dates_in = None):
+def student_cohort(spark, survey_info_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, course_type_counts_in = None, survey_tags_in = None, survey_dates_in = None):
 
     if ipeds_client_config_in is None:
         ipeds_client_config_in = ipeds_client_config_mcr(survey_info_in = survey_info_in)
@@ -824,7 +747,6 @@ def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_
         degree_in = spark.sql("select * from degree")
         field_of_study_in = spark.sql("select * from fieldOfStudy")
 
-#    if (course_type_counts_in.rdd.isEmpty() == False) and (student_in.rdd.isEmpty() == False):
         student = student_in.join(
             reporting_periods_in,
             (upper(student_in.termCode) == reporting_periods_in.termCode) & 
@@ -946,27 +868,26 @@ def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_
             col('survey_id').alias('survey_id'),
             col('survey_type').alias('survey_type'),
             col('surveyCollectionYear').alias('survey_year'),
-            col('acadOrProgReporter').alias('configAcadOrProgReporter'),
-            col('admUseTestScores').alias('configAdmUseTestScores'),
-            col('compGradDateOrTerm').alias('configCompGradDateOrTerm'),
-            col('feIncludeOptSurveyData').alias('configFeIncludeOptSurveyData'),
-            col('fourYrOrLessInstitution').alias('configFourYrOrLessInstitution'),
-            col('genderForNonBinary').alias('configGenderForNonBinary'),
-            col('genderForUnknown').alias('configGenderForUnknown'),
-            col('grReportTransferOut').alias('configGrReportTransferOut'),
             col('icOfferUndergradAwardLevel').alias('configIcOfferUndergradAwardLevel'),
             col('icOfferGraduateAwardLevel').alias('configIcOfferGraduateAwardLevel'),
             col('icOfferDoctorAwardLevel').alias('configIcOfferDoctorAwardLevel'),
-            col('includeNonDegreeAsUG').alias('configIncludeNonDegreeAsUG'),
             col('instructionalActivityType').alias('configInstructionalActivityType'),
-            col('publicOrPrivateInstitution').alias('configPublicOrPrivateInstitution'),
-            col('recordActivityDate').alias('configRecordActivityDate'),
-            col('sfaGradStudentsOnly').alias('configSfaGradStudentsOnly'),
-            col('sfaLargestProgCIPC').alias('configSfaLargestProgCIPC'),
-            col('sfaReportPriorYear').alias('configSfaReportPriorYear'),
-            col('sfaReportSecondPriorYear').alias('configSfaReportSecondPriorYear'),
-            col('surveyCollectionYear').alias('configSurveyCollectionYear'),
-            col('tmAnnualDPPCreditHoursFTE').alias('configTmAnnualDPPCreditHoursFTE')).withColumn(
+            col('genderForNonBinary').alias('configGenderForNonBinary'),
+            col('genderForUnknown').alias('configGenderForUnknown'),
+            when(col('survey_type') == 'ADM', col('admUseTestScores')).alias('configAdmUseTestScores'),
+            when(col('survey_type') == 'COM', col('compGradDateOrTerm')).alias('configCompGradDateOrTerm'),
+            when(col('survey_type') == 'FE', col('feIncludeOptSurveyData')).alias('configFeIncludeOptSurveyData'),
+            when(col('survey_type') == 'GR', col('grReportTransferOut')).alias('configGrReportTransferOut'),
+            #col('fourYrOrLessInstitution').alias('configFourYrOrLessInstitution'),
+            #col('acadOrProgReporter').alias('configAcadOrProgReporter'),
+            #col('publicOrPrivateInstitution').alias('configPublicOrPrivateInstitution'),
+            #col('recordActivityDate').alias('configRecordActivityDate'),
+            #when(col('survey_type') == 'SFA', col('sfaGradStudentsOnly').alias('configSfaGradStudentsOnly'),
+            when(col('survey_type') == 'SFA', col('sfaLargestProgCIPC')).alias('configSfaLargestProgCIPC'),
+            when(col('survey_type') == 'SFA', col('sfaReportPriorYear')).alias('configSfaReportPriorYear'),
+            when(col('survey_type') == 'SFA', col('sfaReportSecondPriorYear')).alias('configSfaReportSecondPriorYear'),
+            when(col('survey_type') == '12ME', col('includeNonDegreeAsUG')).alias('configIncludeNonDegreeAsUG'),
+            when(col('survey_type') == '12ME', col('tmAnnualDPPCreditHoursFTE')).alias('configTmAnnualDPPCreditHoursFTE')).withColumn(
             'isNonDegreeSeeking_calc',
             when(col('stuStudyAbroadStatus') != 'Study Abroad - Home Institution',
                  col('stuIsNonDegreeSeeking'))
@@ -1246,8 +1167,8 @@ def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_
                 col('repRefFinancialAidYear').alias('financialAidYear'),
                 col('studentLevelUGGRDPP'),
                 col('isNonDegreeSeeking_final').alias('isNonDegreeSeeking'),
-                col('timeStatus_calc').alias('timeStatus'),
                 col('stuStudentType').alias('studentType'),
+                col('timeStatus_calc').alias('timeStatus'),
                 col('ipedsInclude'),
                 col('persIpedsEthnValue').alias('ethnicity'),
                 col('persIpedsGender').alias('gender'),
@@ -1264,7 +1185,8 @@ def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_
                 col('configIcOfferGraduateAwardLevel').alias('icOfferGraduateAwardLevel'),
                 col('configIcOfferDoctorAwardLevel').alias('icOfferDoctorAwardLevel'),
                 col('configInstructionalActivityType').alias('instructionalActivityType'),
-                col('configTmAnnualDPPCreditHoursFTE').alias('tmAnnualDPPCreditHoursFTE')
+                col('configTmAnnualDPPCreditHoursFTE').alias('tmAnnualDPPCreditHoursFTE'),
+                col('configIncludeNonDegreeAsUG').alias('includeNonDegreeAsUG') 
                 ).filter(col('ipedsInclude') == 1).withColumn(
                 'NDSRn',
                 row_number().over(
@@ -1285,28 +1207,35 @@ def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_
                         col('fullTermOrder'),
                         col('termCodeOrder')))).cache()
         
-#for future reference - the cohort_priority df is referenced 3x here
-        
-        cohort_fnds = cohort_priority.select(
+        cohort_firstDegreeSeeking = cohort_priority.select(
             col('personId').alias('personIdFirstDegreeSeeking'),
             col('yearType').alias('yearTypeFirstDegreeSeeking'),
             col('surveySection').alias('surveySectionFirstDegreeSeeking'),
             col('termCode').alias('termCodeFirstDegreeSeeking'), 
             when((col('annualSurvey') == True) & (col('isNonDegreeSeeking') == False) & (col('NDSRn') == 1) & (col('FFTRn') != 1) & (col('studentLevelUGGRDPP') == 'UG'), lit('Continuing')).alias('studentTypeFirstDegreeSeeking'),
-            when((col('annualSurvey') == True) & (col('isNonDegreeSeeking') == False) & (col('NDSRn') == 1) & (col('FFTRn') != 1) & (col('studentLevelUGGRDPP') == 'UG'), lit(False)).alias('isNonDegreeSeekingFirstDegreeSeeking'))
+            when((col('annualSurvey') == True) & (col('isNonDegreeSeeking') == False) & (col('NDSRn') == 1) & (col('FFTRn') != 1) & (col('studentLevelUGGRDPP') == 'UG'), lit(False)).alias('isNonDegreeSeekingFirstDegreeSeeking')).groupBy(
+            col('personIdFirstDegreeSeeking'),
+            col('yearTypeFirstDegreeSeeking')).agg(max(col('studentTypeFirstDegreeSeeking')).alias('studentTypeFirstDegreeSeeking'),
+                        max(col('isNonDegreeSeekingFirstDegreeSeeking')).alias('isNonDegreeSeekingFirstDegreeSeeking'))
         
-        cohort_pfs = cohort_priority.select(
+        cohort_preFallSummer = cohort_priority.select(
             col('personId').alias('personIdPreFallSummer'),
             col('yearType').alias('yearTypePreFallSummer'),
             col('surveySection').alias('surveySectionPreFallSummer'),
             col('termCode').alias('termCodePreFallSummer'), 
-            when((col('termType') == 'Pre-Fall Summer') & (col('studentLevelUGGRDPP') == 'UG') & (col('isNonDegreeSeeking') == False), col('studentType')).alias('studentTypePreFallSummer'))
+            when((col('termType') == 'Pre-Fall Summer') & (col('studentLevelUGGRDPP') == 'UG') & (col('isNonDegreeSeeking') == False), col('studentType')).alias('studentTypePreFallSummer')).groupBy(
+            col('personIdPreFallSummer'),
+            col('yearTypePreFallSummer')).agg(max(col('studentTypePreFallSummer')).alias('studentTypePreFallSummer'))
             
-        cohort = cohort_priority.join(cohort_fnds,
-            (col('personId') == col('personIdFirstDegreeSeeking')) & (col('yearType') == col('yearTypeFirstDegreeSeeking'))
-                & (col('surveySection') == col('surveySectionFirstDegreeSeeking')) & (col('termCode') == col('termCodeFirstDegreeSeeking')), 'left').join(cohort_pfs,
-            (col('personId') == col('personIdPreFallSummer')) & (col('yearType') == col('yearTypePreFallSummer'))
-                & (col('surveySection') == col('surveySectionPreFallSummer')) & (col('termCode') == col('termCodePreFallSummer')), 'left').select(
+        cohort_maxStudentLevel = cohort_priority.groupBy(
+            col('personId').alias('personIdMaxStudentLevel'),
+            col('yearType').alias('yearTypeMaxStudentLevel')).agg( 
+            min(col('studentLevelUGGRDPP')).alias('maxStudentLevel'))
+            
+        cohort = cohort_priority.join(cohort_firstDegreeSeeking,
+            (col('personId') == col('personIdFirstDegreeSeeking')) & (col('yearType') == col('yearTypeFirstDegreeSeeking')), 'left').join(cohort_preFallSummer,
+            (col('personId') == col('personIdPreFallSummer')) & (col('yearType') == col('yearTypePreFallSummer')), 'left').join(cohort_maxStudentLevel,
+            (col('personId') == col('personIdMaxStudentLevel')) & (col('yearType') == col('yearTypeMaxStudentLevel')), 'left').select(
             col('yearType'),
             col('surveySection'),
             col('surveyYear'),
@@ -1323,13 +1252,13 @@ def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_
             col('termType'),
             col('financialAidYear'),
             col('studentLevelUGGRDPP'), 
+            col('maxStudentLevel'),
             col('isNonDegreeSeeking'),
             col('isNonDegreeSeekingFirstDegreeSeeking'),
             col('timeStatus'),
             col('studentType'),
             col('studentTypePreFallSummer'),
             col('studentTypeFirstDegreeSeeking'),
-            #col('ipedsInclude'),
             col('ethnicity'),
             col('gender'),
             col('distanceEducationType'),
@@ -1345,12 +1274,14 @@ def student_cohort(survey_info_in, ipeds_client_config_in = None, academic_term_
             col('icOfferGraduateAwardLevel'),
             col('icOfferDoctorAwardLevel'),
             col('instructionalActivityType'),
-            col('tmAnnualDPPCreditHoursFTE')
+            col('tmAnnualDPPCreditHoursFTE'),
+            col('includeNonDegreeAsUG')
             )
-        
+
         return cohort
     
     else:
         if course_type_counts_in.rdd.isEmpty() == False:
             return student_in
         else: return course_type_counts_in
+        
