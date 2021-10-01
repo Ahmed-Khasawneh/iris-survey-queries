@@ -64,9 +64,7 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
         'survey_year_iris' : year,
         'survey_year_doris' : year1 + year2}
         
-    survey_tags = default_values.get_survey_tags(survey_info)
-
-    survey_dates = default_values.get_survey_dates(survey_info)
+    default_values = default_values.get_survey_default_values(survey_info)
 
     survey_year_int = int(survey_info['survey_year_doris'])
     
@@ -75,21 +73,21 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
     ipeds_client_config = query_helpers.ipeds_client_config_mcr(spark, survey_info_in = survey_info)
     
     if ipeds_client_config.rdd.isEmpty() == False:
-        ipeds_reporting_period = query_helpers.ipeds_reporting_period_mcr(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config,  survey_tags_in = survey_tags)  
+        ipeds_reporting_period = query_helpers.ipeds_reporting_period_mcr(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, default_values_in = default_values)  
 
         if ipeds_reporting_period.rdd.isEmpty() == False:
             all_academic_terms = query_helpers.academic_term_mcr(spark)    
             
             if all_academic_terms.rdd.isEmpty() == False:  
-                reporting_period_terms = query_helpers.reporting_periods(spark, survey_info_in = survey_info, ipeds_reporting_period_in = ipeds_reporting_period, academic_term_in = all_academic_terms, survey_tags_in = survey_tags, survey_dates_in = survey_dates)
+                reporting_period_terms = query_helpers.reporting_periods(spark, survey_info_in = survey_info, ipeds_reporting_period_in = ipeds_reporting_period, academic_term_in = all_academic_terms, default_values_in = default_values)
                 
                 # ********** Course Type Counts
                 if reporting_period_terms.rdd.isEmpty() == False: 
-                    course_counts = query_helpers.course_type_counts(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, survey_tags_in = survey_tags, survey_dates_in = survey_dates)
+                    course_counts = query_helpers.course_type_counts(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms,  default_values_in = default_values)
 
                     # ********** Cohort
                     if course_counts.rdd.isEmpty() == False: 
-                        cohort_all = query_helpers.student_cohort(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, course_type_counts_in = course_counts, survey_tags_in = survey_tags, survey_dates_in = survey_dates).cache()
+                        cohort_all = query_helpers.student_cohort(spark, survey_info_in = survey_info, ipeds_client_config_in = ipeds_client_config, academic_term_in = all_academic_terms, reporting_periods_in = reporting_period_terms, course_type_counts_in = course_counts,  default_values_in = default_values).cache()
 
                         # ********** Survey Data Transformations  
                         if cohort_all.rdd.isEmpty() == False:                           
@@ -322,4 +320,3 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
 #test.explain()
 #test.show()
 #print(test)    
-
