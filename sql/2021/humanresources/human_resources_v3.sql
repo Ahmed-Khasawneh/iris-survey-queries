@@ -25,7 +25,7 @@ WITH DefaultValues as (
 --Assigns all hard-coded values to variables. All date and version adjustments and default values should be modified here.
 
 --Production Default (Begin)
-select '2022' surveyYear, 
+select '2122' surveyYear, 
 	'HR2' surveyId,
 	'HR Reporting End' repPeriodTag1, --used for all status updates and IPEDS tables
 	CAST('9999-09-09' as DATE) snapshotDate,  

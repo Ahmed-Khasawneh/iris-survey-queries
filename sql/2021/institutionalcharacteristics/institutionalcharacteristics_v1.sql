@@ -24,7 +24,7 @@ The views below pull the most recent records based on activity date and other fi
 
 WITH DefaultValues as (
 
-select '2022' surveyYear,
+select '2122' surveyYear,
 	false diffTuitionAmounts,
 	false institControlledHousing,
 	'NO' provideMealPlans,

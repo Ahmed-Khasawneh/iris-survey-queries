@@ -46,7 +46,7 @@ WITH DefaultValues as (
 
 --prod default block
 
-select '2022' surveyYear, 
+select '2122' surveyYear, 
 	'SFA' surveyId,
 	'GI Bill' repPeriodTag4,
 	'Department of Defense' repPeriodTag5,
