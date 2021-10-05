@@ -40,7 +40,7 @@ WITH DefaultValues as (
 --IPEDS specs define reporting period as July 1, 2020 and June 30, 2021.
 
 --prod default block
-select '2021' surveyYear,
+select '2122' surveyYear,
     'COM' surveyId,
     'Academic Year End' repPeriodTag1,
     'June End' repPeriodTag2,
