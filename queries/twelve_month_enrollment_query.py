@@ -20,6 +20,10 @@ sparkContext = SparkContext.getOrCreate()
 sqlContext = SQLContext(sparkContext)
 glueContext = GlueContext(sparkContext)
 
+####****TEST uncomment survey_type and year for testing; these two values are set in run_query.py at runtime
+    #survey_type = 'TWELVE_MONTH_ENROLLMENT_1'
+    #year = '2014'        #'2019' = 1920, '2020' = 2021, '2021' = 2122, '2022 = 2223
+    
 #***************************************************************
 #*
 #***  run_twelve_month_enrollment_query 
@@ -40,10 +44,6 @@ glueContext = GlueContext(sparkContext)
 def run_twelve_month_enrollment_query(spark, survey_type, year):
     
 # ********** Survey Default Values
-
-####****TEST uncomment survey_type and year for testing; these two values are set in run_query.py at runtime
-    #survey_type = 'TWELVE_MONTH_ENROLLMENT_1'
-    #year = '2014'        #'2019' = 1920, '2020' = 2021, '2021' = 2122, '2022 = 2223
     year1 = str(year[2:4])
     year2 = str(int(year1) + 1)
     survey_year = year1 + year2
@@ -67,11 +67,11 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
     default_survey_values = default_values.get_survey_default_values(survey_info)
 
     survey_year_int = int(survey_info['survey_year_doris'])
-    
-    # ********** Survey Reporting Period
-    
+
+    # ********** Survey Client Configuration
     ipeds_client_config = query_helpers.ipeds_client_config_mcr(spark, survey_info_in = survey_info)
-    
+        
+    # ********** Survey Reporting Period
     if ipeds_client_config.rdd.isEmpty() == False:
         ipeds_reporting_period = query_helpers.ipeds_reporting_period_mcr(spark, survey_info_in = survey_info, default_values_in = default_survey_values, ipeds_client_config_in = ipeds_client_config)  
 
@@ -260,7 +260,8 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
                                     when((col('icOfferDoctorAwardLevel') == 'Y') & (col('surveyId')== 'E1D'), 
                                             when(coalesce(col('DPPCreditHours'), lit(0)) > 0, round(col('DPPCreditHours')/col('tmAnnualDPPCreditHoursFTE'), 0))
                                             .otherwise(lit(0))).cast('int').alias('field5')))
-                
+        
+        # ********** Survey Formatting
         else:
             # Part A    
             a_data = survey_format.get_part_format_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'data', ipeds_client_config_in = ipeds_client_config)
@@ -284,6 +285,7 @@ def run_twelve_month_enrollment_query(spark, survey_type, year):
             partB_out = sparkContext.parallelize(b_data)
             partB_out = spark.createDataFrame(partB_out).toDF(*b_columns)
 
+    # ********** Survey Formatting          
     else:
         # Part A    
         a_data = survey_format.get_default_part_format_string(survey_info_in = survey_info, part_in = 'A', part_type_in = 'data')
