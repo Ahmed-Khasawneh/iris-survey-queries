@@ -5,7 +5,7 @@ import json
 from uuid import uuid4
 from pyspark.sql.window import Window
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
-    to_date, when, coalesce, count, rank, concat, substring
+    to_date, when, coalesce, count, rank, concat, substring, date_add, date_sub, array_contains, regexp_replace, abs
 from pyspark.sql.utils import AnalysisException
 from datetime import datetime
 from pyspark import SparkContext
@@ -160,7 +160,8 @@ def academic_term_mcr(spark):
                 coalesce(upper(col('partOfTermCode')), lit('1')).alias('partOfTermCode'),
                 to_timestamp(col('snapshotDate')).alias('snapshotDateTimestamp'),
                 to_date(col('snapshotDate'), 'YYYY-MM-DD').alias('snapshotDate'),
-                to_timestamp(coalesce(col('recordActivityDate'), lit('9999-09-09'))).alias('recordActivityDate'),
+                to_timestamp(coalesce(col('recordActivityDate'), lit('9999-09-09'))).alias('recordActivityDateTimestamp'),
+                coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), lit('9999-09-09')).alias('recordActivityDate'), 
                 academic_term_in.partOfTermCodeDescription,
                 academic_term_in.requiredFTCreditHoursGR,
                 academic_term_in.requiredFTCreditHoursUG,
@@ -172,14 +173,16 @@ def academic_term_mcr(spark):
                 academic_term_in.tags)
             .withColumn('acadTermRowNum', row_number().over(Window
                 .partitionBy(
+                    col('snapshotDateTimestamp'),
                     col('termCode'), 
                     col('partOfTermCode'))
                 .orderBy(
-                    col('snapshotDate').desc(),
-                    col('recordActivityDate').desc())))
+                    col('recordActivityDateTimestamp').desc())))
             .filter(col('acadTermRowNum') == 1)
-            .drop(col('snapshotDate'))
-            .drop(col('recordActivityDate')))
+            #.drop(col('snapshotDate'))
+            .drop(col('recordActivityDate'))
+            #.drop(col('snapshotDateTimestamp'))
+            .drop(col('recordActivityDateTimestamp')))
     
         academic_term_order = (academic_term_2
             .select(
@@ -249,15 +252,18 @@ def reporting_periods(spark, survey_info_in, default_values_in, ipeds_reporting_
                 ipeds_reporting_period_in.surveySection,
                 ipeds_reporting_period_in.termCode,
                 ipeds_reporting_period_in.partOfTermCode,
-                to_timestamp(ipeds_reporting_period_in.snapshotDate).alias('snapshotDateTimestamp'),
-                to_date(ipeds_reporting_period_in.snapshotDate, 'YYYY-MM-DD').alias('snapshotDate'),
-                ipeds_reporting_period_in.tags,
+                academic_term_in.snapshotDateTimestamp.alias('snapshotDateTimestamp'),
+                academic_term_in.snapshotDate.alias('snapshotDate'),
+                academic_term_in.tags.alias('tags'),
                 academic_term_in.termCodeOrder,
                 academic_term_in.partOfTermOrder,
+                when(col('termClassification') == 'Standard Length', lit(1))
+                    .when(col('termClassification').isNull(), when(col('termType').isin('Fall', 'Spring'), lit(1)).otherwise(lit(2)))
+                    .otherwise(lit(2)).alias('fullTermOrder'),
                 to_date(academic_term_in.maxCensus, 'YYYY-MM-DD').alias('maxCensus'),
                 to_date(academic_term_in.minStart, 'YYYY-MM-DD').alias('minStart'),
                 to_date(academic_term_in.maxEnd, 'YYYY-MM-DD').alias('maxEnd'),
-                to_date(academic_term_in.censusDate, 'YYYY-MM-DD').alias('censusDate'),
+                coalesce(to_date(academic_term_in.censusDate, 'YYYY-MM-DD'), (when(col('termType') == 'Fall', default_values_in['default_fall_census']))).alias('censusDate'),
                 academic_term_in.termClassification,
                 academic_term_in.termType,
                 to_date(academic_term_in.startDate, 'YYYY-MM-DD').alias('startDate'),
@@ -269,13 +275,6 @@ def reporting_periods(spark, survey_info_in, default_values_in, ipeds_reporting_
             .withColumn('dummyDate', to_date(to_timestamp(lit('9999-09-09')), 'YYYY-MM-DD'))
             .withColumn('snapShotMaxDummyDate', to_date(to_timestamp(lit('9999-09-09')), 'YYYY-MM-DD'))
             .withColumn('snapShotMinDummyDate', to_date(to_timestamp(lit('1900-09-09')), 'YYYY-MM-DD'))
-            .withColumn('fullTermOrder',
-                expr("""       
-                        (case when termClassification = 'Standard Length' then 1
-                            when termClassification is null then (case when termType in ('Fall', 'Spring') then 1 else 2 end)
-                            else 2
-                        end) 
-                    """))
             .withColumn('equivCRHRFactor', 
                 expr("(coalesce(requiredFTCreditHoursUG/coalesce(requiredFTClockHoursUG, requiredFTCreditHoursUG), 1))"))
             .withColumn('rowNum', row_number().over(Window
@@ -283,19 +282,14 @@ def reporting_periods(spark, survey_info_in, default_values_in, ipeds_reporting_
                         col('termCode'), 
                         col('partOfTermCode'))
                 .orderBy(
-                    expr("""
-                                ((case when snapshotDate <= to_date(date_add(censusdate, 3), 'YYYY-MM-DD') 
-                                            and snapshotDate >= to_date(date_sub(censusDate, 1), 'YYYY-MM-DD') 
-                                            and ((array_contains(tags, 'Fall Census') and termType = 'Fall')
-                                                or (array_contains(tags, 'Spring Census') and termType = 'Spring')
-                                                or (array_contains(tags, 'Pre-Fall Summer Census') and termType = 'Summer')
-                                                or (array_contains(tags, 'Post-Fall Summer Census') and termType = 'Summer')) then 1
-                                    when snapshotDate <= to_date(date_add(censusdate, 3), 'YYYY-MM-DD') 
-                                        and snapshotDate >= to_date(date_sub(censusDate, 1), 'YYYY-MM-DD') then 2
-                                    else 3 end) asc,
-                                (case when snapshotDate > censusDate then snapshotDate else snapShotMaxDummyDate end) asc,
-                                (case when snapshotDate < censusDate then snapshotDate else snapShotMinDummyDate end) desc)
-                            """))))
+                    when((array_contains(col('tags'), default_values_in['cohort_academic_fall'])) & (col('termType') == 'Fall'), lit(1)).otherwise(lit(2)).asc(),
+                    when((array_contains(col('tags'), default_values_in['cohort_academic_spring'])) & (col('termType') == 'Spring'), lit(1)).otherwise(lit(2)).asc(),
+                    when((array_contains(col('tags'), default_values_in['cohort_academic_pre_fall_summer'])) & (col('termType') == 'Summer'), lit(1)).otherwise(lit(2)).asc(),
+                    when((array_contains(col('tags'), default_values_in['cohort_academic_post_spring_summer'])) & (col('termType') == 'Summer'), lit(1)).otherwise(lit(2)).asc(),
+                    when((col('snapshotDate') <= to_date(date_add(col('censusdate'), 3), 'YYYY-MM-DD')) 
+                        & (col('snapshotDate') >= to_date(date_sub(col('censusdate'), 1), 'YYYY-MM-DD')), lit(1)).otherwise(lit(2)).asc(),
+                    when(col('snapshotDate') > col('censusdate'), col('snapshotDate')).otherwise(col('snapShotMaxDummyDate')).asc(),
+                    when(col('snapshotDate') < col('censusdate'), col('snapshotDate')).otherwise(col('snapShotMinDummyDate')).desc())))
             .filter(col('rowNum') == 1))
     
         max_term_order_summer = (ipeds_reporting_period_2
@@ -311,13 +305,7 @@ def reporting_periods(spark, survey_info_in, default_values_in, ipeds_reporting_
             .crossJoin(max_term_order_fall)
             .withColumn('termTypeNew', when((col('termType') == 'Summer') & (col('termClassification') != 'Standard Length'),
                 when(col('maxSummerTerm') < col('maxFallTerm'), lit('Pre-Fall Summer'))
-                .otherwise(lit('Post-Spring Summer'))).otherwise(col('termType'))))
-            #.withColumn(expr("""
-                    #(case when termType = 'Summer' and termClassification != 'Standard Length' then 
-                    #            (case when maxSummerTerm < maxFallTerm then 'Pre-Fall Summer' 
-                    #                    else 'Post-Spring Summer' end) 
-                    #      else termType end)
-            #"""))))    
+                .otherwise(lit('Post-Spring Summer'))).otherwise(col('termType'))))   
     
         return academic_term_reporting_refactor_out
     
@@ -358,80 +346,333 @@ def campus_mcr(spark, snapshotDateFilter_in = None):
     
     return campus_in
 
-def financial_aid_mcr(spark, snapshotDateFilter_in = None, cohort_df_in = None):
+def financial_aid_mcr(spark, default_values_in, cohort_df_in, ipeds_client_config_in):
 
-    financial_aid_in = spark.sql("select * from financialAid").filter(col('isIpedsReportable') == True)
+    survey_type = cohort_df_in.first()['surveyType']
 
-    if financial_aid_in.rdd.isEmpty() == False:
-        financial_aid_in = (financial_aid_in
-                .select(
-                    col('personId'),
-                    col('fundType'),
-                    upper(col('fundCode')).alias('fundCode'),
-                    col('fundSource'),
-                    col('recordActivityDate').alias('recordActivityDateTimestamp'),
-                    to_date(col('recordActivityDate'), 'YYYY-MM-DD').alias('recordActivityDate'), 
-                    col('snapshotDate').alias('finAidSnapshotDateTimestamp'),
-                    to_date(col('snapshotDate'), 'YYYY-MM-DD').alias('finAidSnapshotDate'),
-                    col('awardStatusActionDate').alias('awardStatusActionDateTimestamp'),
-                    to_date(col('awardStatusActionDate'), 'YYYY-MM-DD').alias('awardStatusActionDate'), 
-                    upper(col('termCode')).alias('termCode'),
-                    col('awardStatus'),
-                    coalesce(col('isPellGrant'), lit(False)).alias('isPellGrant'),
-                    coalesce(col('isTitleIV'), lit(False)).alias('isTitleIV'),
-                    coalesce(col('isSubsidizedDirectLoan'), lit(False)).alias('isSubsidizedDirectLoan'),
-                    col('acceptedAmount'),
-                    col('offeredAmount'),
-                    col('paidAmount'),
-                    when((col('IPEDSFinancialAidAmount').isNotNull()) & (col('IPEDSFinancialAidAmount') > 0), col('IPEDSFinancialAidAmount'))
-                            .when(col('fundType') == 'Loan', col('acceptedAmount'))
-                            .when(col('fundType').isin('Grant', 'Scholarship'), col('offeredAmount'))
-                            .when(col('fundType') == 'Work Study', col('paidAmount'))
-                            .otherwise(col('IPEDSFinancialAidAmount')).alias('IPEDSFinancialAidAmount'), 
-                    when((col('IPEDSOutcomeMeasuresAmount').isNotNull()) & (col('IPEDSOutcomeMeasuresAmount') > 0), col('IPEDSOutcomeMeasuresAmount'))
-                            .when(col('fundType') == 'Loan', col('acceptedAmount'))
-                            .when(col('fundType').isin('Grant', 'Scholarship'), col('offeredAmount'))
-                            .when(col('fundType') == 'Work Study', col('paidAmount'))
-                            .otherwise(col('IPEDSOutcomeMeasuresAmount')).alias('IPEDSOutcomeMeasuresAmount'), 
-                    col('IPEDSOutcomeMeasuresAmount'),
-                    round(regexp_replace(col('familyIncome'), ',', ''), 0).alias('familyIncome'),
-                    col('livingArrangement'))
-                .withColumn('snapshotDateFilter', lit(snapshotDateFilter_in))
-                .withColumn('useSnapshotDatePartition', when(col('snapshotDateFilter').isNull(), col('finAidSnapshotDateTimestamp')).otherwise(lit(None)))
-                .withColumn('finAidRowNum', row_number().over(Window
-                    .partitionBy(
-                        col('useSnapshotDatePartition'),
-                        col('financialAidYear'),
-                        col('personId'),
-                        col('termCode'),
-                        col('fundCode'),
-                        col('fundType'),
-                        col('fundSource'))
-                    .orderBy(
-                        when(col('finAidSnapshotDateTimestamp') == snapshotDateFilter_in, lit(1)).otherwise(lit(2)).asc(),
-                        col('finAidSnapshotDateTimestamp').desc(),
-                        col('recordActivityDateTimestamp').desc(),
-                        col('awardStatusActionDateTimestamp').desc())))
-            .filter(col('finAidRowNum') == 1)
-            .drop(col('recordActivityDate'))
-            .drop(col('recordActivityDateTimestamp'))
-            .drop(col('snapshotDateTimestamp'))
-            .drop(col('finAidRowNum')))
+    financial_aid_snapshot = (spark.sql("select distinct to_date(snapshotDate, 'YYYY-MM-DD') finaidSnapshotDate, snapshotDate finaidSnapshotDateTimestamp, tags from financialAid")
+        .withColumn('fa_start_date', lit(default_values_in['financial_aid_start']))
+        .withColumn('fa_end_date', lit(default_values_in['financial_aid_end']))
+        .withColumn('dummyDate', to_date(to_timestamp(lit('9999-09-09')), 'YYYY-MM-DD'))
+        .withColumn('snapShotMaxDummyDate', to_date(to_timestamp(lit('9999-09-09')), 'YYYY-MM-DD'))
+        .withColumn('snapShotMinDummyDate', to_date(to_timestamp(lit('1900-09-09')), 'YYYY-MM-DD'))
+        .withColumn('finAidRowNum', row_number().over(Window
+                .orderBy(
+                        when(array_contains(col('tags'), default_values_in['financial_aid']), lit(1)).otherwise(lit(2)).asc(),
+                        when((col('finaidSnapshotDate') <= date_add(col('fa_end_date'), 15)) 
+                            & (col('finaidSnapshotDate') >= date_sub(col('fa_start_date'), 15)), lit(1)).otherwise(lit(2)).asc(),
+                        when(col('finaidSnapshotDate') > col('fa_end_date'), col('finaidSnapshotDate')).otherwise(col('snapShotMaxDummyDate')).asc(),
+                        when(col('finaidSnapshotDate') < col('fa_end_date'), col('finaidSnapshotDate')).otherwise(col('snapShotMinDummyDate')).desc()
+                        )))
+        .filter(col('finAidRowNum') == 1))
 
-    return financial_aid_in
+    financial_aid_in = (financial_aid_snapshot
+        .join(
+            spark.sql("select * from financialAid"),
+            (col('snapshotDate') == col('finaidSnapshotDateTimestamp')) & 
+                (((coalesce(to_date(col('awardStatusActionDate'), 'YYYY-MM-DD'), col('dummyDate')) != col('dummyDate')) & 
+                    (coalesce(to_date(col('awardStatusActionDate'), 'YYYY-MM-DD'), col('dummyDate')) <= col('fa_end_date')))
+                | ((coalesce(to_date(col('awardStatusActionDate'), 'YYYY-MM-DD'), col('dummyDate')) == col('dummyDate')) & 
+                    (coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')) != col('dummyDate')) & 
+                    (coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')) <= col('fa_end_date')))
+                | ((coalesce(to_date(col('awardStatusActionDate'), 'YYYY-MM-DD'), col('dummyDate')) == col('dummyDate')) & 
+                    (coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')) == col('dummyDate')))), 'left')
+        .filter(col('isIpedsReportable') == True))
+        
+    cohort_financial_aid = (cohort_df_in   
+        .join(
+            financial_aid_in,
+            (col('cohortPersonId') == col('personId')) & (col('cohortFinancialAidYear') == col('financialAidYear')), 'left')
+        .select(
+            cohort_df_in['*'],
+            col('personId'),
+            col('termCode'),
+            col('fundType'),
+            upper(col('fundCode')).alias('fundCode'),
+            col('fundSource'),
+            col('recordActivityDate').alias('recordActivityDateTimestamp'),
+            to_date(col('recordActivityDate'), 'YYYY-MM-DD').alias('recordActivityDate'), 
+            col('snapshotDate').alias('snapshotDateTimestamp'),
+            to_date(col('snapshotDate'), 'YYYY-MM-DD').alias('snapshotDate'),
+            col('awardStatusActionDate').alias('awardStatusActionDateTimestamp'),
+            to_date(col('awardStatusActionDate'), 'YYYY-MM-DD').alias('awardStatusActionDate'), 
+            col('awardStatus'),
+            coalesce(col('isPellGrant'), lit(False)).alias('isPellGrant'),
+            coalesce(col('isTitleIV'), lit(False)).alias('isTitleIV'),
+            coalesce(col('isSubsidizedDirectLoan'), lit(False)).alias('isSubsidizedDirectLoan'),
+            col('acceptedAmount'),
+            col('offeredAmount'),
+            col('paidAmount'),
+            col('IPEDSFinancialAidAmount'),
+            col('IPEDSOutcomeMeasuresAmount'),
+            round(regexp_replace(col('familyIncome'), ',', ''), 0).alias('familyIncome'),
+            col('livingArrangement'))
+        .withColumn('finAidRowNum', row_number().over(Window
+            .partitionBy(
+                col('cohortYearType'),
+                col('cohortPersonId'),
+                col('cohortFinancialAidYear'),
+                col('termCode'),
+                col('fundCode'),
+                col('fundType'),
+                col('fundSource'))
+            .orderBy(
+                col('recordActivityDateTimestamp').desc(),
+                col('awardStatusActionDateTimestamp').desc())))
+        .filter(col('finAidRowNum') == 1))
+
+    if survey_type == 'SFA':
+        cohort_with_financial_aid = (cohort_financial_aid
+            .withColumn('ipeds_survey_amount', 
+                when((col('IPEDSFinancialAidAmount').isNotNull()) & (col('IPEDSFinancialAidAmount') > 0), col('IPEDSFinancialAidAmount'))
+                .when(col('fundType') == 'Loan', col('acceptedAmount'))
+                .when(col('fundType').isin('Grant', 'Scholarship'), col('offeredAmount'))
+                .when(col('fundType') == 'Work Study', col('paidAmount'))
+                .otherwise(col('IPEDSFinancialAidAmount')))
+            .withColumn('awardedAidInd', when((~col('awardStatus').isin('Source Denied', 'Cancelled')) & (col('ipeds_survey_amount') > 0), lit(1)).otherwise(lit(0)))
+            .filter(col('awardedAidInd') == 1))
+                            
+        student_fa_totals = (cohort_with_financial_aid
+            .select(
+                col('cohortPersonId'),
+                col('cohortYearType'),
+                col('cohortFinancialAidYear'),
+                col('termCode'),
+                col('livingArrangement'),
+                when((col('fundType') == 'Loan') & (col('fundSource') == 'Federal'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('federalLoan'),
+                when((col('fundType').isin('Grant', 'Scholarship')) & (col('fundSource') == 'Federal'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('federalGrantSchol'),
+                when((col('fundType') == 'Work Study') & (col('fundSource') == 'Federal'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('federalWorkStudy'),
+                when((col('fundType') == 'Loan') & (col('fundSource').isin('State', 'Local')), col('ipeds_survey_amount')).otherwise(lit(0)).alias('stateLocalLoan'),
+                when((col('fundType').isin('Grant', 'Scholarship')) & (col('fundSource').isin('State', 'Local')), col('ipeds_survey_amount')).otherwise(lit(0)).alias('stateLocalGrantSchol'),
+                when((col('fundType') == 'Work Study') & (col('fundSource').isin('State', 'Local')), col('ipeds_survey_amount')).otherwise(lit(0)).alias('stateLocalWorkStudy'),
+                when((col('fundType') == 'Loan') & (col('fundSource') == 'Institution'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('institutionLoan'),
+                when((col('fundType').isin('Grant', 'Scholarship')) & (col('fundSource') == 'Institution'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('institutionGrantSchol'),
+                when((col('fundType') == 'Work Study') & (col('fundSource') == 'Institution'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('institutionalWorkStudy'),
+                when((col('fundType') == 'Loan') & (col('fundSource') == 'Other'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('otherLoan'),
+                when((col('fundType').isin('Grant', 'Scholarship')) & (col('fundSource') == 'Other'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('otherGrantSchol'),
+                when((col('fundType') == 'Work Study') & (col('fundSource') == 'Other'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('otherWorkStudy'),
+                when((col('isPellGrant') == True), col('ipeds_survey_amount')).otherwise(lit(0)).alias('pellGrant'),
+                when((col('isTitleIV') == True), col('ipeds_survey_amount')).otherwise(lit(0)).alias('titleIV'),
+                when((col('fundType').isin('Grant', 'Scholarship')), col('ipeds_survey_amount')).otherwise(lit(0)).alias('allGrantSchol'),
+                when((col('fundType') == 'Loan'), col('ipeds_survey_amount')).otherwise(lit(0)).alias('allLoan'),
+                when((col('fundType').isin('Grant', 'Scholarship')) & (col('fundSource') == 'Federal') & (col('isPellGrant') == False), col('ipeds_survey_amount')).otherwise(lit(0)).alias('nonPellFederalGrantSchol'),
+                coalesce(col('ipeds_survey_amount'), lit(0)).alias('totalAid'),
+                when(col('familyIncome') <= 30000, 1)
+                    .when((col('familyIncome') > 30000) & (col('familyIncome') <= 48000), 2)
+                    .when((col('familyIncome') > 48000) & (col('familyIncome') <= 75000), 3)
+                    .when((col('familyIncome') > 75000) & (col('familyIncome') <= 110000), 4)
+                    .when(col('familyIncome') > 110000, 5).otherwise(lit(1)).alias('familyIncomeCat'),
+                when(col('isGroup2Ind') == 1, col('ipeds_survey_amount')).alias('group2aTotal'),
+                when((col('isGroup2Ind') == 1) & (col('fundType').isin('Loan', 'Grant', 'Scholarship')) & (col('fundSource').isin('Federal', 'State', 'Local', 'Institution')), col('ipeds_survey_amount')).alias('group2bTotal'),
+                when((col('isGroup2Ind') == 1) & (col('fundType').isin('Grant', 'Scholarship')) & (col('fundSource').isin('Federal', 'State', 'Local', 'Institution')), col('ipeds_survey_amount')).alias('group3Total'),
+                when((col('isGroup2Ind') == 1) & (col('fundType').isin('Grant', 'Scholarship')) & (col('fundSource').isin('Federal', 'State', 'Local', 'Institution')) & (~col('fundCode').isin(col('sfaCaresAct1'), col('sfaCaresAct2'))), col('ipeds_survey_amount')).alias('group3Total_caresAct'),
+                when((col('isGroup2Ind') == 1) & (col('isTitleIV') == True), col('ipeds_survey_amount')).alias('group4Total'),
+                when((col('isGroup2Ind') == 1) & (col('isTitleIV') == True) & (~col('fundCode').isin(col('sfaCaresAct1'), col('sfaCaresAct2'))), col('ipeds_survey_amount')).alias('group4Total_caresAct')) 
+            .groupBy(
+                'cohortPersonId', 
+                #'cohortFinancialAidYear', 
+                'cohortYearType')
+            .agg(
+                sum('federalLoan').alias('federalLoan'),
+                sum('federalGrantSchol').alias('federalGrantSchol'),
+                sum('federalWorkStudy').alias('federalWorkStudy'),
+                sum('stateLocalLoan').alias('stateLocalLoan'),
+                sum('stateLocalGrantSchol').alias('stateLocalGrantSchol'),
+                sum('stateLocalWorkStudy').alias('stateLocalWorkStudy'),
+                sum('institutionLoan').alias('institutionLoan'),
+                sum('institutionGrantSchol').alias('institutionGrantSchol'),
+                sum('institutionalWorkStudy').alias('institutionalWorkStudy'),
+                sum('otherLoan').alias('otherLoan'),
+                sum('otherGrantSchol').alias('otherGrantSchol'),
+                sum('otherWorkStudy').alias('otherWorkStudy'),
+                sum('pellGrant').alias('pellGrant'),
+                sum('titleIV').alias('titleIV'),
+                sum('allGrantSchol').alias('allGrantSchol'),
+                sum('allLoan').alias('allLoan'),
+                sum('nonPellFederalGrantSchol').alias('nonPellFederalGrantSchol'),
+                sum('totalAid').alias('totalAid'),
+                sum('group2aTotal').alias('group2aTotal'),
+                sum('group2bTotal').alias('group2bTotal'),
+                sum('group3Total').alias('group3Total'),
+                sum('group3Total').alias('group3Total_caresAct'),
+                sum('group4Total').alias('group4Total'),
+                sum('group4Total').alias('group4Total_caresAct'),
+                max('familyIncomeCat').alias('familyIncomeCat')
+                ))
+
+        cohort_fa = (cohort_df_in
+            .join(
+                student_fa_totals,
+                (cohort_df_in.cohortPersonId == student_fa_totals.cohortPersonId) & 
+                    #(cohort_df_in.cohortFinancialAidYear == student_fa_totals.cohortFinancialAidYear) & 
+                    (cohort_df_in.cohortYearType == student_fa_totals.cohortYearType), 'left')
+            .select(
+                cohort_df_in.cohortPersonId,
+                #cohort_df_in.cohortFinancialAidYear,
+                cohort_df_in.cohortYearType,
+                cohort_df_in.isGroup2Ind,
+                cohort_df_in.residency,
+                student_fa_totals['*']))
+                
+    else:  #survey_type == 'GR': or 'OM'
+        cohort_with_financial_aid = (cohort_financial_aid
+            .withColumn('ipeds_survey_amount', 
+                when((col('IPEDSOutcomeMeasuresAmount').isNotNull()) & (col('IPEDSOutcomeMeasuresAmount') > 0), col('IPEDSOutcomeMeasuresAmount'))
+                .otherwise(col('paidAmount')))
+            .withColumn('awardedAidInd', when((~col('awardStatus').isin('Source Denied', 'Cancelled')) & (col('ipeds_survey_amount') > 0), lit(1)).otherwise(lit(0)))
+            .filter((col('awardedAidInd') == 1)))
+
+        student_fa_totals = (cohort_with_financial_aid
+            .select(
+                col('cohortPersonId'),
+                col('cohortYearType'),
+                col('cohortFinancialAidYear'),
+                col('termCode'),
+                when(col('isPellGrant') == True, ipeds_survey_amount).otherwise(lit(0)).alias('pellGrantAmt'),
+                when(col('isSubsidizedDirectLoan') == True, ipeds_survey_amount).otherwise(lit(0)).alias('subsidLoanAmt'))
+            .groupBy(
+                col('cohortPersonId'),
+                #col('cohortFinancialAidYear'),
+                col('cohortYearType'))
+            .agg(
+                sum('pellGrantAmt').alias('pellGrantAmt'),
+                sum('subsidLoanAmt').alias('subsidLoanAmt')))
+
+        cohort_fa = (cohort_df_in
+            .join(
+                student_fa_totals,
+                (cohort_df_in.cohortPersonId == student_fa_totals.cohortPersonId) & 
+                    #(cohort_df_in.cohortFinancialAidYear == student_fa_totals.cohortFinancialAidYear) & 
+                    (cohort_df_in.cohortYearType == student_fa_totals.cohortYearType), 'left')
+            .select(
+                cohort_df_in['*'],
+                when(col('pellGrantAmt') > 0, lit(1)).otherwise(lit(0)).alias('isPellRec'),
+                when(col('pellGrantAmt') > 0, lit(0))
+                    .when(col('subsidLoanAmt') > 0, lit(1))
+                    .otherwise(lit(0)).alias('isSubLoanRec')))
+        
+    return cohort_fa
+
+def military_benefit_mcr(spark, default_values_in, benefit_type_in):
+
+    if benefit_type_in == 'gi_bill':
+        tag = default_values_in['gi_bill']
+        start_date = default_values_in['gi_bill_start']
+        end_date = default_values_in['gi_bill_end']
+        req_benefit_type = 'GI Bill'
+
+    else: #benefit_type_in == 'dod'
+        tag = default_values_in['department_of_defense']
+        start_date = default_values_in['department_of_defense_start']
+        end_date = default_values_in['department_of_defense_end']
+        req_benefit_type = 'Department of Defense'
+
+    military_benefit_snapshot = (spark.sql("select distinct to_date(snapshotDate, 'YYYY-MM-DD') milbenSnapshotDate, snapshotDate milbenSnapshotDateTimestamp, tags from militaryBenefit")
+        .withColumn('start_date', lit(start_date))
+        .withColumn('end_date', lit(end_date))
+        .withColumn('req_benefit_type', lit(req_benefit_type))
+        .withColumn('dummyDate', to_date(to_timestamp(lit('9999-09-09')), 'YYYY-MM-DD'))
+        .withColumn('snapShotMaxDummyDate', to_date(to_timestamp(lit('9999-09-09')), 'YYYY-MM-DD'))
+        .withColumn('snapShotMinDummyDate', to_date(to_timestamp(lit('1900-09-09')), 'YYYY-MM-DD'))
+        .withColumn('milbenRowNum', row_number().over(Window
+                .orderBy(
+                        when(array_contains(col('tags'), tag), lit(1)).otherwise(lit(2)).asc(),
+                        when((col('milbenSnapshotDate') <= date_add(col('end_date'), 15)) 
+                            & (col('milbenSnapshotDate') >= date_sub(col('start_date'), 15)), lit(1)).otherwise(lit(2)).asc(),
+                        when(col('milbenSnapshotDate') > col('end_date'), col('milbenSnapshotDate')).otherwise(col('snapShotMaxDummyDate')).asc(),
+                        when(col('milbenSnapshotDate') < col('end_date'), col('milbenSnapshotDate')).otherwise(col('snapShotMinDummyDate')).desc()
+                        )))
+        .filter(col('milbenRowNum') == 1)
+        .drop(col('milbenRowNum')))
+
+    military_benefit_in = (military_benefit_snapshot
+        .join(
+            spark.sql("select * from militaryBenefit"),
+            (col('snapshotDate') == col('milbenSnapshotDateTimestamp')) &
+                (((coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')) != col('dummyDate')) & 
+                        (coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')).between(col('start_date'), col('end_date'))))
+                    | (coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')) == col('dummyDate'))) &
+                (to_date(col('transactionDate'), 'YYYY-MM-DD').between(col('start_date'), col('end_date'))) &
+                (col('benefitType') == col('req_benefit_type')) &
+                (col('isIpedsReportable') == True), 'left')
+        .select(
+            col('personId').alias('milbenPersonId'),
+            upper(col('termCode')).alias('termCode'),
+            abs(col('benefitAmount')).alias('benefitAmount'),
+            col('transactionDate'),
+            col('recordActivityDate').alias('recordActivityDateTimestamp'),
+            to_date(col('recordActivityDate'), 'YYYY-MM-DD').alias('recordActivityDate'), 
+            col('snapshotDate').alias('milbenSnapshotDateTimestamp'),
+            to_date(col('snapshotDate'), 'YYYY-MM-DD').alias('milbenSnapshotDate'),
+            col('end_date'),
+            col('dummyDate'),
+            col('snapShotMaxDummyDate'),
+            col('snapShotMinDummyDate'))
+        .withColumn('milbenRowNum', row_number().over(Window
+            .partitionBy(
+                col('milbenPersonId'),
+                col('termCode'),
+                col('transactionDate'),
+                col('benefitAmount'))
+            .orderBy(
+                col('recordActivityDateTimestamp').desc())))
+        .filter(col('milbenRowNum') == 1)
+        .groupBy(
+            col('milbenPersonId'),
+            col('milbenSnapshotDateTimestamp'),
+            col('end_date'),
+            col('dummyDate'),
+            col('snapShotMaxDummyDate'),
+            col('snapShotMinDummyDate'))
+        .agg(
+            sum(col('benefitAmount')).alias('benefitAmount')))
+
+    military_benefit_level = (military_benefit_in
+        .join(
+            spark.sql("select * from student"),
+            (col('milbenPersonId') == col('personId')) &
+            (((coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')) != col('dummyDate')) 
+                & (coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')) <= col('end_date')))
+                | (coalesce(to_date(col('recordActivityDate'), 'YYYY-MM-DD'), col('dummyDate')) == col('dummyDate'))) &
+            (col('isIpedsReportable') == True), 'left')
+        .select(
+            col('milbenPersonId'),
+            col('benefitAmount'),
+            col('milbenSnapshotDateTimestamp'),
+            when(col('studentLevel').isin('Masters', 'Doctorate', 'Professional Practice Doctorate'), lit(2)).otherwise(lit(1)).alias('studentLevel'),
+            col('snapshotDate').alias('snapshotDateTimestamp'),
+            col('recordActivityDate').alias('recordActivityDateTimestamp'),
+            col('snapShotMaxDummyDate'),
+            col('snapShotMinDummyDate'))
+        .withColumn('studentRowNum', row_number().over(Window
+                .partitionBy(
+                    col('milbenPersonId'))
+                .orderBy(
+                    when(col('snapshotDateTimestamp') == col('milbenSnapshotDateTimestamp'), lit(1)).otherwise(lit(2)).asc(),
+                    when(col('snapshotDateTimestamp') > col('milbenSnapshotDateTimestamp'), col('snapshotDateTimestamp')).otherwise(col('snapShotMaxDummyDate')).asc(),
+                    when(col('snapshotDateTimestamp') < col('milbenSnapshotDateTimestamp'), col('snapshotDateTimestamp')).otherwise(col('snapShotMinDummyDate')).desc(),
+                    col('recordActivityDateTimestamp').desc())))
+        .filter(col('studentRowNum') == 1)
+        .groupBy(
+            col('studentLevel'))
+        .agg(
+            count('*').alias('studentCount'),
+            sum(col('benefitAmount')).alias('benefitAmount')))
+
+    return military_benefit_level
     
 def course_type_counts(spark, survey_info_in, default_values_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None):
 
     if not ipeds_client_config_in:
-        ipeds_client_config_in = ipeds_client_config_mcr(spark, survey_info_in)
+        ipeds_client_config_in = ipeds_client_config_mcr(spark = spark, survey_info_in = survey_info_in)
         
     if not academic_term_in:
         academic_term_in = academic_term_mcr(spark)
 
     if not reporting_periods_in:   
         if not ipeds_reporting_period_in:
-            ipeds_reporting_period_in = ipeds_reporting_period_mcr(spark, survey_info_in, default_values_in)
-        reporting_periods_in = reporting_periods(spark, survey_info_in, default_values_in, ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in)   
+            ipeds_reporting_period_in = ipeds_reporting_period_mcr(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in,)
+        reporting_periods_in = reporting_periods(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in)   
         
     registration_in = spark.sql("select * from registration").filter(col('isIpedsReportable') == True)
 
@@ -666,6 +907,8 @@ def course_type_counts(spark, survey_info_in, default_values_in, ipeds_client_co
                 academic_term_in,
                 (col('termCode') == upper(col('termCodeEffective'))) &
                 (col('repRefTermCodeOrder') <= col('termCodeOrder')), 'left')
+            .drop(academic_term_in.snapshotDate)
+            .drop(academic_term_in.snapshotDateTimestamp)
             .select(
                 col('regPersonId'), 
                 col('repRefSnapshotDateTimestamp'),
@@ -821,7 +1064,7 @@ def course_type_counts(spark, survey_info_in, default_values_in, ipeds_client_co
 def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, course_type_counts_in = None):
 
     if ipeds_client_config_in is None:
-        ipeds_client_config_in = ipeds_client_config_mcr(spark, survey_info_in)
+        ipeds_client_config_in = ipeds_client_config_mcr(spark = spark, survey_info_in = survey_info_in)
 
     if not academic_term_in:
         academic_term_in = academic_term_mcr(spark)
@@ -829,9 +1072,9 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
     if not course_type_counts_in:
         if not reporting_periods_in:   
             if not ipeds_reporting_period_in:
-                ipeds_reporting_period_in = ipeds_reporting_period_mcr(spark, survey_info_in, default_values_in)
-            reporting_periods_in = reporting_periods(spark, survey_info_in, default_values_in, ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in)
-        course_type_counts_in = course_type_counts(spark, survey_info_in, default_values_in, ipeds_client_config_in = ipeds_client_config_in, academic_term_in = academic_term_in, reporting_periods_in = reporting_period_in)  
+                ipeds_reporting_period_in = ipeds_reporting_period_mcr(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in,)
+            reporting_periods_in = reporting_periods(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in)
+        course_type_counts_in = course_type_counts(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_client_config_in = ipeds_client_config_in, academic_term_in = academic_term_in, reporting_periods_in = reporting_period_in)  
         
     student_in = spark.sql("select * from student")     
         
@@ -990,10 +1233,11 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
                 #col('acadOrProgReporter').alias('configAcadOrProgReporter'),
                 #col('publicOrPrivateInstitution').alias('configPublicOrPrivateInstitution'),
                 #col('recordActivityDate').alias('configRecordActivityDate'),
-                #when(col('survey_type') == 'SFA', col('sfaGradStudentsOnly').alias('configSfaGradStudentsOnly'),
                 when(col('survey_type') == 'SFA', col('sfaLargestProgCIPC')).alias('configSfaLargestProgCIPC'),
                 when(col('survey_type') == 'SFA', col('sfaReportPriorYear')).alias('configSfaReportPriorYear'),
                 when(col('survey_type') == 'SFA', col('sfaReportSecondPriorYear')).alias('configSfaReportSecondPriorYear'),
+                when(col('survey_type') == 'SFA', coalesce(col('eviReserved1'), lit('XXXX'))).alias('configSfaCaresAct1'),
+                when(col('survey_type') == 'SFA', coalesce(col('eviReserved2'), lit('XXXX'))).alias('configSfaCaresAct2'),
                 when(col('survey_type') == '12ME', col('includeNonDegreeAsUG')).alias('configIncludeNonDegreeAsUG'),
                 when(col('survey_type') == '12ME', col('tmAnnualDPPCreditHoursFTE')).alias('configTmAnnualDPPCreditHoursFTE'))
             .withColumn('isNonDegreeSeeking_calc',
@@ -1095,6 +1339,8 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
                 academic_term_in,
                 (academic_term_in.termCode == upper(col('termCodeEffective'))) &
                 (academic_term_in.termCodeOrder <= col('repRefTermCodeOrder')), 'left')
+            .drop(academic_term_in.snapshotDate)
+            .drop(academic_term_in.snapshotDateTimestamp)
             .select(
                 cohort_person['*'],
                 upper(col('degreeProgram')).alias('acadTrkDegreeProgram'),
@@ -1144,6 +1390,8 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
                 academic_term_in,
                 (academic_term_in.termCode == upper(degree_program_in.termCodeEffective)) &
                 (academic_term_in.termCodeOrder <= col('repRefTermCodeOrder')), 'left')
+            .drop(academic_term_in.snapshotDate)
+            .drop(academic_term_in.snapshotDateTimestamp)
             .select(
                 academic_track['*'],
                 upper(col('degreeProgram')).alias('degProgDegreeProgram'),
@@ -1268,6 +1516,7 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
                     .when(col('totalCreditHrs') > 0, lit(1))
                     .when(col('totalClockHrs') > 0, lit(1))
                     .otherwise(lit(0)))
+            .filter(col('ipedsInclude') == 1)
             .select(
                 col('repRefYearType').alias('yearType'),
                 col('repRefSurveySection').alias('surveySection'),
@@ -1286,7 +1535,6 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
                 col('isNonDegreeSeeking_final').alias('isNonDegreeSeeking'),
                 col('stuStudentType').alias('studentType'),
                 col('timeStatus_calc').alias('timeStatus'),
-                col('ipedsInclude'),
                 col('persIpedsEthnValue').alias('ethnicity'),
                 col('persIpedsGender').alias('gender'),
                 col('distanceEdInd_calc').alias('distanceEducationType'),
@@ -1303,8 +1551,11 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
                 col('configIcOfferDoctorAwardLevel').alias('icOfferDoctorAwardLevel'),
                 col('configInstructionalActivityType').alias('instructionalActivityType'),
                 col('configTmAnnualDPPCreditHoursFTE').alias('tmAnnualDPPCreditHoursFTE'),
-                col('configIncludeNonDegreeAsUG').alias('includeNonDegreeAsUG'))
-            .filter(col('ipedsInclude') == 1)
+                col('configIncludeNonDegreeAsUG').alias('includeNonDegreeAsUG'),
+                col('configSfaReportPriorYear').alias('sfaReportPriorYear'),
+                col('configSfaReportSecondPriorYear').alias('sfaReportSecondPriorYear'),
+                col('configSfaCaresAct1').alias('sfaCaresAct1'),
+                col('configSfaCaresAct2').alias('sfaCaresAct2'))
             .withColumn('NDSRn', row_number().over(Window
                 .partitionBy(
                     col('yearType'),
@@ -1371,46 +1622,12 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
                 cohort_maxStudentLevel,
                 (col('personId') == col('personIdMaxStudentLevel')) & (col('yearType') == col('yearTypeMaxStudentLevel')), 'left')
             .select(
-                col('yearType'),
-                col('surveySection'),
-                col('surveyYear'),
+                cohort_priority['*'],
                 col('surveyYear').cast('int').alias('surveyYear_int'),
-                col('surveyType'),
-                col('surveyId'),
-                col('personId'),
-                col('termCode'),
-                col('NDSRn'),
-                col('FFTRn'),
-                col('fullTermOrder'),
-                col('termCodeOrder'),
-                col('maxCensus'),
-                col('termType'),
-                col('financialAidYear'),
-                col('studentLevelUGGRDPP'), 
                 col('maxStudentLevel'),
-                col('isNonDegreeSeeking'),
                 col('isNonDegreeSeekingFirstDegreeSeeking'),
-                col('timeStatus'),
-                col('studentType'),
                 col('studentTypePreFallSummer'),
-                col('studentTypeFirstDegreeSeeking'),
-                col('ethnicity'),
-                col('gender'),
-                col('distanceEducationType'),
-                col('studyAbroadStatus'),
-                col('residency'),
-                col('cipCode'),
-                col('awardLevel'),
-                col('UGCreditHours'),
-                col('UGClockHours'),
-                col('GRCreditHours'),
-                col('DPPCreditHours'),
-                col('icOfferUndergradAwardLevel'),
-                col('icOfferGraduateAwardLevel'),
-                col('icOfferDoctorAwardLevel'),
-                col('instructionalActivityType'),
-                col('tmAnnualDPPCreditHoursFTE'),
-                col('includeNonDegreeAsUG')))
+                col('studentTypeFirstDegreeSeeking')))
 
         return cohort
     
