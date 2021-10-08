@@ -555,22 +555,20 @@ def financial_aid_mcr(spark, default_values_in, cohort_df_in, ipeds_client_confi
 
 def military_benefit_mcr(spark, default_values_in, benefit_type_in):
 
-    if benefit_type_in == 'gi_bill':
+    if benefit_type_in == 'GI Bill':
         tag = default_values_in['gi_bill']
         start_date = default_values_in['gi_bill_start']
         end_date = default_values_in['gi_bill_end']
-        req_benefit_type = 'GI Bill'
 
-    else: #benefit_type_in == 'dod'
+    else: #benefit_type_in == 'Department of Defense'
         tag = default_values_in['department_of_defense']
         start_date = default_values_in['department_of_defense_start']
         end_date = default_values_in['department_of_defense_end']
-        req_benefit_type = 'Department of Defense'
 
     military_benefit_snapshot = (spark.sql("select distinct to_date(snapshotDate, 'YYYY-MM-DD') milbenSnapshotDate, snapshotDate milbenSnapshotDateTimestamp, tags from militaryBenefit")
         .withColumn('start_date', lit(start_date))
         .withColumn('end_date', lit(end_date))
-        .withColumn('req_benefit_type', lit(req_benefit_type))
+        .withColumn('req_benefit_type', lit(benefit_type_in))
         .withColumn('dummyDate', to_date(to_timestamp(lit('9999-09-09')), 'YYYY-MM-DD'))
         .withColumn('snapShotMaxDummyDate', to_date(to_timestamp(lit('9999-09-09')), 'YYYY-MM-DD'))
         .withColumn('snapShotMinDummyDate', to_date(to_timestamp(lit('1900-09-09')), 'YYYY-MM-DD'))
