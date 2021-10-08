@@ -120,9 +120,9 @@ def run_student_financial_aid_query(spark, survey_type, year):
                                 # for survey years > 2019, use 'group3Total_caresAct' and 'group4Total_caresAct'
 
     # ********** Military Benefits                                                     
-    gi_bill_counts = query_helpers.military_benefit_mcr(spark, default_values_in = default_survey_values, benefit_type_in = 'gi_bill') 
-        
-    dod_counts = query_helpers.military_benefit_mcr(spark, default_values_in = default_survey_values, benefit_type_in = 'dod') 
+    gi_bill_counts = military_benefit_mcr(spark, default_values_in = default_survey_values, benefit_type_in = 'GI Bill') 
+
+    dod_counts = military_benefit_mcr(spark, default_values_in = default_survey_values, benefit_type_in = 'Department of Defense') 
 
     # ********** Survey Formatting
     # Part G
