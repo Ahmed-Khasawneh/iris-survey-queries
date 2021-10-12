@@ -19,7 +19,7 @@ def create_mock_data(
         entity_metadata_override={}  # Accepts a dictionary of values for entity metadata.
 ):
     # Enable for production use
-    with open(f"./Data_Model/{doris_entity_name}.yml") as f:#relative path here
+    with open(f"./tests/Data_Model/{doris_entity_name}.yml") as f:#relative path here
         doris_entity_yml = yaml.load(f, Loader=yaml.FullLoader)
     #        C:/Users/ahmed.khasawneh/PycharmProjects/pythonProject_unittest/venv/data_model_definition/{doris_entity_name}.yml
 

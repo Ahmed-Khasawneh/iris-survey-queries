@@ -43,7 +43,10 @@ def test_check_model_verion():
     actual_entity_versions.append(entity_list_versions)
 
     if actual_entity_versions != entity_list_versions_expected:
-        print('Updating data model')
+        print('Creating updated mock data...')
+        test_mock_data_creation()
+
+        print('Writing new data model version file...')
         with open('./tests/entities/mock_data_dm_versions.csv', 'w') as f:  # You will need 'wb' mode in Python 2.x
             w = csv.DictWriter(f, entity_list_versions.keys())
             w.writeheader()
@@ -68,7 +71,7 @@ def test_mock_data_creation():
 
         if os.path.isdir(f'./tests/entities/{i}.parquet') == True:
             print(f'Removing parquet files for {i}...')
-            os.rmdir(f'./tests/entities/{i}.parquet')
+            shutil.rmtree(f'./tests/entities/{i}.parquet')
         else:
             print(f'No files exist for {i}')
 
