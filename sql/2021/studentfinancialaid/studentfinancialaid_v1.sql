@@ -50,7 +50,7 @@ WITH DefaultValues as (
 
 --prod default block
 
-select '2022' surveyYear, 
+select '2122' surveyYear, 
 	'SFA' surveyId,
 	'Fall Census' repPeriodTag1,
 	'Financial Aid Year End' repPeriodTag2,

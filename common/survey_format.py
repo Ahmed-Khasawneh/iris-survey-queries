@@ -118,9 +118,9 @@ def get_part_format_string(survey_info_in, part_in = None, part_type_in = None, 
         survey_type = survey_info_in['survey_type']
     else: survey_type = 'xxx'
 
+    survey_year_int = int(survey_year)   
 ####****TEST uncomment first line to use test data for survey years > 2019-20   
     #survey_year_int = 2021
-    survey_year_int = int(survey_year)
     
     offer_undergraduate_award = ipeds_client_config_in.first()['icOfferUndergradAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
     offer_graduate_award = ipeds_client_config_in.first()['icOfferGraduateAwardLevel'] if ipeds_client_config_in.rdd.isEmpty() == False else 'Y'
@@ -266,9 +266,9 @@ def get_default_part_format_string(survey_info_in, part_in = None, part_type_in 
         survey_type = survey_info_in['survey_type']
     else: survey_type = 'xxx'
     
+    survey_year_int = int(survey_year)   
 ####****TEST uncomment first line to use test data for survey years > 2019-20   
     #survey_year_int = 2021
-    survey_year_int = int(survey_year)
 
     if survey_type == '12ME': 
 
