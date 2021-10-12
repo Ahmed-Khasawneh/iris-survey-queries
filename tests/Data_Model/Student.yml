@@ -1,0 +1,177 @@
+version: 2.0.0
+name: Student
+dataModelEntityId: 2
+
+#2.0.0 PF-2006 Updated StudentType. Removed StudentStatus, College. Renamed Campus>HomeCampus. Added StudyAbroad,ftptStatus
+#1.3.0 PF-1747 "Deprecated" termCodeOnAdmission and highSchoolGradDate fields via private: true property
+#1.2.0 PF-1746 Added termGPA field
+#1.1.1 PF-1727 Updated descriptions and added comment fields
+#1.1.0 PF-1709 Modified studentLevel enum values: removed PostGraduate, renamed Professional to Occupational/Professional
+
+fields:
+  - name: personId
+    description: Unique person identifier for student
+    type: string
+    required: true
+    reference: Person->personId
+
+  - name: termCode
+    description: Academic term in which the student was admitted or enrolled in the institution
+    type: string
+    required: true
+    reference: AcademicTerm->termCode
+    comments: "Example data: 201910"
+
+  - name: studentLevel
+    description: Level of student
+    type: enum
+    enumValues:
+      - Undergraduate
+      - Masters
+      - Doctorate
+      - Professional Practice Doctorate
+      - Continuing Education
+      - Other
+    required: true
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: studentType
+    description: Type of student
+    type: enum
+    enumValues:
+      - High School
+      - First Time
+      - Transfer
+      - Continuing
+      - Re-admit
+      - Visiting
+      - Unknown
+
+  - name: studyAbroadStatus
+    description: Indicates study abroad status of student
+    type: enum
+    enumValues:
+      - Not Study Abroad
+      - Study Abroad - Home Institution
+      - Study Abroad - Host Institution
+
+  - name: fullTimePartTimeStatus
+    description: Full time/Part time status of the student for the term
+    type: enum
+    enumValues:
+      - Full-time
+      - Part-time
+
+  - name: homeCampus
+    description: Home campus associated with the student
+    type: string
+    reference: Campus->campus
+    comments: If institution does not associate a home campus for students, set value of field to null.
+
+  - name: termGpa
+    description: GPA of student for the academic term
+    type: string
+
+  - name: cumulativeGpa
+    description: GPA of student up to and including the academic term
+    type: string
+
+  - name: isNonDegreeSeeking
+    description: "If student is enrolled, but not seeking an academic degree or award, value = 1, else 0"
+    type: boolean
+    required: true
+    comments: "Default value if null: 0/false"
+
+  - name: firstTermEnrolled
+    description: Academic term in which the student was first enrolled/registered at current student level
+    type: string
+    reference: AcademicTerm->termCode
+    comments: "Example data: 201910"
+
+  - name: residency
+    description: Residency of student for tuition and reporting purposes
+    type: enum
+    enumValues:
+      - In District
+      - In State
+      - Out of State
+      - Out of US
+    comments: If institution does not use residency to determine tuition rates or if different tuition rates are not offered, use default value of In State
+
+  - name: isIPEDSReportable
+    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    type: boolean
+    required: true
+
+  # deprecated fields
+  - name: studentStatus
+    description: Status of student
+    type: enum
+    enumValues:
+      - Active
+      - Inactive
+      - Study Abroad
+      - Unknown
+    depreciated: true
+
+  - name: campus
+    description: Campus associated with the student
+    type: string
+    reference: Campus->campus
+    comments: If institution does not associate a home campus for students, set value of field to null.
+    depreciated: true
+
+  - name: college
+    description: College code associated with student
+    type: string
+    comments: If institution does not associate a college for students, set value of field to null.
+    depreciated: true
+
+  - name: termCodeOnAdmission
+    description: Academic term in which the student was admitted at current student level
+    type: string
+    reference: AcademicTerm->termCode
+    comments: Moved to Admission entity
+    depreciated: true
+
+  - name: highSchoolGradDate
+    description: High school graduation date
+    type: date
+    comments: moved to Admission entity
+    depreciated: true
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

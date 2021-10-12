@@ -1,0 +1,84 @@
+version: 1.0.0
+name: FieldOfStudy
+dataModelEntityId: 41
+
+#jh/ck 20200908 PF-1671 Created FieldOfStudy entity
+
+fields:
+  - name: fieldOfStudy
+    description: Unique identifier code of the field of study
+    type: string
+    required: true
+    
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+    
+  - name: fieldOfStudyDescription
+    description: Description of the field of study
+    type: string
+
+  - name: fieldOfStudyType
+    description: Type of field of study
+    type: enum
+    enumValues:
+      - Major
+      - Minor
+      - Certification
+      - Concentration
+      - Special Program
+    required: true
+    
+  - name: cipCode
+    description: >-
+      'Standardized six-digit code that categorizes major into an
+      instructional program specialty' 
+    type: string
+    comments: 'cipCode value stored as numeric characters with no dashes'
+    
+  - name: cipCodeDescription
+    description: Description of CIPCode
+    type: string
+ 
+  - name: cipCodeVersion
+    description: The most current CIP version for which the cipCode is effective
+    type: string
+    comments: 'Valid values: 2020, 2010, 2000, 1990, 1985'
+   
+  - name: isIPEDSReportable
+    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    type: boolean
+    required: true
+    
+# meta-data fields    
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

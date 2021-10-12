@@ -1,0 +1,607 @@
+version: 1.0.0
+name: OperatingLedgerReporting
+dataModelEntityId: 33
+fields:
+  - name: fiscalYear2Char
+    description: Fiscal year in YY format
+    type: string
+    required: true
+    reference: FiscalYear->fiscalYear2Char
+    comments: 'Example data: 19 (2019)'
+  - name: fiscalPeriodCode
+    description: Fiscal period valid for fiscal year
+    type: string
+    reference: FiscalYear->fiscalPeriodCode
+    comments: 'Example data: 01 (1st fiscal year period)'
+  - name: chartOfAccountsId
+    description: Chart of accounts identifier
+    type: string
+    required: true
+    reference: ChartOfAccounts->chartOfAccountsId
+  - name: accountingString
+    description: >-
+      Full accounting string including all components separated by a dash, no
+      spaces
+    type: string
+    required: true
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+  - name: accountType
+    description: Type of account
+    type: enum
+    enumValues:
+      - Revenue
+      - Revenue Discount
+      - Expense
+    comments: 'Revenue,Revenue Discount,Expense'
+  - name: beginBalance
+    description: Balance at beginning of fiscal period of fiscal year
+    type: number
+  - name: endBalance
+    description: Balance at end of fiscal period of fiscal year
+    type: number
+  - name: revTuitionAndFees
+    description: >-
+      Is the account tuition or fee revenue from students for educational
+      purposes?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revFedGrantsContractsOper
+    description: >-
+      Is the account operating revenue from federal govt agencies for specific
+      research projects or other programs?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revFedGrantsContractsNOper
+    description: >-
+      Is the account nonoperating revenue from federal govt agencies provided on
+      a nonexchange basis, including federal student grant aid, excluding
+      capital gifts and grants?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revFedApproprations
+    description: >-
+      Is the account revenue received by acts of a federal legislative body,
+      excluding grants and contracts, for meeting current operating expenses?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revStateGrantsContractsOper
+    description: >-
+      Is the account operating revenue from state govt agencies for specific
+      research projects or other programs?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revStateGrantsContractsNOper
+    description: >-
+      Is the account nonoperating revenue from state govt agencies provided on a
+      nonexchange basis, excluding capital gifts and grants?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revStateApproprations
+    description: >-
+      Is the account revenue received by acts of a state legislative body,
+      excluding grants and contracts, for meeting current operating expenses?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revStateCapitalAppropriations
+    description: >-
+      Is the account state govt appropriations intended primarily for
+      acquisition or construction of capital assets?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revLocalGrantsContractsOper
+    description: >-
+      Is the account operating revenue from local govt agencies for specific
+      research projects or other programs?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revLocalGrantsContractsNOper
+    description: >-
+      Is the account nonoperating revenue from local govt agencies provided on a
+      nonexchange basis, excluding capital gifts and grants?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revLocalApproprations
+    description: >-
+      Is the account revenue received by acts of govt body below state level for
+      general support, excluding property taxes, education district taxes or
+      other tax revenue?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revLocalTaxApproprations
+    description: >-
+      Is the account revenue received by acts of govt body below state level,
+      including property taxes, education district taxes or other tax revenue?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revLocalCapitalAppropriations
+    description: >-
+      Is the account local govt appropriations intended primarily for
+      acquisition or construction of capital assets?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revPrivGrantsContractsOper
+    description: >-
+      Is the account operating revenue from non-govt agencies or organizations
+      for specific research projects or other programs?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revPrivGrantsContractsNOper
+    description: >-
+      Is the account nonoperating revenue from non-govt agencies or
+      organizations provided on a nonexchange basis, excluding capital gifts and
+      grants?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revPrivGifts
+    description: >-
+      Is the account revenue from private donor for which no legal consideration
+      is provided, exluding additions to permanent endowments or capital grants
+      and gifts?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revAffiliatedOrgnGifts
+    description: >-
+      Is the account revenue from affiliated organizations for which no legal
+      consideration is provided, exluding additions to permanent endowments or
+      capital grants and gifts?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revAuxEnterprSalesServices
+    description: >-
+      Is the account sales of goods or services generated by or collected from
+      the auxiliary enterprise operations of the institution that exist to
+      furnish a service to students, faculty, or staff, and that charge a fee
+      that is directly related to, although not necessarily equal to, the cost
+      of the service?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revHospitalSalesServices
+    description: >-
+      Is the account sales of goods or services generated by a hospital operated
+      by the postsecondary institution?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revEducActivSalesServices
+    description: >-
+      Is the account sales of goods or services incidental to the conduct of
+      instruction, research or public service?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revOtherSalesServices
+    description: >-
+      Is the account operating revenue from other sales of goods or services
+      rendered?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revIndependentOperations
+    description: >-
+      Is the account revenue from operations independent of or unrelated to the
+      primary missions of the institution (i.e., instruction, research, public
+      service) although they may contribute indirectly to the enhancement of
+      these programs?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revInvestmentIncome
+    description: >-
+      Is the account revenue from investments including endowment funds, in the
+      form of interest, dividends, rental or royalty income, and includes both
+      realized and unrealized gaines and losses?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revCapitalGrantsGifts
+    description: >-
+      Is the account a gift or grant primarily intended to provide for the
+      acquisition or construction of capital assets for the institution?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revAddToPermEndowments
+    description: >-
+      Is the account a gift or other addition to endowments that are permanently
+      nonexpendable?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revReleasedAssets
+    description: >-
+      Is the account revenue resulting from the reclassification of temporarily
+      restricted assets or permanently restricted assets?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revPropAndNonPropTaxes
+    description: >-
+      Is the account revenue from locally imposed property taxes or other taxes
+      levied by the local higher education district, including current,
+      restricted, unrestricted and debt service, but excluding taxes levied by
+      another government and transferred to the local higher education district
+      by the levying government?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revInterestEarnings
+    description: 'Is the account interest earned, including all funds and endowments?'
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revDividendEarnings
+    description: >-
+      Is the account dividends earned, including all funds and endowments but
+      excluding dividends of any component units?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revRealizedCapitalGains
+    description: >-
+      Is the account capital gain on securities held in a portfolio that has
+      become actual by the sale or other type of surrender of one or many
+      securities?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revRealizedOtherGains
+    description: >-
+      Is the account actuarial gain or (loss) on split interest agreements or
+      from the disposition of a business segment or on the sale of plant assets
+      or discontinued operations?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revUnrealizedGains
+    description: >-
+      Is the account unrealized gains or losses on certain investments (i.e.,
+      debt or equity securities classified as available-for-sale)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revExtraordGains
+    description: 'Is the account a gain from an unusual and infrequent transaction? '
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revOwnerEquityAdjustment
+    description: >-
+      Is the account investments by owners, unrealized gains on securities and
+      other comprehensive income, and other additions to owners equity?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revSumOfChangesAdjustment
+    description: >-
+      Is the account revenue from the cumulative effect of change(s) in
+      accounting principle or accumulated other comprehensive income (i.e. the
+      companys change in total stockholder's equity from all sources other than
+      the owners of the business and net income)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revOtherOper
+    description: Is the account operating revenue not categorized in other fields?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revOtherNOper
+    description: Is the account nonoperating revenue not categorized in other fields?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: revOther
+    description: Is the account miscellaneous revenue not categorized in other fields?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expFAPellGrant
+    description: >-
+      Is the account Pell Grant federal grant revenue received for student
+      financial aid?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expFANonPellFedGrants
+    description: >-
+      Is the account non-Pell Grant federal grant revenue received for student
+      financial aid?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expFAStateGrants
+    description: >-
+      Is the account state govt grant revenue received for funding scholarships
+      and fellowships?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expFALocalGrants
+    description: >-
+      Is the account local govt grant revenue received for funding scholarships
+      and fellowships?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expFAInstitGrantsRestr
+    description: >-
+      Is the account private source grant revenue received for funding
+      scholarships and fellowships, using restricted-expendable net assets? 
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expFAInstitGrantsUnrestr
+    description: >-
+      Is the account institutional expenditure for scholarships and fellowships
+      from unrestricted net assets, including athletic scholarships and matching
+      portion of other grants?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expSalariesWages
+    description: >-
+      Is the account salary and wage expense, excluding Operation and
+      Maintenance of Plant (O&M)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expBenefits
+    description: >-
+      Is the account a benefit expense, excluding Operation and Maintenance of
+      Plant (O&M)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expOperMaintSalariesWages
+    description: >-
+      Is the account salary and wage expense for Operation and Maintenance of
+      Plant (O&M)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expOperMaintBenefits
+    description: >-
+      Is the account benefit expense for Operation and Maintenance of Plant
+      (O&M)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expOperMaintOther
+    description: >-
+      Is the account expense for operations established to provide service and
+      maintenance related to campus grounds and facilities used for educational
+      and general purposes)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expCapitalConstruction
+    description: >-
+      Is the account construction from all funds (plant, capital, or bond funds)
+      includes expenditure for the construction of new structures and other
+      permanent improvements, additions replacements, and major alterations?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expCapitalEquipPurch
+    description: >-
+      Is the account equipment purchases from all funds (plant, capital, or bond
+      funds)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expCapitalLandPurchOther
+    description: >-
+      Is the account from all funds (plant, capital, or bond funds) and include
+      the cost of land and existing structures, as well as the purchase of
+      rights-of-way or capital outlay other than construction if not specified
+      elsewhere?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expDepreciation
+    description: Is the account deprectiation on capital assets?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expInterest
+    description: Is the account interest paid by the institution?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expFedIncomeTax
+    description: Is the account federal income tax paid by the institution?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expStateLocalIncomeTax
+    description: Is the account state income tax paid by the institution?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expExtraordLosses
+    description: Is the account a loss from an unusual and infrequent transaction?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expOwnerEquityAdjustment
+    description: >-
+      Is the account distributions to owners, unrealized losses on securities
+      and other comprehensive income, and other deductions from owners equity?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expSumOfChangesAdjustment
+    description: >-
+      Is the account a loss from the cumulative effect of change(s) in
+      accounting principle?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: expOther
+    description: Is the account a miscellaneous expense not categorized in other fields?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: discAllowTuitionFees
+    description: >-
+      Is the account a discount or allowance recorded as an offset (reduction)
+      to student tuition & fees?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: discAllowAuxEnterprise
+    description: >-
+      Is the account a discount or allowance recorded as an offset (reduction)
+      to revenues of auxiliary enterprises (room and board, books, meals, etc.)?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: discAllowPatientContract
+    description: >-
+      Is the account a contractual allowance provided to insurers or other group
+      health providers which are deducted from fees for services provided by
+      hospitals?
+    type: string
+    comments: 'Required values: Y or null'
+  - name: isInstruction
+    description: >-
+      If the account relates to colleges, schools, departments, and other
+      instructional divisions of the institution and expenses for departmental
+      research and public service that are not separately budgeted, including
+      expenses for both credit and noncredit activities, but excluding expenses
+      for academic administration where the primary function is administration
+      (e.g., academic deans), value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isResearch
+    description: >-
+      If the account relates to activities specifically organized to produce
+      research outcomes and commissioned by an agency either external to the
+      institution or separately budgeted by an organizational unit within the
+      institution, exluding nonresearch sponsored programs (e.g., training
+      programs), value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isPublicService
+    description: >-
+      If the account relates to activities budgeted specifically for public
+      service and for activities established primarily to provide
+      noninstructional services beneficial to groups external to the
+      institution, such as seminars and projects provided to particular sectors
+      of the community, including expenditures for community services and
+      cooperative extension services, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isAcademicSupport
+    description: >-
+      If the account relates to support services that are an integral part of
+      the institution's primary missions of instruction, research, and public
+      service, including expenses for museums, libraries, galleries,
+      audio/visual services, ancillary support, academic administration,
+      personnel development, and course and curriculum development, value = 1
+      else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isStudentServices
+    description: >-
+      If the account relates to admissions, registrar activities, and activities
+      whose primary purpose is to contribute to students emotional and physical
+      well-being and to their intellectual, cultural, and social development
+      outside the context of the formal instructional program, including career
+      guidance, counseling, and financial aid administration, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isInstitutionalSupport
+    description: >-
+      If the account relates to day-to-day operational support of the
+      institution, including expenses for general administrative services,
+      executive direction and planning, legal and fiscal operations, and public
+      relations/development, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isScholarshipFellowship
+    description: >-
+      If the account relates to scholarships and fellowships expenses in the
+      form of outright grants to students selected and awarded by the
+      institution, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isAuxiliaryEnterprises
+    description: >-
+      If the account relates to essentially self-supporting operations of the
+      institution that exist to furnish a service to students, faculty, or
+      staff, and that charge a fee that is directly related to, although not
+      necessarily equal to, the cost of the service, such as residence halls,
+      food services, student health services, intercollegiate athletics, college
+      unions, college stores, and barber shops when the activities are operated
+      as auxiliary enterprises, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isHospitalServices
+    description: >-
+      If the account is associated with the operation of a hospital, including
+      nursing expenses, other professional services, general services,
+      administrative services, fiscal services, and charges for physical plant
+      operation, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isIndependentOperations
+    description: >-
+      If the account relates to operations that are independent of or unrelated
+      to the primary missions of the institution (i.e., instruction, research,
+      public service), although they may contribute indirectly to the
+      enhancement of these programs, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isAgricultureOrExperiment
+    description: >-
+      If the account relates to agriculture programs and services, value = 1
+      else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isPensionGASB
+    description: 'If the account is a benefit pension plan, value = 1 else 0'
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isOPEBRelatedGASB
+    description: >-
+      If the account is an OPEB (Other Postemployment Benefits) plan, value = 1
+      else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isStateRetireFundGASB
+    description: >-
+      If the account relates to amounts paid to retirement systems operated by
+      your state government only, including only employer contributions and
+      excluding employee contributions withheld, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isUnrestrictedFASB
+    description: >-
+      If the account is not considered restricted or capital-asset related,
+      value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isRestrictedTempFASB
+    description: >-
+      If the account has a constraint placed on use and not required to be
+      retained in perpetuity, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isRestrictedPermFASB
+    description: >-
+      If the account has a constraint placed on use and required to be retained
+      in perpetuity, such as endowment funds, value = 1 else 0
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: isIPEDSReportable
+    description: 'If the record is applicable for IPEDS reporting, value = 1 else 0'
+    type: boolean
+    required: true
+    comments: 'Required values: 1 or 0'
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

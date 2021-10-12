@@ -1,0 +1,123 @@
+version: 2.0.0
+name: IPEDSReportingPeriod
+dataModelEntityId: 37
+
+#2.0.0 PF-2012 Removed fields no longer needed, updated valid values in surveySection field
+
+fields:
+  - name: surveyCollectionYear
+    description: IPEDS collection survey year
+    type: string
+    required: true
+    comments: "Valid format YYyy (1920 for 2019-2020)"
+
+  - name: surveyId
+    description: IPEDS survey version
+    type: string
+    required: true
+    comments: Value found on IPEDS import spec in the SURVSECT field
+
+  - name: surveyName
+    description: IPEDS survey version name
+    type: string
+
+  - name: surveySection
+    description: The section of the survey for the termCode and partOfTermCode in the record
+    type: string
+    comments: "Valid values (applicable survey in parentheses): \n
+      Cohort (Completions, 12MoEnrollment, Outcome Measures) \n 
+      Fall (SFA, Admissions, Graduation Rates, 200% Graduation Rates, Fall Enrollment) \n
+      Prior Summer (SFA, Admissions, Graduation Rates, 200% Graduation Rates, Fall Enrollment) \n
+      Prior Year 1 Fall (SFA, Fall Enrollment) \n
+      Prior Year 1 Prior Summer (SFA, Fall Enrollment) \n
+      Prior Year 2 Fall (SFA) \n
+      Prior Year 2 Prior Year (SFA) \n
+      Fiscal Year (Finance, Academic Libraries) \n
+      Prior Fiscal Year (Finance)"
+
+  - name: termCode
+    description: "Academic term code to use for specific survey and/or survey section reporting"
+    type: string
+    reference: AcademicTerm->termCode
+
+  - name: partOfTermCode
+    description: "Part of academic term code"
+    type: string
+    reference: AcademicTerm->partOfTermCode
+    comments: "If field is not applicable or value unknown, use default value of 1 for full term."
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+ 
+# deprecated fields
+  - name: reportingDateStart
+    description: "The date on which the reporting period starts, if applicable"
+    type: date
+    deprecated: true
+
+  - name: reportingDateEnd
+    description: "The date on which the reporting period ends, if applicable"
+    type: date
+    deprecated: true
+
+  - name: reportingTerm
+    description: "The type of academic term for the reporting period, if applicable"
+    type: string
+    deprecated: true
+
+  - name: reportingTermAcademicYear
+    description: "The academic year for the type of academic term, if applicable"
+    type: string
+    reference: AcademicTerm->academicYear
+    deprecated: true
+
+  - name: reportingAcademicYearStart
+    description: "The starting academic year for the reporting period, if applicable"
+    type: string
+    reference: AcademicTerm->academicYear
+    deprecated: true
+
+  - name: reportingAcademicYearEnd
+    description: "The ending academic year for the reporting period, if applicable"
+    type: string
+    reference: AcademicTerm->academicYear
+    deprecated: true
+
+  - name: asOfDate
+    description: "The as-of date for the reporting period, if applicable"
+    type: date
+    deprecated: true
+
+ # meta-data fields    
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

@@ -1,0 +1,94 @@
+version: 3.0.0
+name: Degree
+dataModelEntityId: 8
+
+#3.0.0 PF-2005 Added updated ENUM options to DegreeLevel
+#2.2.1 PF-1727 Updated other descriptions and added comment fields; removed fields not current
+#2.2.0 PF-1709 Modified degreeLevel enum values: removed PostGraduate, renamed Professional to Occupational/Professional
+#2.1.0 PF-1629 Remove fields for distance ed and curriculumRule
+
+fields:
+  - name: degree
+    description: Unique identifier for the degree/certificate program
+    type: string
+    required: true
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: degreeDescription
+    description: Description of the degree/certificate program
+    type: string
+
+  - name: degreeLevel
+    description: Level of study for degree
+    type: enum
+    enumValues:
+      - Undergraduate
+      - Masters
+      - Doctorate
+      - Professional Practice Doctorate
+      - Continuing Education      
+      - Other
+
+  - name: awardLevel
+    description: IPEDS defined award level (ACAT)
+    type: enum
+    enumValues:
+      - Postsecondary (<300 clock/<9 semester credit/<13 quarter credit hours)
+      - Postsecondary (300-899 clock/9-29 semester credit/13-44 quarter credit hours)
+      - Postsecondary (900-1800 clock/30-60 semester credit/45-90 quarter credit hours)
+      - Associates Degree
+      - Postsecondary (>1800 clock/>60 semester credit/>90 quarter credit hours)
+      - Bachelors Degree
+      - Post-baccalaureate Certificate
+      - Masters Degree
+      - Post-Masters Certificate
+      - Doctors Degree (Research/Scholarship)
+      - Doctors Degree (Professional Practice)
+      - Doctors Degree (Other)
+    comments: Updated for IPEDS 20-21 requirements
+
+  - name: isNonDegreeSeeking
+    description: "If the degree/certificate program is considered non-degree-seeking, value = 1, else 0"
+    type: boolean
+    comments: "Default value if null: 0/false"
+
+  - name: isIPEDSReportable
+    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    type: boolean
+    required: true
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

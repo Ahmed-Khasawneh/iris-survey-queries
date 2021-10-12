@@ -1,0 +1,142 @@
+version: 2.0.0
+name: Award
+dataModelEntityId: 9
+
+#2.0.0 PF-2020 Added departmentOverride and divisionOverride fields,
+#              renamed college and campus to collegeOverride and campusOverride,
+#              moved degree and degreeLevel to 'to be removed' section
+#1.1.0 PF-1709 Modified degreeLevel enum values: removed PostGraduate, renamed Professional to Occupational/Professional
+#1.0.1 PF-1691 Added degreeProgram field
+
+fields:
+  - name: personId
+    description: "Unique identifier of student"
+    type: string
+    required: true
+    reference: Student->personId
+
+  - name: degreeProgram
+    description: Unique identifier for an academic course of study that results in a formal award
+    type: string
+    required: true
+    reference: DegreeProgram->degreeProgram
+    comments:
+      "Value is client-defined, but typically includes the degree and major and/or a combination of data fields that result in a unique value.\n
+      The value for degreeProgram will be referenced as a one-to-one relationship in DegreeProgram and AcademicTrack."
+
+  - name: awardStatus
+    description: "Status of the award"
+    type: enum
+    enumValues:
+      - Pending
+      - Awarded
+
+  - name: recordActivityDate
+    description: "Date source record inserted or modified"
+    type: date
+    required: true
+
+  - name: awardedDate
+    description: "Date on which degree/certificate was awarded"
+    type: date
+
+  - name: awardedTermCode
+    description: "Academic term in which degree/certificate was awarded"
+    type: string
+    reference: AcademicTerm->termCode
+
+  - name: collegeOverride
+    description: "College associated with the award if it differs from the degree program college"
+    type: string
+    comments: "If college offering the award is different than DegreeProgram.college, field 
+      should include the alternate college code. If null, DegreeProgram.college value will be used."
+
+  - name: divisionOverride
+    description: "Division associated with the award if it differs from the degree program division"
+    type: string
+    comments: "If division offering the award is different than DegreeProgram.division, field
+      should include the alternate division code. If null, DegreeProgram.division value will be used."
+
+  - name: departmentOverride
+    description: "Department associated with the award if it differs from the degree program department"
+    type: string
+    comments: "If department offering the award is different than DegreeProgram.department, field 
+      should include the alternate department code. If null, DegreeProgram.department value will be used."
+
+  - name: campusOverride
+    description: "Campus associated with the award if it differs from the degree program campus"
+    type: string
+    comments: "If campus offering the award is different than DegreeProgram.campus, field 
+      should include the alternate campus code. If null, DegreeProgram.campus value will be used."
+
+  - name: gpa
+    description: "Final GPA at awarded date"
+    type: string
+
+  - name: classRank
+    description: "Rank in graduating class"
+    type: number
+
+  - name: isIPEDSReportable
+    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    type: boolean
+    required: true
+
+  # deprecated fields
+  - name: degree
+    description: "Degree/certificate associated with the award"
+    type: string
+    deprecated: true
+
+  - name: degreeLevel
+    description: "Level of study for the degree/certificate"
+    type: enum
+    enumValues:
+      - Undergrad
+      - Graduate
+      - Occupational/Professional
+      - Continuing Ed
+      - Other
+    deprecated: true
+
+  - name: college
+    description: "College code associated with the degree/certificate awarded"
+    type: string
+    deprecated: true
+
+  - name: campus
+    description: "Campus associated with the degree/certificate awarded"
+    type: string
+    deprecated: true
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

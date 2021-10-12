@@ -1,0 +1,95 @@
+version: 1.0.0
+name: Employee
+dataModelEntityId: 15
+fields:
+  - name: personId
+    description: Unique identifier of employee
+    type: string
+    required: true
+    reference: Person->personId
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+  - name: hireDate
+    description: The date the employee was hired
+    type: date
+  - name: terminationDate
+    description: Date on which employment was terminated (null if currently employed)
+    type: date
+  - name: primaryFunction
+    description: Primary function identifier for each employee used for IPEDS reporting
+    type: enum
+    enumValues:
+      - Instruction - Credit
+      - Instruction - Non-credit
+      - Instruction - Combined Credit/Non-credit
+      - Instruction with Research/Public Service
+      - Research
+      - Public Service
+      - Graduate Assistant - Teaching
+      - Graduate Assistant - Research
+      - Graduate Assistant - Other
+      - None
+  - name: isIPEDSMedicalOrDental
+    description: >-
+      If the employee is considered medical or dental staff per IPEDS
+      requirements, value = 1, else 0
+    type: boolean
+    required: true
+  - name: employeeStatus
+    description: Employment status
+    type: enum
+    enumValues:
+      - Active
+      - On Leave
+      - Terminated
+  - name: employeeClass
+    description: Employee classification
+    type: string
+    comments: >-
+      Employee class code that determines employee groupings used to help
+      determine controls for benefits, leave, payroll and self-service rules
+  - name: employeeClassDescription
+    description: Employee class description
+    type: string
+  - name: employeeGroup
+    description: Employee group identifier
+    type: string
+  - name: employeeGroupDescription
+    description: Employee group description
+    type: string
+  - name: isIPEDSReportable
+    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    type: boolean
+    required: true
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

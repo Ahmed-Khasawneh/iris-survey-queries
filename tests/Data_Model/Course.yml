@@ -1,0 +1,158 @@
+version: 2.0.0
+name: Course
+dataModelEntityId: 4
+
+#2.0.0 PF-2013 New enum values for courseLevel, renamed college to courseCollege, renamed department to courseDepartment,
+#              added new field courseDivision, removed fields isESL and isRemedial
+#1.1.1 PF-1727 Updated descriptions and added comment fields; removed fields not current
+#1.1.0 PF-1709 Modified courseLevel enum values: removed PostGraduate, renamed Professional to Occupational/Professional
+
+fields:
+  - name: subject
+    description: "Subject associated with the course"
+    type: string
+    required: true
+    comments: "Typically a 2- to 4-char string in all caps."
+    
+  - name: courseNumber
+    description: "Number to disinguish type of course"
+    type: string
+    required: true
+    comments: "Typically a 3- to 5-digit string."
+    
+  - name: termCodeEffective
+    description: Academic term code in which the course is initially effective
+    type: string
+    required: true
+    reference: AcademicTerm->termCode
+
+  - name: courseLevel
+    description: Academic level of the course
+    type: enum
+    enumValues:
+      - Undergraduate
+      - Masters
+      - Doctorate
+      - Professional Practice Doctorate
+      - Continuing Education
+      - Other
+    comments:
+      "Course.courseLevel could match CourseSection.courseSectionLevel, but allows for varying values as needed.\n
+      For example, an Independent Study course could have differing levels for course sections where level is based on student.\n
+      If level is assigned based solely on subject and course number, use the same value in both Course.courseLevel and
+      CourseSection.courseSectionLevel.\n
+      If level is assigned based partly on course section, the Course.courseLevel value can be null.\n
+      Either CourseSection.courseSectionLevel or Course.courseLevel should have an applicable level value."
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: title
+    description: Title or description of the course
+    type: string
+
+  - name: courseStatus
+    description: Current status of the course
+    type: enum
+    enumValues:
+      - Active
+      - Inactive
+      - Pending
+      - Cancelled
+      - Renumbered
+    required: true
+
+  - name: courseCollege
+    description: College associated with the course
+    type: string
+    comments:
+      "Course.courseCollege could match the CourseSection.college, but allows for varying values as needed.\n
+      If college is associated solely on subject and course number, use the same value in both Course.courseCollege
+      and CourseSection.college.\n
+      If college is associated partly on course section, the Course.courseCollege value can be null.
+      If college is not associated with a course or course section, both values can be null."
+
+  - name: courseDivision
+    description: Division associated with the course
+    type: string
+    comments:
+      "Course.courseDivision could match the CourseSection.division, but allows for varying values as needed.\n
+      If division is associated solely on subject and course number, use the same value in both Course.courseDivision
+      and CourseSection.division.\n
+      If division is associated partly on course section, the Course.courseDivision value can be null.\n
+      If division is not associated with a course or course section, both values can be null."
+
+  - name: courseDepartment
+    description: Department associated with the course
+    type: string
+    comments:
+      "Course.courseDepartment could match the CourseSection.department, but allows for varying values as needed.\n
+      If department is associated solely on subject and course number, use the same value in both Course.courseDepartment
+      and CourseSection.department.\n
+      If department is associated partly on course section, the Course.courseDepartment value can be null.\n
+      If department is not associated with a course or course section, both values can be null."
+
+  - name: isIPEDSReportable
+    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    type: boolean
+    required: true
+
+  # deprecated fields
+
+  - name: isESL
+    description: "If course is considered an ESL course, value = 1, else 0"
+    type: boolean
+    deprecated: true
+    comments: "Default value if null: 0/false"
+
+  - name: isRemedial
+    description: "If course is considered a remedial course, value = 1, else 0"
+    type: boolean
+    deprecated: true
+    comments: "Default value if null: 0/false"
+
+  - name: college
+    description: College associated with the course
+    type: string
+    deprecated: true
+    comments: "If institution does not associate a college with course records, set value of field to null."
+
+  - name: department
+    description: Department associated with course
+    type: string
+    deprecated: true
+    comments: "If institution does not associate a department with course records, set value of field to null."
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

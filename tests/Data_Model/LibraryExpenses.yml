@@ -1,0 +1,134 @@
+version: 1.0.0
+name: LibraryExpenses
+dataModelEntityId: 30
+fields:
+  - name: branchId
+    description: Academic library branch identifier
+    type: string
+    required: true
+    reference: LibraryBranch->branchId
+  - name: fiscalYear2Char
+    description: Fiscal year in YY format
+    type: string
+    required: true
+    reference: FiscalYear->fiscalYear2Char
+    comments: 'Example data: 19 (2019)'
+  - name: chartOfAccountsId
+    description: Chart of accounts identifier
+    type: string
+    required: true
+    reference: ChartOfAccounts->chartOfAccountsId
+  - name: accountingString
+    description: >-
+      Full accounting string including all components separated by a dash, no
+      spaces
+    type: string
+    required: true
+    comments: Banner uses FOAPAL
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+  - name: beginBalance
+    description: Balance at beginning of final fiscal period of fiscal year
+    type: number
+  - name: endBalance
+    description: Balance at end of final fiscal period of fiscal year
+    type: number
+  - name: LibSalariesAndWages
+    description: Is the account a salary and wage expense from the library budget?
+    type: number
+    comments: >-
+      Report salaries and wages before deductions for all full-time and
+      part-time library staff, including student assistant wage and Federal
+      Work-Study students' wage, from the library budget or all other
+      institutional sources that are identifiable. Required values: Y or null
+  - name: LibFringeBenefits
+    description: Is the account a benefit expense from the library budget?
+    type: number
+    comments: >-
+      Employee fringe benefits include retirement plans, social security taxes,
+      medical/dental plans, unemployment compensation plans, group life
+      insurance plans, worker's compensation plans, and other benefits in-kind
+      with cash options. Required values: Y or null
+  - name: LibOneTimeMaterials
+    description: >-
+      Is the account a materials/service cost expense for one-time purchases of
+      books, serial back-files, and other materials?
+    type: number
+    comments: >-
+      Provide the cost of one-time purchases of books, serial back-files, and
+      other materials. Required values: Y or null
+  - name: LibServicesSubscriptions
+    description: >-
+      Is the account a materials/service cost expense for ongoing commitments to
+      subscriptions?
+    type: number
+    comments: >-
+      Report expenses for ongoing commitments in all formats, including
+      duplicates, for all outlets. This includes serials and any other items
+      committed to annually, as well as annual electronic platform or access
+      fees. Required values: Y or null
+  - name: LibOtherMaterialsServices
+    description: >-
+      Is the account a materials/service cost expense for other
+      materials/service cost?
+    type: number
+    comments: >-
+      Report additional materials/service costs that have not already been
+      reported in this section, including document delivery/interlibrary loan
+      services and other expenses for information resources. Required values: Y
+      or null
+  - name: LibPreservationOps
+    description: >-
+      Is the account an operations and maintenance expense for preservation
+      services?
+    type: number
+    comments: >-
+      Report expenses associated with maintaining library and archival materials
+      for use either in their original physical form or in some other usable
+      way. Required values: Y or null
+  - name: LibOtherOpsMaintenance
+    description: >-
+      Is the account an operations and maintenance expense for all other O&M
+      expenses?
+    type: number
+    comments: >-
+      Report any other maintenance expenses that have not already been reported
+      in this section, including computer hardware and software expenses,
+      national, regional, and local bibliographic utilities, networks and
+      consortia, and other operating expenses. Required values: Y or null
+  - name: isIPEDSReportable
+    description: 'If the record is applicable for IPEDS reporting, value = 1 else 0'
+    type: boolean
+    required: true
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

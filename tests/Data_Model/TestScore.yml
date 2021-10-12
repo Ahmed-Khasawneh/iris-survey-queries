@@ -1,0 +1,63 @@
+version: 1.0.0
+name: TestScore
+dataModelEntityId: 22
+fields:
+  - name: personId
+    description: Unique identifier of student
+    type: string
+    required: true
+    reference: Student->personId
+  - name: testScoreType
+    description: Type of test
+    type: enum
+    enumValues:
+      - SAT Evidence-Based Reading and Writing
+      - SAT Math
+      - ACT Composite
+      - ACT English
+      - ACT Math
+    required: true
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+  - name: testScore
+    description: Test score
+    type: number
+  - name: testDate
+    description: Date when test was taken
+    type: date
+  - name: isIPEDSReportable
+    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    type: boolean
+    required: true
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

@@ -17,7 +17,7 @@ def ipeds_client_config_mcr(spark, survey_info_in):
 
     survey_year = survey_info_in['survey_year_doris']
     survey_id = survey_info_in['survey_id']
-    survey_type = survey_info_in['survey_type']   
+    survey_type = survey_info_in['survey_type']
             
     ipeds_client_config_in = spark.sql('select * from ipedsClientConfig').filter(col('surveyCollectionYear') == survey_year)
 

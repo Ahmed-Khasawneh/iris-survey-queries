@@ -1,0 +1,207 @@
+version: 2.0.0
+name: CourseSection
+dataModelEntityId: 38
+
+#2.0.0 PF-2014 Renamed crn to courseSectionNumber and sectionStatus to courseSectionStatus;
+#       added new fields customDataValue, courseSectionLevel, college, division, department, isESL, isRemedial; 
+#       removed fields campus and maxSeats
+#1.0.1 PF-1727 Updated descriptions and added comment fields
+
+fields:
+  - name: courseSectionNumber
+    description: Unique identifier for every course section per termCode/partOfTermCode
+    type: string
+    required: true
+    comments: "Value is client-defined, but is typically the Course Reference Number (CRN), the 
+      Course Section Identifier or a combination of data fields that result in a unique value.\n
+      The value for courseSectionNumber will be referenced as a one-to-one relationship in 
+      Registration, CourseSectionSchedule and InstructionalAssignment."
+
+  - name: termCode
+    description: Academic term code
+    type: string
+    required: true
+    reference: AcademicTerm->termCode
+
+  - name: partOfTermCode
+    description: Part of academic term
+    type: string
+    required: true
+    reference: AcademicTerm->partOfTermCode
+    comments: If field is not applicable or value unknown, use default value of 1 for full term.
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: subject
+    description: "Subject associated with the course"
+    type: string
+    required: true
+    reference: Course->subject
+    comments: "Typically a 2- to 4-char string in all caps."
+
+  - name: courseNumber
+    description: "Number to disinguish type of course"
+    type: string
+    required: true
+    reference: Course->courseNumber
+    comments: "Typically a 3- to 5-digit string."
+
+  - name: section
+    description: Additional identifier to distinguish courses section
+    type: string
+
+  - name: customDataValue
+    description: "Client-defined value for use as needed, such as an additional identifier" 
+    type: string
+
+  - name: courseSectionLevel
+    description: Academic level of the course section
+    type: enum
+    enumValues:
+      - Undergraduate
+      - Masters
+      - Doctorate
+      - Professional Practice Doctorate
+      - Continuing Education
+      - Other
+    comments: "CourseSection.courseSectionLevel could match Course.courseLevel, but allows for varying values as needed.\n 
+      For example, an Independent Study course could have differing levels for course sections, based on student level.\n
+      If level is assigned based solely on subject and course number, use the same value in both Course.courseLevel and 
+      CourseSection.courseSectionLevel.\n
+      If level is assigned based partly on course section, the Course.courseLevel value can be null.\n
+      Either CourseSection.courseSectionLevel or Course.courseLevel should have an applicable level value."
+
+  - name: courseSectionStatus
+    description: Current status of the course section
+    type: enum
+    enumValues:
+      - Active
+      - Inactive
+      - Pending
+      - Cancelled
+      - Renumbered
+
+  - name: enrollmentHours
+    description: "Credit or clock hour value or remedial/ESL/co-op equivalent hour 
+      value to be used for enrollment reporting"
+    type: number
+
+  - name: billableHours
+    description: "Billable hours for course section"
+    type: number
+
+  - name: creditOrClockHours
+    description: >-
+      Credit or clock hours based on the number of hours per week the course section meets
+    type: number
+
+  - name: isClockHours
+    description: "If course hours are reported in clock hours instead of credit hours, value = 1, else 0" 
+    type: boolean
+    comments: "Default value if null: 0/false."
+
+  - name: isESL
+    description: "If course section is considered an ESL course, value = 1, else 0"
+    type: boolean
+    comments: "Default value if null: 0/false."
+
+  - name: isRemedial
+    description: "If course section is considered a remedial course, value = 1, else 0"
+    type: boolean
+    comments: "Default value if null: 0/false."
+
+  - name: college
+    description: College associated with the course section
+    type: string
+    comments: "CourseSection.college could match the Course.courseCollege, but allows for varying values as needed.\n
+      If college is associated solely on subject and course number, use the same value in both Course.courseCollege 
+      and CourseSection.college.\n 
+      If college is associated partly on course section, the Course.courseCollege value can be null.\n 
+      If college is not associated with a course or course section, both values can be null."
+
+  - name: division
+    description: Division associated with the course section
+    type: string
+    comments: "CourseSection.division could match the Course.courseDivision, but allows for varying values as needed.\n 
+      If division is associated solely on subject and course number, use the same value in both Course.courseDivision 
+      and CourseSection.division.\n 
+      If division is associated partly on course section, the Course.courseDivision value can be null.\n 
+      If division is not associated with a course or course section, both values can be null."
+
+  - name: department
+    description: Department associated with course section
+    type: string
+    comments: "CourseSection.department could match the Course.courseDepartment, but allows for varying values as needed.\n 
+      If department is associated solely on subject and course number, use the same value in both Course.courseDepartment 
+      and CourseSection.department.\n 
+      If department is associated partly on course section, the Course.courseDepartment value can be null.\n
+      If department is not associated with a course or course section, both values can be null."
+
+  - name: isIPEDSReportable
+    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    type: boolean
+    required: true
+
+# deprecated fields
+  - name: crn
+    description: Unique identifier for an instance of a course based on academic term and course number
+    type: string
+    deprecated: true
+
+  - name: campus
+    description: Campus associated with course section
+    type: string
+    reference: Campus->campus
+    comments: If institution does not associate a campus with a course section, set value of field to null.
+    deprecated: true
+
+  - name: maxSeats
+    description: Maximum number of seats available for course section
+    type: number
+    deprecated: true
+
+  - name: sectionStatus
+    description: Current status of the course section
+    type: enum
+    enumValues:
+      - Active
+      - Inactive
+      - Pending
+      - Cancelled
+      - Renumbered
+    deprecated: true
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

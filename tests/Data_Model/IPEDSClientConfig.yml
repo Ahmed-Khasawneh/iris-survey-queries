@@ -1,0 +1,442 @@
+version: 1.3.0
+name: IPEDSClientConfig
+dataModelEntityId: 36
+
+#PF-1695 Added sfaReportPriorYear and sfaReportSecondPriorYear fields and added Hyrid Reporter value for acadOrProgReporter field
+#PF-1934 Added eviReserved1, eviReserved2, eviReserved3, eviReserved4 & eviReserved5 for variable reporting info storage.
+
+fields:
+  - name: surveyCollectionYear
+    description: The IPEDS collection survey year
+    type: string
+    required: true
+    reference: IPEDSReportingPeriod->surveyCollectionYear
+    comments: 'YYyy (1920 for 2019-2020)'
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: includeNonDegreeAsUG
+    description: 'Include non-degree seeking students who take for-credit courses as UG?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+
+  - name: acadOrProgReporter
+    description: >-
+      'Is the institution an academic reporter/fall cohort, a hybrid reporter or program
+      reporter/full-year cohort?'
+    type: string
+    comments: >-
+      'Valid values: A = Academic, H = Hybrid, P = Program; Default value (if no record or
+      null value): A'
+
+  - name: fourYrOrLessInstitution
+    description: Is the institution a 4-year or less-than-4-year institution?
+    type: string
+    comments: >-
+      'Valid values: FY = Four-year, LT = Less-than-four-year; Default value (if
+      no record or null value): FY'
+
+  - name: publicOrPrivateInstitution
+    description: Is the institution public or private?
+    type: string
+    comments: >-
+      'Valid values: U = Public, R = Private; Default value (if no record or null
+      value): U'
+
+  - name: instructionalActivityType
+    description: >-
+      'Does the institution measure instructional activity in credit hours, clock
+      hours or both?'
+    type: string
+    comments: >-
+      'Valid values: CR = Credit, CL = Clock, B = Both; Default value (if no
+      record or null value): CR'
+
+  - name: genderForUnknown
+    description: >-
+      'IPEDS allows for gender values of male and female. If a person has a
+      gender with value unknown (or null), report the gender as male or female?'
+    type: string
+    comments: >-
+      'Valid values: M = Male, F = Female; Default value (if no record or null
+      value): M'
+
+  - name: genderForNonBinary
+    description: >-
+      'IPEDS allows for gender values of male and female. If a person has a
+      gender with value is binary, report the gender as male or female?'
+    type: string
+    comments: >-
+      'Valid values: M = Male, F = Female; Default value (if no record or null
+      value): F'
+
+  - name: ncSchoolCode
+    description: National Clearinghouse School Code
+    type: string
+    comments: >-
+      'Valid values: first 6 digits of OPE Id; Default value (if no record or
+      null value): 000000'
+
+  - name: ncBranchCode
+    description: National Clearinghouse Branch Code
+    type: string
+    comments: >-
+      'Valid values: last 2 digits of OPE Id; Default value (if no record or null
+      value): 00'
+
+  - name: ncSchoolName
+    description: National Clearinghouse proper school name
+    type: string
+    comments: 'Default value (if no record or null value): XXXXX'
+
+  - name: admSecSchoolGPA
+    description: >-
+      'Admissions - Undergraduate admission consideration for Secondary School
+      GPA'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admSecSchoolRank
+    description: >-
+      'Admissions - Undergraduate admission consideration for Secondary School
+      Rank'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admSecSchoolRecord
+    description: >-
+      'Admissions - Undergraduate admission consideration for Secondary School
+      Record'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admCollegePrepProgram
+    description: >-
+      'Admissions - Undergraduate admission consideration for Completion of
+      College Prep Program'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admRecommendation
+    description: 'Admissions - Undergraduate admission consideration for Recommendations'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admDemoOfCompetency
+    description: >-
+      'Admissions - Undergraduate admission consideration for Formal
+      Demonstration of Competencies (portfolios, certifications, assessments,
+      etc.)'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admAdmissionTestScores
+    description: >-
+      'Admissions - Undergraduate admission consideration for Admission Test
+      Scores'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admOtherTestScores
+    description: >-
+      'Admissions - Undergraduate admission consideration for Other Test Scores
+      (ABT, Wonderlic, WISC-III, etc.)'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admTOEFL
+    description: 'Admissions - Undergraduate admission consideration for TOEFL'
+    type: string
+    comments: >-
+      'Valid values: R = Required, C = Considered but not required, M =
+      Recommended, N = Neither required nor recommended; Default value (if no
+      record or null value): R'
+
+  - name: admUseTestScores
+    description: >-
+      'Admissions - Use SAT test scores, ACT test scores or both for admission
+      requirements?'
+    type: string
+    comments: >-
+      'Valid values: A = ACT, S = SAT, B = Both; Default value (if no record or
+      null value): B'
+
+  - name: admUseForBothSubmitted
+    description: >-
+      'Admissions - If student submitted both SAT and ACT scores, and either can
+      be considered for admission, use SAT test scores, ACT test scores or both?'
+    type: string
+    comments: >-
+      'Valid values: A = ACT, S = SAT, B = Both; Default value (if no record or
+      null value): B'
+
+  - name: admUseForMultiOfSame
+    description: >-
+      'Admissions - If student submitted two scores of the same test, use the
+      highest score or an average of the scores?'
+    type: string
+    comments: >-
+      'Valid values: H = Highest, A = Average; Default value (if no record or
+      null value): H'
+
+  - name: compGradDateOrTerm
+    description: >-
+      'Completions - Report awards based on graduation/awarded date or
+      graduation/awarded term?'
+    type: string
+    comments: >-
+      'Valid values: D = Date, T = Term; Default value (if no record or null value): D'
+
+  - name: feIncludeOptSurveyData
+    description: 'Fall Enrollment - Include the optional data for the survey year?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+
+  - name: finGPFSAuditOpinion
+    description: >-
+      'Finance All - Did your institution receive an unqualified opinion on its
+      General Purpose Financial Statements from your auditor?'
+    type: string
+    comments: >-
+      'Valid values: Q = Qualified, UQ = Unqualified, U = Unknown/In Progress;
+      Default value (if no record or null value): U'
+
+  - name: finAthleticExpenses
+    description: >-
+      'Finance All - If your institution participates in intercollegiate
+      athletics, how are the expenses accounted for?'
+    type: string
+    comments: >-
+      'Valid values: A = Auxiliary Enterprises, S = Student Services, N = Does
+      not participate, O = Other; Default value (if no record or null value): A'
+
+  - name: finEndowmentAssets
+    description: >-
+      'Finance All - Does this institution or any of its foundations or other
+      affiliated organizations own endowment assets?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+
+  - name: finPensionBenefits
+    description: >-
+      'Finance All - Does your institution include defined benefit pension or
+      OPEB liabilities, expenses, and/or deferrals in its GPFS?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+
+  - name: finReportingModel
+    description: 'Finance GASB - Which GASB reporting model is used by your institution?'
+    type: string
+    comments: >-
+      'Valid values: B = Business type, G = Government, GB = Government with
+      Business; Default value (if no record or null value): B'
+
+  - name: finPellTransactions
+    description: >-
+      'Finance FASB - Does your institution account for Pell grants as pass
+      through transactions?'
+    type: string
+    comments: >-
+      'Valid values: P = Pass through, F = Federal Grant Revenue, N = Does not
+      award Pell grants; Default value (if no record or null value): P'
+
+  - name: finBusinessStructure
+    description: >-
+      'Finance ForProfit - What type of business structure is the institution for
+      tax purposes?'
+    type: string
+    comments: >-
+      'Valid values: SP = Sole Proprietorship, P = Partnership, C = C Corp, SC =
+      S Corp, LLC = LLC; Default value (if no record or null value): LLC'
+
+  - name: finTaxExpensePaid
+    description: >-
+      'Finance NonDegree Private ForProfit - Who paid the reported tax expenses
+      for your institution?'
+    type: string
+    comments: >-
+      'Valid values: M = multi-institution or multi-campus organization indicated
+      in IC Header, N = multi-institution or multi-campus organization NOT
+      indicated in IC Header, I = reporting institution; Default value (if no
+      record or null value): M'
+
+  - name: finParentOrChildInstitution
+    description: >-
+      'Finance Degree - If your institution reports on a parent/child basis, is
+      this insititution consided a parent or child?'
+    type: string
+    comments: >-
+      'Valid values: P = Parent, C = Child; Default value (if no record or null
+      value): P'
+
+  - name: grReportTransferOut
+    description:
+      'For Graduation Rates, should transfer out students be reported?
+      Reporting is required for institutions offering programs with an intended transfer
+      outcome but is otherwise optional.'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+
+  - name: hrIncludeSecondarySalary
+    description: >-
+      'Human Resources - Include secondary positions in the annual salary
+      calculation?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+
+  - name: icOfferUndergradAwardLevel
+    description: >-
+      'InstitutionalCharacteristics - Do you offer undergraduate programs/awards
+      - Bachelors degrees and below?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+
+  - name: icOfferGraduateAwardLevel
+    description: >-
+      'InstitutionalCharacteristics - Do you offer graduate programs/awards -
+      Masters degrees?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+
+  - name: icOfferDoctorAwardLevel
+    description: >-
+      'InstitutionalCharacteristics - Do you offer post-graduate programs/awards
+      - Doctors/Professional degrees?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): Y'
+
+  - name: sfaLargestProgCIPC
+    description: >-
+      'Financial Aid - The institution's largest program, as reported in
+      Institutional Characteristics. Program reporters ONLY'
+    type: string
+    comments: >-
+      'CIPC (no dashes, just numeric characters); Default value (if no record): null'
+
+  - name: sfaGradStudentsOnly
+    description: 'Financial Aid - Does the institution only enroll graduate students?'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+
+  - name: sfaReportPriorYear
+    description: >-
+      'Financial Aid - Report prior survey year data for parts D, E and F? Prior year
+      data should only be reported if not previously reported to IPEDS.'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+
+  - name: sfaReportSecondPriorYear
+    description: >-
+      'Financial Aid - Report second prior survey year data for parts D, E and F? Second 
+      prior year data should only be reported if not previously reported to IPEDS.'
+    type: string
+    comments: >-
+      'Valid values: Y = Yes, N = No; Default value (if no record or null value): N'
+
+  - name: tmAnnualDPPCreditHoursFTE
+    description: >-
+      'Twelve Month Enrollment - the number of credit hours in which a full-time
+      Doctors Professional Practice student should be enrolled annually to be
+      considered full-time'
+    type: number
+    comments: 'Valid values: 1 to 99; Default value (if no record or null value): 12'
+
+  - name: eviReserved1
+    description: >-
+      'Reserved field for variable client info which may change year over year (null if not applicable)'
+    type: string
+    comments: 'Used in 20-21 to store an institutions CARES Act fund code assignment for reporting of Financial Aid funding'
+
+  - name: eviReserved2
+    description: >-
+      'Reserved field for variable client info which may change year over year (null if not applicable)'
+    type: string
+    comments: 'Used in 20-21 to store secondary CARES Act fund code assignment for reporting of Financial Aid funding'
+
+  - name: eviReserved3
+    description: >-
+      'Reserved field for variable client info which may change year over year (null if not applicable)'
+    type: string
+    comments: 'Not applicable for 20-21'
+
+  - name: eviReserved4
+    description: >-
+      'Reserved field for variable client info which may change year over year (null if not applicable)'
+    type: string
+    comments: 'Not applicable for 20-21'
+
+  - name: eviReserved5
+    description: >-
+      'Reserved field for variable client info which may change year over year (null if not applicable)'
+    type: string
+    comments: 'Not applicable for 20-21'
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

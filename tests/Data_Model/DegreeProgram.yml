@@ -1,0 +1,185 @@
+version: 2.0.0
+name: DegreeProgram
+dataModelEntityId: 40
+
+#2.0.0 PF-2004 Added Division, DegreeProgramLevel, IsESL. Renamed distanceEducationOption > distanceEducationType
+#1.1.1 PF-1727 Updated descriptions and added comment fields
+#1.1.0 PF-1709 Modified degreeLevel enum values: removed PostGraduate, renamed Professional to Occupational/Professional
+
+fields:
+  - name: degreeProgram
+    description: Unique identifier for an academic course of study that results in a formal award 
+    type: string
+    required: true
+    comments: "Value is client-defined, but typically includes the degree and major and/or a combination of data fields that
+      result in a unique value. The value for degreeProgram will be referenced as a one-to-one relationship in Award 
+      and AcademicTrack."
+
+  - name: degreeProgramLevel
+    description: Level of degree program
+    type: enum
+    enumValues:
+      - Undergraduate
+      - Masters
+      - Doctorate
+      - Professional Practice Doctorate
+      - Continuing Education
+      - Other
+    required: true
+
+  - name: degree
+    description: Degree code associated with the degree program
+    type: string
+    required: true
+    reference: Degree->degree
+
+  - name: major
+    description: Major code associated with the degree program
+    type: string
+    required: true
+    reference: FieldOfStudy->fieldOfStudy
+    comments: "Condition for reference - FieldOfStudy->fieldOfStudyType = 'Major'  " 
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: degreeProgramDescription
+    description: Description of the degree program
+    type: string
+
+  - name: college
+    description: College code associated with the degree program
+    type: string
+    comments: If institution does not associate a college with degree programs, set value of field to null.
+
+  - name: division
+    description: Division code associated with the degree program
+    type: string
+    comments: If institution does not associate a division with degree programs, set value of field to null.
+
+  - name: campus
+    description: Campus code associated with the degree program
+    type: string
+    reference: Campus->campus
+    comments: If institution does not associate a campus with degree programs, set value of field to null.
+
+  - name: department
+    description: Department code associated with the degree program
+    type: string
+    comments: If institution does not associate a department with degree programs, set value of field to null.
+
+  - name: startDate
+    description: Date on which degree program is active
+    type: date
+    comments: Either startDate or termCodeEffective must contain a non-null value.
+
+  - name: termCodeEffective
+    description: Academic term in which degree program is active
+    type: date
+    reference: AcademicTerm->termCode
+    comments: Either termCodeEffective or startDate must contain a non-null value.
+
+  - name: isForAdmissions
+    description: "If the degree program is used for recruiting and admissions, value = 1, elso 0"
+    type: boolean
+    required: true
+
+  - name: isForStudentAcadTrack
+    description: "If the degree program is used for students and academic track, value = 1, elso 0"
+    type: boolean
+    required: true
+
+  - name: isForDegreeAcadHistory
+    description: "If the degree program is used for degree/graduation and academic history, value = 1, elso 0"
+    type: boolean
+    required: true
+
+  - name: distanceEducationType
+    description: Distance education property of the degree program. 
+    type: enum
+    enumValues:
+      - Distance education with no onsite component
+      - Distance education with mandatory onsite component
+      - Distance education with non-mandatory onsite component
+      - Not distance education
+    required: true
+    comments: "If all instructional activity required for program completion cannot be completed remotely, the degree program is not considered distance education"
+
+  - name: lengthInMonths
+    description: Number of months required for completion of the degree program
+    type: number
+
+  - name: lengthInCreditOrClockHours
+    description: Number of clock hours or credit hours required for completion of the degree program
+    type: number
+
+  - name: isClockHours
+    description: "If degree length is reported in clock hours instead of credit hours, value = 1, else 0"
+    type: boolean
+    comments: "Default value if null: 0/false."
+
+  - name: isESL
+    description: "If program is English as a second language ESL, then value = 1, else 0"
+    type: boolean
+    comments: "Default value if null: 0/false."
+
+  - name: isIPEDSReportable
+    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    type: boolean
+    required: true
+
+  # deprecated fields
+  - name: degreeLevel
+    description: Level of degree program
+    type: enum
+    enumValues:
+      - Undergrad
+      - Graduate
+      - Occupational/Professional
+      - Continuing Ed
+      - Other
+    deprecated: true
+
+  - name: distanceEducationOption
+    description: 'Distance education (DE) option for the degree program'
+    type: enum
+    enumValues:
+      - DE with no onsite component
+      - DE with mandatory onsite component
+      - DE with non-mandatory onsite component
+      - No DE option
+    deprecated: true
+
+# meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

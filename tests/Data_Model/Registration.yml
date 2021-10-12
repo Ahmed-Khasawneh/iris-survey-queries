@@ -1,0 +1,194 @@
+version: 2.0.0
+name: Registration
+dataModelEntityId: 3
+
+#2.0.0 PF-2007 Renamed crn>courseSectionNumber, crnLevel>courseSectionLevelOverride,campus>courseSectionCampusOverride
+#      Removed crnGradingMode. Added isAudited, Updated crnLevel(courseSectionLevelOverride) ENUM values.
+#1.1.2 Added private property to isCurrentOnSnapshot field
+#1.1.1 PF-1727 Updated descriptions and added comment fields
+#1.1.0 PF-1709 Modified crnLevel enum values: removed PostGraduate, renamed Professional to Occupational/Professional
+
+fields:
+  - name: personId
+    description: Unique identifier of student
+    type: string
+    required: true
+    reference: Student->personId
+
+  - name: termCode
+    description: Academic term in which the registration record is valid
+    type: string
+    required: true
+    reference: AcademicTerm->termCode
+    comments: 'Example data: 201910'
+    partition:
+      order: 2
+
+  - name: partOfTermCode
+    description: Part of academic term
+    type: string
+    required: true
+    reference: AcademicTerm->partOfTermCode
+    comments: If field is not applicable or value unknown, use default value of 1 for full term
+
+  - name: courseSectionNumber
+    description: Unique identifier for every course section
+    type: string
+    required: true
+    reference: CourseSection->courseSectionNumber
+    comments: "Value is client-defined, but is typically the Course Reference Number (CRN), the Course Section Identifier or a 
+      combination of data fields that result in a unique value. The value for courseSectionNumber will be referenced as a one-to-one 
+      relationship in CourseSection, CourseSectionSchedule and InstructionalAssignment."
+      
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: registrationStatus
+    description: Registration status
+    type: enum
+    enumValues:
+      - Registered
+      - Web Registered
+      - Withdrawal
+      - Drop
+      - Web Drop
+
+  - name: registrationStatusActionDate
+    description: Date the registration status was inserted or modified, if different than recordActivityDate
+    type: date
+    required: true
+    comments: "If not applicable, use dummy date of: to_date('9999-09-09', 'YYYY-MM-DD')."
+
+  - name: isEnrolled
+    description: "If student with associated registration status is considered enrolled in the course instance, value = 1, else 0"
+    type: boolean
+    required: true
+
+  - name: isAudited
+    description: If student is auditing the associated course registration, value = 1, else 0
+    type: boolean
+    required: true
+
+  - name: courseSectionLevelOverride
+    description: Academic level associated with the course registration if it differs from the course section level
+    type: enum
+    enumValues:
+      - Undergraduate
+      - Masters
+      - Doctorate
+      - Professional Practice Doctorate
+      - Continuing Education 
+      - Other
+    required: true
+    comments: "If student is registered for a different level value than what is reflected by the CourseSection.courseSectionLevel 
+      value, this field should include the alternate level. If null, CourseSection.courseSectionLevel value will be used."
+
+  - name: courseSectionCampusOverride
+    description: Campus associated with the course registration if it differs from the course section campus value
+    type: string
+    reference: Campus->courseSectionCampusOverride
+    comments: "If student is registered for a different campus value than CourseSectionSchedule.campus, field should include the 
+      alternate campus. If null, CourseSectionSchedule.campus value will be used."
+
+  - name: isIPEDSReportable
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
+    type: boolean
+    required: true
+
+  # deprecated fields
+  - name: crn
+    description: Instance of a course based on academic term, part of term and course number
+    type: string
+    reference: CourseSection->crn
+    depreciated: true
+
+  - name: crnLevel
+    description: Level of course instance
+    type: enum
+    enumValues:
+      - Undergrad
+      - Graduate
+      - Occupational/Professional
+      - Continuing Ed
+      - Other
+    depreciated: true
+
+  - name: campus
+    description: Campus associated with the course instance
+    type: string
+    reference: Campus->campus
+    comments: If institution does not associate a campus with registration records, set value of field to null.
+    depreciated: true
+
+  - name: crnGradingMode
+    description: Method of grading for the course instance
+    type: enum
+    enumValues:
+      - Audit
+      - Pass/Fail
+      - Not Gradable
+      - Standard
+    comments: "Default value if null: Standard"
+    depreciated: true
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true
+
+  - name: isCurrentOnSnapshot
+    description: Data is current at the time the snapshot was taken
+    type: boolean
+    private: true
+    partition:
+      order: 1
+    calculated:
+      type: query
+      query: >-
+        SELECT
+          rowGuid
+        FROM (
+          SELECT
+            rowGuid,
+            row_number() over (
+              partition by
+                regENT.personId,
+                regENT.termCode,
+                regENT.partOfTermCode,
+                regENT.crn,
+                regENT.crnLevel
+              order by regENT.recordActivityDate desc
+            ) regRn
+          FROM Registration regENT
+          WHERE regENT.recordActivityDate <= regENT.snapshotDate
+        )
+        WHERE regRn = 1

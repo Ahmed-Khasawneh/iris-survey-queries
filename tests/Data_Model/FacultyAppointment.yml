@@ -1,0 +1,107 @@
+version: 1.0.0
+name: FacultyAppointment
+dataModelEntityId: 42
+
+fields:
+  - name: personId
+    description: Unique identifier of an employee
+    type: string
+    required: true
+    reference: Employee->personId
+    
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+    
+  - name: appointmentPosition
+    description: Position of appointment
+    type: string
+    reference: EmployeePosition->position
+    
+  - name: appointmentDecision
+    description: Faculty appointment decision
+    type: enum
+    enumValues:
+      - Accepted
+      - Not Accepted
+    
+  - name: appointmentDecisionDate
+    description: The date of the appointment decision
+    type: date
+    
+  - name: appointmentStartDate
+    description: Appointment start date
+    type: date
+    comments: >-
+      The official begin date of the faculty members appointment or
+      reappointment
+    
+  - name: appointmentEndDate
+    description: Appointment end date
+    type: date
+    comments: The official end date of the faculty members appointment or reappointment
+    
+  - name: tenureStatus
+    description: Tenure status of the faculty member
+    type: enum
+    enumValues:
+      - Tenured
+      - On Tenure Track
+      - Not on Tenure Track
+    
+  - name: tenureEffectiveDate
+    description: Date on which the tenure status was effective
+    type: date
+    
+  - name: tenureTrackStartDate
+    description: Tenure track process start date
+    type: date
+    comments: >-
+      The official start date of faculty members tenure track process
+    
+  - name: nonTenureContractLength
+    description: Contract type (length) for non-tenured faculty members
+    type: enum
+    enumValues:
+      - Multi-year
+      - Annual
+      - Less than Annual
+      - Indefinite
+    
+  - name: isIPEDSReportable
+    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    type: boolean
+    required: true
+    
+# meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

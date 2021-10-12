@@ -1,0 +1,67 @@
+version: 1.0.0
+name: InterlibraryLoanStatistic
+dataModelEntityId: 26
+fields:
+  - name: branchId
+    description: Academic library branch identifier
+    type: string
+    required: true
+    reference: LibraryBranch->branchId
+  - name: fiscalYear2Char
+    description: Fiscal year in YY format
+    type: string
+    required: true
+    reference: FiscalYear->fiscalYear2Char
+    comments: 'Example data: 19 (2019)'
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+  - name: loansDocumentsProvided
+    description: Total loans and documents provided to other libraries
+    type: number
+    comments: >-
+      Report the number of filled requests for material provided to other
+      libraries. Include all returnable and non-returnable interlibrary loans
+      and documents
+  - name: loansDocumentsReceived
+    description: Total loans and documents received from other libraries
+    type: number
+    comments: >-
+      Report the number of filled requests for material received from other
+      libraries. Include all returnable and non-returnable interlibrary loans
+      and documents received from commercial services
+  - name: isIPEDSReportable
+    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    type: boolean
+    required: true
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

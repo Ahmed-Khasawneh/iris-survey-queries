@@ -1,0 +1,175 @@
+version: 2.0.0
+name: Admission
+dataModelEntityId: 13
+
+#2.0.0 PF-2022 Modified ENUM values for studentLevel and studentType
+#1.4.0 PF-1877 Added new enum value to admissionDecision: 'Student Accepted, Deferred' and renamed 'Admitted Deferred' to 'Admitted, Waitlisted';
+#              Removed required: true property on applicationStatusActionDate and admissionDecisionActionDate fields
+#1.3.0 PF-1857 Modified admissionDecision enum values: removed previous values of Accepted, Not Accepted, Pending and added
+#               new values: Admitted, Admitted Deferred, Decision Pending, Denied, Student Accepted, Application Withdrawn/Inactive
+#1.2.0 PF-1747 Added new fields, several from the Student entity (termCodeAdmitted, secondarySchoolCompleteDate, secondarySchoolType, secondarySchoolGPA, secondarySchoolClassRankPct
+#1.1.0 PF-1709 Modified studentLevel enum values: removed PostGraduate, renamed Professional to Occupational/Professional
+
+fields:
+  - name: personId
+    description: "Unique identifier of student"
+    type: string
+    required: true
+    reference: Student->personId
+
+  - name: applicationNumber
+    description: "Application number to record multiple records per student for the academic term"
+    type: string
+    required: true
+
+  - name: termCodeApplied
+    description: "Academic term in which student applied"
+    type: string
+    required: true
+    reference: AcademicTerm->termCode
+    comments: "Example data: 201910"
+
+  - name: recordActivityDate
+    description: "Date source record inserted or modified"
+    type: date
+    required: true
+
+  - name: applicationDate
+    description: "Date on which the application was officially on record"
+    type: date
+
+  # ENUM values to be removed: Undergrad, Graduate, Occupational/Professional, Continuing Ed
+  - name: studentLevel
+    description: "Student level of applicant"
+    type: enum
+    enumValues:
+      - Undergraduate
+      - Masters
+      - Doctorate
+      - Professional Practice Doctorate
+      - Continuing Education
+      - Other
+      - Undergrad
+      - Graduate
+      - Occupational/Professional
+      - Continuing Ed
+
+  # ENUM values to be removed: Returning, Undeclared
+  - name: studentType
+    description: "Student type of applicant"
+    type: enum
+    enumValues:
+      - High School
+      - First Time
+      - Transfer
+      - Continuing
+      - Re-admit
+      - Visiting
+      - Unknown
+      - Returning
+      - Undeclared
+
+  - name: applicationStatus
+    description: "Status of application"
+    type: enum
+    enumValues:
+      - Complete
+      - Incomplete
+      - Withdrawn
+      - Decision Made
+
+  - name: applicationStatusActionDate
+    description: "Date application status record inserted or modified, if different than recordActivityDate"
+    type: date
+    required: true
+    comments: "If not applicable, use dummy date of: to_date('9999-09-09', 'YYYY-MM-DD')."
+
+  - name: admissionType
+    description: "Admission type of applicant"
+    type: enum
+    enumValues:
+      - New Applicant
+      - Readmit
+      - Special Program
+      - Internal Transfer/Transition
+
+  - name: admissionDecision
+    description: "Admission decision"
+    type: enum
+    enumValues:
+      - Admitted
+      - Admitted, Waitlisted
+      - Decision Pending
+      - Denied
+      - Student Accepted
+      - Student Accepted, Deferred
+      - Application Withdrawn/Inactive
+
+  - name: admissionDecisionActionDate
+    description: "Date admission decision record inserted or modified, if different than recordActivityDate"
+    type: date
+    comments: "If not applicable, use dummy date of: to_date('9999-09-09', 'YYYY-MM-DD')."
+
+  - name: termCodeAdmitted
+    description: "Academic term in which the student was admitted at current student level"
+    type: string
+    reference: AcademicTerm->termCode
+    comments: "Example data: 201910"
+
+  - name: secondarySchoolCompleteDate
+    description: "Date of secondary school completion"
+    type: date
+
+  - name: secondarySchoolType
+    description: "Type of secondary school attainment by applicant"
+    type: enum
+    enumValues:
+      - US High School Diploma
+      - US GED Certificate (or Similar)
+      - Non-US Secondary School Diploma
+      - Non-US Secondary School Equivalency
+
+  - name: secondarySchoolGPA
+    description: "The secondary school GPA reported by the applicant"
+    type: number
+
+  - name: secondarySchoolClassRankPct
+    description: "Class rank value shown as a percentage"
+    type: number
+
+  - name: isIPEDSReportable
+    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    type: boolean
+    required: true
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

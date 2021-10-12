@@ -1,0 +1,80 @@
+version: 1.1.0
+name: MilitaryBenefit
+dataModelEntityId: 21
+
+#1.1.0 PF-1740 Added transactionDate field
+
+fields:
+  - name: personId
+    description: Unique identifier of student
+    type: string
+    required: true
+    reference: Student->personId
+  
+  - name: termCode
+    description: Academic term in which benefit awarded
+    type: string
+    required: true
+    reference: AcademicTerm->termCode
+    comments: 'Example data: 201910'
+
+  - name: benefitType
+    description: Military benefit type
+    type: enum
+    enumValues:
+      - GI Bill
+      - Dept of Defense
+      - Other
+    required: true
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: transactionDate 
+    description: >- 
+      'Date the military benefit was paid or disbursed to the student'
+    type: date
+    required: true
+
+  - name: benefitAmount
+    description: Military benefit awarded amount for academic term
+    type: number
+
+  - name: isIPEDSReportable
+    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    type: boolean
+    required: true
+
+  # meta-data fields	
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: will refer to institute id
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: id of executed entity w.r.t pipeline
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: user who ran the pipeline
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: ingestion time of data
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: The path of data stored over S3
+    type: string
+    required: true
+    private: true

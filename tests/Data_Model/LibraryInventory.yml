@@ -1,0 +1,86 @@
+version: 1.0.0
+name: LibraryInventory
+dataModelEntityId: 31
+fields:
+  - name: branchId
+    description: Academic library branch identifier
+    type: string
+    required: true
+    reference: LibraryBranch->branchId
+  - name: fiscalYear2Char
+    description: Fiscal year in YY format
+    type: string
+    required: true
+    reference: FiscalYear->fiscalYear2Char
+    comments: 'Example data: 19 (2019)'
+  - name: itemId
+    description: Unique ID for each library inventory item
+    type: string
+    required: true
+    comments: >-
+      Inventory material titles owned or leased by the library if individual
+      titles are cataloged and/or searchable through the library catalog or
+      discovery system. Exclude serials, microforms, maps, nonprint materials,
+      and uncataloged items.
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+  - name: itemTitle
+    description: Library inventory item title
+    type: string
+  - name: itemType
+    description: Library item type
+    type: enum
+    enumValues:
+      - Book
+      - Database
+      - Media
+      - Serial
+      - Other
+  - name: isDigital
+    description: >-
+      If the item is considered a digital or electronic product, value = 1, else
+      0
+    type: boolean
+    required: true
+  - name: inCirculationDate
+    description: The date the library item went into circulation
+    type: date
+  - name: outOfCirculationDate
+    description: The date the library item was moved out of circulation
+    type: date
+  - name: isIPEDSReportable
+    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    type: boolean
+    required: true
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true
