@@ -3,7 +3,7 @@
 from pyspark.sql.window import Window
 # from queries.twelve_month_enrollment_query import run_twelve_month_enrollment_query
 from pyspark.sql.functions import sum as sum, expr, col, lit, upper, to_timestamp, max, min, row_number, date_trunc, \
-    to_date, when, coalesce, count, rank, round, concat, substring, instr
+    to_date, when, coalesce, count, rank, round, concat, substring, instr, least  #, add_months
 from pyspark.sql.utils import AnalysisException
 from datetime import datetime
 from pyspark import SparkContext
@@ -113,7 +113,8 @@ def run_graduation_rates_query(spark, survey_type, year):
                                     col('ethnicity'),
                                     col('gender'))
                                 .filter(col('studentType') == 'First Time') #344
-                                .withColumn('gradDate150', least(to_date(add_months(col('termStartDate'), (col('degProgLengthInMonths')* 1.5)),'YYYY-MM-DD'), default_survey_values['latest_or_only_status_as_of']))
+                           # Got errors on the next line - will need to fix
+                                #.withColumn('gradDate150', least(to_date(add_months(col('termStartDate'), (col('degProgLengthInMonths')* 1.5)),'YYYY-MM-DD'), default_survey_values['latest_or_only_status_as_of']))
                                 .withColumn('awardLevelNo', when(col('awardLevel') == 'Bachelors Degree', lit(3))
                                                 .when(col('awardLevel').isin('Associates Degree', 'Postsecondary (>1800 clock/>60 semester credit/>90 quarter credit hours)'), lit(2))
                                                 .when(col('awardLevel').isin('Postsecondary (<300 clock/<9 semester credit/<13 quarter credit hours)', 
