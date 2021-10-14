@@ -1,107 +1,169 @@
-version: 1.0.0
+version: 2.0.1
 name: LibraryExpenses
 dataModelEntityId: 30
+
+description: Compilation of IRIS Academic Libraries operational expenses
+detailedDescription: |-
+  Library branch expenses incurred within a fiscal year as part of budgeted library activities. 
+
+  Data includes annual expense totals according to operational, material, maintenance and salary/wage categories. 
+
+  Entity relationship: LibraryBranch + FiscalYear  + (branch Expenses data) = LibraryExpenses
+
+#2.0.1 20210521 ckeller Added descriptions
+#2.0.0 Major mods for 20-21 AL survey
+
 fields:
   - name: branchId
     description: Academic library branch identifier
     type: string
     required: true
     reference: LibraryBranch->branchId
+    
   - name: fiscalYear2Char
     description: Fiscal year in YY format
     type: string
     required: true
     reference: FiscalYear->fiscalYear2Char
     comments: 'Example data: 19 (2019)'
+    
   - name: chartOfAccountsId
     description: Chart of accounts identifier
     type: string
     required: true
     reference: ChartOfAccounts->chartOfAccountsId
-  - name: accountingString
-    description: >-
-      Full accounting string including all components separated by a dash, no
-      spaces
-    type: string
-    required: true
-    comments: Banner uses FOAPAL
+    
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
-  - name: beginBalance
-    description: Balance at beginning of final fiscal period of fiscal year
-    type: number
-  - name: endBalance
-    description: Balance at end of final fiscal period of fiscal year
-    type: number
-  - name: LibSalariesAndWages
-    description: Is the account a salary and wage expense from the library budget?
-    type: number
-    comments: >-
-      Report salaries and wages before deductions for all full-time and
-      part-time library staff, including student assistant wage and Federal
-      Work-Study students' wage, from the library budget or all other
-      institutional sources that are identifiable. Required values: Y or null
-  - name: LibFringeBenefits
-    description: Is the account a benefit expense from the library budget?
-    type: number
-    comments: >-
-      Employee fringe benefits include retirement plans, social security taxes,
-      medical/dental plans, unemployment compensation plans, group life
-      insurance plans, worker's compensation plans, and other benefits in-kind
-      with cash options. Required values: Y or null
-  - name: LibOneTimeMaterials
+
+  - name: libSalariesAndWagesLibrarians 
     description: >-
-      Is the account a materials/service cost expense for one-time purchases of
-      books, serial back-files, and other materials?
+      Includes total salary and wage expenses, before deductions, for all full-time and
+      part-time librarian staff
     type: number
     comments: >-
-      Provide the cost of one-time purchases of books, serial back-files, and
-      other materials. Required values: Y or null
-  - name: LibServicesSubscriptions
+      Librarians are professional staff members doing work that requires professional 
+      education in the theoretical and scientific aspects of librarianship, archives, or 
+      information studies.
+
+  - name: libSalariesAndWagesProfessionals 
     description: >-
-      Is the account a materials/service cost expense for ongoing commitments to
-      subscriptions?
+      Includes total salary and wage expenses, before deductions, for all full-time and
+      part-time library professional staff
     type: number
     comments: >-
-      Report expenses for ongoing commitments in all formats, including
-      duplicates, for all outlets. This includes serials and any other items
-      committed to annually, as well as annual electronic platform or access
-      fees. Required values: Y or null
-  - name: LibOtherMaterialsServices
+      Professional staff are staff performing professional level tasks who, though 
+      not librarians, have equivalent education and training in related fields (e.g., 
+      computer sciences, business administration, education).
+
+  - name: libSalariesAndWagesOther 
     description: >-
-      Is the account a materials/service cost expense for other
-      materials/service cost?
+      Includes total salary and wage expenses, before deductions, for all full-time and 
+      part-time library staff that are not considered librarians, professionals or students
     type: number
     comments: >-
-      Report additional materials/service costs that have not already been
-      reported in this section, including document delivery/interlibrary loan
-      services and other expenses for information resources. Required values: Y
-      or null
-  - name: LibPreservationOps
+      Library staff members without formal qualification (or equivalent combination of 
+      training and experience) in librarianship, archives, information studies or other 
+      relevant specialization.
+
+  - name: libSalariesAndWagesStudents 
     description: >-
-      Is the account an operations and maintenance expense for preservation
-      services?
+      Includes total salary and wage expenses, before deductions, for all full-time and 
+      part-time library staff that are considered student assistants
+    type: number
+    comments: >-
+      Student assistants (graduate and undergraduate), employed on an hourly basis whose 
+      wages are paid from funds from the library budget or from an account(s) within the 
+      institution, including the Federal Work-Study Program.
+
+  - name: libFringeBenefits
+    description: >-
+      Includes total fringe benefit expenses incurred by the library budget
+    type: number
+    comments: >-
+      Employee fringe benefits include retirement plans, social security taxes, 
+      medical/dental plans, unemployment compensation plans, group life insurance plans, 
+      worker's compensation plans, and other benefits in-kind with cash options.
+
+  - name: libOneTimeMaterials
+    description: >-
+      Includes total one time materials expenses incurred by the library budget
+    type: number
+    comments: >-
+      Reports the cost of one-time purchases of books, serial back-files, and other materials.
+
+  - name: libServicesSubscriptions
+    description: >-
+      Includes total ongoing subscription expenses incurred by the library budget
+    type: number
+    comments: >-
+      Report expenses for ongoing commitments in all formats, including duplicates, for 
+      all outlets. This includes serials and any other items committed to annually, as 
+      well as annual electronic platform or access fees.
+
+  - name: libOtherMaterialsServices
+    description: >-
+      Includes total other materials/service expenses incurred by the library budget which
+      have not been included in other fields
+    type: number
+    comments: >-
+      Report additional materials/service costs that have not already been included in 
+      other fields, including document delivery/interlibrary loan services and other expenses 
+      for information resources.
+
+  - name: libPreservationOps
+    description: >-
+      Includes total preservation and materials maintenance expenses incurred by the library budget
     type: number
     comments: >-
       Report expenses associated with maintaining library and archival materials
       for use either in their original physical form or in some other usable
-      way. Required values: Y or null
-  - name: LibOtherOpsMaintenance
+      way.
+
+  - name: libOtherOpsMaintenance
     description: >-
-      Is the account an operations and maintenance expense for all other O&M
-      expenses?
+      Includes total non-preservation maintenance expenses incurred by the library budget
     type: number
     comments: >-
-      Report any other maintenance expenses that have not already been reported
-      in this section, including computer hardware and software expenses,
-      national, regional, and local bibliographic utilities, networks and
-      consortia, and other operating expenses. Required values: Y or null
+      Report any other maintenance expenses that have not already been included in other fields, 
+      including computer hardware and software expenses, national, regional, and local bibliographic 
+      utilities, networks and consortia, and other operating expenses.
+
   - name: isIPEDSReportable
-    description: 'If the record is applicable for IPEDS reporting, value = 1 else 0'
+    description: If the record is applicable for IPEDS reporting, value = 1 else 0
     type: boolean
     required: true
+
+  # deprecated fields
+
+  - name: libSalariesAndWages
+    description: Is the account a salary and wage expense from the library budget?
+    type: string
+    comments: Removed. New requirements for 20-21 Academic Libraries survey required a re-work of the entity.
+    deprecated: true
+
+  - name: accountingString
+    description: Full accounting string including all components separated by a dash, no spaces
+    type: string
+    required: true
+    comments: Removed. New requirements for 20-21 Academic Libraries survey required a re-work of the entity.
+    deprecated: true
+
+  - name: beginBalance
+    description: Balance at beginning of final fiscal period of fiscal year
+    type: number
+    comments: Removed. New requirements for 20-21 Academic Libraries survey required a re-work of the entity.
+    deprecated: true
+    
+  - name: endBalance
+    description: Balance at end of final fiscal period of fiscal year
+    type: number
+    comments: Removed. New requirements for 20-21 Academic Libraries survey required a re-work of the entity.
+    deprecated: true
+
+  # meta-data fields    
   - name: rowGuid
     description: GUID of the row
     type: uuid

@@ -76,6 +76,7 @@ def test_mock_data_creation():
             print(f'No files exist for {i}')
 
         print(f'Creating mock {i} data...')
+
         mock_data = create_mock_data(
             doris_entity_name=i,
             record_count=count_num,

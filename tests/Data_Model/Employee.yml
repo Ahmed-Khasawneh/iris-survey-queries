@@ -1,22 +1,43 @@
-version: 1.0.0
+version: 1.0.1
 name: Employee
 dataModelEntityId: 15
+
+description: Index of all employees
+detailedDescription: |-
+  Professional, instructional and other staff employed by the institution.
+
+  Data includes hire, termination and leave dates, employee class/group and primary employee function.
+
+#1.0.1 20210512 jhanicak Added descriptions
+
 fields:
   - name: personId
     description: Unique identifier of employee
     type: string
     required: true
     reference: Person->personId
+    
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
+    
   - name: hireDate
     description: The date the employee was hired
     type: date
+    
   - name: terminationDate
     description: Date on which employment was terminated (null if currently employed)
     type: date
+
+  - name: leaveStartDate
+    description: Date on which an employee started a leave period (null if not on leave)
+    type: date
+    
+  - name: leaveEndDate
+    description: Date on which an employee ended a leave period (null if not on leave or if on leave with an end date that has not yet been defined)
+    type: date
+
   - name: primaryFunction
     description: Primary function identifier for each employee used for IPEDS reporting
     type: enum
@@ -31,38 +52,45 @@ fields:
       - Graduate Assistant - Research
       - Graduate Assistant - Other
       - None
+      
   - name: isIPEDSMedicalOrDental
-    description: >-
-      If the employee is considered medical or dental staff per IPEDS
-      requirements, value = 1, else 0
+    description: If the employee is considered medical or dental staff per IPEDS requirements, value = 1, else 0
     type: boolean
     required: true
+    
   - name: employeeStatus
     description: Employment status
     type: enum
     enumValues:
       - Active
-      - On Leave
+      - Leave without Pay
+      - Leave with Pay
       - Terminated
+      
   - name: employeeClass
     description: Employee classification
     type: string
-    comments: >-
-      Employee class code that determines employee groupings used to help
-      determine controls for benefits, leave, payroll and self-service rules
+    comments: 
+      "Employee class code that determines employee groupings used to help determine controls for benefits, leave, payroll and self-service rules."
+      
   - name: employeeClassDescription
     description: Employee class description
     type: string
+    
   - name: employeeGroup
     description: Employee group identifier
     type: string
+    
   - name: employeeGroupDescription
     description: Employee group description
     type: string
+    
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
+
+#meta-data fields
   - name: rowGuid
     description: GUID of the row
     type: uuid

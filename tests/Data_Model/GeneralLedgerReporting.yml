@@ -1,6 +1,15 @@
-version: 1.0.0
+version: 1.0.1
 name: GeneralLedgerReporting
 dataModelEntityId: 25
+
+description: Compilation for IRIS Finance
+detailedDescription: |-
+  Aggregated general ledger records, specifically for use with the IRIS Finance survey for IPEDS. 
+
+  Data includes asset and liability categories and properties.
+
+#1.0.1 20210520 ckeller Added descriptions
+
 fields:
   - name: fiscalYear2Char
     description: Fiscal year in YY format
@@ -8,210 +17,226 @@ fields:
     required: true
     reference: FiscalYear->fiscalYear2Char
     comments: 'Example data: 19 (2019)'
+    
   - name: fiscalPeriodCode
     description: Fiscal period valid for fiscal year
     type: string
     required: true
     reference: FiscalYear->fiscalPeriodCode
     comments: 'Example data: 01 (1st fiscal year period)'
+    
   - name: chartOfAccountsId
     description: Chart of accounts identifier
     type: string
     required: true
     reference: ChartOfAccounts->chartOfAccountsId
+    
   - name: accountingString
-    description: >-
-      Full accounting string including all components separated by a dash, no
+    description: Full accounting string including all components separated by a dash, no
       spaces
     type: string
     required: true
+    
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
+    
   - name: accountType
     description: Type of account.
     type: enum
     enumValues:
       - Asset
       - Liability
-    comments: 'Asset, Liability'
+    comments: Asset, Liability
+    
   - name: beginBalance
     description: Balance at beginning of fiscal period of fiscal year
     type: number
+    
   - name: endBalance
     description: Balance at end of fiscal period of fiscal year
     type: number
+    
   - name: assetCurrent
-    description: >-
-      Is the account a current asset - cash, cash equiv, investments, accounts
+    description: Is the account a current asset - cash, cash equiv, investments, accounts
       and notes receivable, inventories or other?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: assetCapitalLand
-    description: >-
-      Is the account a capital asset - land, land improvements, such as golf
+    description: Is the account a capital asset - land, land improvements, such as golf
       courses, athletic fields, lakes?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: assetCapitalInfrastructure
-    description: >-
-      Is the account a capital asset - infrastructure, such as roads, bridges,
+    description: Is the account a capital asset - infrastructure, such as roads, bridges,
       drainage systems, water/sewer systems?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: assetCapitalBuildings
-    description: >-
-      Is the account a capital asset - buildings for occupancy or use, built-in
+    description: Is the account a capital asset - buildings for occupancy or use, built-in
       fixtures and permanent equipment in structure?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: assetCapitalEquipment
-    description: >-
-      Is the account a capital asset - moveable tangible property, such as
+    description: Is the account a capital asset - moveable tangible property, such as
       vehicles, research/office equipment, library/art collections?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: assetCapitalConstruction
-    description: >-
-      Is the account a capital asset - asset under construction and not yet in
+    description: Is the account a capital asset - asset under construction and not yet in
       service?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: assetCapitalIntangibleAsset
-    description: >-
-      Is the account a capital asset - nonmaterial rights and benefits, such as
+    description: Is the account a capital asset - nonmaterial rights and benefits, such as
       patents, copyrights, trademarks, goodwill?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: assetCapitalOther
-    description: >-
-      Is the account a capital asset - capital asset not categorized in other
+    description: Is the account a capital asset - capital asset not categorized in other
       fields?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: assetNoncurrentOther
     description: Is the account a noncurrent asset other than capital asset?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: deferredOutflow
     description: Is the account a deferred outflow of resources?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: liabCurrentLongtermDebt
-    description: >-
-      Is the account an outstanding long-term debt that the institution is
+    description: Is the account an outstanding long-term debt that the institution is
       expected to pay or liquidate during the next year using current assets?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: liabCurrentOther
     description: Is the account a current debt not considered long-term?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: liabNoncurrentLongtermDebt
-    description: >-
-      Is the account an outstanding long-term debt in the form of bonds, notes,
+    description: Is the account an outstanding long-term debt in the form of bonds, notes,
       capital leases, and other forms of debt that are repayable over a period
       greater than one year?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: liabNoncurrentOther
-    description: >-
-      Is the account a noncurrent debt, such as compensated absences, claims and
+    description: Is the account a noncurrent debt, such as compensated absences, claims and
       judgments, pensions?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: deferredInflow
     description: Is the account a deferred inflow of resources?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: accumDepreciation
     description: Is the account a depreciation on assets?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: accumAmmortization
     description: Is the account an ammortization on intangible assets?
     type: string
     comments: 'Required values: Y or null'
+    
   - name: isCapitalRelatedDebt
-    description: >-
-      If the account reflects an outstanding bond, mortgage, note, or other debt
+    description: If the account reflects an outstanding bond, mortgage, note, or other debt
       for the acquisition, construction or improvement of capital asset, value =
       1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isRestrictedExpendOrTemp
-    description: >-
-      If there is a constraint placed on use of the account and NOT required to
+    description: If there is a constraint placed on use of the account and NOT required to
       be retained in perpetuity, value = 1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isRestrictedNonExpendOrPerm
-    description: >-
-      If there is a constraint placed on use of the account and required to be
+    description: If there is a constraint placed on use of the account and required to be
       retained in perpetuity, value = 1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isUnrestricted
-    description: >-
-      If the account is not considered restricted or capital-asset related,
+    description: If the account is not considered restricted or capital-asset related,
       value = 1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isEndowment
-    description: >-
-      If the account is a gross investment of endowment, term endowment, or
+    description: If the account is a gross investment of endowment, term endowment, or
       funds functioning as endowment, value = 1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isPensionGASB
-    description: 'If the account is a benefit pension plan, value = 1, else 0.'
+    description: If the account is a benefit pension plan, value = 1, else 0.
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isOPEBRelatedGASB
-    description: >-
-      If the account is an OPEB (Other Postemployment Benefits) plan, value = 1,
+    description: If the account is an OPEB (Other Postemployment Benefits) plan, value = 1,
       else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isSinkingOrDebtServFundGASB
-    description: 'If the account is exclusively used to service debt, value = 1, else 0'
+    description: If the account is exclusively used to service debt, value = 1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isBondFundGASB
-    description: >-
-      If the account is established to disburse revenue bond proceeds, value =
+    description: If the account is established to disburse revenue bond proceeds, value =
       1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isNonBondFundGASB
-    description: >-
-      If the account is NOT established to disburse revenue bond proceeds, value
+    description: If the account is NOT established to disburse revenue bond proceeds, value
       = 1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isCashOrSecurityAssetGASB
-    description: >-
-      If the account is cash or a security asset, including cash on hand, value
+    description: If the account is cash or a security asset, including cash on hand, value
       = 1, else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: isIPEDSReportable
-    description: 'If the record is applicable for IPEDS reporting, value = 1 else 0'
+    description: If the record is applicable for IPEDS reporting, value = 1 else 0
     type: boolean
     required: true
     comments: 'Required values: 1 or 0'
+    
   - name: rowGuid
     description: GUID of the row
     type: uuid

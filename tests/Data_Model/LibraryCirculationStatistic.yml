@@ -1,37 +1,54 @@
-version: 1.0.0
+version: 1.0.1
 name: LibraryCirculationStatistic
 dataModelEntityId: 28
+
+description: Compilation of IRIS Academic Libraries inventory circulation 
+detailedDescription: |-
+  Library branch collection circulation figures within a fiscal year. 
+
+  Data reflects totals for a given branch as of the close of the associated fiscal year. 
+
+  Entity relationship: LibraryBranch + FiscalYear  + (loan data) = LibraryCirculationStatistic
+
+#1.0.1 20210520 ckeller Added descriptions
+
 fields:
   - name: branchId
     description: Academic library branch identifier
     type: string
     required: true
     reference: LibraryBranch->branchId
+    
   - name: fiscalYear2Char
     description: Fiscal year in YY format
     type: string
     required: true
     reference: FiscalYear->fiscalYear2Char
     comments: 'Example data: 19 (2019)'
+    
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
+    
   - name: circulationCountPhysical
     description: Total physical circulation count
     type: number
-    comments: >-
-      Report the total number of times physical items are checked out from the
+    comments: Report the total number of times physical items are checked out from the
       general and reserve collections. Include only initial checkouts
       (circulation), not renewals
+      
   - name: circulationCountDigital
     description: Total digital circulation count
     type: number
     comments: Report the total number of times digital items are checked out
+    
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
+    
+# meta-data fields    
   - name: rowGuid
     description: GUID of the row
     type: uuid

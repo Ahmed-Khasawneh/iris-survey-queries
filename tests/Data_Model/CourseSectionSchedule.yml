@@ -1,7 +1,16 @@
-version: 2.0.0
+version: 2.0.1
 name: CourseSectionSchedule
 dataModelEntityId: 39
 
+description: Course section scheduling details
+detailedDescription: |-
+  Scheduling details for each instance of a course offered in an academic term.
+
+  Data includes location properties, days/times and instruction type.
+
+  Entity relationship: CourseSection + AcademicTerm + Campus = CourseSection
+
+#2.0.1 20210512 jhanicak Added descriptions
 #2.0.0 PF-2015 Renamed crn to courseSectionNumber and meetingType to instructionType; added new fields
 #      campus, locationType, distanceEducationType, onlineInstructionType, maxSeats; removed field section
 #1.0.2 Removed references to CourseSection.Section
@@ -30,7 +39,7 @@ fields:
     type: string
     required: true
     reference: AcademicTerm->partOfTermCode
-    comments: If field is not applicable or value unknown, use default value of 1 for full term
+    comments: If field is not applicable or value unknown, use default value of 1 for full term.
 
   - name: recordActivityDate
     description: Date source record inserted or modified
@@ -62,7 +71,7 @@ fields:
     description: Days of the week on which the course section meets for the startTime/endTime
     type: string
     comments:
-      "Concatenate days of week in the following order and using the values:
+      "Concatenate days of week in the following order and using the values: \n
       Sunday = U, Monday = M, Tuesday = T, Wednesday = W, Thursday = R, Friday =
       F, Saturday = S.\n
       Multiple records could exist for courseSectionNumber/termCode/partOfTermCode
@@ -134,25 +143,27 @@ fields:
     type: number
 
   - name: isIPEDSReportable
-    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 
 #deprecated fields
+ 
   - name: crn
     description:
       Unique identifier for an instance of a course based on academic term,
       part of term and course number
     type: string
+    comments: Renamed to courseSectionNumber. Remap the crn field to the courseSectionNumber field.
     deprecated: true
 
   - name: section
     description:
-      Course sequence number to uniquely identify a course instance within a
-      term/part of term
+      Course sequence number to uniquely identify a course instance within a term/part of term
     type: string
+    comments: Removed. The section field is not required, since courseSectionNumber uniquely identifies the course section.
     deprecated: true
-
+    
   - name: meetingType
     description: Meeting/location type of course
     type: enum
@@ -164,7 +175,7 @@ fields:
       - Off Campus
       - Practicum
       - Other
-    comments: "Default value if null: Classroom/On Campus"
+    comments: Removed. New logic required in the SQL query to relocate values to the new fields instructionType, locationType, distanceEducationType and onlineInstructionType.
     deprecated: true
 
   # meta-data fields

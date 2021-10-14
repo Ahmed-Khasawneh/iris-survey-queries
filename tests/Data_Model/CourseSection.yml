@@ -1,7 +1,16 @@
-version: 2.0.0
+version: 2.0.1
 name: CourseSection
 dataModelEntityId: 38
 
+description: Course offerings per academic term
+detailedDescription: |-
+  Instance of a course offered in an academic term. 
+
+  Data includes multiple course identifiers, enrollment hours and developmental properties.
+
+  Entity relationship: Course + AcademicTerm = CourseSection
+
+#2.0.1 20210512 jhanicak Added descriptions
 #2.0.0 PF-2014 Renamed crn to courseSectionNumber and sectionStatus to courseSectionStatus;
 #       added new fields customDataValue, courseSectionLevel, college, division, department, isESL, isRemedial; 
 #       removed fields campus and maxSeats
@@ -12,11 +21,10 @@ fields:
     description: Unique identifier for every course section per termCode/partOfTermCode
     type: string
     required: true
-    comments: "Value is client-defined, but is typically the Course Reference Number (CRN), the 
-      Course Section Identifier or a combination of data fields that result in a unique value.\n
-      The value for courseSectionNumber will be referenced as a one-to-one relationship in 
-      Registration, CourseSectionSchedule and InstructionalAssignment."
-
+    comments: |-
+      Value is client-defined, but is typically the Course Reference Number (CRN), the Course Section Identifier or a combination of data fields that result in a unique value.
+      The value for courseSectionNumber will be referenced as a one-to-one relationship in Registration, CourseSectionSchedule and InstructionalAssignment.
+      
   - name: termCode
     description: Academic term code
     type: string
@@ -36,25 +44,23 @@ fields:
     required: true
 
   - name: subject
-    description: "Subject associated with the course"
+    description: Subject associated with the course
     type: string
-    required: true
     reference: Course->subject
-    comments: "Typically a 2- to 4-char string in all caps."
+    comments: Typically a 2- to 4-char string in all caps.
 
   - name: courseNumber
-    description: "Number to disinguish type of course"
+    description: Number to disinguish type of course
     type: string
-    required: true
     reference: Course->courseNumber
-    comments: "Typically a 3- to 5-digit string."
+    comments: Typically a 3- to 5-digit string.
 
   - name: section
-    description: Additional identifier to distinguish courses section
+    description: Additional identifier to distinguish a particular instance of a course
     type: string
 
   - name: customDataValue
-    description: "Client-defined value for use as needed, such as an additional identifier" 
+    description: Client-defined value for use as needed, such as an additional identifier
     type: string
 
   - name: courseSectionLevel
@@ -67,13 +73,12 @@ fields:
       - Professional Practice Doctorate
       - Continuing Education
       - Other
-    comments: "CourseSection.courseSectionLevel could match Course.courseLevel, but allows for varying values as needed.\n 
-      For example, an Independent Study course could have differing levels for course sections, based on student level.\n
-      If level is assigned based solely on subject and course number, use the same value in both Course.courseLevel and 
-      CourseSection.courseSectionLevel.\n
-      If level is assigned based partly on course section, the Course.courseLevel value can be null.\n
-      Either CourseSection.courseSectionLevel or Course.courseLevel should have an applicable level value."
-
+    comments: |-
+      CourseSection.courseSectionLevel could match Course.courseLevel, but allows for varying values as needed. For example, an Independent Study course could have differing levels for course sections, based on student level.
+      If level is assigned based solely on subject and course number, use the same value in both Course.courseLevel and CourseSection.courseSectionLevel.
+      If level is assigned based partly on course section, the Course.courseLevel value can be null.
+      Either CourseSection.courseSectionLevel or Course.courseLevel should have an applicable level value.
+#
   - name: courseSectionStatus
     description: Current status of the course section
     type: enum
@@ -85,82 +90,82 @@ fields:
       - Renumbered
 
   - name: enrollmentHours
-    description: "Credit or clock hour value or remedial/ESL/co-op equivalent hour 
-      value to be used for enrollment reporting"
+    description: Credit or clock hour value or remedial/ESL/co-op equivalent hour value to be used for enrollment reporting
     type: number
 
   - name: billableHours
-    description: "Billable hours for course section"
+    description: Billable hours for course section
     type: number
 
   - name: creditOrClockHours
-    description: >-
-      Credit or clock hours based on the number of hours per week the course section meets
+    description: Credit or clock hours based on the number of hours per week the course section meets
     type: number
 
   - name: isClockHours
-    description: "If course hours are reported in clock hours instead of credit hours, value = 1, else 0" 
+    description: If course hours are reported in clock hours instead of credit hours, value = 1, else 0
     type: boolean
     comments: "Default value if null: 0/false."
 
   - name: isESL
-    description: "If course section is considered an ESL course, value = 1, else 0"
+    description: If course section is considered an ESL course, value = 1, else 0
     type: boolean
     comments: "Default value if null: 0/false."
 
   - name: isRemedial
-    description: "If course section is considered a remedial course, value = 1, else 0"
+    description: If course section is considered a remedial course, value = 1, else 0
     type: boolean
     comments: "Default value if null: 0/false."
 
   - name: college
     description: College associated with the course section
     type: string
-    comments: "CourseSection.college could match the Course.courseCollege, but allows for varying values as needed.\n
-      If college is associated solely on subject and course number, use the same value in both Course.courseCollege 
-      and CourseSection.college.\n 
-      If college is associated partly on course section, the Course.courseCollege value can be null.\n 
-      If college is not associated with a course or course section, both values can be null."
+    comments: |-
+      CourseSection.college could match the Course.courseCollege, but allows for varying values as needed.
+      If college is associated solely on subject and course number, use the same value in both Course.courseCollege and CourseSection.college.
+      If college is associated partly on course section, the Course.courseCollege value can be null. 
+      If college is not associated with a course or course section, both values can be null.
 
   - name: division
     description: Division associated with the course section
     type: string
-    comments: "CourseSection.division could match the Course.courseDivision, but allows for varying values as needed.\n 
-      If division is associated solely on subject and course number, use the same value in both Course.courseDivision 
-      and CourseSection.division.\n 
-      If division is associated partly on course section, the Course.courseDivision value can be null.\n 
-      If division is not associated with a course or course section, both values can be null."
+    comments: |-
+      CourseSection.division could match the Course.courseDivision, but allows for varying values as needed.
+      If division is associated solely on subject and course number, use the same value in both Course.courseDivision and CourseSection.division.
+      If division is associated partly on course section, the Course.courseDivision value can be null.
+      If division is not associated with a course or course section, both values can be null.
 
   - name: department
     description: Department associated with course section
     type: string
-    comments: "CourseSection.department could match the Course.courseDepartment, but allows for varying values as needed.\n 
-      If department is associated solely on subject and course number, use the same value in both Course.courseDepartment 
-      and CourseSection.department.\n 
-      If department is associated partly on course section, the Course.courseDepartment value can be null.\n
-      If department is not associated with a course or course section, both values can be null."
+    comments: |-
+      CourseSection.department could match the Course.courseDepartment, but allows for varying values as needed.
+      If department is associated solely on subject and course number, use the same value in both Course.courseDepartment and CourseSection.department.
+      If department is associated partly on course section, the Course.courseDepartment value can be null.
+      If department is not associated with a course or course section, both values can be null.
 
   - name: isIPEDSReportable
-    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 
 # deprecated fields
+ 
   - name: crn
     description: Unique identifier for an instance of a course based on academic term and course number
     type: string
+    comments: Renamed to courseSectionNumber. Remap the crn field to the courseSectionNumber field.
     deprecated: true
 
   - name: campus
     description: Campus associated with course section
     type: string
-    reference: Campus->campus
-    comments: If institution does not associate a campus with a course section, set value of field to null.
+    comments: Removed. The campus field is relocated to the Course Section Schedule entity with other scheduling properties.
     deprecated: true
 
   - name: maxSeats
     description: Maximum number of seats available for course section
     type: number
+    comments: Removed. The maxSeats field is relocated to the Course Section Schedule entity with other scheduling properties.
     deprecated: true
 
   - name: sectionStatus
@@ -172,6 +177,7 @@ fields:
       - Pending
       - Cancelled
       - Renumbered
+    comments: Renamed to courseSectionStatus. Remap the sectionStatus field to the courseSectionStatus field.
     deprecated: true
 
   # meta-data fields

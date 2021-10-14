@@ -1,37 +1,55 @@
-version: 1.0.0
+version: 1.0.1
 name: EmployeeAssignment
 dataModelEntityId: 16
+
+description: Employees assigned to positions
+detailedDescription: |-
+  Job details for employee assignments to positions. 
+
+  Data includes start/end dates, status, assignment type properties and salary information.
+
+  Entity relationship: Person + Employee + EmployeePosition = EmployeeAssignment 
+
+#1.0.1 20210519 jhanicak Added descriptions
+
 fields:
   - name: personId
     description: Unique identifier of employee
     type: string
     required: true
     reference: Employee->personId
+    
   - name: position
     description: Position to which assignment is attached
     type: string
     required: true
     reference: EmployeePosition->position
+    
   - name: suffix
     description: >-
       Code used to create and maintain multiple assignments for the same
       position for the same employee
     type: string
     required: true
+    
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
+    
   - name: assignmentStartDate
     description: Start date of the assignment
     type: date
+    
   - name: assignmentEndDate
     description: End date of the assignment
     type: date
+    
   - name: assignmentDescription
     description: Assignment description
     type: string
-    comments: 'Defaults to position title, if not available for assignment'
+    comments: Defaults to position title, if not available for assignment.
+    
   - name: assignmentType
     description: Type of the assignment
     type: enum
@@ -39,6 +57,7 @@ fields:
       - Primary
       - Secondary
       - Overload
+      
   - name: assignmentStatus
     description: Assignment status
     type: enum
@@ -46,6 +65,7 @@ fields:
       - Active
       - On Leave
       - Terminated
+      
   - name: fullOrPartTimeStatus
     description: Full-time or part-time status for assignment
     type: enum
@@ -53,71 +73,81 @@ fields:
       - Full Time
       - Part Time
       - Other
+      
   - name: employeeClass
-    description: 'Employee class code associated with this position, based on position class'
+    description: Employee class code associated with this position, based on position class
     type: string
-    comments: 'Defaults to position employeeClass, if not available for assignment'
+    comments: Defaults to position employeeClass, if not available for assignment.
+    
   - name: employeeClassDescription
     description: Employee class description
     type: string
-    comments: 'Defaults to position employeeClassDesc, if not available for assignment'
+    comments: Defaults to position employeeClassDesc, if not available for assignment.
+    
   - name: employerCode
     description: The code of the institution or body the employee has been assigned to
     type: string
+    
   - name: isFaculty
-    description: >-
-      If the employee for this assignment is considered faculty, value = 1, else
-      0
+    description: If the employee for this assignment is considered faculty, value = 1, else 0
     type: boolean
     required: true
+    
   - name: isUndergradStudent
-    description: >-
-      If the employee for this assignment is an undergraduate student, value =
-      1, else 0
+    description: If the employee for this assignment is an undergraduate student, value = 1, else 0
     type: boolean
     required: true
+    
   - name: isWorkStudy
-    description: >-
-      If the employee for this assignment is in a work study program, value = 1,
-      else 0
+    description: If the employee for this assignment is in a work study program, value = 1, else 0
     type: boolean
     required: true
+    
   - name: isTempOrSeasonal
-    description: >-
-      If the employee for this assignment is considered temporary or seasonal,
+    description: If the employee for this assignment is considered temporary or seasonal,
       value = 1, else 0
     type: boolean
     required: true
+    
   - name: annualSalary
     description: Annual salary of the assignment based on calendar year
     type: number
+    
   - name: payrollScheduleCode
     description: Payroll schedule code
     type: string
+    
   - name: salaryTable
-    description: 'Salary table associated with this position, based on position class'
+    description: Salary table associated with this position, based on position class
     type: string
-    comments: 'Defaults to position salaryTable, if not available for assignment'
+    comments: Defaults to position salaryTable, if not available for assignment.
+    
   - name: salaryGrade
-    description: 'Salary grade associated with this position, based on position class'
+    description: Salary grade associated with this position, based on position class
     type: string
-    comments: 'Defaults to position salaryGrade, if not available for assignment'
+    comments: Defaults to position salaryGrade, if not available for assignment.
+    
   - name: salaryStep
-    description: 'Salary step associated with the salary grade, based on position class'
+    description: Salary step associated with the salary grade, based on position class
     type: string
-    comments: 'Defaults to position salaryStep, if not available for assignment'
+    comments: Defaults to position salaryStep, if not available for assignment.
+    
   - name: appointmentPercent
     description: Percentage of full time appointment for an employee in the position
     type: number
-    comments: 'Defaults to position appointmentPercent, if not available for assignment'
+    comments: Defaults to position appointmentPercent, if not available for assignment.
+    
   - name: fte
     description: The full time percentage attached to the assignment (FTE)
     type: number
-    comments: Defaults to 1
+    comments: "Default value if null: 1."
+    
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
+    
+#meta-data fields
   - name: rowGuid
     description: GUID of the row
     type: uuid

@@ -1,26 +1,41 @@
-version: 1.0.0
+version: 1.0.1
 name: Campus
 dataModelEntityId: 6
+
+description: Index of locations where courses are offered
+detailedDescription: |-
+  Buildings or other locations where institutional functions are carried out or courses are held. 
+
+  Data includes campus code, description and international designation.
+
+#1.0.1 20210512 jhanicak Added descriptions
+
 fields:
   - name: campus
     description: Unique identifier code of campus
     type: string
     required: true
+    
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
+    
   - name: campusDescription
     description: Description of campus code
     type: string
+    
   - name: isInternational
-    description: 'If campus is located outside of USA, then value = 1 else 0'
+    description: If campus is located outside of USA, then value = 1 else 0
     type: boolean
     required: true
+    
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
+    
+#meta-data fields    
   - name: rowGuid
     description: GUID of the row
     type: uuid

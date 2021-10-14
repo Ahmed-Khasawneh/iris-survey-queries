@@ -1,10 +1,19 @@
-version: 1.1.0
+version: 1.1.1
 name: Faculty
 dataModelEntityId: 18
-fields:
 
+description: Academic staff rank
+detailedDescription: |-
+  Teaching, research or public service staff and rank classification.
+
+  Data includes academic title and rank start/end dates.
+
+  Entity relationship: Person + Employee = Faculty
+
+#1.1.1 20210520 ckeller Added detailed descriptions
 #1.1.0 PF-1973 Moved appointment fields to Faculty Appointment
 
+fields:
   - name: personId
     description: Unique identifier of faculty member
     type: string
@@ -41,7 +50,7 @@ fields:
     type: date
 
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 
@@ -50,31 +59,26 @@ fields:
     type: uuid
     required: true
     private: true
-
   - name: tenantId
     description: Institution ID
     type: uuid
     required: true
     private: true
-
   - name: groupEntityExecutionId
     description: Execution ID of the entity group that is being ingested
     type: number
     required: true
     private: true
-
   - name: userId
     description: User who ran the ingestion
     type: uuid
     required: true
     private: true
-
   - name: recordInsertedTimestamp
     description: Data ingestion time
     type: date
     required: true
     private: true
-
   - name: dataPath
     description: S3 data path
     type: string

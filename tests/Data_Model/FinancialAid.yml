@@ -1,7 +1,16 @@
-version: 1.2.0
+version: 1.2.1
 name: FinancialAid
 dataModelEntityId: 10
 
+description: Student financial aid
+detailedDescription: |-
+  Financial aid and awards given to students by various sources, based on financial aid year.
+
+  Data includes fund codes/types/sources, award status, offered/accepted/paid amounts, family income and living arrangement.
+
+  Entity relationship: Person + Student + AcademicTerm = FinancialAid
+
+#1.2.1 20210520 ckeller Added descriptions
 #1.1.0 PF-1749 Added new enum values to fundType field, formatted to match other YAMLs
 #1.2.0 PF-1907 Added new field awardStatusActionDate 
 
@@ -17,7 +26,7 @@ fields:
     type: number
     required: true
     reference: AcademicTerm->financialAidYear
-    comments: 'Example data: 1819 (for 2018-2019)'
+    comments: "Example data: 1819 (for 2018-2019)"
 
   - name: fundType
     description: Type of fund associated with financial aid award
@@ -60,7 +69,6 @@ fields:
     description: Academic term in which financial aid awarded
     type: string
     reference: AcademicTerm->termCode
-    comments: 'Example data: 201910'
 
   - name: awardStatus
     description: Status of financial aid award
@@ -79,19 +87,17 @@ fields:
     required: true
 
   - name: isPellGrant
-    description: 'If the financial aid award is considered a Pell Grant, value = 1, else 0'
+    description: If the financial aid award is considered a Pell Grant, value = 1, else 0
     type: boolean
     required: true
 
   - name: isTitleIV
-    description: >-
-      If the financial aid award is considered Title IV federal student aid,
-      value = 1, else 0
+    description: If the financial aid award is considered Title IV federal student aid, value = 1, else 0
     type: boolean
     required: true
 
   - name: isSubsidizedDirectLoan
-    description: 'If the financial aid award is a Direct Subsidized Loan, value = 1, else 0'
+    description: If the financial aid award is a Direct Subsidized Loan, value = 1, else 0
     type: boolean
     required: true
 
@@ -108,15 +114,11 @@ fields:
     type: number
 
   - name: IPEDSFinancialAidAmount
-    description: >-
-      Financial aid award amount reported to IPEDS SFA survey per IPEDS
-      requirements
+    description: Financial aid award amount reported to IPEDS SFA survey per IPEDS requirements
     type: number
 
   - name: IPEDSOutcomeMeasuresAmount
-    description: >-
-      Financial aid award amount reported to IPEDS OM survey per IPEDS
-      requirements
+    description: Financial aid award amount reported to IPEDS OM survey per IPEDS requirements
     type: number
 
   - name: familyIncome
@@ -132,7 +134,7 @@ fields:
       - Off Campus with Family
 
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 

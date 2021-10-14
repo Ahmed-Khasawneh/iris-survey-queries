@@ -1,6 +1,16 @@
-version: 1.0.0
+version: 1.0.1
 name: FacultyAppointment
 dataModelEntityId: 42
+
+description: Academic staff contract/tenure status
+detailedDescription: |-
+  Teaching, research or public service staff and academic position, based on status and length of appointment.
+
+  Data includes position, appointment start/end dates, tenure status and tenure associated dates.
+
+  Entity relationship: Person + Employee + EmployeePosition = FacultyAppointment
+
+#1.0.1 20210520 ckeller Added descriptions
 
 fields:
   - name: personId
@@ -70,7 +80,7 @@ fields:
       - Indefinite
     
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
     

@@ -1,7 +1,14 @@
-version: 2.0.0
+version: 2.0.1
 name: Course
 dataModelEntityId: 4
 
+description: Index of courses based on subject
+detailedDescription: |-
+  Classes or other units of teaching for a particular subject. 
+
+  Data includes academic level and status.
+
+#2.0.1 20210512 jhanicak Added descriptions
 #2.0.0 PF-2013 New enum values for courseLevel, renamed college to courseCollege, renamed department to courseDepartment,
 #              added new field courseDivision, removed fields isESL and isRemedial
 #1.1.1 PF-1727 Updated descriptions and added comment fields; removed fields not current
@@ -9,17 +16,17 @@ dataModelEntityId: 4
 
 fields:
   - name: subject
-    description: "Subject associated with the course"
+    description: Subject associated with the course
     type: string
     required: true
-    comments: "Typically a 2- to 4-char string in all caps."
-    
+    comments: Typically a 2- to 4-char string in all caps.
+
   - name: courseNumber
-    description: "Number to disinguish type of course"
+    description: Number to disinguish type of course
     type: string
     required: true
-    comments: "Typically a 3- to 5-digit string."
-    
+    comments: Typically a 3- to 5-digit string.
+
   - name: termCodeEffective
     description: Academic term code in which the course is initially effective
     type: string
@@ -36,13 +43,12 @@ fields:
       - Professional Practice Doctorate
       - Continuing Education
       - Other
-    comments:
-      "Course.courseLevel could match CourseSection.courseSectionLevel, but allows for varying values as needed.\n
-      For example, an Independent Study course could have differing levels for course sections where level is based on student.\n
-      If level is assigned based solely on subject and course number, use the same value in both Course.courseLevel and
-      CourseSection.courseSectionLevel.\n
-      If level is assigned based partly on course section, the Course.courseLevel value can be null.\n
-      Either CourseSection.courseSectionLevel or Course.courseLevel should have an applicable level value."
+    comments: |-
+      Course.courseLevel could match CourseSection.courseSectionLevel, but allows for varying values as needed.
+      For example, an Independent Study course could have differing levels for course sections where level is based on student.
+      If level is assigned based solely on subject and course number, use the same value in both Course.courseLevel and CourseSection.courseSectionLevel.
+      If level is assigned based partly on course section, the Course.courseLevel value can be null.
+      Either CourseSection.courseSectionLevel or Course.courseLevel should have an applicable level value.
 
   - name: recordActivityDate
     description: Date source record inserted or modified
@@ -67,63 +73,60 @@ fields:
   - name: courseCollege
     description: College associated with the course
     type: string
-    comments:
-      "Course.courseCollege could match the CourseSection.college, but allows for varying values as needed.\n
-      If college is associated solely on subject and course number, use the same value in both Course.courseCollege
-      and CourseSection.college.\n
+    comments: |-
+      Course.courseCollege could match the CourseSection.college, but allows for varying values as needed.
+      If college is associated solely on subject and course number, use the same value in both Course.courseCollege and CourseSection.college.
       If college is associated partly on course section, the Course.courseCollege value can be null.
-      If college is not associated with a course or course section, both values can be null."
+      If college is not associated with a course or course section, both values can be null.
 
   - name: courseDivision
     description: Division associated with the course
     type: string
-    comments:
-      "Course.courseDivision could match the CourseSection.division, but allows for varying values as needed.\n
-      If division is associated solely on subject and course number, use the same value in both Course.courseDivision
-      and CourseSection.division.\n
-      If division is associated partly on course section, the Course.courseDivision value can be null.\n
-      If division is not associated with a course or course section, both values can be null."
+    comments: |-
+      Course.courseDivision could match the CourseSection.division, but allows for varying values as needed.
+      If division is associated solely on subject and course number, use the same value in both Course.courseDivision and CourseSection.division.
+      If division is associated partly on course section, the Course.courseDivision value can be null.
+      If division is not associated with a course or course section, both values can be null.
 
   - name: courseDepartment
     description: Department associated with the course
     type: string
-    comments:
-      "Course.courseDepartment could match the CourseSection.department, but allows for varying values as needed.\n
-      If department is associated solely on subject and course number, use the same value in both Course.courseDepartment
-      and CourseSection.department.\n
-      If department is associated partly on course section, the Course.courseDepartment value can be null.\n
-      If department is not associated with a course or course section, both values can be null."
+    comments: |-
+      Course.courseDepartment could match the CourseSection.department, but allows for varying values as needed.
+      If department is associated solely on subject and course number, use the same value in both Course.courseDepartment and CourseSection.department.
+      If department is associated partly on course section, the Course.courseDepartment value can be null.
+      If department is not associated with a course or course section, both values can be null.
 
   - name: isIPEDSReportable
-    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 
   # deprecated fields
 
   - name: isESL
-    description: "If course is considered an ESL course, value = 1, else 0"
+    description: If course is considered an ESL course, value = 1, else 0
     type: boolean
+    comments: Removed. The isESL field is relocated to the Course Section entity to allow for setting property on a unique course section.
     deprecated: true
-    comments: "Default value if null: 0/false"
 
   - name: isRemedial
-    description: "If course is considered a remedial course, value = 1, else 0"
+    description: If course is considered a remedial course, value = 1, else 0
     type: boolean
+    comments: Removed. The isRemedial field is relocated to the Course Section entity to allow for setting property on a unique course section.
     deprecated: true
-    comments: "Default value if null: 0/false"
 
   - name: college
     description: College associated with the course
     type: string
+    comments: Renamed to courseCollege. Remap the college field to the courseCollege field or to the college field in the Course Section entity.
     deprecated: true
-    comments: "If institution does not associate a college with course records, set value of field to null."
-
+    
   - name: department
     description: Department associated with course
     type: string
+    comments: Renamed to courseDepartment. Remap the department field to the courseDepartment field or to the department field in the Course Section entity.
     deprecated: true
-    comments: "If institution does not associate a department with course records, set value of field to null."
 
   # meta-data fields
   - name: rowGuid

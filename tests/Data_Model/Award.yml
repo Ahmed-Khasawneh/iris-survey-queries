@@ -1,7 +1,16 @@
-version: 2.0.0
+version: 2.0.1
 name: Award
 dataModelEntityId: 9
 
+description: Student degrees, diplomas, certificates or other credentials
+detailedDescription: |-
+  Student degrees, diplomas, certificates or other awards granted by the institution upon the completion of a degree program. 
+
+  Data includes award status, awarded date or academic term and GPA.
+
+  Entity relationship: Person + Student + AcademicTerm + DegreeProgram + Campus (optional) = Award 
+
+#2.0.1 20210512 jhanicak Added descriptions
 #2.0.0 PF-2020 Added departmentOverride and divisionOverride fields,
 #              renamed college and campus to collegeOverride and campusOverride,
 #              moved degree and degreeLevel to 'to be removed' section
@@ -10,7 +19,7 @@ dataModelEntityId: 9
 
 fields:
   - name: personId
-    description: "Unique identifier of student"
+    description: Unique identifier of student
     type: string
     required: true
     reference: Student->personId
@@ -25,71 +34,74 @@ fields:
       The value for degreeProgram will be referenced as a one-to-one relationship in DegreeProgram and AcademicTrack."
 
   - name: awardStatus
-    description: "Status of the award"
+    description: Status of the award
     type: enum
     enumValues:
       - Pending
       - Awarded
 
   - name: recordActivityDate
-    description: "Date source record inserted or modified"
+    description: Date source record inserted or modified
     type: date
     required: true
 
   - name: awardedDate
-    description: "Date on which degree/certificate was awarded"
+    description: Date on which degree/certificate was awarded
     type: date
 
   - name: awardedTermCode
-    description: "Academic term in which degree/certificate was awarded"
+    description: Academic term in which degree/certificate was awarded
     type: string
     reference: AcademicTerm->termCode
 
   - name: collegeOverride
-    description: "College associated with the award if it differs from the degree program college"
+    description: College associated with the award if it differs from the degree program college
     type: string
     comments: "If college offering the award is different than DegreeProgram.college, field 
       should include the alternate college code. If null, DegreeProgram.college value will be used."
 
   - name: divisionOverride
-    description: "Division associated with the award if it differs from the degree program division"
+    description: Division associated with the award if it differs from the degree program division
     type: string
     comments: "If division offering the award is different than DegreeProgram.division, field
       should include the alternate division code. If null, DegreeProgram.division value will be used."
 
   - name: departmentOverride
-    description: "Department associated with the award if it differs from the degree program department"
+    description: Department associated with the award if it differs from the degree program department
     type: string
     comments: "If department offering the award is different than DegreeProgram.department, field 
       should include the alternate department code. If null, DegreeProgram.department value will be used."
 
   - name: campusOverride
-    description: "Campus associated with the award if it differs from the degree program campus"
+    description: Campus associated with the award if it differs from the degree program campus
     type: string
+    reference: Campus->campus
     comments: "If campus offering the award is different than DegreeProgram.campus, field 
       should include the alternate campus code. If null, DegreeProgram.campus value will be used."
 
   - name: gpa
-    description: "Final GPA at awarded date"
+    description: Final GPA at awarded date
     type: string
 
   - name: classRank
-    description: "Rank in graduating class"
+    description: Rank in graduating class
     type: number
 
   - name: isIPEDSReportable
-    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 
   # deprecated fields
+  
   - name: degree
-    description: "Degree/certificate associated with the award"
+    description: Degree/certificate associated with the award
     type: string
+    comments: Removed. The degree field is not required, since the degree value is located in the Degree Program entity.
     deprecated: true
 
   - name: degreeLevel
-    description: "Level of study for the degree/certificate"
+    description: Level of study for the degree/certificate
     type: enum
     enumValues:
       - Undergrad
@@ -97,16 +109,21 @@ fields:
       - Occupational/Professional
       - Continuing Ed
       - Other
+    comments: Removed. The degreeLevel field is not required, since the degree level value is located in the Degree entity.
     deprecated: true
 
   - name: college
-    description: "College code associated with the degree/certificate awarded"
+    description: College code associated with the degree/certificate awarded
     type: string
+    comments: Renamed to collegeOverride. If the college value differs from the degree program college value, 
+      remap the college field to the collegeOverride field.
     deprecated: true
 
   - name: campus
-    description: "Campus associated with the degree/certificate awarded"
+    description: Campus associated with the degree/certificate awarded
     type: string
+    comments: Renamed to campusOverride. If the campus value differs from the degree program campus value, 
+      remap the campus field to the campusOverride field.
     deprecated: true
 
   # meta-data fields

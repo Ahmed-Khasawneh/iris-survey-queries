@@ -1,12 +1,22 @@
-version: 1.0.0
+version: 1.0.1
 name: TestScore
 dataModelEntityId: 22
+
+description: Student admission and placement tests
+detailedDescription: |-
+  Student evaluation tests to determine institution admission and/or course placement.
+
+  Data includes test type, date taken and test score.
+
+#1.0.1 20210521 ckeller Added descriptions
+
 fields:
   - name: personId
     description: Unique identifier of student
     type: string
     required: true
     reference: Student->personId
+    
   - name: testScoreType
     description: Type of test
     type: enum
@@ -17,20 +27,26 @@ fields:
       - ACT English
       - ACT Math
     required: true
+    
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
+    
   - name: testScore
     description: Test score
     type: number
+    
   - name: testDate
     description: Date when test was taken
     type: date
+    
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
+    
+  # meta-data fields
   - name: rowGuid
     description: GUID of the row
     type: uuid

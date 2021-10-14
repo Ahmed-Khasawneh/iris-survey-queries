@@ -1,311 +1,251 @@
-version: 1.0.0
+version: 1.0.1
 name: InstitCharDoctorate
 dataModelEntityId: 35
+
+description: Compilation for IRIS Institutional Characteristics 
+detailedDescription: |-
+  Doctorate and Professional Practice Doctorate level student charges, specifically for use with the IRIS Institutional Characteristics survey for IPEDS.
+
+  Data includes tuition amounts, broken down by residency (in-state, out-of-state).
+
+#1.0.1 20210520 ckeller Added descriptions
+
 fields:
   - name: surveyCollectionYear
     description: IPEDS collection survey year
     type: string
     required: true
     comments: Valid format YYyy (1920 for 2019-2020)
-  - name: academicYear
-    description: Academic year in format YYYY
-    type: string
-    required: true
-    deprecated: true
-    reference: AcademicTerm->academicYear
-    comments: 'Example data: 2019.'
+    
   - name: recordActivityDate
     description: Date source record inserted or modified.
     type: date
     required: true
+    
   - name: chiroAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in a Chiropractic (D.C. or D.C.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+      
   - name: chiroReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in a Chiropractic (D.C. or D.C.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+      
   - name: chiroAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in a Chiropractic (D.C. or D.C.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments:  'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+      
   - name: chiroReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description:  Typical required fees for an out-of-state full-time doctors-professional
       practice student in a Chiropractic (D.C. or D.C.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments:  'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: dentAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in a Dentistry (D.D.S. or D.M.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: dentReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in a Dentistry (D.D.S. or D.M.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: dentAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in a Dentistry (D.D.S. or D.M.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: dentReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description: Typical required fees for an out-of-state full-time doctors-professional
       practice student in a Dentistry (D.D.S. or D.M.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: medAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in a Medicine (M.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: medReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in a Medicine (M.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: medAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in a Medicine (M.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: medReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description: Typical required fees for an out-of-state full-time doctors-professional
       practice student in a Medicine (M.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearestdollar).'
+    
   - name: optomAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in an Optometry (O.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+      
   - name: optomReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in an Optometry (O.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+      
   - name: optomAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in an Optometry (O.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: optomReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description: Typical required fees for an out-of-state full-time doctors-professional
       practice student in an Optometry (O.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: osteoAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in an Osteopathic Medicine (D.O.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: osteoReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in an Osteopathic Medicine (D.O.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: osteoAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in an Osteopathic Medicine (D.O.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: osteoReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description: Typical required fees for an out-of-state full-time doctors-professional
       practice student in an Osteopathic Medicine (D.O.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: pharmAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in a Pharmacy (Pharm.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: pharmReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in a Pharmacy (Pharm.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: pharmAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in a Pharmacy (Pharm.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: pharmReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description: Typical required fees for an out-of-state full-time doctors-professional
       practice student in a Pharmacy (Pharm.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: podiaAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in a Podiatry (Pod.D., D.P., or D.P.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: podiaReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in a Podiatry (Pod.D., D.P., or D.P.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: podiaAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in a Podiatry (Pod.D., D.P., or D.P.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: podiaReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description: Typical required fees for an out-of-state full-time doctors-professional
       practice student in a Podiatry (Pod.D., D.P., or D.P.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: vetAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in a Veterinary Medicine (D.V.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: vetReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in a Veterinary Medicine (D.V.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: vetAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in a Veterinary Medicine (D.V.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: vetReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description: Typical required fees for an out-of-state full-time doctors-professional
       practice student in a Veterinary Medicine (D.V.M.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: lawAvgTuitionInSt
-    description: >-
-      Typical tuition for an in-state full-time doctors-professional practice
+    description: Typical tuition for an in-state full-time doctors-professional practice
       student in a Law (J.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: lawReqFeesInSt
-    description: >-
-      Typical required fees for an in-state full-time doctors-professional
+    description: Typical required fees for an in-state full-time doctors-professional
       practice student in a Law (J.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: lawAvgTuitionOutSt
-    description: >-
-      Typical tuition for an out-of-state full-time doctors-professional
+    description: Typical tuition for an out-of-state full-time doctors-professional
       practice student in a Law (J.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+    
   - name: lawReqFeesOutSt
-    description: >-
-      Typical required fees for an out-of-state full-time doctors-professional
+    description: Typical required fees for an out-of-state full-time doctors-professional
       practice student in a Law (J.D.) program.
     type: string
-    comments: >-
-      Valid values: 0 to 999999, or null (no decimals - round to the nearest
-      dollar).
+    comments: 'Valid values: 0 to 999999, or null (no decimals - round to the nearest dollar).'
+
+ #deprecated fields   
+  - name: academicYear
+    description: Academic year in format YYYY
+    type: string
+    comments: Value not required to report Institutional Characteristics.
+    deprecated: true
+
+# meta-data fields     
   - name: rowGuid
     description: GUID of the row
     type: uuid

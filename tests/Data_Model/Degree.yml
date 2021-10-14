@@ -1,7 +1,14 @@
-version: 3.0.0
+version: 3.0.1
 name: Degree
 dataModelEntityId: 8
 
+description: Index of degrees, certificates and other credentials
+detailedDescription: |-
+  Type of awards presented for successful completion of a degree program. 
+
+  Data includes degree program level and award level (ACAT).  
+
+#3.0.1 20210512 jhanicak Added descriptions 
 #3.0.0 PF-2005 Added updated ENUM options to DegreeLevel
 #2.2.1 PF-1727 Updated other descriptions and added comment fields; removed fields not current
 #2.2.0 PF-1709 Modified degreeLevel enum values: removed PostGraduate, renamed Professional to Occupational/Professional
@@ -52,12 +59,12 @@ fields:
     comments: Updated for IPEDS 20-21 requirements
 
   - name: isNonDegreeSeeking
-    description: "If the degree/certificate program is considered non-degree-seeking, value = 1, else 0"
+    description: If the degree/certificate program is considered non-degree-seeking, value = 1, else 0
     type: boolean
     comments: "Default value if null: 0/false"
 
   - name: isIPEDSReportable
-    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 

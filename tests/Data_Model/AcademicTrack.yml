@@ -1,7 +1,16 @@
-version: 2.0.0
+version: 2.0.1
 name: AcademicTrack
-dataModelEntityId: 7
+dataModelEntityId: 7 
 
+description: Student academic plans 
+detailedDescription: |-
+  Student curricumum and fields of study designation, based on student ID, educational level and academic term. 
+
+  Data includes degree programs, majors, minors and concentrations with associated priorities.
+
+  Entity relationship: Person + Student + AcademicTerm + DegreeProgram + FieldOfStudy + Campus (optional) = AcademicTrack
+
+#2.0.1 20210505 jhanicak Added descriptions
 #2.0.0 PF-2021 Added departmentOverride and divisionOverride fields,
 #              renamed college and campus to collegeOverride and campusOverride,
 #              moved degree and academicTrackLevel to 'to be removed' section
@@ -11,34 +20,34 @@ dataModelEntityId: 7
 
 fields:
   - name: personId
-    description: "Unique identifier of student"
+    description: Unique identifier of student
     type: string
     required: true
     reference: Student->personId
 
   - name: degreeProgram
-    description: "Unique identifier for an academic course of study that results in a formal award"
+    description: Unique identifier for an academic course of study that results in a formal award
     type: string
     required: true
     reference: DegreeProgram->degreeProgram
     comments:
-      "Value is client-defined, but typically includes the degree and major and/or a combination \n
-      of data fields that result in a unique value. The value for degreeProgram will be referenced \n
-      as a one-to-one relationship in DegreeProgram and Award."
+      "Value is client-defined, but typically includes the degree and major and/or a combination
+      of data fields that result in a unique value. \n
+      The value for degreeProgram will be referenced as a one-to-one relationship in DegreeProgram and Award."
 
   - name: termCodeEffective
-    description: "Academic term code in which the academic track is effective"
+    description: Academic term code in which the academic track is effective
     type: string
     required: true
     reference: AcademicTerm->termCode
 
   - name: recordActivityDate
-    description: "Date source record inserted or modified"
+    description: Date source record inserted or modified
     type: date
     required: true
 
   - name: academicTrackStatus
-    description: "Status of degree/curriculum and associated fields of study"
+    description: Status of degree/curriculum and associated fields of study
     type: enum
     enumValues:
       - In Progress
@@ -46,13 +55,13 @@ fields:
       - Applied
 
   - name: fieldOfStudy
-    description: "Field of study associated with the degree/curriculum"
+    description: Field of study associated with the degree/curriculum
     type: string
     reference: FieldOfStudy->fieldOfStudy
     required: true
 
   - name: fieldOfStudyType
-    description: "Type of field of study"
+    description: Type of field of study
     type: enum
     enumValues:
       - Major
@@ -64,54 +73,57 @@ fields:
     required: true
 
   - name: fieldOfStudyPriority
-    description: "Priority of field of study per type"
+    description: Priority of field of study per type
     type: number
     required: true
     comments: "Example data: 1 (1st Major), 2 (2nd Major)"
 
   - name: fieldOfStudyActionDate
-    description: "Date the field of study data was inserted or modified, if different than recordActivityDate"
+    description: Date the field of study data was inserted or modified, if different than recordActivityDate
     type: date
     required: true
     comments: "If not applicable, use dummy date of: to_date('9999-09-09', 'YYYY-MM-DD')."
 
   - name: isCurrentFieldOfStudy
-    description: "If field of study data is most current for degree and term code effective, value = 1, else 0"
+    description: If field of study data is most current for degree and term code effective, value = 1, else 0
     type: boolean
     required: true
 
   - name: collegeOverride
-    description: "College associated with the degree/curriculum if it differs from the degree program college"
+    description: College associated with the degree/curriculum if it differs from the degree program college
     type: string
     comments: "If college value is different than DegreeProgram.college, field
       should include the alternate college code. If null, DegreeProgram.college value will be used."
 
   - name: divisionOverride
-    description: "Division associated with the degree/curriculum if it differs from the degree program division"
+    description: Division associated with the degree/curriculum if it differs from the degree program division
     type: string
     comments: "If division value is different than DegreeProgram.division, field
       should include the alternate division code. If null, DegreeProgram.division value will be used."
 
   - name: departmentOverride
-    description: "Department associated with the degree/curriculum if it differs from the degree program department"
+    description: Department associated with the degree/curriculum if it differs from the degree program department
     type: string
     comments: "If department value is different than DegreeProgram.department, field
       should include the alternate department code. If null, DegreeProgram.department value will be used."
 
   - name: campusOverride
-    description: "Campus associated with the degree/curriculum if it differs from the degree program campus"
+    description: Campus associated with the degree/curriculum if it differs from the degree program campus
     type: string
+    reference: Campus->campus
     comments: "If campus value is different than DegreeProgram.campus, field
       should include the alternate campus code. If null, DegreeProgram.campus value will be used."
 
   - name: isIPEDSReportable
-    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 
-  # deprecated fields
+# deprecated fields
+
+  # removed academicTrackLevel. Level value can now be found in DegreeProgram entity.
   - name: academicTrackLevel
-    description: "Level of degree/curriculum and associated fields of study"
+    description: Level of degree/curriculum and associated fields of study
     type: enum
     enumValues:
       - Undergrad
@@ -119,29 +131,34 @@ fields:
       - Occupational/Professional
       - Continuing Ed
       - Other
+    comments: "Removed. The academicTrackLevel field is not required, since the degree level value is located in the Degree entity."
     deprecated: true
-
+    
   - name: degree
-    description: "Degree/certification associated with the degree program"
+    description: Degree/certification associated with the degree program
     type: string
+    comments: "Removed. The degree field is not required, since the degree value is located in the Degree Program entity."
     deprecated: true
-
+    
   - name: college
-    description: "College associated with the degree/curriculum and associated fields of study"
+    description: College associated with the degree/curriculum and associated fields of study
     type: string
-    comments: "If institution does not associate a college with academic track records, set value of field to null."
+    comments: "Renamed to collegeOverride. If the college value differs from the degree program college value, 
+      remap the college field to the collegeOverride field."
     deprecated: true
 
   - name: campus
-    description: "Campus associated with the degree/curriculum and associated fields of study"
+    description: Campus associated with the degree/curriculum and associated fields of study
     type: string
-    comments: "If institution does not associate a campus with academic track records, set value of field to null."
+    comments: "Renamed to campusOverride. If the campus value differs from the degree program campus value, 
+      remap the campus field to the campusOverride field."
     deprecated: true
-
+    
   - name: department
-    description: "Department code associated with the degree/curriculum and associated fields of study"
+    description: Department code associated with the degree/curriculum and associated fields of study
     type: string
-    comments: "If institution does not associate a department with academic track records, set value of field to null."
+    comments: "Renamed to departmentOverride. If the department value differs from the degree program department value, 
+      remap the department field to the departmentOverride field."
     deprecated: true
 
   # meta-data fields

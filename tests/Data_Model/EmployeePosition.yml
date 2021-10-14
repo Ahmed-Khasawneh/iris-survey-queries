@@ -1,49 +1,68 @@
-version: 1.0.0
+version: 1.0.1
 name: EmployeePosition
 dataModelEntityId: 17
+
+description: Index of viable positions
+detailedDescription: |-
+  Positions available within the institution. 
+
+  Data includes classification values, such as position class/group/federal category/skill class, position status, chart of accounts and default values for appointment percent and salary.
+
+#1.0.1 20210520 ckeller Added descriptions
+
 fields:
   - name: position
     description: Unique identifier code of position
     type: string
     required: true
+    
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
+    
   - name: positionDescription
     description: Position code description or title
     type: string
+    
   - name: startDate
     description: Start date of the position
     type: date
+    
   - name: endDate
     description: End date of the position
     type: date
+    
   - name: positionClass
     description: Position class code
     type: string
+    
   - name: positionClassDescription
     description: Position class code description
     type: string
+    
   - name: positionGroup
     description: Position group code
     type: string
+    
   - name: positionGroupDescription
     description: Position group code description
     type: string
+    
   - name: skillClass
-    description: >-
-      Skill class codes for Equal Employment Opportunity skills reporting as
+    description: Skill class codes for Equal Employment Opportunity skills reporting as
       defined by the federal government for higher education 
     type: string
+    
   - name: skillClassDescription
     description: Skill class code description
     type: string
+    
   - name: standardOccupationalCategory
-    description: >-
-      Standard occupational categories defined by the government for federal
+    description: Standard occupational categories defined by the government for federal
       reporting (ESOC)
     type: string
+    
   - name: positionStatus
     description: Employee position status
     type: enum
@@ -52,6 +71,7 @@ fields:
       - Cancelled
       - Frozen
       - Inactive
+      
   - name: federalEmploymentCategory
     description: Employment category code used for IPEDS reporting (ECIP)
     type: enum
@@ -63,42 +83,47 @@ fields:
       - Other Full Time
       - Part Time
       - Unreported
+      
   - name: defaultSalaryTable
-    description: >-
-      Default salary table associated with this position, based on position
+    description: Default salary table associated with this position, based on position
       class
     type: string
+    
   - name: defaultSalaryGrade
-    description: >-
-      Default salary grade associated with this position, based on position
+    description: Default salary grade associated with this position, based on position
       class
     type: string
+    
   - name: defaultSalaryStep
-    description: >-
-      Default salary step associated with the salary grade associated with this
+    description: Default salary step associated with the salary grade associated with this
       position, based on position class
     type: string
+    
   - name: defaultEmployeeClass
-    description: >-
-      Default employee class code associated with this position, based on
+    description: Default employee class code associated with this position, based on
       position class
     type: string
+    
   - name: defaultEmployeeClassDesc
     description: Default employee class description
     type: string
+    
   - name: defaultAppointmentPercent
-    description: >-
-      Default percentage of full time appointment for an employee in the
+    description: Default percentage of full time appointment for an employee in the
       position
     type: number
+    
   - name: chartOfAccountsId
     description: Chart of accounts associated with the position
     type: string
     reference: ChartOfAccounts->chartOfAccountsId
+    
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
+
+# meta-data fields
   - name: rowGuid
     description: GUID of the row
     type: uuid

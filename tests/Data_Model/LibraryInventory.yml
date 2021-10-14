@@ -1,34 +1,49 @@
-version: 1.0.0
+version: 1.0.1
 name: LibraryInventory
 dataModelEntityId: 31
+
+description: Compresensive catalog of IRIS Academic Libraries branch inventories
+detailedDescription: |-
+  Itemized archive of library branch inventory transactions within a fiscal year. 
+
+  Data includes individual title details such as medium and the circulation life timeframe. 
+
+  Entity relationship: LibraryBranch + FiscalYear  + (itemized branch inventory data) = LibraryInventory
+
+#1.0.1 20210520 ckeller Added descriptions
+
 fields:
   - name: branchId
     description: Academic library branch identifier
     type: string
     required: true
     reference: LibraryBranch->branchId
+    
   - name: fiscalYear2Char
     description: Fiscal year in YY format
     type: string
     required: true
     reference: FiscalYear->fiscalYear2Char
     comments: 'Example data: 19 (2019)'
+    
   - name: itemId
     description: Unique ID for each library inventory item
     type: string
     required: true
-    comments: >-
-      Inventory material titles owned or leased by the library if individual
+    comments: Inventory material titles owned or leased by the library if individual
       titles are cataloged and/or searchable through the library catalog or
       discovery system. Exclude serials, microforms, maps, nonprint materials,
       and uncataloged items.
+      
   - name: recordActivityDate
     description: Date source record inserted or modified
     type: date
     required: true
+    
   - name: itemTitle
     description: Library inventory item title
     type: string
+    
   - name: itemType
     description: Library item type
     type: enum
@@ -38,22 +53,26 @@ fields:
       - Media
       - Serial
       - Other
+      
   - name: isDigital
-    description: >-
-      If the item is considered a digital or electronic product, value = 1, else
-      0
+    description: If the item is considered a digital or electronic product, value = 1, else 0
     type: boolean
     required: true
+    
   - name: inCirculationDate
     description: The date the library item went into circulation
     type: date
+    
   - name: outOfCirculationDate
     description: The date the library item was moved out of circulation
     type: date
+    
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
+
+# meta-data fields
   - name: rowGuid
     description: GUID of the row
     type: uuid

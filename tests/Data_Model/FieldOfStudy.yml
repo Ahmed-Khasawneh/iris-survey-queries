@@ -1,7 +1,14 @@
-version: 1.0.0
+version: 1.0.1
 name: FieldOfStudy
 dataModelEntityId: 41
 
+description: Index of majors, minors and concentrations
+detailedDescription: |-
+  "Academic subject or discipline used to categorically define a student's focus in a pursued degree program. Field of study types include major, minors and concentrations."
+
+  Data includes description, type and CIP code.
+
+#1.0.1 20210520 ckeller Added descriptions
 #jh/ck 20200908 PF-1671 Created FieldOfStudy entity
 
 fields:
@@ -31,11 +38,9 @@ fields:
     required: true
     
   - name: cipCode
-    description: >-
-      'Standardized six-digit code that categorizes major into an
-      instructional program specialty' 
+    description: Standardized six-digit code that categorizes major into an instructional program specialty
     type: string
-    comments: 'cipCode value stored as numeric characters with no dashes'
+    comments: CIPCode value stored as numeric characters with no dashes.
     
   - name: cipCodeDescription
     description: Description of CIPCode
@@ -44,10 +49,10 @@ fields:
   - name: cipCodeVersion
     description: The most current CIP version for which the cipCode is effective
     type: string
-    comments: 'Valid values: 2020, 2010, 2000, 1990, 1985'
+    comments: "Valid values: 2020, 2010, 2000, 1990, 1985."
    
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
     

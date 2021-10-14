@@ -1,7 +1,14 @@
-version: 1.1.0
+version: 1.1.1
 name: Person
 dataModelEntityId: 1
 
+description: Index of all persons, including students and employees
+detailedDescription: |-
+  Student and employee identity information and demographics.
+
+  Data includes name, address, birthdate, ethnicity, gender, social security number and additional personal properties.
+
+# 1.1.1 20210520 ckeller Added descriptions
 # 1.1.0 PF-1748 - Added visaType enum field
 
 fields:
@@ -29,7 +36,7 @@ fields:
     type: string
     
   - name: suffix
-    description: 'Suffix of a person''s name, for example: Jr., Sr., etc.'
+    description: "Suffix of a person's name, for example: Jr., Sr., etc."
     type: string
     
   - name: birthDate
@@ -37,7 +44,7 @@ fields:
     type: date
     
   - name: deathDate
-    description: 'Date of death. If still living, value is null.'
+    description: Date of death. If still living, value is null.
     type: date
     
   - name: ethnicity
@@ -53,7 +60,7 @@ fields:
       - Unknown
       
   - name: isHispanic
-    description: 'If person''s race is Hispanic, value = 1, else 0'
+    description: If person''s race is Hispanic, value = 1, else 0
     type: boolean
     required: true
     
@@ -63,15 +70,14 @@ fields:
     required: true
     
   - name: isInUSOnVisa
-    description: >-
-      If currently in US on a visa program and official resident of a foreign
+    description: If currently in US on a visa program and official resident of a foreign
       country, value = 1, else 0
     type: boolean
     required: true
     
   - name: visaType
     description: >-
-      'If isInUSOnVisa field is true, then type of visa, else null'
+      If isInUSOnVisa field is true, then type of visa, else null
     type: enum
     enumValues:
       - Student Non-resident
@@ -81,7 +87,7 @@ fields:
       - Other Resident
     
   - name: visaStartDate
-    description: 'If isInUSOnVisa field is true, date when person''s visa starts, else null'
+    description: If isInUSOnVisa field is true, date when person''s visa starts, else null
     type: date
     
   - name: visaEndDate
@@ -89,7 +95,7 @@ fields:
     type: date
     
   - name: isUSCitizen
-    description: 'If a United States citizen, value = 1, else 0'
+    description: If a United States citizen, value = 1, else 0
     type: boolean
     required: true
   - name: gender
@@ -102,31 +108,31 @@ fields:
       - Unknown
       
   - name: address1
-    description: 'Permanent address, street line 1'
+    description: Permanent address, street line 1
     type: string
     
   - name: address2
-    description: 'Permanent address, street line 2'
+    description: Permanent address, street line 2
     type: string
     
   - name: address3
-    description: 'Permanent address, street line 3'
+    description: Permanent address, street line 3
     type: string
     
   - name: city
-    description: 'Permanent address, city'
+    description: Permanent address, city
     type: string
     
   - name: state
-    description: 'Permanent address, state'
+    description: Permanent address, state
     type: string
     
   - name: zipcode
-    description: 'Permanent address, zipcode'
+    description: Permanent address, zipcode
     type: string
     
   - name: nation
-    description: 'Permanent address, nation'
+    description: Permanent address, nation
     type: string
     
   - name: phone
@@ -154,24 +160,23 @@ fields:
       - Unknown
       
   - name: isMilitary
-    description: 'If person is currently serving in the military, value = 1, else 0'
+    description: If person is currently serving in the military, value = 1, else 0
     type: boolean
     required: true
     
   - name: isVeteran
-    description: >-
-      If person has previously served, but not currently serving in the
+    description: If person has previously served, but not currently serving in the
       military, value = 1, else 0
     type: boolean
     required: true
     
   - name: isConfidential
-    description: 'If personal data should remain confidential, value = 1, else 0'
+    description: If personal data should remain confidential, value = 1, else 0
     type: boolean
     required: true
     
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
     

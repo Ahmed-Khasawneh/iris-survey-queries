@@ -1,7 +1,16 @@
-version: 2.0.0
+version: 2.0.1
 name: Admission
 dataModelEntityId: 13
 
+description: Student application and admittance
+detailedDescription: |-
+  Student application status and admission decision, based on academic term and application number. 
+  
+  Data includes secondary school information and student type/level on entry.
+
+  Entity relationship: Person + Student + AcademicTerm = Admission 
+
+#2.0.1 20210505 jhanicak Added descriptions
 #2.0.0 PF-2022 Modified ENUM values for studentLevel and studentType
 #1.4.0 PF-1877 Added new enum value to admissionDecision: 'Student Accepted, Deferred' and renamed 'Admitted Deferred' to 'Admitted, Waitlisted';
 #              Removed required: true property on applicationStatusActionDate and admissionDecisionActionDate fields
@@ -12,35 +21,33 @@ dataModelEntityId: 13
 
 fields:
   - name: personId
-    description: "Unique identifier of student"
+    description: Unique identifier of student
     type: string
     required: true
     reference: Student->personId
 
   - name: applicationNumber
-    description: "Application number to record multiple records per student for the academic term"
+    description: Application number to record multiple records per student for the academic term
     type: string
     required: true
 
   - name: termCodeApplied
-    description: "Academic term in which student applied"
+    description: Academic term in which student applied
     type: string
     required: true
     reference: AcademicTerm->termCode
-    comments: "Example data: 201910"
 
   - name: recordActivityDate
-    description: "Date source record inserted or modified"
+    description: Date source record inserted or modified
     type: date
     required: true
 
   - name: applicationDate
-    description: "Date on which the application was officially on record"
+    description: Date on which the application was officially on record
     type: date
 
-  # ENUM values to be removed: Undergrad, Graduate, Occupational/Professional, Continuing Ed
   - name: studentLevel
-    description: "Student level of applicant"
+    description: Student level of applicant
     type: enum
     enumValues:
       - Undergraduate
@@ -49,14 +56,9 @@ fields:
       - Professional Practice Doctorate
       - Continuing Education
       - Other
-      - Undergrad
-      - Graduate
-      - Occupational/Professional
-      - Continuing Ed
 
-  # ENUM values to be removed: Returning, Undeclared
   - name: studentType
-    description: "Student type of applicant"
+    description: Student type of applicant
     type: enum
     enumValues:
       - High School
@@ -66,11 +68,9 @@ fields:
       - Re-admit
       - Visiting
       - Unknown
-      - Returning
-      - Undeclared
 
   - name: applicationStatus
-    description: "Status of application"
+    description: Status of application
     type: enum
     enumValues:
       - Complete
@@ -79,13 +79,13 @@ fields:
       - Decision Made
 
   - name: applicationStatusActionDate
-    description: "Date application status record inserted or modified, if different than recordActivityDate"
+    description: Date application status record inserted or modified, if different than recordActivityDate
     type: date
     required: true
     comments: "If not applicable, use dummy date of: to_date('9999-09-09', 'YYYY-MM-DD')."
 
   - name: admissionType
-    description: "Admission type of applicant"
+    description: Admission type of applicant
     type: enum
     enumValues:
       - New Applicant
@@ -94,7 +94,7 @@ fields:
       - Internal Transfer/Transition
 
   - name: admissionDecision
-    description: "Admission decision"
+    description: Institution or student admission decision
     type: enum
     enumValues:
       - Admitted
@@ -106,22 +106,21 @@ fields:
       - Application Withdrawn/Inactive
 
   - name: admissionDecisionActionDate
-    description: "Date admission decision record inserted or modified, if different than recordActivityDate"
+    description: Date admission decision record inserted or modified, if different than recordActivityDate
     type: date
     comments: "If not applicable, use dummy date of: to_date('9999-09-09', 'YYYY-MM-DD')."
 
   - name: termCodeAdmitted
-    description: "Academic term in which the student was admitted at current student level"
+    description: Academic term in which the student was admitted at current student level
     type: string
     reference: AcademicTerm->termCode
-    comments: "Example data: 201910"
 
   - name: secondarySchoolCompleteDate
-    description: "Date of secondary school completion"
+    description: Date of secondary school completion
     type: date
 
   - name: secondarySchoolType
-    description: "Type of secondary school attainment by applicant"
+    description: Type of secondary school attainment by applicant
     type: enum
     enumValues:
       - US High School Diploma
@@ -130,15 +129,15 @@ fields:
       - Non-US Secondary School Equivalency
 
   - name: secondarySchoolGPA
-    description: "The secondary school GPA reported by the applicant"
+    description: The secondary school GPA reported by the applicant
     type: number
 
   - name: secondarySchoolClassRankPct
-    description: "Class rank value shown as a percentage"
+    description: Class rank value shown as a percentage
     type: number
 
   - name: isIPEDSReportable
-    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 

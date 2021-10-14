@@ -1,7 +1,17 @@
-version: 1.1.0
+version: 1.2.1
 name: MilitaryBenefit
 dataModelEntityId: 21
 
+description: Student military aid
+detailedDescription: |-
+  Federal financial aid given to students from established military programs.
+
+  Data includes benefit type, benefit amount and transaction date.
+
+  Entity relationship: Person + Student + AcademicTerm = MilitaryBenefit
+
+#1.2.1 20210520 ckeller Added descriptions
+#1.2.0 PF-2146 Changed benefitType enum value to 'Department of Defense'
 #1.1.0 PF-1740 Added transactionDate field
 
 fields:
@@ -10,20 +20,19 @@ fields:
     type: string
     required: true
     reference: Student->personId
-  
+
   - name: termCode
     description: Academic term in which benefit awarded
     type: string
     required: true
     reference: AcademicTerm->termCode
-    comments: 'Example data: 201910'
 
   - name: benefitType
     description: Military benefit type
     type: enum
     enumValues:
       - GI Bill
-      - Dept of Defense
+      - Department of Defense
       - Other
     required: true
 
@@ -33,8 +42,7 @@ fields:
     required: true
 
   - name: transactionDate 
-    description: >- 
-      'Date the military benefit was paid or disbursed to the student'
+    description: Date the military benefit was paid or disbursed to the student
     type: date
     required: true
 
@@ -43,7 +51,7 @@ fields:
     type: number
 
   - name: isIPEDSReportable
-    description: 'If record is applicable for IPEDS reporting, value = 1, else 0'
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 

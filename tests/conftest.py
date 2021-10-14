@@ -15,6 +15,7 @@ def sql_context():
     spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
 
 
+
     for i in entity_list:
         parquetFile = spark.read.parquet(f'./tests/entities/{i}.parquet')
         if i in ['IPEDSClientConfig']:
@@ -26,7 +27,7 @@ def sql_context():
             parquetFile.createOrReplaceTempView(f'{i[0].lower() + i[1:]}')
 
 
-    sql_context = SQLContext(spark)
+    sql_context = SQLContext(sparkContext = spark.sparkContext, sparkSession = spark)
 
     yield sql_context
     spark.stop()

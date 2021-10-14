@@ -1,7 +1,17 @@
-version: 2.0.0
+version: 2.1.1
 name: Registration
 dataModelEntityId: 3
 
+description: Student registration per academic term
+detailedDescription: |-
+  Student enrollment in course sections, based on academic term.
+
+  Data includes registration dates, status and properties.
+
+  Entity relationship: Person + Student + AcademicTerm + CourseSection + Campus (optional) = Registration
+
+#2.1.1 20210512 jhanicak Added descriptions
+#2.1.0 PF-2089 Added enrollmentHoursOverride field and modified isCurrentOnSnapshot to reflect new fields names
 #2.0.0 PF-2007 Renamed crn>courseSectionNumber, crnLevel>courseSectionLevelOverride,campus>courseSectionCampusOverride
 #      Removed crnGradingMode. Added isAudited, Updated crnLevel(courseSectionLevelOverride) ENUM values.
 #1.1.2 Added private property to isCurrentOnSnapshot field
@@ -16,29 +26,28 @@ fields:
     reference: Student->personId
 
   - name: termCode
-    description: Academic term in which the registration record is valid
+    description: Academic term code
     type: string
     required: true
     reference: AcademicTerm->termCode
-    comments: 'Example data: 201910'
-    partition:
-      order: 2
+#    partition:
+#      order: 2
 
   - name: partOfTermCode
     description: Part of academic term
     type: string
     required: true
     reference: AcademicTerm->partOfTermCode
-    comments: If field is not applicable or value unknown, use default value of 1 for full term
+    comments: If field is not applicable or value unknown, use default value of 1 for full term.
 
   - name: courseSectionNumber
     description: Unique identifier for every course section
     type: string
     required: true
     reference: CourseSection->courseSectionNumber
-    comments: "Value is client-defined, but is typically the Course Reference Number (CRN), the Course Section Identifier or a 
-      combination of data fields that result in a unique value. The value for courseSectionNumber will be referenced as a one-to-one 
-      relationship in CourseSection, CourseSectionSchedule and InstructionalAssignment."
+    comments: Value is client-defined, but is typically the Course Reference Number (CRN), the Course Section Identifier or a 
+      combination of data fields that result in a unique value. 
+      The value for courseSectionNumber will be referenced as a one-to-one relationship in CourseSection, CourseSectionSchedule and InstructionalAssignment.
       
   - name: recordActivityDate
     description: Date source record inserted or modified
@@ -62,7 +71,7 @@ fields:
     comments: "If not applicable, use dummy date of: to_date('9999-09-09', 'YYYY-MM-DD')."
 
   - name: isEnrolled
-    description: "If student with associated registration status is considered enrolled in the course instance, value = 1, else 0"
+    description: If student with associated registration status is considered enrolled in the course instance, value = 1, else 0
     type: boolean
     required: true
 
@@ -82,15 +91,21 @@ fields:
       - Continuing Education 
       - Other
     required: true
-    comments: "If student is registered for a different level value than what is reflected by the CourseSection.courseSectionLevel 
-      value, this field should include the alternate level. If null, CourseSection.courseSectionLevel value will be used."
+    comments: If student is registered for a different level value than what is reflected by the CourseSection.courseSectionLevel 
+      value, this field should include the alternate level. If null, CourseSection.courseSectionLevel value will be used.
+
+  - name: enrollmentHoursOverride
+    description: Enrollment hours value (credit/clock/billable/equivalent) if it differs from the course section enrollment hours value
+    type: number
+    comments: If student is registered for a different enrollment hours value for the course section than CourseSection.enrollmentHours, field should include the 
+      alternate value. If null, CourseSection.enrollmentHours value will be used.
 
   - name: courseSectionCampusOverride
     description: Campus associated with the course registration if it differs from the course section campus value
     type: string
-    reference: Campus->courseSectionCampusOverride
-    comments: "If student is registered for a different campus value than CourseSectionSchedule.campus, field should include the 
-      alternate campus. If null, CourseSectionSchedule.campus value will be used."
+    reference: Campus->campus
+    comments: If student is registered for a different campus value than CourseSectionSchedule.campus, field should include the 
+      alternate campus. If null, CourseSectionSchedule.campus value will be used.
 
   - name: isIPEDSReportable
     description: If record is applicable for IPEDS reporting, value = 1, else 0
@@ -98,12 +113,13 @@ fields:
     required: true
 
   # deprecated fields
+  
   - name: crn
     description: Instance of a course based on academic term, part of term and course number
     type: string
-    reference: CourseSection->crn
-    depreciated: true
-
+    comments: Renamed to courseSectionNumber. Remap the crn field to the courseSectionNumber field.
+    deprecated: true
+    
   - name: crnLevel
     description: Level of course instance
     type: enum
@@ -113,14 +129,16 @@ fields:
       - Occupational/Professional
       - Continuing Ed
       - Other
-    depreciated: true
-
+    comments: Renamed to courseSectionLevelOverride. If the level value differs from the course section level value, 
+      remap the crnLevel field to the courseSectionLevelOverride field.
+    deprecated: true
+    
   - name: campus
     description: Campus associated with the course instance
     type: string
-    reference: Campus->campus
-    comments: If institution does not associate a campus with registration records, set value of field to null.
-    depreciated: true
+    comments: Renamed to courseSectionCampusOverride. If the campus value differs from the course section campus value, 
+      remap the campus field to the courseSectionCampusOverride field.
+    deprecated: true
 
   - name: crnGradingMode
     description: Method of grading for the course instance
@@ -130,8 +148,8 @@ fields:
       - Pass/Fail
       - Not Gradable
       - Standard
-    comments: "Default value if null: Standard"
-    depreciated: true
+    comments: Removed. New logic required in the SQL query to relocate the course audit property to the new field isAudited.
+    deprecated: true
 
   # meta-data fields
   - name: rowGuid
@@ -184,11 +202,17 @@ fields:
                 regENT.personId,
                 regENT.termCode,
                 regENT.partOfTermCode,
-                regENT.crn,
-                regENT.crnLevel
-              order by regENT.recordActivityDate desc
+                regENT.courseSectionNumber,
+                regENT.courseSectionLevelOverride
+              order by regENT.recordActivityDate desc,
+                       regENT.registrationStatusActionDate desc
             ) regRn
           FROM Registration regENT
-          WHERE regENT.recordActivityDate <= regENT.snapshotDate
+          WHERE ((to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') != CAST('9999-09-09' AS DATE)
+                            and to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') <= to_date(regENT.snapshotDate,'YYYY-MM-DD'))
+                        or (to_date(regENT.registrationStatusActionDate,'YYYY-MM-DD') = CAST('9999-09-09' AS DATE)
+                            and ((to_date(regENT.recordActivityDate,'YYYY-MM-DD') != CAST('9999-09-09' as DATE)
+                                    and to_date(regENT.recordActivityDate,'YYYY-MM-DD') <= to_date(regENT.snapshotDate,'YYYY-MM-DD'))
+                                or to_date(regENT.recordActivityDate,'YYYY-MM-DD') = CAST('9999-09-09' as DATE))))
         )
         WHERE regRn = 1

@@ -1,68 +1,78 @@
-version: 2.0.0
+version: 2.0.1
 name: InstructionalAssignment
 dataModelEntityId: 19
 
-# 2.0.0 PF-2023 Added new isPrimary field,
-#       re-named CRN to courseSectionNumber,
-#       removed section field
+description: Employees assigned to instruct course sections
+detailedDescription: |-
+  Instructional or other staff course assignments by academic term.
+
+  Data includes percent of responsibility and primary instructor indicator.
+
+  Entity relationship: Person + Employee + CourseSection + AcademicTerm = InstructionalAssignment
+
+#2.0.1 20210520 ckeller Added descriptions
+# 2.0.0 PF-2023 Added new isPrimary field, renamed CRN to courseSectionNumber, removed section field
 
 fields:
   - name: personId
-    description: "Unique identifier of employee"
+    description: Unique identifier of employee
     type: string
     required: true
     reference: Employee->PersonId
 
   - name: termCode
-    description: "Academic term in which instructional assignment is valid"
+    description: Academic term code
     type: string
     required: true
     reference: AcademicTerm->termCode
 
   - name: partOfTermCode
-    description: "Part of academic term"
+    description: Part of academic term
     type: string
     required: true
     reference: AcademicTerm->partOfTermCode
-    comments: "If field is not applicable or value unknown, use default value of 1 for full term"
+    comments: If field is not applicable or value unknown, use default value of 1 for full term.
 
   - name: courseSectionNumber
-    description: "Unique identifier for every course section"
+    description: Unique identifier for every course section
     type: string
     required: true
     reference: CourseSection->courseSectionNumber
     comments: "Value is client-defined, but is typically the Course Reference Number (CRN), the Course Section Identifier or a 
-      combination of data fields that result in a unique value. The value for courseSectionNumber will be referenced as a one-to-one 
-      relationship in CourseSection, CourseSectionSchedule and Registration."
+      combination of data fields that result in a unique value. \n
+      The value for courseSectionNumber will be referenced as a one-to-one relationship in CourseSection, CourseSectionSchedule and Registration."
 
   - name: recordActivityDate
-    description: "Date source record inserted or modified"
+    description: Date source record inserted or modified
     type: date
     required: true
 
   - name: instructorPercent
-    description: "Instructors percentage of responsibility to the assignment"
+    description: Instructors percentage of responsibility to the assignment
     type: number
 
   - name: isPrimary
-    description: "If instructor is the primary instructor of record, value = 1, else 0"
+    description: If instructor is the primary instructor of record, value = 1, else 0
     type: boolean
     required: true
 
   - name: isIPEDSReportable
-    description: "If record is applicable for IPEDS reporting, value = 1, else 0"
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
     type: boolean
     required: true
 
   # deprecated fields
+  
   - name: crn
-    description: "Course instance assigned to instructor"
+    description: Course instance assigned to instructor
     type: string
+    comments: Renamed to courseSectionNumber. Remap the crn field to the courseSectionNumber field.
     deprecated: true
-
+  
   - name: section
-    description: "Course sequence number to uniquely identify a course instance within a term"
+    description: Course sequence number to uniquely identify a course instance within a term
     type: string
+    comments: Removed. The section field is not required, since courseSectionNumber uniquely identifies the course section.
     deprecated: true
 
   # meta-data fields
