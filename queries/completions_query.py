@@ -71,16 +71,17 @@ def run_completions_query(spark, survey_type, year):
                         
                         # ********** Degree Program
                         if completions_person.rdd.isEmpty() == False:
-                            completions_degree_program = degree_program_cohort_mcr(spark, cohort_df_in = completions_person)
-                            completions_degree = degree_cohort_mcr(spark, cohort_df_in = completions_degree_person)
-                            completions_fieldOfStudy = field_of_study_cohort_mcr(spark, cohort_df_in = completions_degree)
+                            completions_degree_program = degree_program_cohort_mcr(spark, cohort_df_in = completions_person, academic_term_in = all_academic_terms, data_type_in = 'all')
                             
                 # ***** Done with Completers
                 
                 # ***** Get all Programs
-                    # Create degree_program_mcr, degree_mcr, field_of_study_mcr
-                  
-                # ***** Join to get Completions
+                    # Create degree_program_mcr
+                    #all_degree_programs = degree_program_mcr()
+                    
+                # ***** Join completions_degree_program with all_degree_programs
+                
+                # ********** Survey Formatting
                 
     return completions_degree_program
     
