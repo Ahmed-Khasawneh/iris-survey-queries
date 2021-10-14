@@ -141,18 +141,6 @@ test = run_graduation_rates_query(spark, survey_type, year)
 test.show()
 #test.count()
 
-#award_snapshot_100, earliest
-#|ENTSnapshotDate|ENTSnapshotDateTimestamp|                tags|  end_date| dummyDate|snapShotMaxDummyDate|snapShotMinDummyDate|ENTRowNum|
-#|     2013-09-13|     2013-09-13 17:00:00|[August End, Acad...|2012-08-30|9999-09-09|          9999-09-09|          1900-09-09|        1|
-
-#award_snapshot_150, middle
-#|ENTSnapshotDate|ENTSnapshotDateTimestamp|                tags|  end_date| dummyDate|snapShotMaxDummyDate|snapShotMinDummyDate|ENTRowNum|
-#|     2013-09-13|     2013-09-13 17:00:00|[August End, Acad...|2013-08-30|9999-09-09|          9999-09-09|          1900-09-09|        1|
-
-#award_snapshot_200, latest
-#|ENTSnapshotDate|ENTSnapshotDateTimestamp|                tags|  end_date| dummyDate|snapShotMaxDummyDate|snapShotMinDummyDate|ENTRowNum|
-#|     2013-09-13|     2013-09-13 17:00:00|[August End, Acad...|2014-08-30|9999-09-09|          9999-09-09|          1900-09-09|        1|
-
 #if test is None: # and isinstance(test,DataFrame): #exists(test): #test.isEmpty:
 #    test = test
 #else:
