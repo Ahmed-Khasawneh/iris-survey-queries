@@ -85,10 +85,10 @@ def run_student_financial_aid_query(spark, survey_type, year):
 
                             if cohort_all.rdd.isEmpty() == False:
                                 cohort_fall_term = (cohort_all
-                                    .filter(col('surveySection').isin('COHORT','PRIOR YEAR 1 COHORT','PRIOR YEAR 2 COHORT'))
                                 ####****TEST uncomment next line for test data '1415'
                                     #.filter(col('surveySection').isin('COHORT','FALL','PRIOR YEAR 1 COHORT','PRIOR YEAR 2 COHORT','PRIOR YEAR 1 FALL','PRIOR YEAR 2 FALL'))
-                                    .filter(col('studentLevelUGGRDPP') == 'UG')
+                                    .filter(col('surveySection').isin('COHORT','PRIOR YEAR 1 COHORT','PRIOR YEAR 2 COHORT'))
+                                    .filter(col('studentLevelUGGRDPP') == 'UG') #change this to degreeLevelUGGRDPP?
                                     .select(
                                         col('yearType').alias('cohortYearType'),
                                         col('surveyId'),
@@ -111,7 +111,7 @@ def run_student_financial_aid_query(spark, survey_type, year):
                                     .withColumn('isGroup2Ind', when((col('timeStatus') == 'Full Time') & (col('isNonDegreeSeeking') == False) & (col('studentType') == 'First Time'), lit(1)).otherwise(lit(0))))
 
                                 # ********** Cohort Financial Aid                              
-                                cohort_financial_aid = (query_helpers.financial_aid_mcr(spark, default_values_in = default_survey_values, cohort_df_in = cohort_fall_term, ipeds_client_config_in = ipeds_client_config))
+                                cohort_financial_aid = (query_helpers.financial_aid_cohort_mcr(spark, default_values_in = default_survey_values, cohort_df_in = cohort_fall_term, ipeds_client_config_in = ipeds_client_config))
 
                                 # ********** Survey Formatting
                                 # Parts A - F
