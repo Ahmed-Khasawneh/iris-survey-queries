@@ -1059,7 +1059,7 @@ def course_type_counts(spark, survey_info_in, default_values_in, ipeds_client_co
             return registration_in 
         else: return reporting_periods_in
     
-def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, course_type_counts_in = None):                   ipeds_reporting_period_in=None, reporting_period_in=None):
+def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, course_type_counts_in = None):
 
     if ipeds_client_config_in is None:
         ipeds_client_config_in = ipeds_client_config_mcr(spark = spark, survey_info_in = survey_info_in)
