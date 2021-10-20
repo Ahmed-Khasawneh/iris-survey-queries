@@ -1,6 +1,5 @@
-from pyspark import SparkContext
-from pyspark.sql import SparkSession
-from pyspark.sql import SQLContext
+import boto3
+from common import s3_utility
 from .Mock_data import create_mock_data
 import os
 import shutil
@@ -8,9 +7,7 @@ import pytest
 import yaml
 import csv
 
-import pandas as pd
 
-# entity_list =['IPEDSReportingPeriod']
 entity_list =["AcademicTerm","AcademicTrack","Admission","Award","Campus","ChartOfAccounts","CohortExclusion","Course","CourseSection","CourseSectionSchedule","Degree","DegreeProgram","Employee","EmployeeAssignment","EmployeePosition","Faculty","FacultyAppointment","FieldOfStudy","FinancialAid","FiscalYear","GeneralLedgerReporting","InstitCharDoctorate","InstitCharUndergradGrad","InstructionalAssignment","InterlibraryLoanStatistic","IPEDSClientConfig","IPEDSReportingPeriod","LibraryBranch","LibraryCirculationStatistic","LibraryCollectionStatistic","LibraryExpenses","LibraryInventory","LibraryItemTransaction","MilitaryBenefit","OperatingLedgerReporting","Person","Registration","Student","TestScore","Transfer"]
 var_surveyId = 'E1D'  # survey_id_map[args['survey_type']]
 var_surveyType = '12ME'
@@ -58,10 +55,6 @@ def test_check_model_verion():
 
     assert actual_entity_versions == entity_list_versions_expected
 
-
-
-
-
 def test_mock_data_creation():
     for i in entity_list:
 
@@ -85,8 +78,40 @@ def test_mock_data_creation():
             entity_data_override_type='R',
             # entity_metadata_override={}
         )
+
         mock_data.write.format('parquet').option("header", "true").save(f'./tests/entities/{i}.parquet')
 
 
+#TODO: Get the s3 upload working
+def skip_upload(sql_context):
+    role_info = {
+        'RoleArn': 'arn:aws:iam::102184641170:role/developer',
+        'RoleSessionName': 'test_session'
+    }
+
+    sts = boto3.client('sts')
+    credentials = sts.assume_role(**role_info)
+
+    session = boto3.session.Session(
+        aws_access_key_id=credentials['Credentials']['AccessKeyId'],
+        aws_secret_access_key=credentials['Credentials']['SecretAccessKey'],
+        aws_session_token=credentials['Credentials']['SessionToken']
+    )
+    print(session)
+    surveySectionValues='COHORT'
+    for i in entity_list:
+        mock_data = create_mock_data(
+            doris_entity_name=i,
+            record_count=count_num,
+            entity_data_override={'surveyCollectionYear': var_surveyYear, 'surveyId': var_surveyId,
+                                  'surveySection': surveySectionValues},
+            entity_data_override_type='R',
+            # entity_metadata_override={}
+        )
+
+        s3_utility.write_dataframe_as_parquet_to_s3(mock_data, 's3a://testing-bucket-qa/iris-report-query-mock-data/', mode='overwrite',file_format="parquet")
+        # mock_data.write.parquet("s3a://testing-bucket-qa/iris-report-query-mock-data/")
+        # s3 = boto3.client('s3')
+        # s3.upload_file(f'./tests/entities/{i}.parquet', 'testing-bucket-qa', f'/iris-report-query-mock-data/{i}.parquet')
 
 
