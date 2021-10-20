@@ -16,9 +16,9 @@ from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
-# sparkContext = SparkContext.getOrCreate()
-# sqlContext = SQLContext(sparkContext)
-# glueContext = GlueContext(sparkContext)
+sparkContext = SparkContext.getOrCreate()
+sqlContext = SQLContext(sparkContext)
+glueContext = GlueContext(sparkContext)
 
 ####****TEST uncomment survey_type and year for testing; these two values are set in run_query.py at runtime
     #survey_type = 'TWELVE_MONTH_ENROLLMENT_1'

@@ -16,3 +16,4 @@ iris_report_queries.egg-info
 target
 *.parquet
 .idea
+.ipynb_checkpoints
