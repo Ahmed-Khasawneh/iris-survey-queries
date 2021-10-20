@@ -659,7 +659,7 @@ def military_benefit_mcr(spark, default_values_in, benefit_type_in):
 
     return military_benefit_level
     
-def course_type_counts(spark, survey_info_in, default_values_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, ipeds_reporting_period_in = None):
+def course_type_counts(spark, survey_info_in, default_values_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None):
 
     if not ipeds_client_config_in:
         ipeds_client_config_in = ipeds_client_config_mcr(spark = spark, survey_info_in = survey_info_in)
@@ -1059,8 +1059,7 @@ def course_type_counts(spark, survey_info_in, default_values_in, ipeds_client_co
             return registration_in 
         else: return reporting_periods_in
     
-def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, course_type_counts_in = None,
-                   ipeds_reporting_period_in=None, reporting_period_in=None):
+def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config_in = None, academic_term_in = None, reporting_periods_in = None, course_type_counts_in = None):                   ipeds_reporting_period_in=None, reporting_period_in=None):
 
     if ipeds_client_config_in is None:
         ipeds_client_config_in = ipeds_client_config_mcr(spark = spark, survey_info_in = survey_info_in)
@@ -1073,7 +1072,7 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
             if not ipeds_reporting_period_in:
                 ipeds_reporting_period_in = ipeds_reporting_period_mcr(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in,)
             reporting_periods_in = reporting_periods(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in)
-        course_type_counts_in = course_type_counts(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_client_config_in = ipeds_client_config_in, academic_term_in = academic_term_in, reporting_periods_in = reporting_periods_in)
+        course_type_counts_in = course_type_counts(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_client_config_in = ipeds_client_config_in, academic_term_in = academic_term_in, reporting_periods_in = reporting_period_in)
         
     student_in = spark.sql("select * from student")     
         
