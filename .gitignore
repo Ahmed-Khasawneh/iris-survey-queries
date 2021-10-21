@@ -11,3 +11,9 @@ spark-warehouse
 build
 dist
 iris_report_queries.egg-info
+.env
+**/__pycache__
+target
+*.parquet
+.idea
+.ipynb_checkpoints

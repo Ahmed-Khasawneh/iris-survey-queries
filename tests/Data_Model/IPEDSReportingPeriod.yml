@@ -1,0 +1,136 @@
+version: 2.0.2
+name: IPEDSReportingPeriod
+dataModelEntityId: 37
+
+description: Reporting time periods for IRIS
+detailedDescription: |-
+  Academic term values that correspond with the IRIS survey reporting periods.
+
+  Data includes survey identifying information and  designated academic terms and part of terms for IPEDS.
+
+#2.0.2 20210512 jhanicak Added descriptions
+#2.0.1 PF-2130 Updated surveySection values
+#2.0.0 PF-2012 Removed fields no longer needed, updated valid values in surveySection field
+
+fields:
+  - name: surveyCollectionYear
+    description: IPEDS collection survey year
+    type: string
+    required: true
+    comments: Valid format YYyy (1920 for 2019-2020)
+
+  - name: surveyId
+    description: IPEDS survey version
+    type: string
+    required: true
+    comments: Value found on IPEDS import spec in the SURVSECT field.
+
+  - name: surveyName
+    description: IPEDS survey version name
+    type: string
+
+  - name: surveySection
+    description: The section of the survey for the termCode and partOfTermCode in the record
+    type: string
+    comments: "Valid values per surveyId: \n
+      COM: Cohort\n
+      E1D, E12, E1E, E1F: Cohort\n
+      SFA: Cohort, Prior Summer, Prior Year 1 Cohort, Prior Year 1 Prior Summer, Prior Year 2 Cohort, Prior Year 2 Prior Summer\n
+      GR1, GR2, GR3: Cohort, Prior Summer\n
+      G21, G22: Cohort, Prior Summer\n
+      ADM: Cohort, Prior Summer\n
+      OM1: Cohort\n
+      EF1, EF2, EF4, EF3: Cohort, Prior Summer, Prior Year 1 Cohort, Prior Year 1 Prior Summer\n
+      F1B, F2B, F3A, F1C, F2C, F3B: Fiscal Year\n
+      AL1: Fiscal Year"
+
+  - name: termCode
+    description: Academic term code to use for specific survey and/or survey section reporting
+    type: string
+    reference: AcademicTerm->termCode
+
+  - name: partOfTermCode
+    description: Part of academic term code
+    type: string
+    reference: AcademicTerm->partOfTermCode
+    comments: If field is not applicable or value unknown, use default value of 1 for full term.
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+ 
+# deprecated fields
+  - name: reportingDateStart
+    description: The date on which the reporting period starts, if applicable
+    type: date
+    comments: Removed. Information located in IPEDS Survey Material.
+    deprecated: true
+
+  - name: reportingDateEnd
+    description: The date on which the reporting period ends, if applicable
+    type: date
+    comments: Removed. Information located in IPEDS Survey Material.
+    deprecated: true
+
+  - name: reportingTerm
+    description: The type of academic term for the reporting period, if applicable
+    type: string
+    comments: Removed. Data not applicable.
+    deprecated: true
+
+  - name: reportingTermAcademicYear
+    description: The academic year for the type of academic term, if applicable
+    type: string
+    comments: Removed. Data not applicable.
+    deprecated: true
+
+  - name: reportingAcademicYearStart
+    description: The starting academic year for the reporting period, if applicable
+    type: string
+    comments: Removed. Data not applicable.
+    deprecated: true
+
+  - name: reportingAcademicYearEnd
+    description: The ending academic year for the reporting period, if applicable
+    type: string
+    comments: Removed. Data not applicable.
+    deprecated: true
+
+  - name: asOfDate
+    description: The as-of date for the reporting period, if applicable
+    type: date
+    comments: Removed. Information located in IPEDS Survey Material.
+    deprecated: true
+
+ # meta-data fields    
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

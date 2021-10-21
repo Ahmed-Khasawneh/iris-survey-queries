@@ -1,0 +1,90 @@
+version: 1.0.1
+name: LibraryItemTransaction
+dataModelEntityId: 32
+
+description: Transactional catalog of IRIS Academic Libraries inventory circulation
+detailedDescription: |-
+  Itemized archive of library branch inventory circulation transactions within a fiscal year. 
+
+  Data includes individual title checkout details for an associated branch. 
+
+  Entity relationship: LibraryBranch + FiscalYear  + (itemized branch circulation data) = LibraryItemTransaction
+
+#1.0.1 20210520 ckeller Added descriptions
+
+fields:
+  - name: branchId
+    description: Academic library branch identifier
+    type: string
+    required: true
+    reference: LibraryBranch->branchId
+    
+  - name: fiscalYear2Char
+    description: Fiscal year in YY format
+    type: string
+    required: true
+    reference: FiscalYear->fiscalYear2Char
+    comments: 'Example data: 19 (2019)'
+    
+  - name: itemId
+    description: Library inventory item identifier
+    type: string
+    required: true
+    reference: LibraryInventory->itemId
+    
+  - name: checkoutPersonId
+    description: The person ID of the individual who conducted the transaction
+    type: string
+    required: true
+    reference: Person->personId
+    
+  - name: checkoutDate
+    description: The check-out date of the material item
+    type: date
+    required: true
+    
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+    
+  - name: returnDate
+    description: The return or check-in date of the material item
+    type: date
+    
+  - name: isIPEDSReportable
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
+    type: boolean
+    required: true
+    
+# meta-data fields    
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

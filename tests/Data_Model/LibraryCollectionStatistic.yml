@@ -1,0 +1,118 @@
+version: 1.0.1
+name: LibraryCollectionStatistic
+dataModelEntityId: 29
+
+description: Compilation of IRIS Academic Libraries inventory figures'
+detailedDescription: |-
+  Library branch collection volume, in terms of titles, as of the end of a given fiscal year. 
+
+  Data reflects collection quantity according to the physical or digital medium of the titles. 
+
+  Entity relationship: LibraryBranch + FiscalYear  + (branch inventory data) = LibraryCollectionStatistic
+
+#1.0.1 ckeller Added descriptions
+
+fields:
+  - name: branchId
+    description: Academic library branch identifier
+    type: string
+    required: true
+    reference: LibraryBranch->branchId
+    
+  - name: fiscalYear2Char
+    description: Fiscal year in YY format
+    type: string
+    required: true
+    reference: FiscalYear->fiscalYear2Char
+    comments: 'Example data: 19 (2019)'
+    
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+    
+  - name: bookCountPhysical
+    description: Total physical book count
+    type: number
+    comments: Report physical book titles owned or leased by the library including
+      government documents if individual titles are cataloged and/or searchable
+      through the library catalog or discovery system
+      
+  - name: bookCountDigital
+    description: Total digital book count
+    type: number
+    comments: Report e-book titles owned or leased by the library if individual titles
+      are cataloged and/or searchable through the library catalog or discovery
+      system
+      
+  - name: databaseCountDigital
+    description: Total count of digital/electronic databases
+    type: number
+    comments: Report the total number of licensed digital/electronic databases in your
+      collection if there is bibliographic or discovery access at the database
+      level
+      
+  - name: mediaCountPhysical
+    description: Total count of physical media
+    type: number
+    comments: Report the number of titles of media materials. Include microforms,
+      audiovisual materials, cartographic, and graphic materials and
+      three-dimensional artifacts realia
+      
+  - name: mediaCountDigital
+    description: Total count of digital/electronic media
+    type: number
+    comments: Report titles of e-media materials, such as titles from Films on Demand or
+      Alexander Street Press, digital graphic materials and cartographic
+      materials and e-media titles in aggregated sets in which the library
+      selected the aggregator, even if not listed by each individual title
+      
+  - name: serialCountPhysical
+    description: Total count of physical serials/periodicals
+    type: number
+    comments: Report the number of periodicals, serial titles on microform, newspapers,
+      and annuals (reports, yearbooks, etc.); the journals, memoirs,
+      proceedings, transactions, etc. of societies; and numbered monographic
+      series
+      
+  - name: serialCountDigital
+    description: Total count of digital serials/periodicals
+    type: number
+    comments: Report the number of e-serial titles that are accessible through the
+      librarys catalog or discovery system
+      
+  - name: isIPEDSReportable
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

@@ -1,0 +1,211 @@
+version: 2.0.1
+name: CourseSectionSchedule
+dataModelEntityId: 39
+
+description: Course section scheduling details
+detailedDescription: |-
+  Scheduling details for each instance of a course offered in an academic term.
+
+  Data includes location properties, days/times and instruction type.
+
+  Entity relationship: CourseSection + AcademicTerm + Campus = CourseSection
+
+#2.0.1 20210512 jhanicak Added descriptions
+#2.0.0 PF-2015 Renamed crn to courseSectionNumber and meetingType to instructionType; added new fields
+#      campus, locationType, distanceEducationType, onlineInstructionType, maxSeats; removed field section
+#1.0.2 Removed references to CourseSection.Section
+#1.0.1 PF-1727 Updated descriptions and added comment fields
+
+fields:
+  - name: courseSectionNumber
+    description: Unique identifier for every course section per termCode/partOfTermCode
+    type: string
+    required: true
+    comments:
+      "Value is client-defined, but is typically the Course Reference Number (CRN), the
+      Course Section Identifier or a combination of data fields that result in a unique value.\n
+      The value for courseSectionNumber will be referenced as a one-to-one relationship in
+      CourseSection, Registration and InstructionalAssignment."
+    reference: CourseSection->courseSectionNumber
+
+  - name: termCode
+    description: Academic term code
+    type: string
+    required: true
+    reference: AcademicTerm->termCode
+
+  - name: partOfTermCode
+    description: Part of academic term
+    type: string
+    required: true
+    reference: AcademicTerm->partOfTermCode
+    comments: If field is not applicable or value unknown, use default value of 1 for full term.
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: campus
+    description: Campus on which the course section meets
+    type: string
+    reference: Campus->campus
+
+  - name: building
+    description: Building in which the course section meets
+    type: string
+
+  - name: room
+    description: Room in which the course section meets
+    type: string
+
+  - name: startDate
+    description: Date on which course section starts for academic term/part of term
+    type: date
+
+  - name: endDate
+    description: Date on which course section ends for academic term/part of term
+    type: date
+
+  - name: daysOfWeek
+    description: Days of the week on which the course section meets for the startTime/endTime
+    type: string
+    comments:
+      "Concatenate days of week in the following order and using the values: \n
+      Sunday = U, Monday = M, Tuesday = T, Wednesday = W, Thursday = R, Friday =
+      F, Saturday = S.\n
+      Multiple records could exist for courseSectionNumber/termCode/partOfTermCode
+      if section meets on various days at various times."
+
+  - name: startTime
+    description: Start time for the course section for the daysOfWeek
+    type: date
+
+  - name: endTime
+    description: End time for the course section for the daysOfWeek
+    type: date
+
+  - name: instructionType
+    description: Instructional method type of course section
+    type: enum
+    enumValues:
+      - Lecture
+      - Lab
+      - Lecture/Lab Combination
+      - Activity
+      - Cooperative Learning
+      - Independent Study
+      - Internship
+      - Practicum
+      - Residency
+      - Seminar
+      - Studio
+      - Thesis/Capstone
+      - Tutorial
+      - Other
+
+  - name: locationType
+    description: Location type of course section
+    type: enum
+    enumValues:
+      - On-campus
+      - Online or Hybrid
+      - Other Institution
+      - Clinical Facility
+      - High School
+      - Correctional Facility
+      - Foreign Country
+      - Other Off-campus Location
+      - Other
+
+  - name: distanceEducationType
+    description: Distance education type of the course section
+    type: enum
+    enumValues:
+      - Distance education with no onsite component
+      - Distance education with mandatory onsite component
+      - Distance education with non-mandatory onsite component
+      - Not distance education
+
+  - name: onlineInstructionType
+    description: Type of online instruction of course section
+    type: enum
+    enumValues:
+      - Syncronous
+      - Asyncronous
+      - Combined Sync/Async
+      - Other Online
+      - Hybrid
+      - Not Online
+
+  - name: maxSeats
+    description: Maximum number of seats available for course section
+    type: number
+
+  - name: isIPEDSReportable
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
+    type: boolean
+    required: true
+
+#deprecated fields
+ 
+  - name: crn
+    description:
+      Unique identifier for an instance of a course based on academic term,
+      part of term and course number
+    type: string
+    comments: Renamed to courseSectionNumber. Remap the crn field to the courseSectionNumber field.
+    deprecated: true
+
+  - name: section
+    description:
+      Course sequence number to uniquely identify a course instance within a term/part of term
+    type: string
+    comments: Removed. The section field is not required, since courseSectionNumber uniquely identifies the course section.
+    deprecated: true
+    
+  - name: meetingType
+    description: Meeting/location type of course
+    type: enum
+    enumValues:
+      - Online/Distance Learning
+      - Classroom/On Campus
+      - Laboratory
+      - Lecture/Lab Combination
+      - Off Campus
+      - Practicum
+      - Other
+    comments: Removed. New logic required in the SQL query to relocate values to the new fields instructionType, locationType, distanceEducationType and onlineInstructionType.
+    deprecated: true
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

@@ -1,0 +1,88 @@
+version: 1.0.1
+name: ChartOfAccounts
+dataModelEntityId: 23
+
+description: Index of financial accounts
+detailedDescription: |-
+  Financial accounts used to record and organize financial transactions. 
+
+  Data includes account status, description, applicable dates and parent/child relationship.
+
+#1.0.1 20210512 jhanicak Added descriptions
+
+fields:
+  - name: chartOfAccountsId
+    description: Unique identifier of chart of accounts
+    type: string
+    required: true
+    
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+    
+  - name: chartOfAccountsTitle
+    description: Chart of accounts description
+    type: string
+    
+  - name: statusCode
+    description: Status of chart of accounts code
+    type: enum
+    enumValues:
+      - Active
+      - Inactive
+      
+  - name: startDate
+    description: Start date of chart of accounts code
+    type: date
+    
+  - name: endDate
+    description: End date of chart of accounts code
+    type: date
+    
+  - name: isParent
+    description: If chart of accounts code is associated with a parent/main institution, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: isChild
+    description: If chart of accounts code is associated with a child institution, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: isIPEDSReportable
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
+    type: boolean
+    required: true
+    
+#meta-data fields    
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

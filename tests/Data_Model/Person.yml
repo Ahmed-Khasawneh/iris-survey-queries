@@ -1,0 +1,212 @@
+version: 1.1.1
+name: Person
+dataModelEntityId: 1
+
+description: Index of all persons, including students and employees
+detailedDescription: |-
+  Student and employee identity information and demographics.
+
+  Data includes name, address, birthdate, ethnicity, gender, social security number and additional personal properties.
+
+# 1.1.1 20210520 ckeller Added descriptions
+# 1.1.0 PF-1748 - Added visaType enum field
+
+fields:
+  - name: personId
+    description: Unique identifier of a person
+    type: string
+    required: true
+    
+  - name: lastName
+    description: Last name of person
+    type: string
+    required: true
+    
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+    
+  - name: firstName
+    description: First name of person
+    type: string
+    
+  - name: middleName
+    description: Middle name or initial of person
+    type: string
+    
+  - name: suffix
+    description: "Suffix of a person's name, for example: Jr., Sr., etc."
+    type: string
+    
+  - name: birthDate
+    description: Date of birth
+    type: date
+    
+  - name: deathDate
+    description: Date of death. If still living, value is null.
+    type: date
+    
+  - name: ethnicity
+    description: Ethnicity/race of person
+    type: enum
+    enumValues:
+      - Hispanic or Latino
+      - American Indian or Alaskan Native
+      - Asian
+      - Black or African American
+      - Native Hawaiian or Other Pacific Islander
+      - Caucasian
+      - Unknown
+      
+  - name: isHispanic
+    description: If person''s race is Hispanic, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: isMultipleRaces
+    description: 'If person''s origin is of multiple races, value = 1, else 0'
+    type: boolean
+    required: true
+    
+  - name: isInUSOnVisa
+    description: If currently in US on a visa program and official resident of a foreign
+      country, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: visaType
+    description: >-
+      If isInUSOnVisa field is true, then type of visa, else null
+    type: enum
+    enumValues:
+      - Student Non-resident
+      - Employee Non-resident
+      - Employee Resident
+      - Other Non-resident
+      - Other Resident
+    
+  - name: visaStartDate
+    description: If isInUSOnVisa field is true, date when person''s visa starts, else null
+    type: date
+    
+  - name: visaEndDate
+    description: 'If isInUSOnVisa field is true, date when person''s visa ends, else null'
+    type: date
+    
+  - name: isUSCitizen
+    description: If a United States citizen, value = 1, else 0
+    type: boolean
+    required: true
+  - name: gender
+    description: Gender of person
+    type: enum
+    enumValues:
+      - Male
+      - Female
+      - Non-Binary
+      - Unknown
+      
+  - name: address1
+    description: Permanent address, street line 1
+    type: string
+    
+  - name: address2
+    description: Permanent address, street line 2
+    type: string
+    
+  - name: address3
+    description: Permanent address, street line 3
+    type: string
+    
+  - name: city
+    description: Permanent address, city
+    type: string
+    
+  - name: state
+    description: Permanent address, state
+    type: string
+    
+  - name: zipcode
+    description: Permanent address, zipcode
+    type: string
+    
+  - name: nation
+    description: Permanent address, nation
+    type: string
+    
+  - name: phone
+    description: Permanent phone number
+    type: string
+    
+  - name: email
+    description: Permanent email address
+    type: string
+    
+  - name: lastFourSsn
+    description: Last four digits of Social Security Number
+    type: string
+    
+  - name: maritalStatus
+    description: Marital status
+    type: enum
+    enumValues:
+      - Single
+      - Married
+      - Divorced
+      - Widowed
+      - Separated
+      - Domestic Partnership
+      - Unknown
+      
+  - name: isMilitary
+    description: If person is currently serving in the military, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: isVeteran
+    description: If person has previously served, but not currently serving in the
+      military, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: isConfidential
+    description: If personal data should remain confidential, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: isIPEDSReportable
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
+    type: boolean
+    required: true
+    
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

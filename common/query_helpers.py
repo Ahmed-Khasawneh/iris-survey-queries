@@ -19,7 +19,7 @@ def ipeds_client_config_mcr(spark, survey_info_in):
 
     survey_year = survey_info_in['survey_year_doris']
     survey_id = survey_info_in['survey_id']
-    survey_type = survey_info_in['survey_type']   
+    survey_type = survey_info_in['survey_type']
             
     ipeds_client_config_in = (spark.sql('select * from ipedsClientConfig')
         .filter(col('surveyCollectionYear') == survey_year))
@@ -249,8 +249,8 @@ def reporting_periods(spark, survey_info_in, default_values_in, ipeds_reporting_
         ipeds_reporting_period_in = ipeds_reporting_period_mcr(spark, survey_info_in, default_values_in)
 
     if not academic_term_in:
-       academic_term_in = academic_term_mcr(spark) 
-       
+       academic_term_in = academic_term_mcr(spark)
+
     if (academic_term_in.rdd.isEmpty() == False) & (ipeds_reporting_period_in.rdd.isEmpty() == False):
         ipeds_reporting_period_2 = (academic_term_in
             .join(
@@ -1454,7 +1454,7 @@ def student_cohort(spark, survey_info_in, default_values_in, ipeds_client_config
             if not ipeds_reporting_period_in:
                 ipeds_reporting_period_in = ipeds_reporting_period_mcr(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in,)
             reporting_periods_in = reporting_periods(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_reporting_period_in = ipeds_reporting_period_in, academic_term_in = academic_term_in)
-        course_type_counts_in = course_type_counts(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_client_config_in = ipeds_client_config_in, academic_term_in = academic_term_in, reporting_periods_in = reporting_period_in)  
+        course_type_counts_in = course_type_counts(spark = spark, survey_info_in = survey_info_in, default_values_in = default_values_in, ipeds_client_config_in = ipeds_client_config_in, academic_term_in = academic_term_in, reporting_periods_in = reporting_period_in)
         
     student_in = spark.sql("select * from student")     
         

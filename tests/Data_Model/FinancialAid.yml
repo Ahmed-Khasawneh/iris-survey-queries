@@ -1,0 +1,171 @@
+version: 1.2.1
+name: FinancialAid
+dataModelEntityId: 10
+
+description: Student financial aid
+detailedDescription: |-
+  Financial aid and awards given to students by various sources, based on financial aid year.
+
+  Data includes fund codes/types/sources, award status, offered/accepted/paid amounts, family income and living arrangement.
+
+  Entity relationship: Person + Student + AcademicTerm = FinancialAid
+
+#1.2.1 20210520 ckeller Added descriptions
+#1.1.0 PF-1749 Added new enum values to fundType field, formatted to match other YAMLs
+#1.2.0 PF-1907 Added new field awardStatusActionDate 
+
+fields:
+  - name: personId
+    description: Unique identifier of student
+    type: string
+    required: true
+    reference: Student->personId
+
+  - name: financialAidYear
+    description: Financial aid year associated with the academic term
+    type: number
+    required: true
+    reference: AcademicTerm->financialAidYear
+    comments: "Example data: 1819 (for 2018-2019)"
+
+  - name: fundType
+    description: Type of fund associated with financial aid award
+    type: enum
+    enumValues:
+      - Loan
+      - Grant
+      - Scholarship
+      - Work Study
+      - Employer Aid/Tuition Reimbursement
+      - Tuition Waiver
+      - Tuition Discount
+      - Fellowship
+      - Assistantship
+      - Other
+    required: true
+
+  - name: fundCode
+    description: Fund code associated with financial aid award
+    type: string
+    required: true
+
+  - name: fundSource
+    description: Source who offered and funded the financial aid award
+    type: enum
+    enumValues:
+      - Federal
+      - State
+      - Local
+      - Institution
+      - Other
+    required: true
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+
+  - name: termCode
+    description: Academic term in which financial aid awarded
+    type: string
+    reference: AcademicTerm->termCode
+
+  - name: awardStatus
+    description: Status of financial aid award
+    type: enum
+    enumValues:
+      - Source Offered
+      - Source Denied
+      - Student Accepted
+      - Student Declined
+      - Cancelled
+      - Pending
+
+  - name: awardStatusActionDate
+    description: Effective date that awardStatus field source record was inserted or modified
+    type: date
+    required: true
+
+  - name: isPellGrant
+    description: If the financial aid award is considered a Pell Grant, value = 1, else 0
+    type: boolean
+    required: true
+
+  - name: isTitleIV
+    description: If the financial aid award is considered Title IV federal student aid, value = 1, else 0
+    type: boolean
+    required: true
+
+  - name: isSubsidizedDirectLoan
+    description: If the financial aid award is a Direct Subsidized Loan, value = 1, else 0
+    type: boolean
+    required: true
+
+  - name: acceptedAmount
+    description: Accepted amount of financial aid award for academic term
+    type: number
+
+  - name: offeredAmount
+    description: Offered amount of financial aid award for academic term
+    type: number
+
+  - name: paidAmount
+    description: Paid amount of financial aid award for academic term
+    type: number
+
+  - name: IPEDSFinancialAidAmount
+    description: Financial aid award amount reported to IPEDS SFA survey per IPEDS requirements
+    type: number
+
+  - name: IPEDSOutcomeMeasuresAmount
+    description: Financial aid award amount reported to IPEDS OM survey per IPEDS requirements
+    type: number
+
+  - name: familyIncome
+    description: Annual family income of student
+    type: number
+
+  - name: livingArrangement
+    description: Student living arrangement
+    type: enum
+    enumValues:
+      - On Campus
+      - Off Campus
+      - Off Campus with Family
+
+  - name: isIPEDSReportable
+    description: If record is applicable for IPEDS reporting, value = 1, else 0
+    type: boolean
+    required: true
+
+  # meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

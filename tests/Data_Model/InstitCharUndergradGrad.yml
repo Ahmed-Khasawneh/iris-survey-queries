@@ -1,0 +1,401 @@
+version: 1.0.1
+name: InstitCharUndergradGrad
+dataModelEntityId: 34
+
+description: Compilation for IRIS Institutional Characteristics 
+detailedDescription: |-
+  Undergraduate and graduate level student charges, specifically for use with the IRIS Institutional Characteristics survey for IPEDS.
+
+  Data includes tuition and room/board amounts, broken down by residency (in-district, in-state, out-of-state).
+
+#1.0.1 20210521 ckeller Added descriptions
+
+fields:
+  - name: surveyCollectionYear
+    description: IPEDS collection survey year
+    type: string
+    required: true
+    comments: Valid format YYyy (1920 for 2019-2020)
+
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+    
+  - name: diffTuitionAmounts
+    description: If your institution charges different tuition for in-district, in-state, or out-of-state students, then 1, else 0
+    type: boolean
+    required: true
+    comments: The value in this field is used for all levels.
+    
+  - name: institControlledHousing
+    description: If your institution offers institutionally-controlled housing (either on or off campus), then 1, else 0
+    type: boolean
+    required: true
+    
+  - name: ftftDegreeLiveOnCampus
+    description: If all full-time, first-time degree/certificate-seeking students are equired to live on-campus or in institutionally-controlled housing, then 1, else 0
+    type: boolean
+    required: true
+    
+  - name: housingCapacity
+    description: Institutionally-controlled housing (either on- or off-campus) capacity for academic year
+    type: string
+    comments: "Valid values: 1 to 999999, or null if not applicable; Default value (if no record): null."
+    
+  - name: provideMealPlans
+    description: Do you offer board or meal plans to your students?
+    type: string
+    comments: "Valid values: No, Yes - number in max plan, Yes - number varies; Default value (if no record or null value): No."
+      
+  - name: mealsPerWeek
+    description: If the institution offers fixed meal plans, provide the number of meals per week in the maximum plan available
+    type: string
+    comments: "Valid values: If provideMealPlans field is 'Yes - number in max plan, then 2 to 99 (unlimited = 99), else null; Default value (if no record): null."
+      
+  - name: ugApplicationFee
+    description: Full-time, first-time undergraduate application fee for admission
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or
+      null if no full-time undergraduates, undergraduate award levels offered,
+      or no application fee for admission required"
+      
+  - name: grApplicationFee
+    description: Graduate application fee for admission
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or
+      null if no full-time graduates, graduate award levels offered, or no
+      application fee for admission required."
+      
+  - name: ugFTAvgTuitionDist
+    description: Full-time, first-time undergraduate full-time average tuition in-district
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFTAvgTuitionInSt
+    description: Full-time, first-time undergraduate full-time average tuition in-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFTAvgTuitionOutSt
+    description: Full-time, first-time undergraduate full-time average tuition out-of-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFTReqFeesDist
+    description: Full-time, first-time undergraduate full-time required fees in-district
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFTReqFeesInSt
+    description: Full-time, first-time undergraduate full-time required fees in-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFTReqFeesOutSt
+    description: Full-time, first-time undergraduate full-time required fees out-of-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugPTCredHrChargeDist
+    description: Full-time, first-time undergraduate part-time per credit hour charge in-district
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugPTCredHrChargeInSt
+    description: Full-time, first-time undergraduate part-time per credit hour charge in-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugPTCredHrChargeOutSt
+    description: Full-time, first-time undergraduate part-time per credit hour charge out-of-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFTCompFeeDist
+    description: Full-time, first-time undergraduate full-time comprehensive fee in-district
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFTCompFeeInSt
+    description: Full-time, first-time undergraduate full-time comprehensive fee in-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFTCompFeeOutSt
+    description: Full-time, first-time undergraduate full-time comprehensive fee out-of-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grFTAvgTuitionDist
+    description: Graduate full-time average tuition in-district
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grFTAvgTuitionInSt
+    description: Graduate full-time average tuition in-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grFTAvgTuitionOutSt
+    description: Graduate full-time average tuition out-of-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grFTReqFeesDist
+    description: Graduate full-time required fees in-district
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grFTReqFeesInSt
+    description: Graduate full-time required fees in-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grFTReqFeesOutSt
+    description: Graduate full-time required fees out-of-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grPTCredHrChargeDist
+    description: Graduate part-time per credit hour charge in-district
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grPTCredHrChargeInSt
+    description: Graduate part-time per credit hour charge in-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: grPTCredHrChargeOutSt
+    description: Graduate part-time per credit hour charge out-of-state
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: typicalRoomChg
+    description: Typical room charge (double occupancy)
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: typicalBoardChg
+    description: Typical board charge (maximum plan)
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: typicalCombRoomBoardChg
+    description: Typical combined room and board charge - answer only if you CANNOT separate room and board charges
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugTuitionDist
+    description: Full-time, first-time undergraduate published tuition in-district for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugTuitionGuarDist
+    description: If you have tuition guarantee in-district, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugTuitionGuarIncrPercDist
+    description: Guaranteed tuition increase % in-district
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugFeeDist
+    description: Full-time, first-time undergraduate published fees in-district for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFeeGuarDist
+    description: If you have fee guarantee in-district, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugFeeGuarIncrPercDist
+    description: Guaranteed fee increase % in-district
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugTuitionInSt
+    description: Full-time, first-time undergraduate published tuition in-state for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugTuitionGuarInSt
+    description: If you have tuition guarantee in-state, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugTuitionGuarIncrPercInSt
+    description: Guaranteed tuition increase % in-state
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugFeeInSt
+    description: Full-time, first-time undergraduate published fees in-state for full  academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFeeGuarInSt
+    description: If you have fee guarantee in-state, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugFeeGuarIncrPercInSt
+    description: Guaranteed fee increase % in-state
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugTuitionOutSt
+    description: Full-time, first-time undergraduate published tuition out-of-state for full academic year  
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugTuitionGuarOutSt
+    description: If you have tuition guarantee out-of-state, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugTuitionGuarIncrPercOutSt
+    description: Guaranteed tuition increase % out-of-state
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugFeeOutSt
+    description: Full-time, first-time undergraduate published fees out-of-state for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugFeeGuarOutSt
+    description: If you have fee guarantee out-of-state, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugFeeGuarIncrPercOutSt
+    description: Guaranteed fee increase % out-of-state
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugCompFeeDist
+    description: Full-time, first-time undergraduate comprehensive fee in-district for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugCompFeeGuarDist
+    description: If you have guaranteed fees in-district, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugCompFeeGuarIncrPercDist
+    description: Guaranteed fee increase % in-district
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugCompFeeInSt
+    description: Full-time, first-time undergraduate comprehensive fee in-state for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugCompFeeGuarInSt
+    description: If you have guaranteed fees in-state, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugCompFeeGuarIncrPercInSt
+    description: Guaranteed fee increase % in-state
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugCompFeeOutSt
+    description: Full-time, first-time undergraduate comprehensive fee out-of-state for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugCompFeeGuarOutSt
+    description: If you have guaranteed fees out-of-state, value = 1, else 0
+    type: boolean
+    required: true
+    comments: "Required values: 1 or 0."
+    
+  - name: ugCompFeeGuarIncrPercOutSt
+    description: Guaranteed fee increase % out-of-state
+    type: string
+    comments: "Valid values: 0 to 100."
+    
+  - name: ugBooksAndSupplies
+    description: Full-time, first-time undergraduate books and supplies for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugRoomBoardOnCampus
+    description: Full-time, first-time undergraduate on-campus room and board for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugExpensesOnCampus
+    description: Full-time, first-time undergraduate on-campus other expenses for full academic year 
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugRoomBoardOffCampus
+    description: Full-time, first-time undergraduate off-campus (not with family) room and board for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+      
+  - name: ugExpensesOffCampus
+    description: Full-time, first-time undergraduate off-campus (not with family) other expenses for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), ornull if not applicable."
+      
+  - name: ugExpensesOffCampusFamily
+    description: Full-time, first-time undergraduate off-campus (with family) other expenses for full academic year
+    type: string
+    comments: "Valid values: 0 to 999999 (no decimals - round to the nearest dollar), or null if not applicable."
+
+#deprecated fields   
+  - name: academicYear
+    description: Academic year in format YYYY
+    type: string
+    comments: Value not required to report Institutional Characteristics.
+    deprecated: true
+
+# meta-data fields      
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true

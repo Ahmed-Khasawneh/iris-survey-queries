@@ -1,0 +1,140 @@
+version: 1.0.1
+name: Transfer
+dataModelEntityId: 12
+
+description: Student transfer outcomes
+detailedDescription: |-
+  Student transfer out information, as reported by the institution or a third-party tracker system.
+
+  Data includes college, degree, fields of study and associated dates.
+
+#1.0.1 20210521 ckeller Added descriptions
+
+fields:
+  - name: personId
+    description: Unique identifier of student
+    type: string
+    required: true
+    reference: Student->personId
+    
+  - name: recordActivityDate
+    description: Date source record inserted or modified
+    type: date
+    required: true
+    
+  - name: lastTermCodeEnrolled
+    description: Last term code student enrolled
+    type: string
+    reference: AcademicTerm->termCode
+    
+  - name: startDate
+    description: Start date for enrollment
+    type: date
+    
+  - name: endDate
+    description: End date for enrollment
+    type: date
+    
+  - name: collegeCodeBranch
+    description: Code of college branch
+    type: string
+    
+  - name: collegeName
+    description: Name of college
+    type: string
+    
+  - name: collegeState
+    description: State location of college
+    type: string
+    
+  - name: 2YearOr4Year
+    description: 2 or 4 year institution
+    type: string
+    
+  - name: publicOrPrivate
+    description: Public or private institution
+    type: string
+    
+  - name: enrollmentStatus
+    description: Status of enrollment
+    type: string
+    
+  - name: classLevel
+    description: Class level for tranfer student
+    type: string
+    
+  - name: enrollmentMajor1
+    description: Major 1 value at time of enrollment
+    type: string
+    
+  - name: enrollmentMajor2
+    description: Major 2 value at time of enrollment
+    type: string
+    
+  - name: enrollmentCipCode1
+    description: Federal Goverment Code for Major1 value
+    type: string
+    
+  - name: enrollmentCipCode2
+    description: Federal Goverment Code for Major2 value
+    type: string
+    
+  - name: graduationDate
+    description: Date of graduation of student
+    type: date
+    
+  - name: degreeTitle
+    description: Title of degree
+    type: string
+    
+  - name: degreeMajor1
+    description: Major 1 value after admission
+    type: string
+    
+  - name: degreeCipCode1
+    description: Federal Goverment Code for Major1 value
+    type: string
+    
+  - name: degreeMajor2
+    description: Major 2 value after admission
+    type: string
+    
+  - name: degreeCipCode2
+    description: Federal Goverment Code for Major2 value
+    type: string
+    
+  - name: collegeSequence
+    description: Order of colleges attended after search date - earliest date to latest date
+    type: number
+
+# meta-data fields
+  - name: rowGuid
+    description: GUID of the row
+    type: uuid
+    required: true
+    private: true
+  - name: tenantId
+    description: Institution ID
+    type: uuid
+    required: true
+    private: true
+  - name: groupEntityExecutionId
+    description: Execution ID of the entity group that is being ingested
+    type: number
+    required: true
+    private: true
+  - name: userId
+    description: User who ran the ingestion
+    type: uuid
+    required: true
+    private: true
+  - name: recordInsertedTimestamp
+    description: Data ingestion time
+    type: date
+    required: true
+    private: true
+  - name: dataPath
+    description: S3 data path
+    type: string
+    required: true
+    private: true
