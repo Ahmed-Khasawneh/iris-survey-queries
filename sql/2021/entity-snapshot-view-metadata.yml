@@ -1671,7 +1671,7 @@ GRADUATION_RATES_1:
       - Student Transfer Data
     snapshotDateRange:
       start: 2021-08-01
-      end: 2021-02-10
+      end: 2022-02-10
 
 GRADUATION_RATES_3:
 
@@ -1840,7 +1840,7 @@ GRADUATION_RATES_3:
       - Student Transfer Data
     snapshotDateRange:
       start: 2021-08-01
-      end: 2021-02-10
+      end: 2022-02-10
 
 GRADUATION_RATES_5:
 
@@ -1999,7 +1999,7 @@ GRADUATION_RATES_5:
       - Student Transfer Data
     snapshotDateRange:
       start: 2021-08-01
-      end: 2021-02-10
+      end: 2022-02-10
       
 GRADUATION_RATES_200_1:
 
