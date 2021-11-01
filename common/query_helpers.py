@@ -1,5 +1,3 @@
-%pyspark
-
 import logging
 import sys
 import boto3
