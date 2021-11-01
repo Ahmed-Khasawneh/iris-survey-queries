@@ -12,10 +12,10 @@ from awsglue.context import GlueContext
 from pyspark.sql import SQLContext, types as T, functions as f, SparkSession
 from awsglue.utils import getResolvedOptions
 
-# spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
-# sparkContext = SparkContext.getOrCreate()
-# sqlContext = SQLContext(sparkContext)
-# glueContext = GlueContext(sparkContext)
+spark = SparkSession.builder.config("spark.sql.autoBroadcastJoinThreshold", -1).getOrCreate()
+sparkContext = SparkContext.getOrCreate()
+sqlContext = SQLContext(sparkContext)
+glueContext = GlueContext(sparkContext)
 
 logger = logging.getLogger('run_query')
 logger.setLevel(logging.INFO)

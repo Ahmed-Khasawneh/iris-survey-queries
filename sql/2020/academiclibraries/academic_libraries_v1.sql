@@ -113,11 +113,15 @@ from (
     from ChartOfAccounts chartofaccountsENT
         cross join DefaultValues defvalues
     where coalesce(chartofaccountsENT.isIPEDSReportable, true) = true
+
         and to_date(chartofaccountsENT.startDate, 'YYYY-MM-DD') < defvalues.reportingDateEnd
+        
         and (chartofaccountsENT.endDate is null 
             or to_date(chartofaccountsENT.endDate, 'YYYY-MM-DD') >= defvalues.reportingDateStart)
+        
         and chartofaccountsENT.statusCode = 'Active' --We want the most relevant active COA codes, not necessarily the most recent.
-		and ((coalesce(to_date(chartofaccountsENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
+		
+        and ((coalesce(to_date(chartofaccountsENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) != CAST('9999-09-09' as DATE)
 			and to_date(chartofaccountsENT.recordActivityDate,'YYYY-MM-DD') <= defvalues.reportingDateEnd)
 				or coalesce(to_date(chartofaccountsENT.recordActivityDate,'YYYY-MM-DD'), CAST('9999-09-09' as DATE)) = CAST('9999-09-09' as DATE))
     )
