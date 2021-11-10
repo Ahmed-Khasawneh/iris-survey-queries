@@ -93,7 +93,7 @@ def spark_refresh_entity_views_v2(tenant_id, survey_type, stage, year, user_id=N
     )
     view_metadata_without_s3_paths = json.loads(invoke_response['Payload'].read().decode("utf-8"))
 
-    print(json.dumps(view_metadata_without_s3_paths, indent=2))
+    logger.debug(json.dumps(view_metadata_without_s3_paths, indent=2))
 
     view_metadata_without_s3_paths["tenantId"] = tenant_id
     invoke_response = lambda_client.invoke(
@@ -105,18 +105,19 @@ def spark_refresh_entity_views_v2(tenant_id, survey_type, stage, year, user_id=N
     view_metadata = json.loads(invoke_response['Payload'].read().decode("utf-8"))
     snapshot_metadata = view_metadata.get('snapshotMetadata', {})
 
-    print(json.dumps(view_metadata, indent=2))
+    logger.debug(f"view_metadata= {json.dumps(view_metadata, indent=2)}")
+    logger.debug(f"snapshot_metadata= {json.dumps(snapshot_metadata, indent=2)}")
 
     for view in view_metadata.get('views', []):
         s3_paths = view.get('s3Paths', [])
         view_name = view.get('viewName')
         if len(s3_paths) > 0:
-            print("{}: ({})".format(view_name, ','.join(s3_paths)))
+            logger.debug("{}: ({})".format(view_name, ','.join(s3_paths)))
             df = spark_read_s3_source(s3_paths).toDF()
             df = add_snapshot_metadata_columns(df, snapshot_metadata)
             df.createOrReplaceTempView(view_name)
         else:
-            print("No snapshots found for {}".format(view_name))
+            logger.debug("No snapshots found for {}".format(view_name))
 
 def spark_read_s3_source(s3_paths, format="parquet"):
     """Reads data from s3 on the basis of
